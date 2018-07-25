@@ -15,24 +15,35 @@ Page {
             id: playButton
             Layout.alignment: Qt.AlignHCenter
             text: "Play"
-            onClicked: pageStack.push(Qt.resolvedUrl("GamePage.qml"))
+            font.bold: true
+            font.pixelSize: app.largeFont
+            font.family: app.fontFamily
+            onClicked: {
+                console.log("Play pressed")
+                Game.world.loadMap(":/maps/example.json")
+                pageStack.push(Qt.resolvedUrl("GamePage.qml"))
+            }
         }
 
         Button {
             id: settingsButton
             Layout.alignment: Qt.AlignHCenter
             text: "Settings"
-            onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
+            font.pixelSize: app.largeFont
+            font.family: app.fontFamily
+            onClicked: {
+                pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
+            }
         }
 
         Button {
             id: aboutButton
             Layout.alignment: Qt.AlignHCenter
             text: "About"
+            font.pixelSize: app.largeFont
+            font.family: app.fontFamily
             onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
         }
     }
-
-
 
 }

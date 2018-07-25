@@ -5,22 +5,32 @@ import QtGraphicalEffects 1.0
 
 import Chronicles 1.0
 
+import "components"
+
 Item {
     id: root
 
     property real zoomLevel: 1.0
-    property real cellSize: zoomLevel * Math.min(root.width / Game.world.sceneSize.width, root.height / Game.world.sceneSize.height)
+    property real cellSize: zoomLevel * Math.min(root.width / 30, root.height / 20)
 
-    onCellSizeChanged: Game.world.cellSize = root.cellSize
+    property bool debugView: true
 
     Component.onCompleted: {
         console.log("Game scene size: " + root.width + "/" + root.height)
-        gridCanvas.requestPaint();
+        forceActiveFocus()
     }
+
+    Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
+    Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
 
     Connections {
         target: Game
-        onTick: calculateAngle()
+        onTick: {
+            calculateAngle()
+        }
+        onPaintEvent: {
+            //console.log("paint event")
+        }
     }
 
     Connections {
@@ -36,160 +46,145 @@ Item {
         contentWidth: worldBackground.width
         contentHeight: worldBackground.height
 
+        enabled: false
         antialiasing: true
 
-        onContentXChanged: console.log("Content x " + contentX)
-        onContentYChanged: console.log("Content y " + contentY)
+        onContentXChanged: {
+            // Calculate the new screen position
+            var contentOffsetX = parseInt(contentX / cellSize)
+            var contentOffsetY = parseInt(contentY / cellSize)
+            Game.world.currentViewOffset = Qt.point(contentOffsetX, contentOffsetY)
+        }
 
-//        // Moving animation
-//        Behavior on contentX { NumberAnimation { duration: Game.intervall } }
-//        Behavior on contentY { NumberAnimation { duration: Game.intervall } }
+        onContentYChanged: {
+            // Calculate the new screen position
+            var contentOffsetX = parseInt(contentX / cellSize)
+            var contentOffsetY = parseInt(contentY / cellSize)
+            Game.world.currentViewOffset = Qt.point(contentOffsetX, contentOffsetY)
+        }
 
         Item {
             id: worldBackground
-            width: Game.world.size.width * cellSize
-            height: Game.world.size.height * cellSize
+            width: Game.world.map.width * cellSize
+            height: Game.world.map.height * cellSize
+            z: 0
 
-            RadialGradient {
-                anchors.fill: parent
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.000
-                        color: Qt.rgba(1, 0, 0, 1)
-                    }
-                    GradientStop {
-                        position: 0.167
-                        color: Qt.rgba(1, 1, 0, 1)
-                    }
-                    GradientStop {
-                        position: 0.333
-                        color: Qt.rgba(0, 1, 0, 1)
-                    }
-                    GradientStop {
-                        position: 0.500
-                        color: Qt.rgba(0, 1, 1, 1)
-                    }
-                    GradientStop {
-                        position: 0.667
-                        color: Qt.rgba(0, 0, 1, 1)
-                    }
-                    GradientStop {
-                        position: 0.833
-                        color: Qt.rgba(1, 0, 1, 1)
-                    }
-                    GradientStop {
-                        position: 1.000
-                        color: Qt.rgba(1, 0, 0, 1)
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            id: currentField
-            color: "green"
-            opacity: 0.8
-            height: cellSize
-            width: cellSize
-            x: Game.world.currentPlayerField.x * cellSize
-            y: Game.world.currentPlayerField.y * cellSize
-        }
-
-        Canvas {
-            id: gridCanvas
-            anchors.fill: parent
-            smooth: true
-            onPaint: {
-                var ctx = gridCanvas.getContext("2d")
-                ctx.strokeStyle = Qt.rgba(0, 0, 0, 0.5);
-                ctx.lineWidth = 1
-                ctx.save()
-                ctx.reset()
-
-                for (var i = 0; i < Game.world.size.height; i++) {
-                    ctx.moveTo(i * cellSize, 0)
-                    ctx.lineTo(i * cellSize, Game.world.size.width * cellSize)
-                }
-
-                for (var j = 0; j < Game.world.size.width; j++) {
-                    ctx.moveTo(0, j * cellSize)
-                    ctx.lineTo(Game.world.size.height * cellSize, j * cellSize)
-                }
-
-                ctx.stroke()
-                ctx.restore()
-            }
-        }
-
-        Rectangle {
-            id: boundingRectangle
-            color: "white"
-            border.color: "red"
-            border.width: 3
-            opacity: 0.3
-            width: Game.world.boundingSize.width * cellSize
-            height: Game.world.boundingSize.height * cellSize
-
-            // Moving animation
-            Behavior on x { NumberAnimation { duration: Game.intervall } }
-            Behavior on y { NumberAnimation { duration: Game.intervall } }
-
-            onXChanged: {
-                // Over the right sceen boarder
-                if (boundingRectangle.x + boundingRectangle.width >= worldFlickable.contentX + root.width) {
-                    var offsetXRight = (boundingRectangle.x + boundingRectangle.width) - (worldFlickable.contentX + root.width)
-                    worldFlickable.contentX += offsetXRight
-                }
-
-                // Over the left sceen boarder
-                if (boundingRectangle.x < worldFlickable.contentX) {
-                    var offsetXLeft = boundingRectangle.x - worldFlickable.contentX
-                    worldFlickable.contentX += offsetXLeft
+            Repeater {
+                id: fieldRepeater
+                model: Game.world
+                delegate: FieldItem {
+                    width: cellSize
+                    height: cellSize
+                    field: Game.world.get(model.index)
+                    x: field.position.x * cellSize
+                    y: field.position.y * cellSize
                 }
             }
 
-            onYChanged: {
-                // Over the lower sceen boarder
-                if (boundingRectangle.y + boundingRectangle.height >= worldFlickable.contentY + root.height) {
-                    var offsetYLower = (boundingRectangle.y + boundingRectangle.height) - (worldFlickable.contentY + root.height)
-                    worldFlickable.contentY += offsetYLower
+            //            Canvas {
+            //                id: gridCanvas
+            //                anchors.fill: parent
+            //                smooth: true
+            //                antialiasing: true
+
+            //                onPaint: {
+            //                    var ctx = gridCanvas.getContext("2d")
+            //                    ctx.strokeStyle = Qt.rgba(0, 0, 0, 0.5);
+            //                    ctx.lineWidth = 1
+            //                    ctx.save()
+            //                    ctx.reset()
+
+            //                    for (var i = 0; i < Game.world.size.height; i++) {
+            //                        ctx.moveTo(i * cellSize, 0)
+            //                        ctx.lineTo(i * cellSize, Game.world.size.width * cellSize)
+            //                    }
+
+            //                    for (var j = 0; j < Game.world.size.width; j++) {
+            //                        ctx.moveTo(0, j * cellSize)
+            //                        ctx.lineTo(Game.world.size.height * cellSize, j * cellSize)
+            //                    }
+
+            //                    ctx.stroke()
+            //                    ctx.restore()
+            //                }
+            //            }
+
+            Rectangle {
+                id: boundingRectangle
+                color: "white"
+                border.color: "red"
+                border.width: 3
+                antialiasing: true
+                opacity: Game.debugging ? 0.2 : 0
+                width: Game.world.boundingSize.width * cellSize
+                height: Game.world.boundingSize.height * cellSize
+
+
+                onXChanged: {
+                    // Over the right sceen boarder
+                    if (boundingRectangle.x + boundingRectangle.width >= worldFlickable.contentX + root.width) {
+                        var offsetXRight = (boundingRectangle.x + boundingRectangle.width) - (worldFlickable.contentX + root.width)
+                        worldFlickable.contentX += offsetXRight
+                    }
+
+                    // Over the left sceen boarder
+                    if (boundingRectangle.x < worldFlickable.contentX) {
+                        var offsetXLeft = boundingRectangle.x - worldFlickable.contentX
+                        worldFlickable.contentX += offsetXLeft
+                    }
                 }
 
-                // Over the upper sceen boarder
-                if (boundingRectangle.y < worldFlickable.contentY) {
-                    var offsetYUpper = boundingRectangle.y - worldFlickable.contentY
-                    worldFlickable.contentY += offsetYUpper
+                onYChanged: {
+                    // Over the lower sceen boarder
+                    if (boundingRectangle.y + boundingRectangle.height >= worldFlickable.contentY + root.height) {
+                        var offsetYLower = (boundingRectangle.y + boundingRectangle.height) - (worldFlickable.contentY + root.height)
+                        worldFlickable.contentY += offsetYLower
+                    }
+
+                    // Over the upper sceen boarder
+                    if (boundingRectangle.y < worldFlickable.contentY) {
+                        var offsetYUpper = boundingRectangle.y - worldFlickable.contentY
+                        worldFlickable.contentY += offsetYUpper
+                    }
                 }
             }
+
+//            Image {
+//                anchors.fill: boundingRectangle
+//                source: "/images/world/trees/tree-1.png"
+//                opacity: 1
+//            }
+
+
+            PlayerItem {
+                id: playerItem
+                width: root.cellSize * Game.world.player.size.width
+                height: root.cellSize * Game.world.player.size.height
+
+                antialiasing: true
+
+                x: Game.world.player.position.x * cellSize - cellSize / 2
+                y: Game.world.player.position.y * cellSize - cellSize / 2
+                z: 1
+
+                onXChanged: evaluateBoundingRectangle()
+                onYChanged: evaluateBoundingRectangle()
+
+                Component.onCompleted: evaluateBoundingRectangle()
+            }
+
+            GameLabel {
+                id: nameLabel
+                anchors.horizontalCenter: playerItem.horizontalCenter
+                anchors.bottom: playerItem.top
+                anchors.bottomMargin: 4
+                visible: Game.debugging
+                text: Game.world.player.name
+            }
         }
-
-        PlayerItem {
-            id: playerItem
-
-            width: cellSize
-            height: cellSize
-
-            x: (Game.world.player.position.x * cellSize) - cellSize / 2
-            y: (Game.world.player.position.y * cellSize) - cellSize / 2
-
-            rotation: Game.world.player.angle * 180 / Math.PI + 90
-
-            Component.onCompleted: evaluateBoundingRectangle()
-        }
-
-        Label {
-            id: nameLabel
-            anchors.horizontalCenter: playerItem.horizontalCenter
-            anchors.bottom: playerItem.top
-            anchors.bottomMargin: 4
-            text: Game.world.player.name
-        }
-
-
     }
 
     function evaluateBoundingRectangle() {
-
         var worldWidth = Game.world.size.width * cellSize
         var worldHeight = Game.world.size.height * cellSize
 
@@ -221,9 +216,8 @@ Item {
         boundingRectangle.y = newPositionY
     }
 
-
     MouseArea {
-        id: gameMouseArea
+        id: sceenMouseArea
         anchors.fill: parent
         hoverEnabled: true
         visible: Game.controlMode == Game.ControlModeKeyBoardMouse
@@ -236,9 +230,9 @@ Item {
         if (!Game.running || Game.controlMode != Game.ControlModeKeyBoardMouse)
             return;
 
-        var dx = gameMouseArea.mouseX - Game.world.player.position.x
-        var dy = gameMouseArea.mouseY - Game.world.player.position.y
+        var dx = (worldFlickable.contentX + sceenMouseArea.mouseX) - Game.world.player.position.x * cellSize
+        var dy = (worldFlickable.contentY + sceenMouseArea.mouseY) - Game.world.player.position.y * cellSize
+        //console.log("--> ",  dy, " | ", dx)
         Game.world.player.angle = Math.atan2(dy , dx)
-        console.log(dy, " ", dx, " ", Game.world.player.angle)
     }
 }

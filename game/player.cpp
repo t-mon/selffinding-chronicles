@@ -1,61 +1,13 @@
 #include "player.h"
 #include "game.h"
+#include "debugcategories.h"
 
 #include <QtMath>
-#include <QDebug>
 
 Player::Player(QObject *parent) :
-    QObject(parent),
-    m_name("Player"),
-    m_position(1.5, 1.5)
+    GameObject(parent)
 {
 
-}
-
-QString Player::name() const
-{
-    return m_name;
-}
-
-void Player::setName(const QString &name)
-{
-    if (m_name == name)
-        return;
-
-    qDebug() << "Player: name changed" << name;
-    m_name = name;
-    emit nameChanged(m_name);
-}
-
-QPointF Player::position() const
-{
-    return m_position;
-}
-
-void Player::setPosition(const QPointF position)
-{
-    if (m_position == position)
-        return;
-
-    qDebug() << "Player: position" << position;
-    m_position = position;
-    emit positionChanged(m_position);
-    setMoving(true);
-}
-
-int Player::size() const
-{
-    return m_size;
-}
-
-void Player::setSize(const int &size)
-{
-    if (m_size == size)
-        return;
-
-    qDebug() << "Player: size changed" << size;
-    m_size = size;
-    emit sizeChanged(m_size);
 }
 
 qreal Player::angle() const
@@ -68,9 +20,24 @@ void Player::setAngle(const qreal &angle)
     if (m_angle == angle)
         return;
 
-    qDebug() << "Player: angle" << angle;
+    //qCDebug(dcPlayer()) << "angle" << angle;
     m_angle = angle;
     emit angleChanged(m_angle);
+}
+
+qreal Player::auraRange() const
+{
+    return m_auraRange;
+}
+
+void Player::setAuraRange(const qreal auraRange)
+{
+    if (m_auraRange == auraRange)
+        return;
+
+    qCDebug(dcPlayer()) << "Aura range changed" << auraRange;
+    m_auraRange = auraRange;
+    emit auraRangeChanged(m_auraRange);
 }
 
 qreal Player::speed() const
@@ -83,7 +50,7 @@ void Player::setSpeed(const qreal speed)
     if (m_speed == speed)
         return;
 
-    qDebug() << "Player: speed changed" << speed;
+    qCDebug(dcPlayer()) << "Speed changed" << speed;
     m_speed = speed;
     emit speedChanged(m_speed);
 }
@@ -98,7 +65,7 @@ void Player::setMovable(const bool &movable)
     if (m_movable == movable)
         return;
 
-    qDebug() << "Player: movable changed" << movable;
+    qCDebug(dcPlayer()) << "Movable changed" << movable;
     m_movable = movable;
     emit movableChanged(m_movable);
 }
@@ -113,8 +80,30 @@ void Player::setMoving(bool moving)
     if (m_moving == moving)
         return;
 
-    qDebug() << "Player" << m_name << (moving ? "moving" : "stopped");
+    qCDebug(dcPlayer()) << name() << (moving ? "moving" : "stopped");
     m_moving = moving;
     emit movingChanged(m_moving);
+}
+
+bool Player::running() const
+{
+    return m_running;
+}
+
+void Player::setRunning(bool running)
+{
+    if (m_running == running)
+        return;
+
+    m_running = running;
+    emit runningChanged(m_running);
+
+    qCDebug(dcPlayer()) << name() << (m_running ? "running" : "not running");
+    if (m_running) {
+        setSpeed(m_speed * 1.8);
+    } else {
+        setSpeed(0.03);
+    }
+
 }
 

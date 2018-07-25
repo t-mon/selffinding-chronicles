@@ -1,27 +1,29 @@
 #include "world.h"
 #include "game.h"
 
+#include "debugcategories.h"
+#include "collisiondetector.h"
+
 #include <QtMath>
-#include <QDebug>
+#include <QtConcurrent/QtConcurrent>
 
 World::World(QObject *parent) :
-    QObject(parent),
-    m_size(QSize(50, 50)),
-    m_sceneSize(QSize(30, 20)),
-    m_cellSize(30)
+    Fields(parent),
+    m_size(QSize(40, 40))
 {
+    // Create the player
     m_player = new Player(this);
     connect(m_player, &Player::positionChanged, this, &World::onPlayerPositionChanged);
 
-    // Init occupied fields
-    m_occupiedFields = new Fields(this);
-    m_occupiedFields->addField(new Field(QPoint(6, 6), m_occupiedFields));
+    // Create player controller
+    m_playerController = new PlayerController(m_player, this);
 
-    setboundingPosition(QPoint(0, 0));
-    setBoundingSize(QSize(10, 10));
+    m_collisionDetector = new CollisionDetector(this);
 
-    // Init current field
-    m_player->setPosition(QPointF(5, 5));
+    // Create map and loading watcher
+    m_map = new Map(this);
+    m_loadingWatcher = new QFutureWatcher<void>(this);
+    connect(m_loadingWatcher, &QFutureWatcher<void>::finished, this, &World::onLoadingFinished);
 }
 
 QSize World::size() const
@@ -34,24 +36,9 @@ void World::setSize(const QSize &size)
     if (m_size == size)
         return;
 
-    qDebug() << "World: size changed" << size;
+    qCDebug(dcWorld()) << "Size changed" << size;
     m_size = size;
     emit sizeChanged(m_size);
-}
-
-QSize World::sceneSize() const
-{
-    return m_sceneSize;
-}
-
-void World::setSceneSize(const QSize &sceneSize)
-{
-    if (m_sceneSize == sceneSize)
-        return;
-
-    qDebug() << "World: scene size changed" << sceneSize;
-    m_sceneSize = sceneSize;
-    emit sceneSizeChanged(m_sceneSize);
 }
 
 QSize World::boundingSize() const
@@ -64,24 +51,29 @@ void World::setBoundingSize(const QSize &boundingSize)
     if (m_boundingSize == boundingSize)
         return;
 
-    qDebug() << "World: bounding size changed" << boundingSize;
+    qCDebug(dcWorld()) << "Bounding size changed" << boundingSize;
     m_boundingSize = boundingSize;
     emit boundingSizeChanged(m_boundingSize);
 }
 
-int World::cellSize() const
+QPoint World::currentViewOffset() const
 {
-    return m_cellSize;
+    return m_currentViewOffset;
 }
 
-void World::setCellSize(const int &cellSize)
+void World::setCurrentViewOffset(const QPoint &currentViewOffset)
 {
-    if (m_cellSize == cellSize)
+    if (m_currentViewOffset == currentViewOffset)
         return;
 
-    qDebug() << "World: cell size changed" << cellSize;
-    m_cellSize = cellSize;
-    emit cellSizeChanged(m_cellSize);
+    qCDebug(dcWorld()) << "Current view offset changed" << currentViewOffset;
+    m_currentViewOffset = currentViewOffset;
+    emit currentViewOffsetChanged(m_currentViewOffset);
+}
+
+Map *World::map()
+{
+    return m_map;
 }
 
 Player *World::player()
@@ -89,196 +81,285 @@ Player *World::player()
     return m_player;
 }
 
-Fields *World::occupiedFields()
+PlayerController *World::playerController()
 {
-    return m_occupiedFields;
+    return m_playerController;
 }
 
-QPoint World::currentPlayerField() const
+bool World::loaded() const
+{
+    return m_loaded;
+}
+
+bool World::loading() const
+{
+    return m_loading;
+}
+
+void World::loadMap(const QString &fileName)
+{
+    if (m_map->fileName() == fileName && m_loaded) {
+        qCDebug(dcWorld()) << "Map" << fileName <<"already loaded.";
+        onLoadingFinished();
+        return;
+    }
+
+    qCDebug(dcWorld()) << "Start loading map" << fileName;
+    setLoaded(false);
+    setLoading(true);
+    m_loadingWatcher->setFuture(QtConcurrent::run(m_map, &Map::loadMap, fileName));
+}
+
+QPoint World::currentPlayerPosition() const
+{
+    return m_currentPlayerPosition;
+}
+
+Field *World::currentPlayerField()
 {
     return m_currentPlayerField;
 }
 
-QPointF World::boundingPosition() const
+QPointF World::adjustCollition(qreal dx, qreal dy)
 {
-    return m_boundingPosition;
+    QPointF resultPosition = QPointF(m_player->position().x() + dx, m_player->position().y() + dy);
+    qreal offset = m_player->size().width() / 2.0;
+
+    // Check border of the world
+
+    // North border
+    if (resultPosition.y() < offset)
+        resultPosition = QPointF(resultPosition.x(), offset);
+
+    // East border
+    if (resultPosition.x() > m_size.width() - offset)
+        resultPosition = QPointF(m_size.width() - offset, resultPosition.y());
+
+    // South border
+    if (resultPosition.y() > m_size.height() - offset)
+        resultPosition = QPointF(resultPosition.x(), m_size.height() - offset);
+
+    // West border
+    if (resultPosition.x() < offset)
+        resultPosition = QPointF(offset, resultPosition.y());
+
+    if (!m_currentPlayerField)
+        return resultPosition;
+
+    // Check collition foreach surounding field
+    // North field
+    Field *checkField = m_currentPlayerField->northField();
+    if (checkField && !checkField->accessible() &&
+            resultPosition.y() - offset < checkField->position().y() + 1) {
+        resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1 + offset);
+    }
+
+    // South field
+    checkField = m_currentPlayerField->southField();
+    if (checkField && !checkField->accessible() &&
+            resultPosition.y() + offset > checkField->position().y()) {
+        resultPosition = QPointF(resultPosition.x(), checkField->position().y() - offset);
+    }
+
+    // East field
+    checkField = m_currentPlayerField->eastField();
+    if (checkField && !checkField->accessible() &&
+            resultPosition.x() + offset > checkField->position().x()) {
+        resultPosition = QPointF(checkField->position().x() - offset, resultPosition.y());
+    }
+
+    // West field
+    checkField = m_currentPlayerField->westField();
+    if (checkField && !checkField->accessible() &&
+            resultPosition.x() - offset < checkField->position().x() + 1) {
+        resultPosition = QPointF(checkField->position().x() + 1 + offset, resultPosition.y());
+    }
+
+    // SouthEast field
+    checkField = m_currentPlayerField->southEastField();
+    if (checkField && !checkField->accessible()) {
+        qreal overlapX = checkField->position().x() - (resultPosition.x() + offset);
+        qreal overlapY = checkField->position().y() - (resultPosition.y() + offset);
+
+        // If the player and the field overlap
+        if (overlapX < 0 && overlapY < 0) {
+            // Now check which overlap is bigger and reset the smaller one
+            if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
+                // Overlap in x direction is smaller
+                resultPosition = QPointF(checkField->position().x() - offset, resultPosition.y());
+            } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() - offset);
+            }
+        }
+    }
+
+    // SouthWest field
+    checkField = m_currentPlayerField->southWestField();
+    if (checkField && !checkField->accessible()) {
+        qreal overlapX = (resultPosition.x() - offset) - (checkField->position().x() + 1);
+        qreal overlapY = checkField->position().y() - (resultPosition.y() + offset);
+
+        // If the player and the field overlap
+        if (overlapX < 0 && overlapY < 0) {
+            // Now check which overlap is bigger and reset the smaller one
+            if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
+                // Overlap in x is smaller
+                resultPosition = QPointF(checkField->position().x() + 1 + offset, resultPosition.y());
+            } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
+                // Overlap in y is smaller
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() - offset);
+            }
+        }
+    }
+
+    // NorthEast field
+    checkField = m_currentPlayerField->northEastField();
+    if (checkField && !checkField->accessible()) {
+        qreal overlapX = checkField->position().x() - (resultPosition.x() + offset);
+        qreal overlapY = (resultPosition.y() - offset) - (checkField->position().y() + 1);
+
+        // If the player and the field overlap
+        if (overlapX < 0 && overlapY < 0) {
+            // Now check which overlap is bigger and reset the smaller one
+            if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
+                // Overlap in x direction is smaller
+                resultPosition = QPointF(checkField->position().x() - offset, resultPosition.y());
+            } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1 + offset);
+            }
+        }
+    }
+
+    // NorthWest field
+    checkField = m_currentPlayerField->northWestField();
+    if (checkField && !checkField->accessible()) {
+        qreal overlapX = (resultPosition.x() - offset) - (checkField->position().x() + 1);
+        qreal overlapY = (resultPosition.y() - offset) - (checkField->position().y() + 1);
+
+        // If the player and the field overlap
+        if (overlapX < 0 && overlapY < 0) {
+            // Now check which overlap is bigger and reset the smaller one
+            if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
+                // Overlap in x direction is smaller
+                resultPosition = QPointF(checkField->position().x() + 1 + offset, resultPosition.y());
+            } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1 + offset);
+            }
+        }
+    }
+
+    return resultPosition;
 }
 
-void World::setForwardPressed(bool forwaredPressed)
+void World::evaluateInRangeFields(const QPointF &playerPosition)
 {
-    m_forwaredPressed = forwaredPressed;
+    // Check which fields are in the player aura
+    Q_UNUSED(playerPosition)
+
+    // Get surrounding fields and check if they are in range
+    Field *currentField = getFieldOfPosition(playerPosition);
+    QList<Field *> surroundingFields = currentField->getSurroundingFields();
+    surroundingFields.append(currentField);
+
+    // Remove fields which are not surrounded any more
+    foreach (Field *field, m_fieldsInRange) {
+        if (!surroundingFields.contains(field)) {
+            field->setInPlayerRange(false);
+            m_fieldsInRange.removeOne(field);
+        }
+    }
+
+    foreach (Field *field, surroundingFields) {
+        if (!m_fieldsInRange.contains(field)) {
+            field->setInPlayerRange(true);
+            m_fieldsInRange.append(field);
+        }
+    }
+
 }
 
-void World::setBackwardPressed(bool backwardPressed)
+void World::setCurrentPlayerPosition(const QPoint &currentPosition)
 {
-    m_backwardPressed = backwardPressed;
-}
-
-void World::setLeftPressed(bool leftPressed)
-{
-    m_leftPressed = leftPressed;
-}
-
-void World::setRightPressed(bool rightPressed)
-{
-    m_rightPressed = rightPressed;
-}
-
-void World::setCurrentPlayerField(const QPoint &currentField)
-{
-    if (m_currentPlayerField == currentField)
+    if (m_currentPlayerPosition == currentPosition)
         return;
 
-    qDebug() << "World: current filed" << currentField;
-    m_currentPlayerField = currentField;
+    qCDebug(dcWorld()) << "Current player position changed" << currentPosition;
+    m_currentPlayerPosition = currentPosition;
+    emit currentPlayerPositionChanged(m_currentPlayerPosition);
+}
+
+void World::setCurrentPlayerField(Field *field)
+{
+    if (m_currentPlayerField == field)
+        return;
+
+    // Update old field
+    if (m_currentPlayerField)
+        m_currentPlayerField->setPlayerOnField(false);
+
+    m_currentPlayerField = field;
+
+    if (m_currentPlayerField)
+        m_currentPlayerField->setPlayerOnField(true);
+
     emit currentPlayerFieldChanged(m_currentPlayerField);
 }
 
-void World::setboundingPosition(const QPointF &boundingPosition)
+void World::setLoaded(bool loaded)
 {
-    if (m_boundingPosition == boundingPosition)
+    if (m_loaded == loaded)
         return;
 
-    qDebug() << "World: current screen position" << boundingPosition;
-    m_boundingPosition = boundingPosition;
-    emit boundingPositionChanged(m_boundingPosition);
+    qCDebug(dcWorld()) << "Loaded changed:" << loaded;
+    m_loaded = loaded;
+    emit loadedChanged(m_loaded);
 }
 
-void World::moveKeyBoard()
+void World::setLoading(bool loading)
 {
-    qreal angle = 0;
-
-    // Forward
-    if (m_forwaredPressed && !m_backwardPressed && !m_leftPressed && !m_rightPressed)
-        angle = -M_PI_2;
-
-    // Forward / Left
-    if (m_forwaredPressed && !m_backwardPressed && m_leftPressed && !m_rightPressed)
-        angle = -M_PI_2 - M_PI_4;
-
-    // Forward / Right
-    if (m_forwaredPressed && !m_backwardPressed && !m_leftPressed && m_rightPressed)
-        angle = -M_PI_4;
-
-    // Backward
-    if (!m_forwaredPressed && m_backwardPressed && !m_leftPressed && !m_rightPressed)
-        angle = M_PI_2;
-
-    // Backward / Left
-    if (!m_forwaredPressed && m_backwardPressed && m_leftPressed && !m_rightPressed)
-        angle = M_PI_4 + M_PI_2;
-
-    // Backward / Right
-    if (!m_forwaredPressed && m_backwardPressed && !m_leftPressed && m_rightPressed)
-        angle = M_PI_4;
-
-    // Left
-    if (!m_forwaredPressed && !m_backwardPressed && m_leftPressed && !m_rightPressed)
-        angle = -M_PI;
-
-    // Right
-    if (!m_forwaredPressed && !m_backwardPressed && !m_leftPressed && m_rightPressed)
-        angle = 0;
-
-    //double angleDegree = angle * 180 / M_PI;
-    //qDebug() << angle << angleDegree;
-
-    if (!m_forwaredPressed && !m_backwardPressed && !m_leftPressed && !m_rightPressed) {
-        m_player->setMoving(false);
+    if (m_loading == loading)
         return;
-    }
 
-    qreal deltaX = qRound(m_player->speed() * qCos(angle) * 10000.0) / 10000.0;
-    qreal deltaY = qRound(m_player->speed() * qSin(angle) * 10000.0) / 10000.0;
-
-    m_player->setAngle(angle);
-
-    movePlayer(QPointF(m_player->position().x() + deltaX, m_player->position().y() + deltaY));
+    qCDebug(dcWorld()) << "Loading changed:" << loading;
+    m_loading = loading;
+    emit loadingChanged(m_loading);
 }
 
-void World::moveKeyBoardMouse()
+void World::doPlayerMovement()
 {
-    qreal angle = m_player->angle();
-
-    // Forward
-    if (m_forwaredPressed && !m_backwardPressed && !m_leftPressed && !m_rightPressed)
-        angle = m_player->angle();
-
-    // Forward / Left
-    if (m_forwaredPressed && !m_backwardPressed && m_leftPressed && !m_rightPressed)
-        angle = m_player->angle() - M_PI_4;
-
-    // Forward / Right
-    if (m_forwaredPressed && !m_backwardPressed && !m_leftPressed && m_rightPressed)
-        angle = m_player->angle() + M_PI_4;
-
-    // Backward
-    if (!m_forwaredPressed && m_backwardPressed && !m_leftPressed && !m_rightPressed)
-        angle = m_player->angle() + M_PI;
-
-    // Backward / Left
-    if (!m_forwaredPressed && m_backwardPressed && m_leftPressed && !m_rightPressed)
-        angle = m_player->angle() - M_PI_4 - M_PI_2;
-
-    // Backward / Right
-    if (!m_forwaredPressed && m_backwardPressed && !m_leftPressed && m_rightPressed)
-        angle = m_player->angle() + M_PI_4 + M_PI_2;
-
-    // Left
-    if (!m_forwaredPressed && !m_backwardPressed && m_leftPressed && !m_rightPressed)
-        angle = m_player->angle() - M_PI_2;
-
-    // Right
-    if (!m_forwaredPressed && !m_backwardPressed && !m_leftPressed && m_rightPressed)
-        angle = m_player->angle() + M_PI_2;
-
-    //double angleDegree = angle * 180 / M_PI;
-    //qDebug() << angle << angleDegree;
-
-    if (!m_forwaredPressed && !m_backwardPressed && !m_leftPressed && !m_rightPressed) {
-        m_player->setMoving(false);
+    if (!m_player->movable())
         return;
-    }
 
-    double deltaX = qRound(m_player->speed() * qCos(angle) * 10000.0) / 10000.0;
-    double deltaY = qRound(m_player->speed() * qSin(angle) * 10000.0) / 10000.0;
+    // If primary pressed, default enable running for now
+    m_player->setRunning(m_playerController->primaryActionPressed());
 
-    movePlayer(QPointF(m_player->position().x() + deltaX, m_player->position().y() + deltaY));
+    QPointF delta = m_playerController->delta();
 
-    //qDebug() << deltaX << deltaY << qAbs(qPow(deltaX, 2) + qPow(deltaY, 2));
-}
+    // Collition detection
+    QPointF resultPosition = adjustCollition(delta.x(), delta.y());
 
-void World::moveTouchscreen()
-{
+    // Calculate in range fields
+    evaluateInRangeFields(resultPosition);
 
-}
+    // Check collision with object
+    foreach (Field *field, m_fieldsInRange) {
 
-void World::movePlayer(const QPointF newPosition)
-{
-    QPointF resultPosition = newPosition;
-
-    // Check world end north
-    if (newPosition.y() < 0.5) {
-        resultPosition = QPointF(resultPosition.x(), 0.5);
-    }
-
-    // Check world end east
-    if (newPosition.x() > m_size.width() - 0.5) {
-        resultPosition = QPointF(m_size.width() - 0.5, resultPosition.y());
-    }
-
-    // Check world end south
-    if (newPosition.y() > m_size.height() - 0.5) {
-        resultPosition = QPointF(resultPosition.x(), m_size.height() - 0.5);
-    }
-
-    // Check world end west
-    if (newPosition.x() < 0.5) {
-        resultPosition = QPointF(0.5, resultPosition.y());
+        if (field->gameItem()) {
+            if (m_collisionDetector->checkCollision(m_player, field->gameItem())) {
+                //qCDebug(dcWorld()) << "Player collision with" << field->gameItem();
+            }
+        }
     }
 
     // Check if the field is movable
     m_player->setPosition(resultPosition);
+}
+
+Field *World::getFieldOfPosition(const QPointF position) const
+{
+    int x = static_cast<int>(position.x());
+    int y = static_cast<int>(position.y());
+    return m_map->getField(x, y);
 }
 
 void World::onPlayerPositionChanged()
@@ -286,34 +367,44 @@ void World::onPlayerPositionChanged()
     // Calculate the current field on the map
     int x = static_cast<int>(m_player->position().x());
     int y = static_cast<int>(m_player->position().y());
-    setCurrentPlayerField(QPoint(x, y));
+    setCurrentPlayerPosition(QPoint(x, y));
+    setCurrentPlayerField(m_map->getField(x, y));
+}
+
+void World::onLoadingFinished()
+{
+    qCDebug(dcWorld()) << "Loading map finished";
+
+    clearModel();
+
+    qCDebug(dcWorld()) << "Initialize fields";
+    for (int x = m_currentViewOffset.x(); x < m_currentViewOffset.x() + m_size.width(); x++) {
+        for (int y = m_currentViewOffset.y(); y < m_currentViewOffset.y() + m_size.height(); y++) {
+            Field *field = m_map->getField(x, y);
+            addField(field);
+        }
+    }
+
+    // Init stuff
+    setBoundingSize(QSize(15, 15));
+    m_currentViewOffset = QPoint(0, 0);
+    m_player->setPosition(m_map->playerStartPosition());
+    doPlayerMovement();
+
+    setLoading(false);
+    setLoaded(true);
+
+    // Start the game after loading
+    Game::instance()->setRunning(true);
 }
 
 void World::tick()
 {
-    if (!m_player->movable())
-        return;
+    doPlayerMovement();
 
-    switch (Game::instance()->controlMode()) {
-    case Game::ControlModeKeyBoard:
-        moveKeyBoard();
-        break;
-    case Game::ControlModeKeyBoardMouse:
-        moveKeyBoardMouse();
-        break;
-    case Game::ControlModeTouchscreen:
-        moveTouchscreen();
-        break;
-    default:
-        break;
-    }
+    // Do enemy movements
 
-    // Evaluate players field
+    // Evaluator bullets
 
-
-
-    // Evaluate environment
-
-
-
+    // Do other evaluation stuff
 }

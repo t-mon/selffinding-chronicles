@@ -23,34 +23,103 @@ Page {
 
         ColumnLayout {
             id: settingsColumn
-            width: parent.width
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             RowLayout {
                 Layout.fillWidth: true
 
-                spacing: app.margins
+                GameLabel {
+                    Layout.preferredWidth: settingsColumn.width / 2
+                    text: qsTr("Name")
+                }
 
-                Label {
+                TextField {
+                    id: playerNameField
+                    text: settings.playerName
+                    Layout.fillWidth: true
+
+                    onEditingFinished: {
+                        settings.playerName = text
+                        Game.world.player.name = text
+                    }
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                GameLabel {
+                    Layout.preferredWidth: settingsColumn.width / 2
                     text: qsTr("Controll mode")
                 }
 
                 ComboBox {
                     Layout.fillWidth: true
                     model: [qsTr("Keyboard"), qsTr("Keyboard + Mouse"), qsTr("Touchscreen")]
+                    currentIndex: {
+                        switch (settings.controlMode) {
+                        case PlayerController.ControlModeKeyBoard:
+                            return 0;
+                        case PlayerController.ControlModeKeyBoardMouse:
+                            return 1;
+                        case PlayerController.ControlModeTouchscreen:
+                            return 2;
+                        }
+                    }
+
                     onCurrentIndexChanged: {
                         if (currentIndex == 0) {
-                            Game.controlMode = Game.ControlModeKeyBoard
+                            settings.controlMode = PlayerController.ControlModeKeyBoard
+                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoard
                         } else if (currentIndex == 1) {
-                            Game.controlMode = Game.ControlModeKeyBoardMouse
+                            settings.controlMode = PlayerController.ControlModeKeyBoardMouse
+                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoardMouse
                         } else if (currentIndex == 2) {
-                            Game.controlMode = Game.ControlModeTouchscreen
+                            settings.controlMode = PlayerController.ControlModeTouchscreen
+                            Game.world.playerController.controlMode = PlayerController.ControlModeTouchscreen
                         }
                     }
                 }
-
             }
 
+            RowLayout {
+                Layout.fillWidth: true
 
+                GameLabel {
+                    Layout.preferredWidth: settingsColumn.width / 2
+                    text: qsTr("View mode")
+                }
+
+                ComboBox {
+                    Layout.fillWidth: true
+                    model: [qsTr("Windowed"), qsTr("Maximized"), qsTr("Fullscreen")]
+                    currentIndex: {
+                        switch (settings.viewMode) {
+                        case ApplicationWindow.Windowed:
+                            return 0;
+                        case ApplicationWindow.Maximized:
+                            return 1;
+                        case ApplicationWindow.FullScreen:
+                            return 2;
+                        }
+                    }
+
+                    onCurrentIndexChanged: {
+                        switch (currentIndex) {
+                        case 0:
+                            settings.viewMode = ApplicationWindow.Windowed;
+                            break;
+                        case 1:
+                            settings.viewMode = ApplicationWindow.Maximized;
+                            break;
+                        case 2:
+                            settings.viewMode = ApplicationWindow.FullScreen;
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

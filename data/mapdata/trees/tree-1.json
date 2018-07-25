@@ -1,0 +1,9 @@
+{
+    "name": "Tree 1",
+    "imageName": "/images/world/trees/tree-1.png",
+    "properties": {
+        "width": 4,
+        "height": 4,
+        "accessable": false
+    }
+}

@@ -7,23 +7,24 @@ import Chronicles 1.0
 Item {
     id: root
 
+    rotation: Game.world.player.angle * 180 / Math.PI + 90
+
     Rectangle {
+        id: auraCircle
         anchors.centerIn: parent
         border.color: Qt.rgba(0, 0, 0, 0.2)
         border.width: 1
         radius: width / 2
+        visible: Game.debugging
         color: "transparent"
-        width: root.width * 3
-        height: root.width * 3
+        width: root.width * Game.world.player.auraRange
+        height: root.width * Game.world.player.auraRange
     }
 
     Image {
         id: playerImage
         anchors.fill: parent
-        source: "/characters/player.svg"
+        source: "/images/characters/player.svg"
     }
 
-    // Moving animation
-    Behavior on x { NumberAnimation { duration: Game.intervall } }
-    Behavior on y { NumberAnimation { duration: Game.intervall } }
 }

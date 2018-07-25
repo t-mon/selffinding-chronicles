@@ -14,42 +14,32 @@ Page {
         onBackPressed: pageStack.pop()
     }
 
-
-    //    Flickable {
-    //        anchors.fill: parent
-    //        contentHeight: aboutColumn.implicitHeight
-    //        anchors.leftMargin: app.margins
-    //        anchors.rightMargin: app.margins
-
-
-    //        ColumnLayout {
-    //            id: aboutColumn
-    //            width: parent.width
-
-    //            Label {
-    //                text: "Hello"
-    //            }
-
-
-    //            Label {
-    //                text: "World"
-    //            }
-    //        }
-    //    }
-
-    ListView {
-        id: mapGrid
-
+    Flickable {
         anchors.fill: parent
+        contentHeight: settingsColumn.implicitHeight
+        anchors.leftMargin: app.margins
+        anchors.rightMargin: app.margins
 
-        //        cellHeight: 50
-        //        cellWidth: 50
+        ColumnLayout {
+            id: settingsColumn
+            width: parent.width
 
-        model: 80
-        delegate: Label {
-            text: model.index
+            RowLayout {
+                Layout.fillWidth: true
+
+                spacing: app.margins
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    text: qsTr("Developer")
+                }
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    text: qsTr("Simon Stürz")
+                }
+
+            }
         }
-
     }
-
 }

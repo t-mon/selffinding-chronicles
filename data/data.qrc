@@ -1,5 +1,13 @@
 <RCC>
     <qresource prefix="/">
-        <file>characters/player.svg</file>
+        <file>images/characters/player.svg</file>
+        <file>maps/example.json</file>
+        <file>images/world/accessable.png</file>
+        <file>images/world/unaccessable.png</file>
+        <file>mapdata/plants/healing-herb.json</file>
+        <file>images/sprites/ProjectUtumno_full.png</file>
+        <file>images/items/plants/healing-herb.png</file>
+        <file>images/world/trees/tree-1.png</file>
+        <file>mapdata/trees/tree-1.json</file>
     </qresource>
 </RCC>

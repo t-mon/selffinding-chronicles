@@ -4,34 +4,25 @@
 #include <QObject>
 #include <QPoint>
 
-class Player : public QObject
+#include "gameobject.h"
+
+class Player : public GameObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
-
     Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
+    Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
-    Q_PROPERTY(int size READ size WRITE setSize NOTIFY sizeChanged)
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
 
 public:
     explicit Player(QObject *parent = nullptr);
 
-    QString name() const;
-    void setName(const QString &name);
-
-    qreal x() const;
-    qreal y() const;
-
-    QPointF position() const;
-    void setPosition(const QPointF position);
-
-    int size() const;
-    void setSize(const int &size);
-
     qreal angle() const;
     void setAngle(const qreal &angle);
+
+    qreal auraRange() const;
+    void setAuraRange(const qreal auraRange);
 
     qreal speed() const;
     void setSpeed(const qreal speed);
@@ -42,24 +33,24 @@ public:
     bool moving() const;
     void setMoving(bool moving);
 
+    bool running() const;
+    void setRunning(bool running);
 
 private:
-    QString m_name;
-    QPointF m_position;
     qreal m_angle = 0;
-    qreal m_speed = 0.4;
+    qreal m_speed = 0.03;
+    qreal m_auraRange = 3;
     bool m_movable = true;
     bool m_moving = false;
-    int m_size;
+    bool m_running = false;
 
 signals:
-    void nameChanged(const QString &name);
-    void positionChanged(const QPointF &position);
-    void sizeChanged(int size);
     void angleChanged(const qreal &angle);
     void speedChanged(const qreal &speed);
+    void auraRangeChanged(const qreal &auraRange);
     void movableChanged(bool movable);
     void movingChanged(bool moving);
+    void runningChanged(bool running);
 
 };
 

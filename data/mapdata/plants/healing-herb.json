@@ -1,0 +1,14 @@
+{
+    "name": "Healing herb",
+    "imageName": "/images/items/plants/healing-herb.png",
+    "price": 25,
+    "mana": 0,
+    "health": 25,
+    "speed": 0,
+
+    "properties": {
+        "width": 1,
+        "height": 1,
+        "accessable": true
+    }
+}

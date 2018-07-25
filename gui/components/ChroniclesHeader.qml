@@ -10,10 +10,8 @@ ToolBar {
 
     property string text
     property alias backButtonVisible: backButton.visible
-    //property alias menuButtonVisible: menuButton.visible
 
     signal backPressed();
-    signal menuPressed();
 
     RowLayout {
         id: layout
@@ -22,10 +20,12 @@ ToolBar {
         ToolButton {
             id: backButton
             objectName: "backButton"
+            text: "<"
             //imageSource: "../images/back.svg"
             onClicked: root.backPressed();
         }
-        Label {
+
+        GameLabel {
             id: label
             Layout.fillWidth: true
             Layout.fillHeight: true

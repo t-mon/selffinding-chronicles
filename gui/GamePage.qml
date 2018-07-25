@@ -7,26 +7,43 @@ import "components"
 
 Page {
     id: root
-
     header: ChroniclesHeader {
-        text: qsTr("%1").arg(app.title)
+        text: qsTr("%1").arg(Game.world.map.name)
         backButtonVisible: true
+        visible: !Game.world.loading
         onBackPressed: pageStack.pop()
+    }
+
+    Component.onDestruction: {
+        Game.running = false
     }
 
     GameScene {
         id: gameScene
         anchors.fill: parent
-
-        Keys.onPressed: Game.keyPressed(event.key)
-        Keys.onReleased: Game.keyReleased(event.key)
+        visible: !Game.world.loading
     }
 
-    Component.onCompleted: {
-        Game.running = true
-        print("Game page created")
-        focus = true
-    }
+    Rectangle {
+        id: loadingScreen
+        anchors.fill: parent
 
-    Component.onDestruction: Game.running = false
+        visible: Game.world.loading
+
+        Column {
+            id: loadingColumn
+            anchors.centerIn: parent
+
+            GameLabel {
+                id: loadingLabel
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Loading..."
+                font.pixelSize: app.largeFont
+            }
+
+            BusyIndicator {
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
+    }
 }

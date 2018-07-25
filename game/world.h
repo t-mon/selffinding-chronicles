@@ -4,92 +4,108 @@
 #include <QSize>
 #include <QPoint>
 #include <QObject>
+#include <QFuture>
+#include <QFutureWatcher>
 
+#include "map.h"
 #include "fields.h"
 #include "player.h"
+#include "playercontroller.h"
 
-class World : public QObject
+class CollisionDetector;
+
+class World : public Fields
 {
     Q_OBJECT
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)
-    Q_PROPERTY(QSize sceneSize READ sceneSize WRITE setSceneSize NOTIFY sceneSizeChanged)
     Q_PROPERTY(QSize boundingSize READ boundingSize WRITE setBoundingSize NOTIFY boundingSizeChanged)
-    Q_PROPERTY(QPointF boundingPosition READ boundingPosition NOTIFY boundingPositionChanged)
-    Q_PROPERTY(Player *player READ player CONSTANT)
-    Q_PROPERTY(int cellSize READ cellSize WRITE setCellSize NOTIFY cellSizeChanged)
 
-    Q_PROPERTY(QPoint currentPlayerField READ currentPlayerField NOTIFY currentPlayerFieldChanged)
-    Q_PROPERTY(Fields *occupiedFields READ occupiedFields CONSTANT)
+    Q_PROPERTY(Map *map READ map CONSTANT)
+    Q_PROPERTY(Player *player READ player CONSTANT)
+    Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
+
+    Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
+
+    Q_PROPERTY(Field* currentPlayerField READ currentPlayerField NOTIFY currentPlayerFieldChanged)
+    Q_PROPERTY(QPoint currentPlayerPosition READ currentPlayerPosition NOTIFY currentPlayerPositionChanged)
+    Q_PROPERTY(QPoint currentViewOffset READ currentViewOffset WRITE setCurrentViewOffset NOTIFY currentViewOffsetChanged)
 
 public:
     explicit World(QObject *parent = nullptr);
+    ~World() override = default;
 
     QSize size() const;
     void setSize(const QSize &size);
 
-    QSize sceneSize() const;
-    void setSceneSize(const QSize &sceneSize);
-
     QSize boundingSize() const;
     void setBoundingSize(const QSize &boundingSize);
 
+    QPoint currentViewOffset() const;
+    void setCurrentViewOffset(const QPoint &currentViewOffset);
 
-    int cellSize() const;
-    void setCellSize(const int &cellSize);
+    QPoint currentPlayerPosition() const;
+    Field *currentPlayerField();
 
+    Map *map();
     Player *player();
+    PlayerController *playerController();
 
-    Fields *occupiedFields();
+    bool loaded() const;
+    bool loading() const;
 
-    QPoint currentPlayerField() const;
-    QPointF boundingPosition() const;
+    Q_INVOKABLE void loadMap(const QString &fileName);
 
-    void setForwardPressed(bool forwaredPressed);
-    void setBackwardPressed(bool backwardPressed);
-    void setLeftPressed(bool leftPressed);
-    void setRightPressed(bool rightPressed);
+    // Evaluation helper
+    QPointF adjustCollition(qreal dx, qreal dy);
+    void evaluateInRangeFields(const QPointF &playerPosition);
 
 private:
     QSize m_size;
-    QSize m_sceneSize;
     QSize m_boundingSize;
-    int m_cellSize;
 
+    Map *m_map = nullptr;
     Player *m_player = nullptr;
+    PlayerController *m_playerController = nullptr;
+    CollisionDetector *m_collisionDetector = nullptr;
 
-    bool m_forwaredPressed = false;
-    bool m_backwardPressed = false;
-    bool m_leftPressed = false;
-    bool m_rightPressed = false;
+    // View properties
+    QPoint m_currentPlayerPosition;
+    QPoint m_currentViewOffset;
 
-    QPoint m_currentPlayerField;
-    QPointF m_boundingPosition;
+    Field *m_currentPlayerField = nullptr;
+    QList<Field *> m_fieldsInRange;
 
-    Fields *m_occupiedFields = nullptr;
+    // Map loading
+    QFutureWatcher<void> *m_loadingWatcher = nullptr;
+    bool m_loaded = false;
+    bool m_loading = false;
 
-    void setCurrentPlayerField(const QPoint &currentField);
+    // Set methods
+    void setCurrentPlayerPosition(const QPoint &currentPosition);
+    void setCurrentPlayerField(Field *field);
+    void setLoaded(bool loaded);
+    void setLoading(bool loading);
 
-    void setboundingPosition(const QPointF &boundingPosition);
+    // Move methods
+    void doPlayerMovement();
 
-    void moveKeyBoard();
-    void moveKeyBoardMouse();
-    void moveTouchscreen();
-
-    void moveCamera();
-
-    void movePlayer(const QPointF newPosition);
+    // Helper methods
+    Field *getFieldOfPosition(const QPointF position) const;
 
 signals:
     void sizeChanged(const QSize &size);
-    void sceneSizeChanged(const QSize &sceneSize);
     void boundingSizeChanged(const QSize &boundingSize);
-    void cellSizeChanged(const int &cellSize);
+    void loadingChanged(bool loading);
+    void loadedChanged(bool loaded);
 
-    void currentPlayerFieldChanged(const QPoint &currentPlayerField);
-    void boundingPositionChanged(const QPointF &boundingPosition);
+    void currentPlayerFieldChanged(Field *currentPlayerField);
+    void currentPlayerPositionChanged(const QPoint &currentPlayerPosition);
+    void currentViewOffsetChanged(const QPoint &currentViewOffset);
 
 private slots:
     void onPlayerPositionChanged();
+    void onLoadingFinished();
 
 public slots:
     void tick();

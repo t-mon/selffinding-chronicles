@@ -9,6 +9,8 @@
         <file>components/ChroniclesHeader.qml</file>
         <file>components/HeaderButton.qml</file>
         <file>AboutPage.qml</file>
-        <file>GameCamera.qml</file>
+        <file>FieldItem.qml</file>
+        <file>gameitems/GameItem.qml</file>
+        <file>components/GameLabel.qml</file>
     </qresource>
 </RCC>

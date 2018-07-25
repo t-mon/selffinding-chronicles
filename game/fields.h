@@ -12,18 +12,26 @@ class Fields : public QAbstractListModel
 public:
     enum FieldRole {
         PositionRole,
-        AccessibleRole
+        AccessibleRole,
+        ImageNameRole,
+        PlayerOnFieldRole,
+        InPlayerRangeRole
     };
     Q_ENUM(FieldRole)
 
     explicit Fields(QObject *parent = nullptr);
+    ~Fields() = default;
 
     QList<Field *> fields() const;
+    Q_INVOKABLE Field *get(int index);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
 
     void addField(Field *field);
+    void removeField(Field *field);
+
+    void clearModel();
 
 protected:
     QHash<int, QByteArray> roleNames() const;
@@ -31,7 +39,12 @@ protected:
 private:
     QList<Field *> m_fields;
 
-signals:
+private slots:
+    void onFieldAccessableChanged(bool accessable);
+    void onFieldImageNameChanged(const QString &imageName);
+    void onPlayerOnFieldChanged(bool playerOnField);
+    void onFieldInPlayerRangeChanged(bool inPlayerRange);
+
 
 };
 
