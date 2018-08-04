@@ -131,7 +131,6 @@ Field *World::currentPlayerField()
 QPointF World::adjustCollition(qreal dx, qreal dy)
 {
     QPointF resultPosition = QPointF(m_player->position().x() + dx, m_player->position().y() + dy);
-    qreal offset = m_player->size().width() / 2.0;
 
     // Check border of the world
 
@@ -187,17 +186,17 @@ QPointF World::adjustCollition(qreal dx, qreal dy)
     // SouthEast field
     checkField = m_currentPlayerField->southEastField();
     if (checkField && !checkField->accessible()) {
-        qreal overlapX = checkField->position().x() - (resultPosition.x() + offset);
-        qreal overlapY = checkField->position().y() - (resultPosition.y() + offset);
+        qreal overlapX = checkField->position().x() - (resultPosition.x() + m_player->size().width());
+        qreal overlapY = checkField->position().y() - (resultPosition.y() + m_player->size().height());
 
         // If the player and the field overlap
         if (overlapX < 0 && overlapY < 0) {
             // Now check which overlap is bigger and reset the smaller one
             if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
                 // Overlap in x direction is smaller
-                resultPosition = QPointF(checkField->position().x() - offset, resultPosition.y());
+                resultPosition = QPointF(checkField->position().x() - m_player->size().width(), resultPosition.y());
             } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
-                resultPosition = QPointF(resultPosition.x(), checkField->position().y() - offset);
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() - m_player->size().height());
             }
         }
     }
@@ -205,18 +204,18 @@ QPointF World::adjustCollition(qreal dx, qreal dy)
     // SouthWest field
     checkField = m_currentPlayerField->southWestField();
     if (checkField && !checkField->accessible()) {
-        qreal overlapX = (resultPosition.x() - offset) - (checkField->position().x() + 1);
-        qreal overlapY = checkField->position().y() - (resultPosition.y() + offset);
+        qreal overlapX = resultPosition.x() - (checkField->position().x() + 1);
+        qreal overlapY = checkField->position().y() - (resultPosition.y() +  m_player->size().height());
 
         // If the player and the field overlap
         if (overlapX < 0 && overlapY < 0) {
             // Now check which overlap is bigger and reset the smaller one
             if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
                 // Overlap in x is smaller
-                resultPosition = QPointF(checkField->position().x() + 1 + offset, resultPosition.y());
+                resultPosition = QPointF(checkField->position().x() + 1, resultPosition.y());
             } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
                 // Overlap in y is smaller
-                resultPosition = QPointF(resultPosition.x(), checkField->position().y() - offset);
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() - m_player->size().height());
             }
         }
     }
@@ -224,17 +223,17 @@ QPointF World::adjustCollition(qreal dx, qreal dy)
     // NorthEast field
     checkField = m_currentPlayerField->northEastField();
     if (checkField && !checkField->accessible()) {
-        qreal overlapX = checkField->position().x() - (resultPosition.x() + offset);
-        qreal overlapY = (resultPosition.y() - offset) - (checkField->position().y() + 1);
+        qreal overlapX = checkField->position().x() - (resultPosition.x() + m_player->size().width());
+        qreal overlapY = resultPosition.y() - (checkField->position().y() + 1);
 
         // If the player and the field overlap
         if (overlapX < 0 && overlapY < 0) {
             // Now check which overlap is bigger and reset the smaller one
             if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
                 // Overlap in x direction is smaller
-                resultPosition = QPointF(checkField->position().x() - offset, resultPosition.y());
+                resultPosition = QPointF(checkField->position().x() - m_player->size().width(), resultPosition.y());
             } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
-                resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1 + offset);
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1);
             }
         }
     }
@@ -242,17 +241,17 @@ QPointF World::adjustCollition(qreal dx, qreal dy)
     // NorthWest field
     checkField = m_currentPlayerField->northWestField();
     if (checkField && !checkField->accessible()) {
-        qreal overlapX = (resultPosition.x() - offset) - (checkField->position().x() + 1);
-        qreal overlapY = (resultPosition.y() - offset) - (checkField->position().y() + 1);
+        qreal overlapX = (resultPosition.x()) - (checkField->position().x() + 1);
+        qreal overlapY = (resultPosition.y()) - (checkField->position().y() + 1);
 
         // If the player and the field overlap
         if (overlapX < 0 && overlapY < 0) {
             // Now check which overlap is bigger and reset the smaller one
             if (qAbs(overlapX) < qAbs(overlapY) && qAbs(overlapY) < 0.5) {
                 // Overlap in x direction is smaller
-                resultPosition = QPointF(checkField->position().x() + 1 + offset, resultPosition.y());
+                resultPosition = QPointF(checkField->position().x() + 1, resultPosition.y());
             } else if (qAbs(overlapX) > qAbs(overlapY) && qAbs(overlapX) < 0.5) {
-                resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1 + offset);
+                resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1);
             }
         }
     }
@@ -262,8 +261,7 @@ QPointF World::adjustCollition(qreal dx, qreal dy)
 
 void World::evaluateInRangeFields(const QPointF &playerPosition)
 {
-    // Check which fields are in the player aura
-    Q_UNUSED(playerPosition)
+    // TODO: Check which fields are in the player aura
 
     // Get surrounding fields and check if they are in range
     Field *currentField = getFieldOfPosition(playerPosition);
@@ -349,7 +347,7 @@ void World::doPlayerMovement()
         return;
 
     // Check collision with object
-    evaluateInRangeFields(m_player->position() + delta);
+    evaluateInRangeFields(m_player->centerPosition() + delta);
     foreach (Field *field, m_fieldsInRange) {
         if (field->gameItem()) {
             if (m_collisionDetector->checkCollision(m_player, field->gameItem())) {
@@ -361,11 +359,11 @@ void World::doPlayerMovement()
     // Collition detection
     QPointF resultPosition = adjustCollition(delta.x(), delta.y());
 
-    // Calculate in range fields
-    evaluateInRangeFields(resultPosition);
-
     // Finally set the position
     m_player->setPosition(resultPosition);
+
+    // Calculate in range fields
+    evaluateInRangeFields(m_player->centerPosition());
 }
 
 Field *World::getFieldOfPosition(const QPointF position) const
@@ -378,8 +376,8 @@ Field *World::getFieldOfPosition(const QPointF position) const
 void World::onPlayerPositionChanged()
 {
     // Calculate the current field on the map
-    int x = static_cast<int>(m_player->position().x());
-    int y = static_cast<int>(m_player->position().y());
+    int x = static_cast<int>(m_player->centerPosition().x());
+    int y = static_cast<int>(m_player->centerPosition().y());
     setCurrentPlayerPosition(QPoint(x, y));
     setCurrentPlayerField(m_map->getField(x, y));
 }

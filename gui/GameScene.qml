@@ -149,11 +149,12 @@ Item {
             }
 
             GameLabel {
-                id: nameLabel
+                id: playerNameLabel
                 anchors.horizontalCenter: playerItem.horizontalCenter
                 anchors.bottom: playerItem.top
                 anchors.bottomMargin: 4
                 visible: Game.debugging
+                z: Map.Layer4Highest
                 text: Game.world.player.name
             }
 

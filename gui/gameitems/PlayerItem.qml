@@ -25,6 +25,17 @@ Item {
         id: playerImage
         anchors.fill: parent
         source: dataDirectory + "/images/characters/player.svg"
+        opacity: Game.debugging ? 0.5 : 1
     }
 
+    Rectangle {
+        id: wireFrame
+        anchors.fill: parent
+        color: "transparent"
+        border.color: "red"
+        opacity: 0.3
+        border.width: 2
+        visible: Game.debugging
+        radius: Game.world.player.shape === GameObject.ShapeCircle ? width / 2 : 0
+    }
 }

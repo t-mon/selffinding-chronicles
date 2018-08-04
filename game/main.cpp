@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
-    s_loggingFilters.insert("Player", false);
+    s_loggingFilters.insert("Player", true);
     s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("Item", false);

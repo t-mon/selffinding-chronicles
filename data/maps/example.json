@@ -2,8 +2,8 @@
     "name": "Example world",
     "width": 500,
     "height": 500,
-    "playerStartX": 5.5,
-    "playerStartY": 5.5,
+    "playerStartX": 5,
+    "playerStartY": 5,
     "defaultField": {
         "accessable": true,
         "imageName": "/images/world/accessable.png"
