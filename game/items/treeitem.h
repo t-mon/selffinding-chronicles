@@ -10,6 +10,7 @@ class TreeItem : public GameItem
     Q_OBJECT
 public:
     explicit TreeItem(QObject *parent = nullptr);
+    ~TreeItem() override = default;
 
     QString itemTypeName() const override;
     Type itemType() const override;

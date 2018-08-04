@@ -11,6 +11,7 @@ class PlantItem : public GameItem
 
 public:
     explicit PlantItem(QObject *parent = nullptr);
+    ~PlantItem() override = default;
 
     QString itemTypeName() const override;
     Type itemType() const override;

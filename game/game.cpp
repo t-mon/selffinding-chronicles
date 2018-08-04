@@ -54,7 +54,7 @@ void Game::setDebugging(bool debugging)
     if (m_debugging == debugging)
         return;
 
-    qCDebug(dcGame()) << "debugging" << (debugging ? "enabled" : "disabled");
+    qCDebug(dcGame()) << "Debugging" << (debugging ? "enabled" : "disabled");
     m_debugging = debugging;
     emit debuggingChanged(m_debugging);
 }

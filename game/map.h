@@ -19,6 +19,16 @@ class Map : public QObject
     Q_PROPERTY(QString fileName READ fileName NOTIFY fileNameChanged)
 
 public:
+    enum Layer {
+        Layer0Lowest = 0,
+        Layer1Lower = 1,
+        Layer2Normal = 2,
+        Layer3Higher = 3,
+        Layer4Highest = 4,
+
+    };
+    Q_ENUM(Layer)
+
     explicit Map(QObject *parent = nullptr);
     ~Map();
 
@@ -33,9 +43,12 @@ public:
 
     QString fileName() const;
 
+    QList<GameItem *> items();
+
     void loadMap(const QString &fileName);
 
     Q_INVOKABLE Field *getField(int x, int y) const;
+    Q_INVOKABLE Field *getField(const QPointF position) const;
 
 private:
     QSize m_size;
@@ -44,12 +57,17 @@ private:
     QString m_fileName;
 
     QList<Fields *> m_mapData;
+    QList<GameItem *> m_items;
     QList<PlantItem *> m_plants;
     QList<TreeItem *> m_trees;
 
     QVariantMap loadMapData(const QString &mapDataFileName);
+
+    void placeItemOnMap(GameItem *item);
+
     PlantItem *createPlantItem(const QVariantMap &plantItemMap);
     TreeItem *createTreeItem(const QVariantMap &treeItemMap);
+    QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
 
 signals:
     void sizeChanged(const QSize &size);

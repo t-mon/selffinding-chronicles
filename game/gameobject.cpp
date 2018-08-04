@@ -35,6 +35,17 @@ void GameObject::setPosition(const QPointF &position)
     emit positionChanged(m_position);
 }
 
+qreal GameObject::layer() const
+{
+    return m_layer;
+}
+
+void GameObject::setLayer(qreal layer)
+{
+    m_layer = layer;
+    emit layerChanged(m_layer);
+}
+
 QPointF GameObject::centerPosition() const
 {
     return m_position + QPointF(m_size.width() / 2.0, m_size.height() / 2.0);
@@ -72,6 +83,7 @@ QDebug operator<<(QDebug debug, GameObject *gameObject)
 {
     debug.nospace() << "GameObject(" << gameObject->name();
     debug.nospace() << ", " << gameObject->position();
+    debug.nospace() << ", " << gameObject->shape();
     debug.nospace() << ") ";
     return debug;
 }

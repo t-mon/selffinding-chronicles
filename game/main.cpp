@@ -70,7 +70,9 @@ int main(int argc, char *argv[])
     parser.setApplicationDescription(QString("\nFantasy role play game.\n\n"
                                              "Copyright %1 2018 Simon Stürz <stuerz.simon@gmail.com>\n"
                                              "Released under the GNU GPLv3.").arg(QChar(0xA9)));
-    parser.addPositionalArgument("dataPath", "The relative file path where the \"data\" folders can be found (optional).", "[dataPath]");
+
+    QCommandLineOption dataOption({"d", "data"}, "Specify the relative or absolut path to the game data folder. Default value relative to executable: ../selffinding-chronicles/data", "datapath", "../selffinding-chronicles/data");
+    parser.addOption(dataOption);
     parser.process(app);
 
 
@@ -78,10 +80,10 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
     s_loggingFilters.insert("Player", false);
-    s_loggingFilters.insert("PlayerController", true);
+    s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("Item", false);
-    s_loggingFilters.insert("Collision", false);
+    s_loggingFilters.insert("Collision", true);
 
     s_loggingFilters.insert("qml", true);
 
@@ -98,24 +100,26 @@ int main(int argc, char *argv[])
     // Items
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<GameItem>("Chronicles", 1, 0, "GameItem", "Can't create this in QML. Get it from the world object.");
+    qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML. Get it from the world object.");
 
-
-    QQmlApplicationEngine engine;
-    if (!parser.positionalArguments().isEmpty()) {
-        QDir dataDir(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + parser.positionalArguments().first()));
-        if (!dataDir.exists()) {
-            qWarning() << dataDir.path() << "does not exist.";
-            exit(-1);
-        }
-        engine.rootContext()->setContextProperty("dataDirectory", dataDir.path() + "/");
-    } else {
-        engine.rootContext()->setContextProperty("dataDirectory", QCoreApplication::applicationDirPath() + "/../selffinding-chronicles/data/");
+    QDir dataDirectory(parser.value(dataOption));
+    if (!dataDirectory.makeAbsolute()) {
+        qCCritical(dcGame()) << "Invalid data path passed:" << parser.value(dataOption);
+        exit(-1);
     }
 
-    qCDebug(dcGame()) << "Data path:" << engine.rootContext()->contextProperty("dataDirectory").toString();
+    if (!dataDirectory.exists()) {
+        qWarning() << dataDirectory.path() << "does not exist.";
+        exit(-1);
+    }
 
-    engine.rootContext()->setContextProperty("version", app.applicationVersion());
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());
+
+    qCDebug(dcGame()) << "Data directory:" << engine.rootContext()->contextProperty("dataDirectory").toString();
+
+    engine.rootContext()->setContextProperty("gameVersion", app.applicationVersion());
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     return app.exec();

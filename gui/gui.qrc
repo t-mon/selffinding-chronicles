@@ -5,12 +5,13 @@
         <file>GamePage.qml</file>
         <file>GameScene.qml</file>
         <file>SettingsPage.qml</file>
-        <file>PlayerItem.qml</file>
+        <file>gameitems/PlayerItem.qml</file>
         <file>components/ChroniclesHeader.qml</file>
         <file>components/HeaderButton.qml</file>
         <file>AboutPage.qml</file>
-        <file>FieldItem.qml</file>
+        <file>gameitems/FieldItem.qml</file>
         <file>gameitems/GameItem.qml</file>
         <file>components/GameLabel.qml</file>
+        <file>gameitems/InventoryItem.qml</file>
     </qresource>
 </RCC>

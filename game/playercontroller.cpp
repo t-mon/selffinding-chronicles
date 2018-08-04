@@ -74,6 +74,9 @@ void PlayerController::keyPressed(const Qt::Key &key)
     case Qt::Key_Space:
         setPrimaryActionPressed(true);
         break;
+    case Qt::Key_E:
+        setSecondaryActionPressed(true);
+        break;
     default:
         break;
     }
@@ -97,6 +100,9 @@ void PlayerController::keyReleased(const Qt::Key &key)
         break;
     case Qt::Key_Space:
         setPrimaryActionPressed(false);
+        break;
+    case Qt::Key_E:
+        setSecondaryActionPressed(false);
         break;
     default:
         break;

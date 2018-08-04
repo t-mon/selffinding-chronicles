@@ -26,7 +26,8 @@ HEADERS += \
     game/playercontroller.h \
     game/collisiondetector.h \
     game/gameobject.h \
-    game/items/treeitem.h
+    game/items/treeitem.h \
+    game/items/gameitems.h
 
 SOURCES += game/main.cpp \
     game/player.cpp \
@@ -41,4 +42,5 @@ SOURCES += game/main.cpp \
     game/playercontroller.cpp \
     game/collisiondetector.cpp \
     game/gameobject.cpp \
-    game/items/treeitem.cpp
+    game/items/treeitem.cpp \
+    game/items/gameitems.cpp

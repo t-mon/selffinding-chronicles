@@ -53,6 +53,7 @@ public:
     Q_ENUM(Interaction)
 
     explicit GameItem(QObject *parent = nullptr);
+    ~GameItem() override = default;
 
     virtual Type itemType() const = 0;
     virtual QString itemTypeName() const = 0;
@@ -65,11 +66,20 @@ public:
 
     Interaction interaction() const;
 
+    QList<QPoint> unaccessableMap();
+    void setUnaccessableMap(const QList<QPoint> unaccessableMap);
+
+    QList<QPoint> visibilityMap();
+    void setVisiblilityMap(const QList<QPoint> visiblilityMap);
+
     virtual void performInteraction() = 0;
 
 private:
     QString m_imageName;
     int m_price = 0;
+
+    QList<QPoint> m_unaccessableMap;
+    QList<QPoint> m_visibilityMap;
 
 protected:
     Interaction m_interaction = InteractionNone;
@@ -79,9 +89,6 @@ signals:
     void imageNameChanged(const QString &imageName);
     void interactionChanged(Interaction interaction);
     void priceChanged(int price);
-
-public slots:
-
 
 };
 

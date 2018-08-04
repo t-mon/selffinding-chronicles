@@ -15,9 +15,10 @@ public:
 
 private:
     bool checkRectangleRectangleCollision(GameObject *rectangleOne, GameObject *rectangleTwo);
-    bool checkCircleCircleCollision(GameObject *circleOne, GameObject *circleTwo);
+    bool checkCircleCircleCollision(GameObject *firstCirlce, GameObject *secondCircle);
     bool checkRectangleCircleCollision(GameObject *rectangle, GameObject *circle);
 
+    float getClamp(float value, float minValue, float maxValue);
 };
 
 #endif // COLLISIONDETECTOR_H

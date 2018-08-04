@@ -17,9 +17,6 @@ qreal Player::angle() const
 
 void Player::setAngle(const qreal &angle)
 {
-    if (m_angle == angle)
-        return;
-
     //qCDebug(dcPlayer()) << "angle" << angle;
     m_angle = angle;
     emit angleChanged(m_angle);
@@ -32,9 +29,6 @@ qreal Player::auraRange() const
 
 void Player::setAuraRange(const qreal auraRange)
 {
-    if (m_auraRange == auraRange)
-        return;
-
     qCDebug(dcPlayer()) << "Aura range changed" << auraRange;
     m_auraRange = auraRange;
     emit auraRangeChanged(m_auraRange);
@@ -47,9 +41,6 @@ qreal Player::speed() const
 
 void Player::setSpeed(const qreal speed)
 {
-    if (m_speed == speed)
-        return;
-
     qCDebug(dcPlayer()) << "Speed changed" << speed;
     m_speed = speed;
     emit speedChanged(m_speed);

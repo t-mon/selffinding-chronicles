@@ -18,12 +18,16 @@ ApplicationWindow {
     // General UI configurations
     property int margins: 14
     property int bigMargins: 20
+
     property int smallFont: 14
-    property int mediumFont: 16
-    property int largeFont: 22
-    property int iconSize: 30
+    property int mediumFont: 18
+    property int largeFont: 24
+
+    property int iconSize: 40
     property int delegateHeight: 60
-    property string fontFamily: "Chancery Uralic"
+
+    property string fontFamily: "EB Garamond"
+    property string fontStyleName: "12 Regular"
 
     Settings {
         id: settings

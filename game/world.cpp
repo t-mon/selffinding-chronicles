@@ -13,12 +13,15 @@ World::World(QObject *parent) :
 {
     // Create the player
     m_player = new Player(this);
+    m_player->setShape(GameObject::ShapeCircle);
     connect(m_player, &Player::positionChanged, this, &World::onPlayerPositionChanged);
 
     // Create player controller
     m_playerController = new PlayerController(m_player, this);
 
     m_collisionDetector = new CollisionDetector(this);
+
+    m_gameItems = new GameItems(this);
 
     // Create map and loading watcher
     m_map = new Map(this);
@@ -81,6 +84,11 @@ Player *World::player()
     return m_player;
 }
 
+GameItems *World::gameItems()
+{
+    return m_gameItems;
+}
+
 PlayerController *World::playerController()
 {
     return m_playerController;
@@ -128,51 +136,52 @@ QPointF World::adjustCollition(qreal dx, qreal dy)
     // Check border of the world
 
     // North border
-    if (resultPosition.y() < offset)
-        resultPosition = QPointF(resultPosition.x(), offset);
+    if (resultPosition.y() <= 0)
+        resultPosition = QPointF(resultPosition.x(), 0);
 
     // East border
-    if (resultPosition.x() > m_size.width() - offset)
-        resultPosition = QPointF(m_size.width() - offset, resultPosition.y());
+    if (resultPosition.x() + m_player->size().width() >= m_size.width())
+        resultPosition = QPointF(m_size.width() - m_player->size().width(), resultPosition.y());
 
     // South border
-    if (resultPosition.y() > m_size.height() - offset)
-        resultPosition = QPointF(resultPosition.x(), m_size.height() - offset);
+    if (resultPosition.y() + m_player->size().height() >= m_size.height())
+        resultPosition = QPointF(resultPosition.x(), m_size.height() - m_player->size().height());
 
     // West border
-    if (resultPosition.x() < offset)
-        resultPosition = QPointF(offset, resultPosition.y());
+    if (resultPosition.x() < 0)
+        resultPosition = QPointF(0, resultPosition.y());
 
     if (!m_currentPlayerField)
         return resultPosition;
 
-    // Check collition foreach surounding field
+
+    // Check collision foreach surounding field
     // North field
     Field *checkField = m_currentPlayerField->northField();
     if (checkField && !checkField->accessible() &&
-            resultPosition.y() - offset < checkField->position().y() + 1) {
-        resultPosition = QPointF(resultPosition.x(), checkField->position().y() + 1 + offset);
+            resultPosition.y() < checkField->position().y() + m_player->size().height()) {
+        resultPosition = QPointF(resultPosition.x(), checkField->position().y() + m_player->size().height());
     }
 
     // South field
     checkField = m_currentPlayerField->southField();
     if (checkField && !checkField->accessible() &&
-            resultPosition.y() + offset > checkField->position().y()) {
-        resultPosition = QPointF(resultPosition.x(), checkField->position().y() - offset);
+            resultPosition.y() + m_player->size().height() >= checkField->position().y()) {
+        resultPosition = QPointF(resultPosition.x(), checkField->position().y() - m_player->size().height());
     }
 
     // East field
     checkField = m_currentPlayerField->eastField();
     if (checkField && !checkField->accessible() &&
-            resultPosition.x() + offset > checkField->position().x()) {
-        resultPosition = QPointF(checkField->position().x() - offset, resultPosition.y());
+            resultPosition.x() + m_player->size().width() > checkField->position().x()) {
+        resultPosition = QPointF(checkField->position().x() - m_player->size().width(), resultPosition.y());
     }
 
     // West field
     checkField = m_currentPlayerField->westField();
     if (checkField && !checkField->accessible() &&
-            resultPosition.x() - offset < checkField->position().x() + 1) {
-        resultPosition = QPointF(checkField->position().x() + 1 + offset, resultPosition.y());
+            resultPosition.x() < checkField->position().x() + m_player->size().width()) {
+        resultPosition = QPointF(checkField->position().x() + m_player->size().width(), resultPosition.y());
     }
 
     // SouthEast field
@@ -330,10 +339,24 @@ void World::doPlayerMovement()
     if (!m_player->movable())
         return;
 
-    // If primary pressed, default enable running for now
+    // FIXME: If primary pressed, default enable running for now
     m_player->setRunning(m_playerController->primaryActionPressed());
 
     QPointF delta = m_playerController->delta();
+
+    // If no movement
+    if (delta.isNull())
+        return;
+
+    // Check collision with object
+    evaluateInRangeFields(m_player->position() + delta);
+    foreach (Field *field, m_fieldsInRange) {
+        if (field->gameItem()) {
+            if (m_collisionDetector->checkCollision(m_player, field->gameItem())) {
+                qCDebug(dcWorld()) << "Player collision with" << field->gameItem();
+            }
+        }
+    }
 
     // Collition detection
     QPointF resultPosition = adjustCollition(delta.x(), delta.y());
@@ -341,17 +364,7 @@ void World::doPlayerMovement()
     // Calculate in range fields
     evaluateInRangeFields(resultPosition);
 
-    // Check collision with object
-    foreach (Field *field, m_fieldsInRange) {
-
-        if (field->gameItem()) {
-            if (m_collisionDetector->checkCollision(m_player, field->gameItem())) {
-                //qCDebug(dcWorld()) << "Player collision with" << field->gameItem();
-            }
-        }
-    }
-
-    // Check if the field is movable
+    // Finally set the position
     m_player->setPosition(resultPosition);
 }
 
@@ -377,11 +390,18 @@ void World::onLoadingFinished()
 
     clearModel();
 
-    qCDebug(dcWorld()) << "Initialize fields";
+    qCDebug(dcWorld()) << "--> Initialize fields";
     for (int x = m_currentViewOffset.x(); x < m_currentViewOffset.x() + m_size.width(); x++) {
         for (int y = m_currentViewOffset.y(); y < m_currentViewOffset.y() + m_size.height(); y++) {
             Field *field = m_map->getField(x, y);
             addField(field);
+        }
+    }
+
+    qCDebug(dcWorld()) << "--> Initialize items";
+    foreach (Field *field, fields()) {
+        if (field->gameItem()) {
+            m_gameItems->addItem(field->gameItem());
         }
     }
 

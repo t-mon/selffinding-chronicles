@@ -8,7 +8,6 @@
         "accessable": true,
         "imageName": "/images/world/accessable.png"
     },
-
     "items": {
         "plants": [
             {
@@ -20,6 +19,16 @@
                 "x": 20,
                 "y": 20,
                 "plant": ":/mapdata/plants/healing-herb.json"
+            },
+            {
+                "x": 16,
+                "y": 5,
+                "plant": ":/mapdata/plants/healing-herb.json"
+            },
+            {
+                "x": 18,
+                "y": 6,
+                "plant": ":/mapdata/plants/healing-herb.json"
             }
         ],
         "trees": [
@@ -27,140 +36,52 @@
                 "x": 16,
                 "y": 16,
                 "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 6,
+                "y": 0,
+                "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 12,
+                "y": 0,
+                "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 14,
+                "y": 0,
+                "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 16,
+                "y": 1,
+                "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 6,
+                "y": 12,
+                "tree": ":/mapdata/trees/tree-1.json"
             }
         ]
     },
-
     "fields": [
         {
             "x": 6,
-            "y": 6,
-            "accessable": false,
-            "imageName": "/images/world/trees/tree-1.png"
-        },
-        {
-            "x": 6,
-            "y": 7,
+            "y": 8,
             "accessable": false,
             "imageName": "/images/world/unaccessable.png"
         },
         {
             "x": 6,
-            "y": 8,
+            "y": 9,
             "accessable": false,
             "imageName": "/images/world/unaccessable.png"
         },
         {
-            "x": 8,
-            "y": 6,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 8,
-            "y": 7,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 8,
-            "y": 8,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-
-
-
-
-
-        {
-            "x": 10,
-            "y": 6,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 10,
-            "y": 7,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 10,
-            "y": 8,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 10,
-            "y": 6,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 10,
-            "y": 7,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 10,
-            "y": 8,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 9,
-            "y": 8,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-
-
-
-        {
-            "x": 15,
-            "y": 6,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 15,
-            "y": 7,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 15,
-            "y": 8,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 16,
-            "y": 6,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 17,
-            "y": 6,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 17,
-            "y": 7,
-            "accessable": false,
-            "imageName": "/images/world/unaccessable.png"
-        },
-        {
-            "x": 17,
-            "y": 8,
+            "x": 6,
+            "y": 10,
             "accessable": false,
             "imageName": "/images/world/unaccessable.png"
         }
-
-
     ]
 }

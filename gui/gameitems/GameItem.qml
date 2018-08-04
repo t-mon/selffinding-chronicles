@@ -9,30 +9,33 @@ import "../components"
 Item {
     id: root
 
-    property var field: null
-    property real cellSize: 1
-
-//    // TODO: load different items depending on the type
-//    width: field.gameItem.size.width * root.cellSize
-//    height: field.gameItem.size.height * root.cellSize
-
-    Component.onCompleted: console.log("-------->" + width + "  " + height)
+    property QtObject gameItem: null
 
     Image {
         id: itemImage
-        source: field.gameItem.imageName
+        source: dataDirectory + gameItem.imageName
         anchors.fill: parent
-        z: 1
+        opacity: Game.debugging ? 0.5 : 1
+    }
+
+    Rectangle {
+        id: wireFrame
+        anchors.fill: parent
+        color: "gray"
+        border.color: "black"
+        opacity: 0.1
+        border.width: 2
+        visible: Game.debugging
+        radius: gameItem.shape === GameObject.ShapeCircle ? width / 2 : 0
     }
 
     GameLabel {
         id: nameLabel
         anchors.bottom: itemImage.top
         anchors.horizontalCenter: itemImage.horizontalCenter
-        text: field.gameItem.name
+        text: gameItem.name
         color: "black"
-        visible: field.inPlayerRange
-        z: 2
+        visible: Game.debugging
     }
 }
 

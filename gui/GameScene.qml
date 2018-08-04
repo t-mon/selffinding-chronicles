@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 import Chronicles 1.0
 
 import "components"
+import "gameitems"
 
 Item {
     id: root
@@ -63,11 +64,19 @@ Item {
             Game.world.currentViewOffset = Qt.point(contentOffsetX, contentOffsetY)
         }
 
+        /* Game Layers
+         *      z = 0 -> background, the lowest layer
+         *      z = 1 -> plants, and other things the player can walk over
+         *      z = 2 -> the player
+         *      z = 3 -> large objects like trees
+         *      z = 4 -> highest layer, always visible, desciptions and such
+         */
+
         Item {
             id: worldBackground
             width: Game.world.map.width * cellSize
             height: Game.world.map.height * cellSize
-            z: 0
+            z: Map.Layer0Lowest
 
             Repeater {
                 id: fieldRepeater
@@ -81,44 +90,17 @@ Item {
                 }
             }
 
-            //            Canvas {
-            //                id: gridCanvas
-            //                anchors.fill: parent
-            //                smooth: true
-            //                antialiasing: true
-
-            //                onPaint: {
-            //                    var ctx = gridCanvas.getContext("2d")
-            //                    ctx.strokeStyle = Qt.rgba(0, 0, 0, 0.5);
-            //                    ctx.lineWidth = 1
-            //                    ctx.save()
-            //                    ctx.reset()
-
-            //                    for (var i = 0; i < Game.world.size.height; i++) {
-            //                        ctx.moveTo(i * cellSize, 0)
-            //                        ctx.lineTo(i * cellSize, Game.world.size.width * cellSize)
-            //                    }
-
-            //                    for (var j = 0; j < Game.world.size.width; j++) {
-            //                        ctx.moveTo(0, j * cellSize)
-            //                        ctx.lineTo(Game.world.size.height * cellSize, j * cellSize)
-            //                    }
-
-            //                    ctx.stroke()
-            //                    ctx.restore()
-            //                }
-            //            }
-
             Rectangle {
                 id: boundingRectangle
                 color: "white"
                 border.color: "red"
                 border.width: 3
                 antialiasing: true
-                opacity: Game.debugging ? 0.2 : 0
+                visible: Game.debugging
+                opacity: 0.2
                 width: Game.world.boundingSize.width * cellSize
                 height: Game.world.boundingSize.height * cellSize
-
+                z: Map.Layer1Lower
 
                 onXChanged: {
                     // Over the right sceen boarder
@@ -149,13 +131,6 @@ Item {
                 }
             }
 
-//            Image {
-//                anchors.fill: boundingRectangle
-//                source: "/images/world/trees/tree-1.png"
-//                opacity: 1
-//            }
-
-
             PlayerItem {
                 id: playerItem
                 width: root.cellSize * Game.world.player.size.width
@@ -163,9 +138,9 @@ Item {
 
                 antialiasing: true
 
-                x: Game.world.player.position.x * cellSize - cellSize / 2
-                y: Game.world.player.position.y * cellSize - cellSize / 2
-                z: 1
+                x: Game.world.player.position.x * cellSize
+                y: Game.world.player.position.y * cellSize
+                z: Map.Layer2Normal
 
                 onXChanged: evaluateBoundingRectangle()
                 onYChanged: evaluateBoundingRectangle()
@@ -181,7 +156,53 @@ Item {
                 visible: Game.debugging
                 text: Game.world.player.name
             }
+
+            Repeater {
+                id: itemsRepeater
+                model: Game.world.gameItems
+                delegate: GameItem {
+                    gameItem: Game.world.gameItems.get(model.index)
+                    width: model.size.width * cellSize
+                    height: model.size.height * cellSize
+                    x: model.position.x * cellSize
+                    y: model.position.y * cellSize
+                    z: model.layer
+                }
+            }
         }
+    }
+
+    MouseArea {
+        id: sceenMouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        //visible: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
+        preventStealing: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
+        onMouseXChanged: calculateAngle()
+        onMouseYChanged: calculateAngle()
+        onClicked: {
+            if (inventoryPopup.opened) {
+                inventoryPopup.close()
+            } else {
+                inventoryPopup.open()
+            }
+        }
+    }
+
+    Popup {
+        id: inventoryPopup
+        x: root.width * 0.05
+        y: root.height * 0.05
+        width: root.width * 0.9
+        height: root.height * 0.9
+        modal: true
+        focus: true
+
+        contentItem: InventoryItem { id: inventoryItem }
+
+        onOpened: Game.running = false
+        onClosed: Game.running = true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     }
 
     function evaluateBoundingRectangle() {
@@ -216,18 +237,8 @@ Item {
         boundingRectangle.y = newPositionY
     }
 
-    MouseArea {
-        id: sceenMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        visible: Game.controlMode == Game.ControlModeKeyBoardMouse
-        preventStealing: Game.controlMode == Game.ControlModeKeyBoardMouse
-        onMouseXChanged: calculateAngle()
-        onMouseYChanged: calculateAngle()
-    }
-
     function calculateAngle() {
-        if (!Game.running || Game.controlMode != Game.ControlModeKeyBoardMouse)
+        if (!Game.running || Game.world.playerController.controlMode !== Game.ControlModeKeyBoardMouse)
             return;
 
         var dx = (worldFlickable.contentX + sceenMouseArea.mouseX) - Game.world.player.position.x * cellSize

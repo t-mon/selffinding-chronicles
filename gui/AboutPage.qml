@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
 import Chronicles 1.0
+
 import "components"
 
 Page {
@@ -17,8 +18,7 @@ Page {
     Flickable {
         anchors.fill: parent
         contentHeight: settingsColumn.implicitHeight
-        anchors.leftMargin: app.margins
-        anchors.rightMargin: app.margins
+        anchors.margins: app.margins
 
         ColumnLayout {
             id: settingsColumn
@@ -31,14 +31,15 @@ Page {
 
                 GameLabel {
                     Layout.fillWidth: true
+                    font.pixelSize: app.largeFont
                     text: qsTr("Developer")
                 }
 
                 GameLabel {
                     Layout.fillWidth: true
+                    font.pixelSize: app.largeFont
                     text: qsTr("Simon Stürz")
                 }
-
             }
         }
     }

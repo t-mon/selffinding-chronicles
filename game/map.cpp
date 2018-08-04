@@ -65,6 +65,11 @@ QString Map::fileName() const
     return m_fileName;
 }
 
+QList<GameItem *> Map::items()
+{
+    return m_items;
+}
+
 void Map::loadMap(const QString &fileName)
 {
     QElapsedTimer timer;
@@ -160,17 +165,19 @@ void Map::loadMap(const QString &fileName)
         }
 
         // Place the item into the field
-        Field *field = getField(plantItem->position().x(), plantItem->position().y());
+        Field *field = getField(static_cast<int>(plantItem->position().x()), static_cast<int>(plantItem->position().y()));
         if (!field) {
             qCWarning(dcMap()) << "Could not find any field for" << plantItem;
             plantItem->deleteLater();
             continue;
         }
         field->setGameItem(plantItem);
+        placeItemOnMap(plantItem);
 
         qCDebug(dcMap()) << "        " << plantItem;
         plantItem->moveToThread(QCoreApplication::instance()->thread());
         m_plants.append(plantItem);
+        m_items.append(plantItem);
     }
 
     qCDebug(dcMap()) << "    --> load trees";
@@ -183,17 +190,19 @@ void Map::loadMap(const QString &fileName)
         }
 
         // Place the item into the field
-        Field *field = getField(treeItem->position().x(), treeItem->position().y());
+        Field *field = getField(static_cast<int>(treeItem->position().x()), static_cast<int>(treeItem->position().y()));
         if (!field) {
             qCWarning(dcMap()) << "Could not find any field for" << treeItem;
             treeItem->deleteLater();
             continue;
         }
         field->setGameItem(treeItem);
+        placeItemOnMap(treeItem);
 
         qCDebug(dcMap()) << "        " << treeItem;
         treeItem->moveToThread(QCoreApplication::instance()->thread());
         m_trees.append(treeItem);
+        m_items.append(treeItem);
     }
 
     // Move all the object back to the main thread
@@ -215,6 +224,11 @@ Field *Map::getField(int x, int y) const
     return m_mapData.at(y)->get(x);
 }
 
+Field *Map::getField(const QPointF position) const
+{
+    return getField(static_cast<int>(position.x()), static_cast<int>(position.y()));
+}
+
 QVariantMap Map::loadMapData(const QString &mapDataFileName)
 {
     QFile mapDataFile(mapDataFileName);
@@ -233,6 +247,18 @@ QVariantMap Map::loadMapData(const QString &mapDataFileName)
     return jsonDoc.toVariant().toMap();
 }
 
+void Map::placeItemOnMap(GameItem *item)
+{
+    // Make fields unaccessable according to the unacessableMap
+    foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
+        QPointF absolutCoordinate(item->position() + unaccessableOffset);
+        Field *field = getField(absolutCoordinate);
+        if (field) {
+            field->setAccessible(false);
+        }
+    }
+}
+
 PlantItem *Map::createPlantItem(const QVariantMap &plantItemMap)
 {
     QPoint position = QPoint(plantItemMap.value("x").toInt(), plantItemMap.value("y").toInt());
@@ -244,12 +270,16 @@ PlantItem *Map::createPlantItem(const QVariantMap &plantItemMap)
         return nullptr;
     }
 
-    QVariantMap propertiesMap = description.value("properties").toMap();
-    QSize itemSize(propertiesMap.value("width", 1).toInt(), propertiesMap.value("height", 1).toInt());
+    QVariantMap geometryMap = description.value("geometry").toMap();
+    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
+    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
+    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
 
     PlantItem *plantItem = new PlantItem();
     plantItem->setPosition(position);
     plantItem->setSize(itemSize);
+    plantItem->setLayer(geometryMap.value("layer").toReal());
+    plantItem->setUnaccessableMap(unaccessableMap);
     plantItem->setName(description.value("name").toString());
     plantItem->setImageName(description.value("imageName").toString());
     plantItem->setPrice(description.value("price").toInt());
@@ -270,16 +300,29 @@ TreeItem *Map::createTreeItem(const QVariantMap &treeItemMap)
         return nullptr;
     }
 
-    QVariantMap propertiesMap = description.value("properties").toMap();
-    QSize itemSize(propertiesMap.value("width", 1).toInt(), propertiesMap.value("height", 1).toInt());
+    QVariantMap geometryMap = description.value("geometry").toMap();
+    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
+    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
 
     TreeItem *treeItem = new TreeItem();
     treeItem->setPosition(position);
+    treeItem->setLayer(geometryMap.value("layer").toReal());
     treeItem->setSize(itemSize);
+    treeItem->setUnaccessableMap(unaccessableMap);
     treeItem->setName(description.value("name").toString());
     treeItem->setImageName(description.value("imageName").toString());
 
     return treeItem;
+}
+
+QList<QPoint> Map::loadFieldMap(const QVariantList &fieldMap)
+{
+    QList<QPoint> pointList;
+    foreach(const QVariant &pointVariant, fieldMap) {
+        QVariantMap pointMap = pointVariant.toMap();
+        pointList.append(QPoint(pointMap.value("x").toInt(), pointMap.value("y").toInt()));
+    }
+    return pointList;
 }
 
 void Map::clear()

@@ -42,6 +42,26 @@ GameItem::Interaction GameItem::interaction() const
     return m_interaction;
 }
 
+QList<QPoint> GameItem::unaccessableMap()
+{
+    return m_unaccessableMap;
+}
+
+void GameItem::setUnaccessableMap(const QList<QPoint> unaccessableMap)
+{
+    m_unaccessableMap = unaccessableMap;
+}
+
+QList<QPoint> GameItem::visibilityMap()
+{
+    return m_visibilityMap;
+}
+
+void GameItem::setVisiblilityMap(const QList<QPoint> visiblilityMap)
+{
+    m_visibilityMap = visiblilityMap;
+}
+
 void GameItem::setInteraction(GameItem::Interaction interaction)
 {
     if (m_interaction == interaction)
