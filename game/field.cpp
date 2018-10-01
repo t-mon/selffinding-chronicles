@@ -1,10 +1,19 @@
 #include "field.h"
 
+#include "gameobject.h"
+#include "items/gameitems.h"
+
 Field::Field(QPoint position, QObject *parent) :
     QObject(parent),
     m_position(position)
 {
+    m_gameItems = new GameItems(this);
 
+    m_collitionObject = new GameObject(this);
+    m_collitionObject->setName("Field");
+    m_collitionObject->setSize(QSize(1,1));
+    m_collitionObject->setShape(GameObject::ShapeRectangle);
+    m_collitionObject->setPosition(m_position);
 }
 
 QPoint Field::position() const
@@ -68,18 +77,19 @@ void Field::setInPlayerRange(bool inPlayerRange)
     emit inPlayerRangeChanged(m_inPlayerRange);
 }
 
-GameItem *Field::gameItem() const
+bool Field::hasItem() const
 {
-    return m_gameItem;
+    return !m_gameItems->gameItems().isEmpty();
 }
 
-void Field::setGameItem(GameItem *gameItem)
+GameItems *Field::gameItems() const
 {
-    if (m_gameItem == gameItem)
-        return;
+    return m_gameItems;
+}
 
-    m_gameItem = gameItem;
-    emit gameItemChanged(m_gameItem);
+GameObject *Field::collitionObject() const
+{
+    return m_collitionObject;
 }
 
 Field *Field::northField() const
@@ -174,4 +184,12 @@ void Field::setWestField(Field *field)
 void Field::setNorthWestField(Field *field)
 {
     m_northWestField = field;
+}
+
+QDebug operator<<(QDebug debug, Field *field)
+{
+    debug.nospace() << "Field(" << field->position();
+    debug.nospace() << ", " << (field->accessible() ? "accessable" : "unaccessable");
+    debug.nospace() << ") ";
+    return debug;
 }

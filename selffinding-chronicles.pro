@@ -21,13 +21,13 @@ HEADERS += \
     game/fields.h \
     game/map.h \
     game/debugcategories.h \
-    game/items/gameitem.h \
-    game/items/plantitem.h \
     game/playercontroller.h \
     game/collisiondetector.h \
     game/gameobject.h \
+    game/items/gameitem.h \
+    game/items/plantitem.h \
     game/items/treeitem.h \
-    game/items/gameitems.h
+    game/items/gameitems.h \
 
 SOURCES += game/main.cpp \
     game/player.cpp \
@@ -37,10 +37,10 @@ SOURCES += game/main.cpp \
     game/fields.cpp \
     game/map.cpp \
     game/debugcategories.cpp \
-    game/items/gameitem.cpp \
-    game/items/plantitem.cpp \
     game/playercontroller.cpp \
     game/collisiondetector.cpp \
     game/gameobject.cpp \
+    game/items/gameitem.cpp \
+    game/items/plantitem.cpp \
     game/items/treeitem.cpp \
-    game/items/gameitems.cpp
+    game/items/gameitems.cpp \

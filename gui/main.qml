@@ -29,6 +29,9 @@ ApplicationWindow {
     property string fontFamily: "EB Garamond"
     property string fontStyleName: "12 Regular"
 
+    property real gridSize: Math.min(app.width / 30, app.height / 20)
+
+
     Settings {
         id: settings
         property string playerName: "Player"

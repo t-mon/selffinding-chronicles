@@ -33,32 +33,32 @@
         ],
         "trees": [
             {
-                "x": 16,
+                "x": 26,
                 "y": 16,
                 "tree": ":/mapdata/trees/tree-1.json"
             },
             {
-                "x": 6,
-                "y": 0,
-                "tree": ":/mapdata/trees/tree-1.json"
-            },
-            {
-                "x": 12,
-                "y": 0,
-                "tree": ":/mapdata/trees/tree-1.json"
-            },
-            {
-                "x": 14,
-                "y": 0,
-                "tree": ":/mapdata/trees/tree-1.json"
-            },
-            {
                 "x": 16,
+                "y": 0,
+                "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 22,
+                "y": 0,
+                "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 24,
+                "y": 0,
+                "tree": ":/mapdata/trees/tree-1.json"
+            },
+            {
+                "x": 26,
                 "y": 1,
                 "tree": ":/mapdata/trees/tree-1.json"
             },
             {
-                "x": 6,
+                "x": 16,
                 "y": 12,
                 "tree": ":/mapdata/trees/tree-1.json"
             }

@@ -11,10 +11,12 @@ Item {
 
     property QtObject gameItem: null
 
+    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
+
     Image {
         id: itemImage
-        source: dataDirectory + gameItem.imageName
         anchors.fill: parent
+        source: dataDirectory + gameItem.imageName
         opacity: Game.debugging ? 0.5 : 1
     }
 
@@ -31,8 +33,8 @@ Item {
 
     GameLabel {
         id: nameLabel
-        anchors.bottom: itemImage.top
-        anchors.horizontalCenter: itemImage.horizontalCenter
+        anchors.bottom: root.top
+        anchors.horizontalCenter: root.horizontalCenter
         text: gameItem.name
         color: "black"
         visible: Game.debugging

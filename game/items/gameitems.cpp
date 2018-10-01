@@ -54,14 +54,17 @@ QVariant GameItems::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-void GameItems::addItem(GameItem *item)
+void GameItems::addGameItem(GameItem *item)
 {
+    if (m_gameItems.contains(item))
+        return;
+
     beginInsertRows(QModelIndex(), m_gameItems.count(), m_gameItems.count());
     m_gameItems.append(item);
     endInsertRows();
 }
 
-void GameItems::removeField(GameItem *item)
+void GameItems::removeGameItem(GameItem *item)
 {
     if (!m_gameItems.contains(item))
         return;

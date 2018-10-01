@@ -9,6 +9,7 @@
 class Player : public GameObject
 {
     Q_OBJECT
+    Q_PROPERTY(GameObject *auraCircleObject READ auraCircleObject CONSTANT)
     Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
     Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
@@ -18,11 +19,13 @@ class Player : public GameObject
 public:
     explicit Player(QObject *parent = nullptr);
 
+    GameObject *auraCircleObject() const;
+
     qreal angle() const;
     void setAngle(const qreal &angle);
 
-    qreal auraRange() const;
-    void setAuraRange(const qreal auraRange);
+    int auraRange() const;
+    void setAuraRange(const int auraRange);
 
     qreal speed() const;
     void setSpeed(const qreal speed);
@@ -36,18 +39,25 @@ public:
     bool running() const;
     void setRunning(bool running);
 
+    // TODO: player properties like health, mana...
+
 private:
+    GameObject *m_auraCircleObject = nullptr;
     qreal m_angle = 0;
     qreal m_speed = 0.03;
-    qreal m_auraRange = 3;
+    int m_auraRange = 3;
     bool m_movable = true;
     bool m_moving = false;
     bool m_running = false;
 
+private slots:
+    void onPositionChanged(const QPointF newPosition);
+    void updateAuraObject();
+
 signals:
     void angleChanged(const qreal &angle);
     void speedChanged(const qreal &speed);
-    void auraRangeChanged(const qreal &auraRange);
+    void auraRangeChanged(const int &auraRange);
     void movableChanged(bool movable);
     void movingChanged(bool moving);
     void runningChanged(bool running);

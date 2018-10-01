@@ -171,7 +171,6 @@ void Map::loadMap(const QString &fileName)
             plantItem->deleteLater();
             continue;
         }
-        field->setGameItem(plantItem);
         placeItemOnMap(plantItem);
 
         qCDebug(dcMap()) << "        " << plantItem;
@@ -196,7 +195,6 @@ void Map::loadMap(const QString &fileName)
             treeItem->deleteLater();
             continue;
         }
-        field->setGameItem(treeItem);
         placeItemOnMap(treeItem);
 
         qCDebug(dcMap()) << "        " << treeItem;
@@ -253,9 +251,20 @@ void Map::placeItemOnMap(GameItem *item)
     foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
         QPointF absolutCoordinate(item->position() + unaccessableOffset);
         Field *field = getField(absolutCoordinate);
-        if (field) {
-            field->setAccessible(false);
-        }
+        if (!field)
+            continue;
+
+        field->setAccessible(false);
+    }
+
+    // Place visible item parts on the map fields
+    foreach(const QPoint &visibilityOffset, item->visibilityMap()) {
+        QPointF absolutCoordinate(item->position() + visibilityOffset);
+        Field *field = getField(absolutCoordinate);
+        if (!field)
+            continue;
+
+        field->gameItems()->addGameItem(item);
     }
 }
 
@@ -278,8 +287,10 @@ PlantItem *Map::createPlantItem(const QVariantMap &plantItemMap)
     PlantItem *plantItem = new PlantItem();
     plantItem->setPosition(position);
     plantItem->setSize(itemSize);
+    plantItem->setShape(PlantItem::ShapeCircle);
     plantItem->setLayer(geometryMap.value("layer").toReal());
     plantItem->setUnaccessableMap(unaccessableMap);
+    plantItem->setVisiblilityMap(visibilityMap);
     plantItem->setName(description.value("name").toString());
     plantItem->setImageName(description.value("imageName").toString());
     plantItem->setPrice(description.value("price").toInt());
@@ -303,10 +314,13 @@ TreeItem *Map::createTreeItem(const QVariantMap &treeItemMap)
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
     QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
+    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
 
     TreeItem *treeItem = new TreeItem();
     treeItem->setPosition(position);
     treeItem->setLayer(geometryMap.value("layer").toReal());
+    treeItem->setUnaccessableMap(unaccessableMap);
+    treeItem->setVisiblilityMap(visibilityMap);
     treeItem->setSize(itemSize);
     treeItem->setUnaccessableMap(unaccessableMap);
     treeItem->setName(description.value("name").toString());

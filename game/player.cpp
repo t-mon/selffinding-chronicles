@@ -2,12 +2,23 @@
 #include "game.h"
 #include "debugcategories.h"
 
+#include <QSize>
 #include <QtMath>
 
 Player::Player(QObject *parent) :
     GameObject(parent)
 {
+    m_auraCircleObject = new GameObject(this);
+    m_auraCircleObject->setName("Aura");
+    m_auraCircleObject->setShape(GameObject::ShapeCircle);
 
+    connect(this, &GameObject::positionChanged, this, &Player::onPositionChanged);
+    updateAuraObject();
+}
+
+GameObject *Player::auraCircleObject() const
+{
+    return m_auraCircleObject;
 }
 
 qreal Player::angle() const
@@ -22,16 +33,18 @@ void Player::setAngle(const qreal &angle)
     emit angleChanged(m_angle);
 }
 
-qreal Player::auraRange() const
+int Player::auraRange() const
 {
     return m_auraRange;
 }
 
-void Player::setAuraRange(const qreal auraRange)
+void Player::setAuraRange(const int auraRange)
 {
     qCDebug(dcPlayer()) << "Aura range changed" << auraRange;
     m_auraRange = auraRange;
     emit auraRangeChanged(m_auraRange);
+
+    updateAuraObject();
 }
 
 qreal Player::speed() const
@@ -96,5 +109,17 @@ void Player::setRunning(bool running)
         setSpeed(0.03);
     }
 
+}
+
+void Player::onPositionChanged(const QPointF newPosition)
+{
+    Q_UNUSED(newPosition)
+    updateAuraObject();
+}
+
+void Player::updateAuraObject()
+{
+    m_auraCircleObject->setSize(QSize(auraRange() * 2 + 1, auraRange() * 2 + 1));
+    m_auraCircleObject->setPosition(position() - QPointF(auraRange(), auraRange()));
 }
 

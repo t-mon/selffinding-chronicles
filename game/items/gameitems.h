@@ -24,14 +24,14 @@ public:
 
     explicit GameItems(QObject *parent = nullptr);
 
-    QList<GameItem *> gameItems() const ;
+    QList<GameItem *> gameItems() const;
     Q_INVOKABLE GameItem *get(int index);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
 
-    void addItem(GameItem *item);
-    void removeField(GameItem *item);
+    void addGameItem(GameItem *item);
+    void removeGameItem(GameItem *item);
 
     void clearModel();
 

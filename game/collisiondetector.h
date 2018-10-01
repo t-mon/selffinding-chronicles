@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+class Field;
 class GameObject;
 
 class CollisionDetector : public QObject
@@ -12,13 +13,12 @@ public:
     explicit CollisionDetector(QObject *parent = nullptr);
 
     bool checkCollision(GameObject *firstObject, GameObject *secondObject);
+    qreal calculateCenterDistance(GameObject *firstObject, GameObject *secondObject);
 
 private:
     bool checkRectangleRectangleCollision(GameObject *rectangleOne, GameObject *rectangleTwo);
     bool checkCircleCircleCollision(GameObject *firstCirlce, GameObject *secondCircle);
     bool checkRectangleCircleCollision(GameObject *rectangle, GameObject *circle);
-
-    float getClamp(float value, float minValue, float maxValue);
 };
 
 #endif // COLLISIONDETECTOR_H

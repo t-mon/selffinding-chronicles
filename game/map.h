@@ -7,8 +7,9 @@
 #include <QAbstractItemModel>
 
 #include "fields.h"
-#include "items/plantitem.h"
 #include "items/treeitem.h"
+#include "items/plantitem.h"
+#include "items/gameitems.h"
 
 class Map : public QObject
 {

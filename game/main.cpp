@@ -1,3 +1,24 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                               *
+ * Copyright (C) 2018 Simon Stürz <simon.stuerz@guh.io>                          *
+ *                                                                               *
+ * This file is part of selffinding-cronicles.                                   *
+ *                                                                               *
+ * This program is free software: you can redistribute it and/or modify          *
+ * it under the terms of the GNU General Public License as published by          *
+ * the Free Software Foundation, either version 3 of the License, or             *
+ * (at your option) any later version.                                           *
+ *                                                                               *
+ * This program is distributed in the hope that it will be useful,               *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of                *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                 *
+ * GNU General Public License for more details.                                  *
+ *                                                                               *
+ * You should have received a copy of the GNU General Public License             *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.         *
+ *                                                                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #include <QtQml>
 #include <QGuiApplication>
 #include <QtQml/QQmlContext>
@@ -79,11 +100,11 @@ int main(int argc, char *argv[])
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
-    s_loggingFilters.insert("Player", true);
+    s_loggingFilters.insert("Player", false);
     s_loggingFilters.insert("PlayerController", false);
-    s_loggingFilters.insert("Map", true);
-    s_loggingFilters.insert("Item", false);
-    s_loggingFilters.insert("Collision", true);
+    s_loggingFilters.insert("Map", false);
+    s_loggingFilters.insert("Item", true);
+    s_loggingFilters.insert("Collision", false);
 
     s_loggingFilters.insert("qml", true);
 
@@ -94,14 +115,14 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<World>("Chronicles", 1, 0, "World", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Player>("Chronicles", 1, 0, "Player", "Can't create this in QML. Get it from the world object.");
-    qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the World object.");
+    qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
 
     // Items
-    qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<GameItem>("Chronicles", 1, 0, "GameItem", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML. Get it from the world object.");
+    qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML. Get it from the world object.");
 
     QDir dataDirectory(parser.value(dataOption));
     if (!dataDirectory.makeAbsolute()) {

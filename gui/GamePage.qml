@@ -8,14 +8,6 @@ import "components"
 
 Page {
     id: root
-    //    header: ChroniclesHeader {
-    //        text: qsTr("%1").arg(Game.world.map.name)
-    //        backButtonVisible: true
-    //        visible: !Game.world.loading
-    //        onBackPressed: pageStack.pop()
-    //    }
-
-
 
     Component.onDestruction: {
         Game.running = false
@@ -28,6 +20,26 @@ Page {
     }
 
     RowLayout {
+        anchors.left: parent.left
+        anchors.leftMargin: app.margins
+        anchors.top: parent.top
+        anchors.topMargin: app.margins
+
+
+        Item {
+            id: coordinateSystemImage
+            opacity: Game.debugging ? 1 : 0
+            Layout.preferredHeight: app.gridSize * 3
+            Layout.preferredWidth: app.gridSize * 3
+            Image {
+                anchors.fill: parent
+                source: dataDirectory + "/images/game/koordinate-system.png"
+            }
+        }
+    }
+
+    RowLayout {
+        id: bottomLeftOptions
         anchors.left: parent.left
         anchors.leftMargin: app.margins
         anchors.bottom: parent.bottom

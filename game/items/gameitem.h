@@ -64,6 +64,12 @@ public:
     int price() const;
     void setPrice(int price);
 
+    bool playerFocus() const;
+    void setPlayerFocus(bool playerFocus);
+
+    bool playerVisible() const;
+    void setPlayerVisible(bool playerVisible);
+
     Interaction interaction() const;
 
     QList<QPoint> unaccessableMap();
@@ -77,6 +83,8 @@ public:
 private:
     QString m_imageName;
     int m_price = 0;
+    bool m_playerFocus = false;
+    bool m_playerVisible = false;
 
     QList<QPoint> m_unaccessableMap;
     QList<QPoint> m_visibilityMap;
@@ -89,6 +97,8 @@ signals:
     void imageNameChanged(const QString &imageName);
     void interactionChanged(Interaction interaction);
     void priceChanged(int price);
+    void playerFocusChanged(bool playerFocus);
+    void playerVisibleChanged(bool playerVisible);
 
 };
 

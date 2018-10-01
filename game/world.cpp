@@ -1,6 +1,7 @@
 #include "world.h"
 #include "game.h"
 
+#include "gameobject.h"
 #include "debugcategories.h"
 #include "collisiondetector.h"
 
@@ -128,9 +129,99 @@ Field *World::currentPlayerField()
     return m_currentPlayerField;
 }
 
-QPointF World::adjustCollition(qreal dx, qreal dy)
+void World::setCurrentPlayerPosition(const QPoint &currentPosition)
 {
-    QPointF resultPosition = QPointF(m_player->position().x() + dx, m_player->position().y() + dy);
+    if (m_currentPlayerPosition == currentPosition)
+        return;
+
+    qCDebug(dcWorld()) << "Current player position changed" << currentPosition;
+    m_currentPlayerPosition = currentPosition;
+    emit currentPlayerPositionChanged(m_currentPlayerPosition);
+}
+
+void World::setCurrentPlayerField(Field *field)
+{
+    if (m_currentPlayerField == field)
+        return;
+
+    // Update old field
+    if (m_currentPlayerField)
+        m_currentPlayerField->setPlayerOnField(false);
+
+    m_currentPlayerField = field;
+
+    if (m_currentPlayerField)
+        m_currentPlayerField->setPlayerOnField(true);
+
+    emit currentPlayerFieldChanged(m_currentPlayerField);
+}
+
+void World::setLoaded(bool loaded)
+{
+    if (m_loaded == loaded)
+        return;
+
+    qCDebug(dcWorld()) << "Loaded changed:" << loaded;
+    m_loaded = loaded;
+    emit loadedChanged(m_loaded);
+}
+
+void World::setLoading(bool loading)
+{
+    if (m_loading == loading)
+        return;
+
+    qCDebug(dcWorld()) << "Loading changed:" << loading;
+    m_loading = loading;
+    emit loadingChanged(m_loading);
+}
+
+void World::doPlayerMovement()
+{
+    if (!m_player->movable())
+        return;
+
+    // FIXME: If primary pressed, default enable running for now
+    m_player->setRunning(m_playerController->primaryActionPressed());
+
+    QPointF delta = m_playerController->delta();
+
+    // If no movement
+    if (delta.isNull())
+        return;
+
+    // Check collision with object
+    evaluateInRangeFields(m_player->centerPosition() + delta);
+    foreach (Field *field, m_fieldsInRange) {
+        if (field->hasItem()) {
+            if (m_collisionDetector->checkCollision(m_player, field->gameItems()->gameItems().last())) {
+                qCDebug(dcWorld()) << "Player collision with" << field->gameItems()->gameItems().last();
+            }
+        }
+    }
+
+    // Collition detection
+    QPointF resultPosition = adjustCollition(delta);
+
+    // Finally set the position
+    m_player->setPosition(resultPosition);
+
+    // Calculate in range fields
+    evaluateInRangeFields(m_player->centerPosition());
+
+    // Check
+}
+
+Field *World::getFieldFromPosition(const QPointF position) const
+{
+    int x = static_cast<int>(position.x());
+    int y = static_cast<int>(position.y());
+    return m_map->getField(x, y);
+}
+
+QPointF World::adjustCollition(QPointF delta)
+{
+    QPointF resultPosition = m_player->position() + delta;
 
     // Check border of the world
 
@@ -261,116 +352,123 @@ QPointF World::adjustCollition(qreal dx, qreal dy)
 
 void World::evaluateInRangeFields(const QPointF &playerPosition)
 {
-    // TODO: Check which fields are in the player aura
+    Field *currentField = getFieldFromPosition(playerPosition);
+    QList<Field *> fieldsToCheck;
+    Field *fieldIterator = nullptr;
+    int iteratorCount = 0;
 
-    // Get surrounding fields and check if they are in range
-    Field *currentField = getFieldOfPosition(playerPosition);
-    QList<Field *> surroundingFields = currentField->getSurroundingFields();
-    surroundingFields.append(currentField);
+    // Get most north field
+    iteratorCount = 0; fieldIterator = currentField;
+    while (fieldIterator->northField() && iteratorCount < m_player->auraRange() + 1) {
+        fieldsToCheck.append(fieldIterator);
+        fieldIterator = fieldIterator->northField();
+        iteratorCount++;
+    }
+    Field *mostNorthField = fieldIterator;
+
+    // Get most south field
+    iteratorCount = 0; fieldIterator = currentField;
+    while (fieldIterator->southField() && iteratorCount < m_player->auraRange() + 1) {
+        fieldsToCheck.append(fieldIterator);
+        fieldIterator = fieldIterator->southField();
+        iteratorCount++;
+    }
+    Field *mostSouthField = fieldIterator;
+
+
+    // Get most west field
+    iteratorCount = 0; fieldIterator = currentField;
+    while (fieldIterator->westField() && iteratorCount < m_player->auraRange() + 1) {
+        fieldsToCheck.append(fieldIterator);
+        fieldIterator = fieldIterator->westField();
+        iteratorCount++;
+    }
+    Field *mostWestField = fieldIterator;
+
+    // Get most east field
+    iteratorCount = 0; fieldIterator = currentField;
+    while (fieldIterator->eastField() && iteratorCount < m_player->auraRange() + 1) {
+        fieldsToCheck.append(fieldIterator);
+        fieldIterator = fieldIterator->eastField();
+        iteratorCount++;
+    }
+    Field *mostEastField = fieldIterator;
+
+    // Now add all these fields to the check list
+    for (int x = mostWestField->position().x(); x <= mostEastField->position().x(); x++) {
+        for (int y = mostNorthField->position().y(); y <= mostSouthField->position().y(); y++) {
+            Field *field = getFieldFromPosition(QPointF(x, y));
+            if (!fieldsToCheck.contains(field)) {
+                fieldsToCheck.append(field);
+            }
+        }
+    }
+
+    // Get fields in aura range
+    QList<Field *> fieldsInRange;
+    foreach (Field *field, fieldsToCheck) {
+        // Check fields in range
+        if (m_collisionDetector->checkCollision(m_player->auraCircleObject(), field->collitionObject())) {
+            fieldsInRange.append(field);
+        }
+    }
+
+    // Get player focus item
+    QHash<qreal, GameItem *> visibleItems;
+    foreach (Field *field, fieldsToCheck) {
+        // Check fields in range
+        if (field->hasItem()) {
+            GameItem *item = field->gameItems()->gameItems().first();
+            if (item->interaction() == GameItem::InteractionNone)
+                continue;
+
+            if (m_collisionDetector->checkCollision(m_player->auraCircleObject(), item)) {
+                visibleItems.insert(m_collisionDetector->calculateCenterDistance(m_player, item), item);
+            }
+        }
+    }
+
+    if (visibleItems.isEmpty()) {
+        // No item visible, reset also the old one
+        if (m_playerFocusItem) {
+            m_playerFocusItem->setPlayerFocus(false);
+            m_playerFocusItem = nullptr;
+        }
+    } else {
+        // Get the closest item
+        qreal closestDistance = 100000;
+        foreach (const qreal &distance, visibleItems.keys()) {
+            if (distance <= closestDistance) {
+                closestDistance = distance;
+            }
+        }
+
+        // Make sure it is not the same item
+        if (m_playerFocusItem) {
+            if (m_playerFocusItem != visibleItems.value(closestDistance)) {
+                m_playerFocusItem->setPlayerFocus(false);
+                m_playerFocusItem = nullptr;
+            }
+        }
+
+        m_playerFocusItem = visibleItems.value(closestDistance);
+        m_playerFocusItem->setPlayerFocus(true);
+    }
 
     // Remove fields which are not surrounded any more
     foreach (Field *field, m_fieldsInRange) {
-        if (!surroundingFields.contains(field)) {
+        if (!fieldsInRange.contains(field)) {
             field->setInPlayerRange(false);
             m_fieldsInRange.removeOne(field);
         }
     }
 
-    foreach (Field *field, surroundingFields) {
+    foreach (Field *field, fieldsInRange) {
         if (!m_fieldsInRange.contains(field)) {
             field->setInPlayerRange(true);
             m_fieldsInRange.append(field);
         }
     }
-
-}
-
-void World::setCurrentPlayerPosition(const QPoint &currentPosition)
-{
-    if (m_currentPlayerPosition == currentPosition)
-        return;
-
-    qCDebug(dcWorld()) << "Current player position changed" << currentPosition;
-    m_currentPlayerPosition = currentPosition;
-    emit currentPlayerPositionChanged(m_currentPlayerPosition);
-}
-
-void World::setCurrentPlayerField(Field *field)
-{
-    if (m_currentPlayerField == field)
-        return;
-
-    // Update old field
-    if (m_currentPlayerField)
-        m_currentPlayerField->setPlayerOnField(false);
-
-    m_currentPlayerField = field;
-
-    if (m_currentPlayerField)
-        m_currentPlayerField->setPlayerOnField(true);
-
-    emit currentPlayerFieldChanged(m_currentPlayerField);
-}
-
-void World::setLoaded(bool loaded)
-{
-    if (m_loaded == loaded)
-        return;
-
-    qCDebug(dcWorld()) << "Loaded changed:" << loaded;
-    m_loaded = loaded;
-    emit loadedChanged(m_loaded);
-}
-
-void World::setLoading(bool loading)
-{
-    if (m_loading == loading)
-        return;
-
-    qCDebug(dcWorld()) << "Loading changed:" << loading;
-    m_loading = loading;
-    emit loadingChanged(m_loading);
-}
-
-void World::doPlayerMovement()
-{
-    if (!m_player->movable())
-        return;
-
-    // FIXME: If primary pressed, default enable running for now
-    m_player->setRunning(m_playerController->primaryActionPressed());
-
-    QPointF delta = m_playerController->delta();
-
-    // If no movement
-    if (delta.isNull())
-        return;
-
-    // Check collision with object
-    evaluateInRangeFields(m_player->centerPosition() + delta);
-    foreach (Field *field, m_fieldsInRange) {
-        if (field->gameItem()) {
-            if (m_collisionDetector->checkCollision(m_player, field->gameItem())) {
-                qCDebug(dcWorld()) << "Player collision with" << field->gameItem();
-            }
-        }
-    }
-
-    // Collition detection
-    QPointF resultPosition = adjustCollition(delta.x(), delta.y());
-
-    // Finally set the position
-    m_player->setPosition(resultPosition);
-
-    // Calculate in range fields
-    evaluateInRangeFields(m_player->centerPosition());
-}
-
-Field *World::getFieldOfPosition(const QPointF position) const
-{
-    int x = static_cast<int>(position.x());
-    int y = static_cast<int>(position.y());
-    return m_map->getField(x, y);
 }
 
 void World::onPlayerPositionChanged()
@@ -398,8 +496,8 @@ void World::onLoadingFinished()
 
     qCDebug(dcWorld()) << "--> Initialize items";
     foreach (Field *field, fields()) {
-        if (field->gameItem()) {
-            m_gameItems->addItem(field->gameItem());
+        foreach (GameItem *item, field->gameItems()->gameItems()) {
+            m_gameItems->addGameItem(item);
         }
     }
 
@@ -407,6 +505,7 @@ void World::onLoadingFinished()
     setBoundingSize(QSize(15, 15));
     m_currentViewOffset = QPoint(0, 0);
     m_player->setPosition(m_map->playerStartPosition());
+    evaluateInRangeFields(m_player->position());
     doPlayerMovement();
 
     setLoading(false);

@@ -5,6 +5,7 @@
 #include <QPoint>
 #include <QObject>
 #include <QFuture>
+#include <QVector2D>
 #include <QFutureWatcher>
 
 #include "map.h"
@@ -59,10 +60,6 @@ public:
 
     Q_INVOKABLE void loadMap(const QString &fileName);
 
-    // Evaluation helper
-    QPointF adjustCollition(qreal dx, qreal dy);
-    void evaluateInRangeFields(const QPointF &playerPosition);
-
 private:
     QSize m_size;
     QSize m_boundingSize;
@@ -79,6 +76,7 @@ private:
 
     Field *m_currentPlayerField = nullptr;
     QList<Field *> m_fieldsInRange;
+    GameItem *m_playerFocusItem = nullptr;
 
     // Map loading
     QFutureWatcher<void> *m_loadingWatcher = nullptr;
@@ -95,7 +93,9 @@ private:
     void doPlayerMovement();
 
     // Helper methods
-    Field *getFieldOfPosition(const QPointF position) const;
+    Field *getFieldFromPosition(const QPointF position) const;
+    QPointF adjustCollition(QPointF delta);
+    void evaluateInRangeFields(const QPointF &playerPosition);
 
 signals:
     void sizeChanged(const QSize &size);

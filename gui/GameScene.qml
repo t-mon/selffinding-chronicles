@@ -148,12 +148,31 @@ Item {
                 Component.onCompleted: evaluateBoundingRectangle()
             }
 
+            Item {
+                id: auraItem
+                width: Game.world.player.auraCircleObject.size.width * cellSize
+                height: Game.world.player.auraCircleObject.size.height * cellSize
+                x: Game.world.player.auraCircleObject.position.x * cellSize
+                y: Game.world.player.auraCircleObject.position.y * cellSize
+                z: Game.world.player.auraCircleObject.layer
+
+                opacity: Game.debugging ? 0.5 : 0
+
+                Image {
+                    id: auraImage
+                    anchors.fill: parent
+                    source: dataDirectory + "/images/characters/player-aura.png"
+                }
+            }
+
             GameLabel {
                 id: playerNameLabel
                 anchors.horizontalCenter: playerItem.horizontalCenter
                 anchors.bottom: playerItem.top
                 anchors.bottomMargin: 4
                 visible: Game.debugging
+                color: "black"
+                opacity: 1
                 z: Map.Layer4Highest
                 text: Game.world.player.name
             }

@@ -2,11 +2,14 @@
 #define FIELD_H
 
 #include <QPoint>
-#include <QObject>
+#include <QDebug>
 #include <QImage>
+#include <QObject>
 
 class Map;
 class GameItem;
+class GameItems;
+class GameObject;
 
 class Field : public QObject
 {
@@ -17,7 +20,7 @@ class Field : public QObject
     Q_PROPERTY(bool accessible READ accessible WRITE setAccessible NOTIFY accessibleChanged)
     Q_PROPERTY(bool playerOnField READ playerOnField NOTIFY playerOnFieldChanged)
     Q_PROPERTY(bool inPlayerRange READ inPlayerRange NOTIFY inPlayerRangeChanged)
-    Q_PROPERTY(GameItem *gameItem READ gameItem NOTIFY gameItemChanged)
+    Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
 
     friend class Map;
 
@@ -38,8 +41,10 @@ public:
     bool inPlayerRange() const;
     void setInPlayerRange(bool inPlayerRange);
 
-    GameItem *gameItem() const;
-    void setGameItem(GameItem *gameItem);
+    bool hasItem() const;
+
+    GameItems *gameItems() const;
+    GameObject *collitionObject() const;
 
     Field *northField() const;
     Field *northEastField() const;
@@ -59,7 +64,8 @@ private:
     bool m_playerOnField = false;
     bool m_inPlayerRange = false;
 
-    GameItem *m_gameItem = nullptr;
+    GameItems *m_gameItems = nullptr;
+    GameObject *m_collitionObject = nullptr;
 
     // Neighbors
     Field *m_northField = nullptr;
@@ -86,8 +92,9 @@ signals:
     void accessibleChanged(bool accessible);
     void playerOnFieldChanged(bool playerOnField);
     void inPlayerRangeChanged(bool inPlayerRange);
-    void gameItemChanged(GameItem *gameItem);
 
 };
+
+QDebug operator<<(QDebug debug, Field *field);
 
 #endif // FIELD_H

@@ -37,6 +37,36 @@ void GameItem::setPrice(int price)
     emit priceChanged(m_price);
 }
 
+bool GameItem::playerFocus() const
+{
+    return m_playerFocus;
+}
+
+void GameItem::setPlayerFocus(bool playerFocus)
+{
+    if (m_playerFocus == playerFocus)
+        return;
+
+    qCDebug(dcItem()) << "Focus changed" << playerFocus << this;
+    m_playerFocus = playerFocus;
+    emit playerFocusChanged(m_playerFocus);
+}
+
+bool GameItem::playerVisible() const
+{
+    return m_playerVisible;
+}
+
+void GameItem::setPlayerVisible(bool playerVisible)
+{
+    if (m_playerVisible == playerVisible)
+        return;
+
+    qCDebug(dcItem()) << "Player visible changed" << playerVisible << this;
+    m_playerVisible = playerVisible;
+    emit playerVisibleChanged(m_playerVisible);
+}
+
 GameItem::Interaction GameItem::interaction() const
 {
     return m_interaction;
