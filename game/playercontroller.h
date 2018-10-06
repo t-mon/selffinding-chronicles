@@ -60,8 +60,8 @@ private:
 
 signals:
     void controlModeChanged(ControlMode controlMode);
-
-public slots:
+    void primaryActionPressedChanged(bool pressed);
+    void secondaryActionPressedChanged(bool pressed);
 
 };
 

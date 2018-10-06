@@ -42,11 +42,11 @@ qreal CollisionDetector::calculateCenterDistance(GameObject *firstObject, GameOb
 
 bool CollisionDetector::checkRectangleRectangleCollision(GameObject *rectangleOne, GameObject *rectangleTwo)
 {
-    bool collisionX = rectangleOne->position().x() + rectangleOne->size().width() >= rectangleTwo->position().x() &&
-            rectangleTwo->position().x() + rectangleTwo->size().width() >= rectangleOne->position().x();
+    bool collisionX = rectangleOne->position().x() + rectangleOne->size().width() >= rectangleTwo->position().x()
+            && rectangleTwo->position().x() + rectangleTwo->size().width() >= rectangleOne->position().x();
 
-    bool collisionY = rectangleOne->position().y() + rectangleOne->size().height() >= rectangleTwo->position().y() &&
-            rectangleTwo->position().y() + rectangleTwo->size().height() >= rectangleOne->position().y();
+    bool collisionY = rectangleOne->position().y() + rectangleOne->size().height() >= rectangleTwo->position().y()
+            && rectangleTwo->position().y() + rectangleTwo->size().height() >= rectangleOne->position().y();
 
     return collisionX && collisionY;
 }
@@ -54,7 +54,7 @@ bool CollisionDetector::checkRectangleRectangleCollision(GameObject *rectangleOn
 bool CollisionDetector::checkCircleCircleCollision(GameObject *firstCirlce, GameObject *secondCircle)
 {
     qreal distance = calculateCenterDistance(firstCirlce, secondCircle);
-    return distance < firstCirlce->size().width() / 2 + secondCircle->size().width() / 2;
+    return distance <= (firstCirlce->size().width() / 2 + secondCircle->size().width() / 2);
 }
 
 bool CollisionDetector::checkRectangleCircleCollision(GameObject *rectangle, GameObject *circle)

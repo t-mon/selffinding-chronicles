@@ -92,6 +92,69 @@ void GameItem::setVisiblilityMap(const QList<QPoint> visiblilityMap)
     m_visibilityMap = visiblilityMap;
 }
 
+QString GameItem::interactionToString(const GameItem::Interaction &interaction)
+{
+    QString interactionString;
+    switch (interaction) {
+    case InteractionNone:
+        //: This string describes an interaction for an item. In this case, no interaction
+        interactionString = tr("-");
+        break;
+    case InteractionPick:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Pick up");
+        break;
+    case InteractionOpen:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Open");
+        break;
+    case InteractionClose:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Close");
+        break;
+    case InteractionEnter:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Enter");
+        break;
+    case InteractionExit:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Exit");
+        break;
+    case InteractionTalk:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Talk");
+        break;
+    case InteractionAttack:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Attack");
+        break;
+    case InteractionDrop:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Drop");
+        break;
+    case InteractionEat:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Eat");
+        break;
+    case InteractionDrink:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Drink");
+        break;
+    case InteractionUse:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Use");
+        break;
+    case InteractionRead:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Read");
+        break;
+    default:
+        break;
+    }
+
+    return interactionString;
+}
+
 void GameItem::setInteraction(GameItem::Interaction interaction)
 {
     if (m_interaction == interaction)

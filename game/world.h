@@ -86,6 +86,7 @@ private:
     // Set methods
     void setCurrentPlayerPosition(const QPoint &currentPosition);
     void setCurrentPlayerField(Field *field);
+    void setPlayerFocusItem(GameItem *focusItem);
     void setLoaded(bool loaded);
     void setLoading(bool loading);
 
@@ -110,6 +111,8 @@ signals:
 private slots:
     void onPlayerPositionChanged();
     void onLoadingFinished();
+    void onPrimaryActionPressedChanged(bool pressed);
+    void onSecundaryActionPressedChanged(bool pressed);
 
 public slots:
     void tick();

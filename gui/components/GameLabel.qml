@@ -8,7 +8,6 @@ Label {
 
     font.bold: true
     font.family: app.fontFamily
-    font.styleName: app.fontStyleName
     font.pixelSize: app.mediumFont
     font.weight: Font.ExtraBold
     z: Map.Layer4Highest

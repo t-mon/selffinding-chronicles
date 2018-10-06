@@ -322,7 +322,6 @@ TreeItem *Map::createTreeItem(const QVariantMap &treeItemMap)
     treeItem->setUnaccessableMap(unaccessableMap);
     treeItem->setVisiblilityMap(visibilityMap);
     treeItem->setSize(itemSize);
-    treeItem->setUnaccessableMap(unaccessableMap);
     treeItem->setName(description.value("name").toString());
     treeItem->setImageName(description.value("imageName").toString());
 

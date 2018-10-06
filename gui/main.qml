@@ -10,10 +10,12 @@ ApplicationWindow {
     visible: true
     width: 800
     height: 600
-    title: qsTr("Self finding chronicles")
+    title: gameName
     visibility: ApplicationWindow.Windowed
 
     property int controlMode: PlayerController.ControlModeKeyBoard
+
+    property string gameName: qsTr("Self finding chronicles")
 
     // General UI configurations
     property int margins: 14
@@ -26,11 +28,14 @@ ApplicationWindow {
     property int iconSize: 40
     property int delegateHeight: 60
 
-    property string fontFamily: "EB Garamond"
-    property string fontStyleName: "12 Regular"
-
+    property string fontFamily: gameFont.name
     property real gridSize: Math.min(app.width / 30, app.height / 20)
 
+    FontLoader {
+        id: gameFont
+        source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
+        //source: "/fonts/ArgosGeorge/ArgosGeorge.ttf"
+    }
 
     Settings {
         id: settings

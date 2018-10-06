@@ -19,6 +19,8 @@ World::World(QObject *parent) :
 
     // Create player controller
     m_playerController = new PlayerController(m_player, this);
+    connect(m_playerController, &PlayerController::primaryActionPressedChanged, this, &World::onPrimaryActionPressedChanged);
+    connect(m_playerController, &PlayerController::secondaryActionPressedChanged, this, &World::onSecundaryActionPressedChanged);
 
     m_collisionDetector = new CollisionDetector(this);
 
@@ -156,6 +158,14 @@ void World::setCurrentPlayerField(Field *field)
     emit currentPlayerFieldChanged(m_currentPlayerField);
 }
 
+void World::setPlayerFocusItem(GameItem *focusItem)
+{
+    if (m_playerFocusItem == focusItem)
+        return;
+
+    m_playerFocusItem = focusItem;
+}
+
 void World::setLoaded(bool loaded)
 {
     if (m_loaded == loaded)
@@ -193,7 +203,7 @@ void World::doPlayerMovement()
     // Check collision with object
     evaluateInRangeFields(m_player->centerPosition() + delta);
     foreach (Field *field, m_fieldsInRange) {
-        if (field->hasItem()) {
+        if (field->hasItem() && field->gameItems()->gameItems().last()->interaction() != GameItem::InteractionNone) {
             if (m_collisionDetector->checkCollision(m_player, field->gameItems()->gameItems().last())) {
                 qCDebug(dcWorld()) << "Player collision with" << field->gameItems()->gameItems().last();
             }
@@ -428,6 +438,7 @@ void World::evaluateInRangeFields(const QPointF &playerPosition)
         }
     }
 
+    // Get the focus item
     if (visibleItems.isEmpty()) {
         // No item visible, reset also the old one
         if (m_playerFocusItem) {
@@ -463,6 +474,7 @@ void World::evaluateInRangeFields(const QPointF &playerPosition)
         }
     }
 
+    // Mark fields in range
     foreach (Field *field, fieldsInRange) {
         if (!m_fieldsInRange.contains(field)) {
             field->setInPlayerRange(true);
@@ -513,6 +525,21 @@ void World::onLoadingFinished()
 
     // Start the game after loading
     Game::instance()->setRunning(true);
+}
+
+void World::onPrimaryActionPressedChanged(bool pressed)
+{
+    qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
+}
+
+void World::onSecundaryActionPressedChanged(bool pressed)
+{
+    qCDebug(dcWorld()) << "Secundary action" << (pressed ? "pressed" : "released");
+    if (m_playerFocusItem && pressed) {
+        //qCDebug(dcWorld()) << "Perform interaction" << m_playerFocusItem->interaction();
+        m_playerFocusItem->performInteraction();
+    }
+
 }
 
 void World::tick()

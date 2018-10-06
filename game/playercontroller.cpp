@@ -160,14 +160,22 @@ void PlayerController::setRightPressed(bool rightPressed)
 
 void PlayerController::setPrimaryActionPressed(bool primaryActionPressed)
 {
+    if (m_primaryActionPressed == primaryActionPressed)
+        return;
+
     qCDebug(dcPlayerController()) << "Primary action" << (primaryActionPressed ? "pressed" : "released");
     m_primaryActionPressed = primaryActionPressed;
+    emit primaryActionPressedChanged(m_primaryActionPressed);
 }
 
 void PlayerController::setSecondaryActionPressed(bool secondaryActionPressed)
 {
+    if (m_secondaryActionPressed == secondaryActionPressed)
+        return;
+
     qCDebug(dcPlayerController()) << "Secondary action" << (secondaryActionPressed ? "pressed" : "released");
     m_secondaryActionPressed = secondaryActionPressed;
+    emit secondaryActionPressedChanged(m_secondaryActionPressed);
 }
 
 QPointF PlayerController::moveKeyBoard()

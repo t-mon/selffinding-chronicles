@@ -27,7 +27,7 @@ Item {
         border.color: "black"
         opacity: 0.1
         border.width: 2
-        visible: Game.debugging
+        visible: gameItem.playerFocus || Game.debugging
         radius: gameItem.shape === GameObject.ShapeCircle ? width / 2 : 0
     }
 
@@ -37,7 +37,7 @@ Item {
         anchors.horizontalCenter: root.horizontalCenter
         text: gameItem.name
         color: "black"
-        visible: Game.debugging
+        visible: gameItem.playerFocus || Game.debugging
     }
 }
 
