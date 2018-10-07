@@ -51,7 +51,5 @@ Item {
                 color: "green"; opacity: 0.5;
             }
         }
-
     }
-
 }

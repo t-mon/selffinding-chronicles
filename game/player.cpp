@@ -12,6 +12,10 @@ Player::Player(QObject *parent) :
     m_auraCircleObject->setName("Aura");
     m_auraCircleObject->setShape(GameObject::ShapeCircle);
 
+    m_inventory = new GameItems(this);
+    m_inventoryProxy = new GameItemsProxy(this);
+    m_inventoryProxy->setGameItems(m_inventory);
+
     connect(this, &GameObject::positionChanged, this, &Player::onPositionChanged);
     updateAuraObject();
 }
@@ -19,6 +23,16 @@ Player::Player(QObject *parent) :
 GameObject *Player::auraCircleObject() const
 {
     return m_auraCircleObject;
+}
+
+GameItems *Player::inventory() const
+{
+    return m_inventory;
+}
+
+GameItemsProxy *Player::inventoryProxy() const
+{
+    return m_inventoryProxy;
 }
 
 qreal Player::angle() const
@@ -108,7 +122,6 @@ void Player::setRunning(bool running)
     } else {
         setSpeed(0.03);
     }
-
 }
 
 void Player::onPositionChanged(const QPointF newPosition)

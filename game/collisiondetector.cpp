@@ -53,8 +53,9 @@ bool CollisionDetector::checkRectangleRectangleCollision(GameObject *rectangleOn
 
 bool CollisionDetector::checkCircleCircleCollision(GameObject *firstCirlce, GameObject *secondCircle)
 {
-    qreal distance = calculateCenterDistance(firstCirlce, secondCircle);
-    return distance <= (firstCirlce->size().width() / 2 + secondCircle->size().width() / 2);
+    qreal centerDistance = calculateCenterDistance(firstCirlce, secondCircle);
+    qreal minimalDistance = (static_cast<qreal>(firstCirlce->size().width()) / 2.0 + static_cast<qreal>(secondCircle->size().width()) / 2.0);
+    return centerDistance <= minimalDistance;
 }
 
 bool CollisionDetector::checkRectangleCircleCollision(GameObject *rectangle, GameObject *circle)

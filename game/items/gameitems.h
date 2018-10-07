@@ -11,7 +11,7 @@ class GameItems : public QAbstractListModel
     Q_OBJECT
 public:
     enum ItemRole {
-        NameRole,
+        NameRole = Qt::DisplayRole,
         PositionRole,
         LayerRole,
         CenterPositionRole,

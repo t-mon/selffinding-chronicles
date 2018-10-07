@@ -536,9 +536,25 @@ void World::onSecundaryActionPressedChanged(bool pressed)
 {
     qCDebug(dcWorld()) << "Secundary action" << (pressed ? "pressed" : "released");
     if (m_playerFocusItem && pressed) {
+        switch (m_playerFocusItem->itemType()) {
+        case GameItem::TypePlant:
+            if (m_playerFocusItem->interaction() == GameItem::InteractionPick) {
+                qCDebug(dcWorld()) << "Pick up item" << m_playerFocusItem;
+                m_gameItems->removeGameItem(m_playerFocusItem);
+                m_player->inventory()->addGameItem(m_playerFocusItem);
+                m_playerFocusItem = nullptr;
+                evaluateInRangeFields(m_player->position());
+
+            }
+            break;
+        default:
+            break;
+        }
+
         //qCDebug(dcWorld()) << "Perform interaction" << m_playerFocusItem->interaction();
-        m_playerFocusItem->performInteraction();
+        //m_playerFocusItem->performInteraction();
     }
+
 
 }
 
