@@ -218,8 +218,6 @@ void World::doPlayerMovement()
 
     // Calculate in range fields
     evaluateInRangeFields(m_player->centerPosition());
-
-    // Check
 }
 
 Field *World::getFieldFromPosition(const QPointF position) const
@@ -385,7 +383,6 @@ void World::evaluateInRangeFields(const QPointF &playerPosition)
     }
     Field *mostSouthField = fieldIterator;
 
-
     // Get most west field
     iteratorCount = 0; fieldIterator = currentField;
     while (fieldIterator->westField() && iteratorCount < m_player->auraRange() + 1) {
@@ -483,6 +480,34 @@ void World::evaluateInRangeFields(const QPointF &playerPosition)
     }
 }
 
+void World::pickItem(GameItem *item)
+{
+    qCDebug(dcWorld()) << "Pick up item" << item;
+
+    // Make fields accessable according to the unacessableMap
+    foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
+        QPointF absolutCoordinate(item->position() + unaccessableOffset);
+        Field *field = m_map->getField(absolutCoordinate);
+        if (!field)
+            continue;
+
+        field->setAccessible(true);
+    }
+
+    // Remove visible item parts from the map fields
+    foreach(const QPoint &visibilityOffset, item->visibilityMap()) {
+        QPointF absolutCoordinate(item->position() + visibilityOffset);
+        Field *field = m_map->getField(absolutCoordinate);
+        if (!field)
+            continue;
+
+        field->gameItems()->removeGameItem(item);
+    }
+
+    m_gameItems->removeGameItem(item);
+    m_player->inventory()->addGameItem(item);
+}
+
 void World::onPlayerPositionChanged()
 {
     // Calculate the current field on the map
@@ -539,12 +564,9 @@ void World::onSecundaryActionPressedChanged(bool pressed)
         switch (m_playerFocusItem->itemType()) {
         case GameItem::TypePlant:
             if (m_playerFocusItem->interaction() == GameItem::InteractionPick) {
-                qCDebug(dcWorld()) << "Pick up item" << m_playerFocusItem;
-                m_gameItems->removeGameItem(m_playerFocusItem);
-                m_player->inventory()->addGameItem(m_playerFocusItem);
+                pickItem(m_playerFocusItem);
                 m_playerFocusItem = nullptr;
                 evaluateInRangeFields(m_player->position());
-
             }
             break;
         default:

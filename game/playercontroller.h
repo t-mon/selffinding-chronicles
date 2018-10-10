@@ -27,8 +27,10 @@ public:
     bool backwardPressed() const;
     bool leftPressed() const;
     bool rightPressed() const;
+
     bool primaryActionPressed() const;
     bool secondaryActionPressed() const;
+    bool inventoryPressed() const;
 
     void keyPressed(const Qt::Key &key);
     void keyReleased(const Qt::Key &key);
@@ -43,8 +45,10 @@ private:
     bool m_backwardPressed = false;
     bool m_leftPressed = false;
     bool m_rightPressed = false;
+
     bool m_primaryActionPressed = false;
     bool m_secondaryActionPressed = false;
+    bool m_inventoryPressed = false;
 
     void setForwardPressed(bool forwaredPressed);
     void setBackwardPressed(bool backwardPressed);
@@ -53,6 +57,7 @@ private:
 
     void setPrimaryActionPressed(bool primaryActionPressed);
     void setSecondaryActionPressed(bool secondaryActionPressed);
+    void setInventoryPressed(bool inventoryPressed);
 
     QPointF moveKeyBoard();
     QPointF moveKeyBoardMouse();
@@ -60,8 +65,10 @@ private:
 
 signals:
     void controlModeChanged(ControlMode controlMode);
+
     void primaryActionPressedChanged(bool pressed);
     void secondaryActionPressedChanged(bool pressed);
+    void inventoryPressedChanged(bool pressed);
 
 };
 

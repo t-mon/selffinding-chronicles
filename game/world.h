@@ -98,6 +98,8 @@ private:
     QPointF adjustCollition(QPointF delta);
     void evaluateInRangeFields(const QPointF &playerPosition);
 
+    void pickItem(GameItem *item);
+
 signals:
     void sizeChanged(const QSize &size);
     void boundingSizeChanged(const QSize &boundingSize);
