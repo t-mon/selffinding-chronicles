@@ -104,6 +104,11 @@ signals:
     void playerFocusChanged(bool playerFocus);
     void playerVisibleChanged(bool playerVisible);
 
+    // Interaction signals
+    void picked();
+    void opened();
+    void closed();
+
 };
 
 QDebug operator<<(QDebug debug, GameItem *gameItem);

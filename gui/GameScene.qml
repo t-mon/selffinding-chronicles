@@ -44,14 +44,8 @@ Item {
 
     Connections {
         target: Game.world.playerController
-        onInventoryPressedChanged: {
-            if (pressed && !inventoryVisible) {
-                inventoryPopup.open()
-                inventoryVisible = true
-            } else if (pressed && inventoryVisible) {
-                inventoryPopup.close()
-                inventoryVisible = false
-            }
+        onInventoryPressed: {
+            inventoryPopup.open()
         }
     }
 
@@ -206,22 +200,22 @@ Item {
         }
     }
 
-    MouseArea {
-        id: sceenMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        //visible: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
-        preventStealing: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
-        onMouseXChanged: calculateAngle()
-        onMouseYChanged: calculateAngle()
-        onClicked: {
-            if (inventoryPopup.opened) {
-                inventoryPopup.close()
-            } else {
-                inventoryPopup.open()
-            }
-        }
-    }
+    //    MouseArea {
+    //        id: sceenMouseArea
+    //        anchors.fill: parent
+    //        hoverEnabled: true
+    //        //visible: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
+    //        preventStealing: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
+    //        onMouseXChanged: calculateAngle()
+    //        onMouseYChanged: calculateAngle()
+    //        onClicked: {
+    //            if (inventoryPopup.opened) {
+    //                inventoryPopup.close()
+    //            } else {
+    //                inventoryPopup.open()
+    //            }
+    //        }
+    //    }
 
     Popup {
         id: inventoryPopup

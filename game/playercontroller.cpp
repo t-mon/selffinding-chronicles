@@ -55,11 +55,6 @@ bool PlayerController::secondaryActionPressed() const
     return m_secondaryActionPressed;
 }
 
-bool PlayerController::inventoryPressed() const
-{
-    return m_inventoryPressed;
-}
-
 void PlayerController::keyPressed(const Qt::Key &key)
 {
     // TODO: load key map
@@ -83,7 +78,7 @@ void PlayerController::keyPressed(const Qt::Key &key)
         setSecondaryActionPressed(true);
         break;
     case Qt::Key_Tab:
-        setInventoryPressed(true);
+        emit inventoryPressed();
         break;
     default:
         break;
@@ -113,7 +108,6 @@ void PlayerController::keyReleased(const Qt::Key &key)
         setSecondaryActionPressed(false);
         break;
     case Qt::Key_Tab:
-        setInventoryPressed(false);
         break;
     default:
         break;
@@ -187,16 +181,6 @@ void PlayerController::setSecondaryActionPressed(bool secondaryActionPressed)
     qCDebug(dcPlayerController()) << "Secondary action" << (secondaryActionPressed ? "pressed" : "released");
     m_secondaryActionPressed = secondaryActionPressed;
     emit secondaryActionPressedChanged(m_secondaryActionPressed);
-}
-
-void PlayerController::setInventoryPressed(bool inventoryPressed)
-{
-    if (m_inventoryPressed == inventoryPressed)
-        return;
-
-    qCDebug(dcPlayerController()) << "Inventory" << (inventoryPressed ? "pressed" : "released");
-    m_inventoryPressed = inventoryPressed;
-    emit inventoryPressedChanged(m_inventoryPressed);
 }
 
 QPointF PlayerController::moveKeyBoard()

@@ -148,8 +148,6 @@ QString GameItem::interactionToString(const GameItem::Interaction &interaction)
         //: This string describes an interaction for an item.
         interactionString = tr("Read");
         break;
-    default:
-        break;
     }
 
     return interactionString;

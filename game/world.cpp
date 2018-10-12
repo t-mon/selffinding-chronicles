@@ -564,6 +564,7 @@ void World::onSecundaryActionPressedChanged(bool pressed)
         switch (m_playerFocusItem->itemType()) {
         case GameItem::TypePlant:
             if (m_playerFocusItem->interaction() == GameItem::InteractionPick) {
+                m_playerFocusItem->performInteraction();
                 pickItem(m_playerFocusItem);
                 m_playerFocusItem = nullptr;
                 evaluateInRangeFields(m_player->position());

@@ -20,6 +20,13 @@ GameItem::Type PlantItem::itemType() const
 void PlantItem::performInteraction()
 {
     qCDebug(dcItem()) << itemTypeName() << name() << "perform interaction" << m_interaction;
+    switch (m_interaction) {
+    case InteractionPick:
+        emit picked();
+        break;
+    default:
+        break;
+    }
 }
 
 int PlantItem::healing() const

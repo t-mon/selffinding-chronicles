@@ -30,7 +30,6 @@ public:
 
     bool primaryActionPressed() const;
     bool secondaryActionPressed() const;
-    bool inventoryPressed() const;
 
     void keyPressed(const Qt::Key &key);
     void keyReleased(const Qt::Key &key);
@@ -57,7 +56,6 @@ private:
 
     void setPrimaryActionPressed(bool primaryActionPressed);
     void setSecondaryActionPressed(bool secondaryActionPressed);
-    void setInventoryPressed(bool inventoryPressed);
 
     QPointF moveKeyBoard();
     QPointF moveKeyBoardMouse();
@@ -68,7 +66,7 @@ signals:
 
     void primaryActionPressedChanged(bool pressed);
     void secondaryActionPressedChanged(bool pressed);
-    void inventoryPressedChanged(bool pressed);
+    void inventoryPressed();
 
 };
 

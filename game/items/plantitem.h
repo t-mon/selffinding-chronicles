@@ -37,7 +37,6 @@ signals:
     void manaChanged(int mana);
     void speedChanged(int speed);
 
-public slots:
 };
 
 #endif // PLANTITEM_H
