@@ -9,14 +9,15 @@ import "../components"
 Item {
     id: root
 
-    property QtObject gameItem: null
+    property var gameItem: null
 
     Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
+    Component.onDestruction: console.log("Destroy item")
 
     Image {
         id: itemImage
         anchors.fill: parent
-        source: dataDirectory + gameItem.imageName
+        source: gameItem ? dataDirectory + gameItem.imageName : ""
         opacity: Game.debugging ? 0.5 : 1
     }
 
@@ -27,17 +28,18 @@ Item {
         border.color: "black"
         opacity: 0.1
         border.width: 2
-        visible: Game.debugging
-        radius: gameItem.shape === GameObject.ShapeCircle ? width / 2 : 0
+        visible: gameItem ? gameItem.playerFocus || Game.debugging : Game.debugging
+        radius: gameItem ? (gameItem.shape === GameObject.ShapeCircle ? width / 2 : 0) : 0
     }
 
     GameLabel {
         id: nameLabel
         anchors.bottom: root.top
         anchors.horizontalCenter: root.horizontalCenter
-        text: gameItem.name
+        text: gameItem ? gameItem.name : ""
         color: "black"
-        visible: Game.debugging
+        visible: gameItem ? gameItem.playerFocus || Game.debugging : Game.debugging
     }
+
 }
 

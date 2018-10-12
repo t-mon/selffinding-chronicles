@@ -15,6 +15,7 @@ Item {
     property real cellSize: zoomLevel * Math.min(root.width / 30, root.height / 20)
 
     property bool debugView: true
+    property bool inventoryVisible: false
 
     Component.onCompleted: {
         console.log("Game scene size: " + root.width + "/" + root.height)
@@ -38,6 +39,13 @@ Item {
         target: Game.world.player
         onPositionChanged: {
             evaluateBoundingRectangle()
+        }
+    }
+
+    Connections {
+        target: Game.world.playerController
+        onInventoryPressed: {
+            inventoryPopup.open()
         }
     }
 
@@ -192,25 +200,26 @@ Item {
         }
     }
 
-    MouseArea {
-        id: sceenMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        //visible: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
-        preventStealing: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
-        onMouseXChanged: calculateAngle()
-        onMouseYChanged: calculateAngle()
-        onClicked: {
-            if (inventoryPopup.opened) {
-                inventoryPopup.close()
-            } else {
-                inventoryPopup.open()
-            }
-        }
-    }
+    //    MouseArea {
+    //        id: sceenMouseArea
+    //        anchors.fill: parent
+    //        hoverEnabled: true
+    //        //visible: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
+    //        preventStealing: Game.world.playerController.controlMode === Game.ControlModeKeyBoardMouse
+    //        onMouseXChanged: calculateAngle()
+    //        onMouseYChanged: calculateAngle()
+    //        onClicked: {
+    //            if (inventoryPopup.opened) {
+    //                inventoryPopup.close()
+    //            } else {
+    //                inventoryPopup.open()
+    //            }
+    //        }
+    //    }
 
     Popup {
         id: inventoryPopup
+
         x: root.width * 0.05
         y: root.height * 0.05
         width: root.width * 0.9
@@ -223,6 +232,7 @@ Item {
         onOpened: Game.running = false
         onClosed: Game.running = true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+        Component.onCompleted: Game.running = false
     }
 
     function evaluateBoundingRectangle() {

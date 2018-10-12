@@ -77,7 +77,7 @@ void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
     if (autoRepeat)
         return;
 
-    qCDebug(dcGame()) << "Key pressed" << key;
+    //qCDebug(dcGame()) << "Key pressed" << key;
     m_world->playerController()->keyPressed(key);
 
     switch (key) {
@@ -97,7 +97,7 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
     if (autoRepeat)
         return;
 
-    qCDebug(dcGame()) << "Key released" << key;
+    //qCDebug(dcGame()) << "Key released" << key;
     m_world->playerController()->keyReleased(key);
 }
 

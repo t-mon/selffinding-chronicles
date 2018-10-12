@@ -27,6 +27,7 @@ public:
     bool backwardPressed() const;
     bool leftPressed() const;
     bool rightPressed() const;
+
     bool primaryActionPressed() const;
     bool secondaryActionPressed() const;
 
@@ -43,8 +44,10 @@ private:
     bool m_backwardPressed = false;
     bool m_leftPressed = false;
     bool m_rightPressed = false;
+
     bool m_primaryActionPressed = false;
     bool m_secondaryActionPressed = false;
+    bool m_inventoryPressed = false;
 
     void setForwardPressed(bool forwaredPressed);
     void setBackwardPressed(bool backwardPressed);
@@ -61,7 +64,9 @@ private:
 signals:
     void controlModeChanged(ControlMode controlMode);
 
-public slots:
+    void primaryActionPressedChanged(bool pressed);
+    void secondaryActionPressedChanged(bool pressed);
+    void inventoryPressed();
 
 };
 

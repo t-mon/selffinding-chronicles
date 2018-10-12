@@ -25,7 +25,6 @@ Page {
         anchors.top: parent.top
         anchors.topMargin: app.margins
 
-
         Item {
             id: coordinateSystemImage
             opacity: Game.debugging ? 1 : 0

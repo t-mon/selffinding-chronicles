@@ -14,10 +14,12 @@ class GameItem : public GameObject
     Q_PROPERTY(Type itemType READ itemType CONSTANT)
     Q_PROPERTY(QString itemTypeName READ itemTypeName CONSTANT)
     Q_PROPERTY(int price READ price NOTIFY priceChanged)
+    Q_PROPERTY(bool playerFocus READ playerFocus NOTIFY playerFocusChanged)
+    Q_PROPERTY(bool playerVisible READ playerVisible NOTIFY playerVisibleChanged)
 
 public:
     enum Type {
-        TypeUnknown,
+        TypeNone,
         TypePlant,
         TypeAnimal,
         TypeTree,
@@ -80,6 +82,8 @@ public:
 
     virtual void performInteraction() = 0;
 
+    static QString interactionToString(const Interaction &interaction);
+
 private:
     QString m_imageName;
     int m_price = 0;
@@ -99,6 +103,11 @@ signals:
     void priceChanged(int price);
     void playerFocusChanged(bool playerFocus);
     void playerVisibleChanged(bool playerVisible);
+
+    // Interaction signals
+    void picked();
+    void opened();
+    void closed();
 
 };
 

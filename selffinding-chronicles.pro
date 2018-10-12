@@ -28,6 +28,7 @@ HEADERS += \
     game/items/plantitem.h \
     game/items/treeitem.h \
     game/items/gameitems.h \
+    game/items/gameitemsproxy.h
 
 SOURCES += game/main.cpp \
     game/player.cpp \
@@ -44,3 +45,4 @@ SOURCES += game/main.cpp \
     game/items/plantitem.cpp \
     game/items/treeitem.cpp \
     game/items/gameitems.cpp \
+    game/items/gameitemsproxy.cpp

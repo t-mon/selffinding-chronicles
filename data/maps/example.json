@@ -29,6 +29,31 @@
                 "x": 18,
                 "y": 6,
                 "plant": ":/mapdata/plants/healing-herb.json"
+            },
+            {
+                "x": 6,
+                "y": 17,
+                "plant": ":/mapdata/plants/healing-herb.json"
+            },
+            {
+                "x": 6,
+                "y": 19,
+                "plant": ":/mapdata/plants/healing-herb.json"
+            },
+            {
+                "x": 6,
+                "y": 21,
+                "plant": ":/mapdata/plants/healing-herb.json"
+            },
+            {
+                "x": 8,
+                "y": 21,
+                "plant": ":/mapdata/plants/healing-herb.json"
+            },
+            {
+                "x": 10,
+                "y": 21,
+                "plant": ":/mapdata/plants/healing-herb.json"
             }
         ],
         "trees": [

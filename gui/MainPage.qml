@@ -11,6 +11,8 @@ Page {
 
         anchors.centerIn: parent
 
+
+
         Button {
             id: playButton
             Layout.alignment: Qt.AlignHCenter

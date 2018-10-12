@@ -24,7 +24,6 @@ Item {
                 Layout.minimumHeight: root.height * 0.1
                 color: "blue"; opacity: 0.5;
             }
-
         }
 
         RowLayout {
@@ -51,7 +50,5 @@ Item {
                 color: "green"; opacity: 0.5;
             }
         }
-
     }
-
 }

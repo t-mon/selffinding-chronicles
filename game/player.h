@@ -5,11 +5,14 @@
 #include <QPoint>
 
 #include "gameobject.h"
+#include "items/gameitemsproxy.h"
 
 class Player : public GameObject
 {
     Q_OBJECT
     Q_PROPERTY(GameObject *auraCircleObject READ auraCircleObject CONSTANT)
+    Q_PROPERTY(GameItems *inventory READ inventory CONSTANT)
+    Q_PROPERTY(GameItemsProxy *inventoryProxy READ inventoryProxy CONSTANT)
     Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
     Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
@@ -20,6 +23,8 @@ public:
     explicit Player(QObject *parent = nullptr);
 
     GameObject *auraCircleObject() const;
+    GameItems *inventory() const;
+    GameItemsProxy *inventoryProxy() const;
 
     qreal angle() const;
     void setAngle(const qreal &angle);
@@ -43,6 +48,8 @@ public:
 
 private:
     GameObject *m_auraCircleObject = nullptr;
+    GameItems *m_inventory = nullptr;
+    GameItemsProxy *m_inventoryProxy = nullptr;
     qreal m_angle = 0;
     qreal m_speed = 0.03;
     int m_auraRange = 3;

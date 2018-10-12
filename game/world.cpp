@@ -19,6 +19,8 @@ World::World(QObject *parent) :
 
     // Create player controller
     m_playerController = new PlayerController(m_player, this);
+    connect(m_playerController, &PlayerController::primaryActionPressedChanged, this, &World::onPrimaryActionPressedChanged);
+    connect(m_playerController, &PlayerController::secondaryActionPressedChanged, this, &World::onSecundaryActionPressedChanged);
 
     m_collisionDetector = new CollisionDetector(this);
 
@@ -156,6 +158,14 @@ void World::setCurrentPlayerField(Field *field)
     emit currentPlayerFieldChanged(m_currentPlayerField);
 }
 
+void World::setPlayerFocusItem(GameItem *focusItem)
+{
+    if (m_playerFocusItem == focusItem)
+        return;
+
+    m_playerFocusItem = focusItem;
+}
+
 void World::setLoaded(bool loaded)
 {
     if (m_loaded == loaded)
@@ -193,7 +203,7 @@ void World::doPlayerMovement()
     // Check collision with object
     evaluateInRangeFields(m_player->centerPosition() + delta);
     foreach (Field *field, m_fieldsInRange) {
-        if (field->hasItem()) {
+        if (field->hasItem() && field->gameItems()->gameItems().last()->interaction() != GameItem::InteractionNone) {
             if (m_collisionDetector->checkCollision(m_player, field->gameItems()->gameItems().last())) {
                 qCDebug(dcWorld()) << "Player collision with" << field->gameItems()->gameItems().last();
             }
@@ -208,8 +218,6 @@ void World::doPlayerMovement()
 
     // Calculate in range fields
     evaluateInRangeFields(m_player->centerPosition());
-
-    // Check
 }
 
 Field *World::getFieldFromPosition(const QPointF position) const
@@ -375,7 +383,6 @@ void World::evaluateInRangeFields(const QPointF &playerPosition)
     }
     Field *mostSouthField = fieldIterator;
 
-
     // Get most west field
     iteratorCount = 0; fieldIterator = currentField;
     while (fieldIterator->westField() && iteratorCount < m_player->auraRange() + 1) {
@@ -428,6 +435,7 @@ void World::evaluateInRangeFields(const QPointF &playerPosition)
         }
     }
 
+    // Get the focus item
     if (visibleItems.isEmpty()) {
         // No item visible, reset also the old one
         if (m_playerFocusItem) {
@@ -463,12 +471,41 @@ void World::evaluateInRangeFields(const QPointF &playerPosition)
         }
     }
 
+    // Mark fields in range
     foreach (Field *field, fieldsInRange) {
         if (!m_fieldsInRange.contains(field)) {
             field->setInPlayerRange(true);
             m_fieldsInRange.append(field);
         }
     }
+}
+
+void World::pickItem(GameItem *item)
+{
+    qCDebug(dcWorld()) << "Pick up item" << item;
+
+    // Make fields accessable according to the unacessableMap
+    foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
+        QPointF absolutCoordinate(item->position() + unaccessableOffset);
+        Field *field = m_map->getField(absolutCoordinate);
+        if (!field)
+            continue;
+
+        field->setAccessible(true);
+    }
+
+    // Remove visible item parts from the map fields
+    foreach(const QPoint &visibilityOffset, item->visibilityMap()) {
+        QPointF absolutCoordinate(item->position() + visibilityOffset);
+        Field *field = m_map->getField(absolutCoordinate);
+        if (!field)
+            continue;
+
+        field->gameItems()->removeGameItem(item);
+    }
+
+    m_gameItems->removeGameItem(item);
+    m_player->inventory()->addGameItem(item);
 }
 
 void World::onPlayerPositionChanged()
@@ -513,6 +550,35 @@ void World::onLoadingFinished()
 
     // Start the game after loading
     Game::instance()->setRunning(true);
+}
+
+void World::onPrimaryActionPressedChanged(bool pressed)
+{
+    qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
+}
+
+void World::onSecundaryActionPressedChanged(bool pressed)
+{
+    qCDebug(dcWorld()) << "Secundary action" << (pressed ? "pressed" : "released");
+    if (m_playerFocusItem && pressed) {
+        switch (m_playerFocusItem->itemType()) {
+        case GameItem::TypePlant:
+            if (m_playerFocusItem->interaction() == GameItem::InteractionPick) {
+                m_playerFocusItem->performInteraction();
+                pickItem(m_playerFocusItem);
+                m_playerFocusItem = nullptr;
+                evaluateInRangeFields(m_player->position());
+            }
+            break;
+        default:
+            break;
+        }
+
+        //qCDebug(dcWorld()) << "Perform interaction" << m_playerFocusItem->interaction();
+        //m_playerFocusItem->performInteraction();
+    }
+
+
 }
 
 void World::tick()

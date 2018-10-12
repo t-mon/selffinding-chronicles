@@ -121,6 +121,7 @@ int main(int argc, char *argv[])
     // Items
     qmlRegisterUncreatableType<GameItem>("Chronicles", 1, 0, "GameItem", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML. Get it from the world object.");
+    qmlRegisterUncreatableType<GameItemsProxy>("Chronicles", 1, 0, "GameItemsProxy", "Can't create this in QML. Get it from the player object.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML. Get it from the world object.");
 
