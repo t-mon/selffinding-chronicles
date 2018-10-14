@@ -179,6 +179,32 @@ void Map::loadMap(const QString &fileName)
         m_items.append(plantItem);
     }
 
+    // Load plants
+    qCDebug(dcMap()) << "    --> load weapons";
+    QVariantList weaponsList = mapData.value("items").toMap().value("weapons").toList();
+    foreach (const QVariant &weaponVariant, weaponsList) {
+        WeaponItem *weaponItem = createWeaponItem(weaponVariant.toMap());
+        if (!weaponItem) {
+            qCWarning(dcMap()) << "Could not create weapon item for" << weaponVariant;
+            continue;
+        }
+
+        // Place the item into the field
+        Field *field = getField(static_cast<int>(weaponItem->position().x()), static_cast<int>(weaponItem->position().y()));
+        if (!field) {
+            qCWarning(dcMap()) << "Could not find any field for" << weaponItem;
+            weaponItem->deleteLater();
+            continue;
+        }
+        placeItemOnMap(weaponItem);
+
+        qCDebug(dcMap()) << "        " << weaponItem;
+        weaponItem->moveToThread(QCoreApplication::instance()->thread());
+        m_weapons.append(weaponItem);
+        m_items.append(weaponItem);
+    }
+
+
     qCDebug(dcMap()) << "    --> load trees";
     QVariantList treesList = mapData.value("items").toMap().value("trees").toList();
     foreach (const QVariant &treeVariant, treesList) {
@@ -326,6 +352,37 @@ TreeItem *Map::createTreeItem(const QVariantMap &treeItemMap)
     treeItem->setImageName(description.value("imageName").toString());
 
     return treeItem;
+}
+
+WeaponItem *Map::createWeaponItem(const QVariantMap &weaponItemMap)
+{
+    QPoint position = QPoint(weaponItemMap.value("x").toInt(), weaponItemMap.value("y").toInt());
+    QString itemDescriptionFileName = weaponItemMap.value("weapon").toString();
+
+    QVariantMap description = loadMapData(itemDescriptionFileName);
+    if (description.isEmpty()) {
+        qCWarning(dcMap()) << "The weapon file" << itemDescriptionFileName << "does not contains any valid data.";
+        return nullptr;
+    }
+
+    QVariantMap geometryMap = description.value("geometry").toMap();
+    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
+    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
+    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
+
+    WeaponItem *weaponItem = new WeaponItem();
+    weaponItem->setPosition(position);
+    weaponItem->setSize(itemSize);
+    weaponItem->setShape(PlantItem::ShapeCircle);
+    weaponItem->setLayer(geometryMap.value("layer").toReal());
+    weaponItem->setUnaccessableMap(unaccessableMap);
+    weaponItem->setVisiblilityMap(visibilityMap);
+    weaponItem->setName(description.value("name").toString());
+    weaponItem->setImageName(description.value("imageName").toString());
+    weaponItem->setDamage(description.value("damage").toInt());
+    weaponItem->setPrice(description.value("price").toInt());
+
+    return weaponItem;
 }
 
 QList<QPoint> Map::loadFieldMap(const QVariantList &fieldMap)

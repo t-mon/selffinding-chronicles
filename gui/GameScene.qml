@@ -45,7 +45,8 @@ Item {
     Connections {
         target: Game.world.playerController
         onInventoryPressed: {
-            inventoryPopup.open()
+            console.log("inventory pressed ")
+            inventoryItem.visible = !inventoryItem.visible
         }
     }
 
@@ -217,22 +218,13 @@ Item {
     //        }
     //    }
 
-    Popup {
-        id: inventoryPopup
-
-        x: root.width * 0.05
-        y: root.height * 0.05
-        width: root.width * 0.9
-        height: root.height * 0.9
-        modal: true
-        focus: true
-
-        contentItem: InventoryItem { id: inventoryItem }
-
-        onOpened: Game.running = false
-        onClosed: Game.running = true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-        Component.onCompleted: Game.running = false
+    InventoryItem {
+        id: inventoryItem
+        anchors.fill: parent
+        visible: false
+        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
+        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
+        onVisibleChanged: visible ? Game.running = false : Game.running = true
     }
 
     function evaluateBoundingRectangle() {

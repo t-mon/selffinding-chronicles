@@ -20,7 +20,7 @@ World::World(QObject *parent) :
     // Create player controller
     m_playerController = new PlayerController(m_player, this);
     connect(m_playerController, &PlayerController::primaryActionPressedChanged, this, &World::onPrimaryActionPressedChanged);
-    connect(m_playerController, &PlayerController::secondaryActionPressedChanged, this, &World::onSecundaryActionPressedChanged);
+    connect(m_playerController, &PlayerController::secondaryActionPressedChanged, this, &World::onSecondaryActionPressedChanged);
 
     m_collisionDetector = new CollisionDetector(this);
 
@@ -484,6 +484,9 @@ void World::pickItem(GameItem *item)
 {
     qCDebug(dcWorld()) << "Pick up item" << item;
 
+    item->setPlayerFocus(false);
+    item->setPlayerVisible(false);
+
     // Make fields accessable according to the unacessableMap
     foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
         QPointF absolutCoordinate(item->position() + unaccessableOffset);
@@ -557,12 +560,16 @@ void World::onPrimaryActionPressedChanged(bool pressed)
     qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
 }
 
-void World::onSecundaryActionPressedChanged(bool pressed)
+void World::onSecondaryActionPressedChanged(bool pressed)
 {
-    qCDebug(dcWorld()) << "Secundary action" << (pressed ? "pressed" : "released");
+    if (!Game::instance()->running())
+        return;
+
+    qCDebug(dcWorld()) << "Secondary action" << (pressed ? "pressed" : "released");
     if (m_playerFocusItem && pressed) {
         switch (m_playerFocusItem->itemType()) {
         case GameItem::TypePlant:
+        case GameItem::TypeWeapon:
             if (m_playerFocusItem->interaction() == GameItem::InteractionPick) {
                 m_playerFocusItem->performInteraction();
                 pickItem(m_playerFocusItem);

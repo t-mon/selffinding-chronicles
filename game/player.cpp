@@ -14,7 +14,7 @@ Player::Player(QObject *parent) :
 
     m_inventory = new GameItems(this);
     m_inventoryProxy = new GameItemsProxy(this);
-    m_inventoryProxy->setGameItems(m_inventory);
+    //m_inventoryProxy->setGameItems(m_inventory);
 
     connect(this, &GameObject::positionChanged, this, &Player::onPositionChanged);
     updateAuraObject();
@@ -122,6 +122,48 @@ void Player::setRunning(bool running)
     } else {
         setSpeed(0.03);
     }
+}
+
+int Player::health() const
+{
+    return m_health;
+}
+
+void Player::setHealth(int health)
+{
+    if (m_health == health)
+        return;
+
+    m_health = health;
+    emit healthChanged(m_health);
+}
+
+int Player::mana() const
+{
+    return m_mana;
+}
+
+void Player::setMana(int mana)
+{
+    if (m_mana == mana)
+        return;
+
+    m_mana = mana;
+    emit manaChanged(m_mana);
+}
+
+int Player::wisdom() const
+{
+    return m_wisdom;
+}
+
+void Player::setWisdom(int wisdom)
+{
+    if (m_wisdom == wisdom)
+        return;
+
+    m_wisdom = wisdom;
+    emit wisdomChanged(m_wisdom);
 }
 
 void Player::onPositionChanged(const QPointF newPosition)

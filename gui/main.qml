@@ -34,7 +34,6 @@ ApplicationWindow {
     FontLoader {
         id: gameFont
         source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
-        //source: "/fonts/ArgosGeorge/ArgosGeorge.ttf"
     }
 
     Settings {

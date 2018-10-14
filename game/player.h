@@ -19,6 +19,10 @@ class Player : public GameObject
     Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
 
+    Q_PROPERTY(int health READ health NOTIFY healthChanged)
+    Q_PROPERTY(int mana READ mana NOTIFY manaChanged)
+    Q_PROPERTY(int wisdom READ wisdom NOTIFY wisdomChanged)
+
 public:
     explicit Player(QObject *parent = nullptr);
 
@@ -44,7 +48,14 @@ public:
     bool running() const;
     void setRunning(bool running);
 
-    // TODO: player properties like health, mana...
+    int health() const;
+    void setHealth(int health);
+
+    int mana() const;
+    void setMana(int mana);
+
+    int wisdom() const;
+    void setWisdom(int wisdom);
 
 private:
     GameObject *m_auraCircleObject = nullptr;
@@ -57,6 +68,10 @@ private:
     bool m_moving = false;
     bool m_running = false;
 
+    int m_health = 100;
+    int m_mana = 30;
+    int m_wisdom = 30;
+
 private slots:
     void onPositionChanged(const QPointF newPosition);
     void updateAuraObject();
@@ -68,6 +83,10 @@ signals:
     void movableChanged(bool movable);
     void movingChanged(bool moving);
     void runningChanged(bool running);
+
+    void healthChanged(int healt);
+    void manaChanged(int mana);
+    void wisdomChanged(int wisom);
 
 };
 

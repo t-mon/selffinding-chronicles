@@ -114,7 +114,7 @@ private slots:
     void onPlayerPositionChanged();
     void onLoadingFinished();
     void onPrimaryActionPressedChanged(bool pressed);
-    void onSecundaryActionPressedChanged(bool pressed);
+    void onSecondaryActionPressedChanged(bool pressed);
 
 public slots:
     void tick();

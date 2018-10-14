@@ -85,7 +85,7 @@ public:
     static QString interactionToString(const Interaction &interaction);
 
 private:
-    QString m_imageName;
+    QString m_imageName = "/images/items/placeholder.svg";
     int m_price = 0;
     bool m_playerFocus = false;
     bool m_playerVisible = false;

@@ -56,6 +56,18 @@
                 "plant": ":/mapdata/plants/healing-herb.json"
             }
         ],
+        "weapons": [
+            {
+                "x": 1,
+                "y": 5,
+                "weapon": ":/mapdata/weapons/sword.json"
+            },
+            {
+                "x": 5,
+                "y": 1,
+                "weapon": ":/mapdata/weapons/sword.json"
+            }
+        ],
         "trees": [
             {
                 "x": 26,

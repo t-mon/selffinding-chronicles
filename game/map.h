@@ -8,8 +8,9 @@
 
 #include "fields.h"
 #include "items/treeitem.h"
-#include "items/plantitem.h"
 #include "items/gameitems.h"
+#include "items/plantitem.h"
+#include "items/weaponitem.h"
 
 class Map : public QObject
 {
@@ -60,6 +61,7 @@ private:
     QList<Fields *> m_mapData;
     QList<GameItem *> m_items;
     QList<PlantItem *> m_plants;
+    QList<WeaponItem *> m_weapons;
     QList<TreeItem *> m_trees;
 
     QVariantMap loadMapData(const QString &mapDataFileName);
@@ -68,6 +70,7 @@ private:
 
     PlantItem *createPlantItem(const QVariantMap &plantItemMap);
     TreeItem *createTreeItem(const QVariantMap &treeItemMap);
+    WeaponItem *createWeaponItem(const QVariantMap &weaponItemMap);
     QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
 
 signals:

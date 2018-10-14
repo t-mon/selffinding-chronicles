@@ -12,5 +12,6 @@
         <file>fonts/EBGaramond/EBGaramondSC12-Regular.ttf</file>
         <file>fonts/ArgosGeorge/ArgosGeorge.ttf</file>
         <file>fonts/ArgosGeorge/ArgosGeorgeContour.ttf</file>
+        <file>mapdata/weapons/sword.json</file>
     </qresource>
 </RCC>

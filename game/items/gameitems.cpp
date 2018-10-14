@@ -71,7 +71,7 @@ void GameItems::removeGameItem(GameItem *item)
 
     int index = m_gameItems.indexOf(item);
     beginRemoveRows(QModelIndex(), index, index);
-    m_gameItems.removeOne(item);
+    m_gameItems.removeAll(item);
     endRemoveRows();
 }
 
