@@ -11,14 +11,15 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "#c2c2c2ff"
+        color: "black"
+        opacity: 0.4
     }
 
     ColumnLayout {
         anchors.fill: parent
+        spacing: 0
 
         RowLayout {
-
             Rectangle {
                 id: inventoryBackground
                 Layout.fillWidth: true
@@ -33,57 +34,43 @@ Item {
                 id: inventoryGridView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                model: Game.world.player.inventory
-                delegate: Rectangle {
-                    width: inventoryGridView.width / 6
-                    height: width
-                    color: "steelblue"
+                clip: true
+                model: Game.world.player.inventoryProxy
+                delegate: inventoryItemDelegate
 
-                    Image {
-                        id: itemImage
-                        anchors.fill: parent
-                        source: dataDirectory + model.imageName
-                        opacity: Game.debugging ? 0.5 : 1
+                Component {
+                    id: inventoryItemDelegate
+
+                    Item {
+                        width: inventoryGridView.width / 6
+                        height: width
+
+                        Rectangle {
+                            id: itemRectangle
+                            anchors.fill: parent
+                            anchors.margins: itemRectangle.width / 8
+
+                            color: "#22FFFFFF"
+                            border.color: "gray"
+                            border.width: width / 30
+                            radius: width / 6
+
+                            Image {
+                                id: itemImage
+                                anchors.fill: parent
+                                anchors.margins: itemRectangle.width / 8
+                                source: dataDirectory + model.imageName
+                                opacity: Game.debugging ? 0.5 : 1
+                            }
+                        }
                     }
-
                 }
             }
-
-
-            //            Item {
-            //                Layout.fillWidth: true
-            //                Layout.fillHeight: true
-
-            //                GridLayout {
-            //                    id: inventoryGridView
-            //                    anchors.fill: parent
-            //                    columns: 6
-
-            //                    Repeater {
-            //                        id: itemsRepeater
-            //                        model: Game.world.player.inventory
-            //                        delegate: Rectangle {
-            //                            width: inventoryGridView.width / 6
-            //                            height: width
-            //                            color: "steelblue"
-
-            //                            Image {
-            //                                id: itemImage
-            //                                anchors.fill: parent
-            //                                source: dataDirectory + model.imageName
-            //                                opacity: Game.debugging ? 0.5 : 1
-            //                            }
-
-            //                        }
-            //                    }
-
-            //                }
-            //            }
 
             Rectangle {
                 Layout.minimumWidth: root.width * 0.2
                 Layout.fillHeight: true
-                color: "yellow"; opacity: 0.1;
+                color: "green"; opacity: 0.5;
             }
         }
 
@@ -92,7 +79,7 @@ Item {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.minimumHeight: root.height * 0.1
-                color: "green"; opacity: 0.1;
+                color: "red"; opacity: 0.5;
             }
         }
     }

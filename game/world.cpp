@@ -487,6 +487,8 @@ void World::pickItem(GameItem *item)
     item->setPlayerFocus(false);
     item->setPlayerVisible(false);
 
+    m_gameItems->removeGameItem(item);
+
     // Make fields accessable according to the unacessableMap
     foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
         QPointF absolutCoordinate(item->position() + unaccessableOffset);
@@ -507,7 +509,7 @@ void World::pickItem(GameItem *item)
         field->gameItems()->removeGameItem(item);
     }
 
-    m_gameItems->removeGameItem(item);
+    qCDebug(dcWorld()) << "Picked item and add it to the inventory" << item;
     m_player->inventory()->addGameItem(item);
 }
 
@@ -530,6 +532,7 @@ void World::onLoadingFinished()
     for (int x = m_currentViewOffset.x(); x < m_currentViewOffset.x() + m_size.width(); x++) {
         for (int y = m_currentViewOffset.y(); y < m_currentViewOffset.y() + m_size.height(); y++) {
             Field *field = m_map->getField(x, y);
+            field->setParent(this);
             addField(field);
         }
     }
@@ -537,6 +540,7 @@ void World::onLoadingFinished()
     qCDebug(dcWorld()) << "--> Initialize items";
     foreach (Field *field, fields()) {
         foreach (GameItem *item, field->gameItems()->gameItems()) {
+            item->setParent(this);
             m_gameItems->addGameItem(item);
         }
     }

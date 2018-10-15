@@ -18,6 +18,9 @@ void GameItemsProxy::setGameItems(GameItems *gameItems)
 
     m_gameItems = gameItems;
     emit gameItemsChanged(gameItems);
+    setSourceModel(m_gameItems);
+    invalidateFilter();
+    sort(0);
 }
 
 GameItem::Type GameItemsProxy::itemTypeFilter() const

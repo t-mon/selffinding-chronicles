@@ -14,7 +14,7 @@ Player::Player(QObject *parent) :
 
     m_inventory = new GameItems(this);
     m_inventoryProxy = new GameItemsProxy(this);
-    //m_inventoryProxy->setGameItems(m_inventory);
+    m_inventoryProxy->setGameItems(m_inventory);
 
     connect(this, &GameObject::positionChanged, this, &Player::onPositionChanged);
     updateAuraObject();
