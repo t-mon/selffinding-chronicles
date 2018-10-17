@@ -29,7 +29,8 @@ HEADERS += \
     game/items/treeitem.h \
     game/items/gameitems.h \
     game/items/gameitemsproxy.h \
-    game/items/weaponitem.h
+    game/items/weaponitem.h \
+    game/items/character.h
 
 SOURCES += game/main.cpp \
     game/player.cpp \
@@ -47,4 +48,5 @@ SOURCES += game/main.cpp \
     game/items/treeitem.cpp \
     game/items/gameitems.cpp \
     game/items/gameitemsproxy.cpp \
-    game/items/weaponitem.cpp
+    game/items/weaponitem.cpp \
+    game/items/character.cpp

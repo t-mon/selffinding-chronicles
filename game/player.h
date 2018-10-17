@@ -5,9 +5,10 @@
 #include <QPoint>
 
 #include "gameobject.h"
+#include "items/character.h"
 #include "items/gameitemsproxy.h"
 
-class Player : public GameObject
+class Player : public Character
 {
     Q_OBJECT
     Q_PROPERTY(GameObject *auraCircleObject READ auraCircleObject CONSTANT)
@@ -19,12 +20,9 @@ class Player : public GameObject
     Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
 
-    Q_PROPERTY(int health READ health NOTIFY healthChanged)
-    Q_PROPERTY(int mana READ mana NOTIFY manaChanged)
-    Q_PROPERTY(int wisdom READ wisdom NOTIFY wisdomChanged)
-
 public:
     explicit Player(QObject *parent = nullptr);
+    ~Player() override = default;
 
     GameObject *auraCircleObject() const;
     GameItems *inventory() const;
@@ -48,15 +46,6 @@ public:
     bool running() const;
     void setRunning(bool running);
 
-    int health() const;
-    void setHealth(int health);
-
-    int mana() const;
-    void setMana(int mana);
-
-    int wisdom() const;
-    void setWisdom(int wisdom);
-
 private:
     GameObject *m_auraCircleObject = nullptr;
     GameItems *m_inventory = nullptr;
@@ -68,9 +57,6 @@ private:
     bool m_moving = false;
     bool m_running = false;
 
-    int m_health = 100;
-    int m_mana = 30;
-    int m_wisdom = 30;
 
 private slots:
     void onPositionChanged(const QPointF newPosition);
@@ -84,9 +70,6 @@ signals:
     void movingChanged(bool moving);
     void runningChanged(bool running);
 
-    void healthChanged(int healt);
-    void manaChanged(int mana);
-    void wisdomChanged(int wisom);
 
 };
 
