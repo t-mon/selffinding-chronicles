@@ -12,6 +12,8 @@
         <file>gameitems/FieldItem.qml</file>
         <file>gameitems/GameItem.qml</file>
         <file>components/GameLabel.qml</file>
-        <file>gameitems/InventoryItem.qml</file>
+        <file>inventory/InventoryTabButton.qml</file>
+        <file>inventory/InventoryItem.qml</file>
+        <file>inventory/InventoryPage.qml</file>
     </qresource>
 </RCC>

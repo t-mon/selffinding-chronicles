@@ -20,6 +20,7 @@ ApplicationWindow {
     // General UI configurations
     property int margins: 14
     property int bigMargins: 20
+    property int borderWidth: 3
 
     property int smallFont: 14
     property int mediumFont: 18

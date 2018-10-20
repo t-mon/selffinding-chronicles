@@ -7,6 +7,7 @@ import Chronicles 1.0
 
 import "components"
 import "gameitems"
+import "inventory"
 
 Item {
     id: root
@@ -218,15 +219,6 @@ Item {
     //        }
     //    }
 
-    InventoryItem {
-        id: inventoryItem
-        anchors.fill: parent
-        visible: false
-        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
-        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
-        onVisibleChanged: visible ? Game.running = false : Game.running = true
-    }
-
     function evaluateBoundingRectangle() {
         var worldWidth = Game.world.size.width * cellSize
         var worldHeight = Game.world.size.height * cellSize
@@ -268,4 +260,95 @@ Item {
         //console.log("--> ",  dy, " | ", dx)
         Game.world.player.angle = Math.atan2(dy , dx)
     }
+
+
+    RowLayout {
+        id: bottomLeftOptions
+        anchors.left: parent.left
+        anchors.leftMargin: app.margins
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: app.margins
+
+        Rectangle {
+            id: pauseButton
+            height: 40
+            width: height
+            radius: height * 0.2
+
+            Label {
+                anchors.centerIn: parent
+                text: "II"
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: menuPopup.open()
+            }
+        }
+    }
+
+
+    Popup {
+        id: menuPopup
+        x: root.width * 0.15
+        y: root.height * 0.1
+        width: root.width * 0.7
+        height: root.height * 0.8
+        modal: true
+        focus: true
+
+        contentItem: Item {
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: app.margins
+
+                GameLabel {
+                    text: "Game paused"
+                    font.pixelSize: app.largeFont
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Main menu")
+                    onClicked: {
+                        menuPopup.close()
+                        pageStack.pop()
+                    }
+                }
+
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Settings")
+                    onClicked: {
+                        menuPopup.close()
+                        pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
+                    }
+                }
+
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Close")
+                    onClicked: {
+                        Game.running = true
+                        menuPopup.close()
+                    }
+                }
+            }
+        }
+
+        onOpened: Game.running = false
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    }
+
+    InventoryPage {
+        id: inventoryItem
+        anchors.fill: parent
+        visible: false
+
+        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
+        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
+        onVisibleChanged: visible ? Game.running = false : Game.running = true
+    }
+
 }
