@@ -29,7 +29,7 @@ public:
         TypeDoor,
         TypeTeleportStone,
         TypeBox,
-        TypePerson,
+        TypeCharacter,
         TypeEnemy,
         TypeArmor,
         TypeMagicArtefact,

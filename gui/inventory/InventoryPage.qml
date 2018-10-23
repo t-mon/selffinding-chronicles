@@ -15,59 +15,38 @@ Item {
         id: backgroundRectangle
         anchors.fill: parent
         color: "black"
-        opacity: 0.9
+        opacity: 0.7
     }
 
     RowLayout {
-        id: mainRowLoayout
+        id: inventoryLoyout
         anchors.fill: parent
         anchors.margins: app.margins
         spacing: app.margins
 
-        InventoryItem {
+        Item {
+            id: informationItem
             Layout.fillHeight: true
-            Layout.fillWidth: true
-            cellSize: root.cellSize
-        }
+            Layout.preferredWidth: root.cellSize * 4
 
-        ColumnLayout {
-            id: informationColumnLayout
-            Layout.minimumWidth: cellSize * 4
-            Layout.maximumWidth: cellSize * 4
-            Layout.fillHeight: true
-
-            Item {
-                Layout.fillWidth: true
-                //Layout.fillHeight: true
+            ColumnLayout {
+                id: informationColumnLayout
+                anchors.fill: parent
+                spacing: app.margins
 
                 Rectangle {
-                    anchors.fill: parent
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: playerPropertyLayout.height + 2 * app.margins
                     color: "transparent"
                     border.color: "white"
                     border.width: app.borderWidth
-                }
-
-                ColumnLayout {
-                    id: desciptionLayout
-                    anchors.fill: parent
-                    anchors.margins: app.margins
-
-                    Label {
-                        Layout.fillWidth: true
-                        font.bold: true
-                        font.family: app.fontFamily
-                        font.pixelSize: app.mediumFont
-                        font.weight: Font.ExtraBold
-                        z: Map.Layer4Highest
-                        color: "white"
-                        text: Game.world.player.name
-                    }
 
                     Column {
                         id: playerPropertyLayout
-                        Layout.fillWidth: true
-                        //Layout.fillHeight: true
-                        spacing: 0
+                        spacing: app.margins / 2
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: app.margins
 
                         Label {
                             font.bold: true
@@ -76,7 +55,7 @@ Item {
                             font.weight: Font.ExtraBold
                             z: Map.Layer4Highest
                             color: "white"
-                            text: "Experience: " + Game.world.player.experience
+                            text: qsTr("Experience") + ": " + Game.world.player.experience
                         }
 
                         Label {
@@ -86,7 +65,7 @@ Item {
                             font.weight: Font.ExtraBold
                             z: Map.Layer4Highest
                             color: "white"
-                            text: "Health: " + Game.world.player.health
+                            text: qsTr("Health") + ": " + Game.world.player.health  + "/" + Game.world.player.healthMax
                         }
 
                         Label {
@@ -96,7 +75,7 @@ Item {
                             font.weight: Font.ExtraBold
                             z: Map.Layer4Highest
                             color: "white"
-                            text: "Mana: " + Game.world.player.mana
+                            text: qsTr("Mana") + ": " + Game.world.player.mana  + "/" + Game.world.player.manaMax
                         }
 
                         Label {
@@ -106,7 +85,7 @@ Item {
                             font.weight: Font.ExtraBold
                             z: Map.Layer4Highest
                             color: "white"
-                            text: "Wisdom: " + Game.world.player.wisdom
+                            text: qsTr("Wisdom") + ": " + Game.world.player.wisdom
                         }
 
                         Label {
@@ -116,7 +95,7 @@ Item {
                             font.weight: Font.ExtraBold
                             z: Map.Layer4Highest
                             color: "white"
-                            text: "Strength: " + Game.world.player.strength
+                            text: qsTr("Strength") + ": " + Game.world.player.strength
                         }
 
                         Label {
@@ -126,23 +105,31 @@ Item {
                             font.weight: Font.ExtraBold
                             z: Map.Layer4Highest
                             color: "white"
-                            text: "Stealth: " + Game.world.player.stealth
+                            text: qsTr("Stealth") + ": " + Game.world.player.stealth
                         }
                     }
                 }
-            }
 
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                Item {
+                    id: itemDescription
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
-                Rectangle {
-                    anchors.fill: parent
-                    color: "transparent"
-                    border.color: "white"
-                    border.width: app.borderWidth
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "transparent"
+                        border.color: "white"
+                        border.width: app.borderWidth
+                    }
                 }
             }
+        }
+
+        InventoryItem {
+            id: inventoryItem
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            cellSize: root.cellSize
         }
     }
 }

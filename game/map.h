@@ -45,7 +45,7 @@ public:
 
     QString fileName() const;
 
-    QList<GameItem *> items();
+    GameItems *items();
 
     void loadMap(const QString &fileName);
 
@@ -58,20 +58,10 @@ private:
     QString m_name;
     QString m_fileName;
 
+    GameItems *m_items = nullptr;
     QList<Fields *> m_mapData;
-    QList<GameItem *> m_items;
-    QList<PlantItem *> m_plants;
-    QList<WeaponItem *> m_weapons;
-    QList<TreeItem *> m_trees;
-
-    QVariantMap loadMapData(const QString &mapDataFileName);
 
     void placeItemOnMap(GameItem *item);
-
-    PlantItem *createPlantItem(const QVariantMap &plantItemMap);
-    TreeItem *createTreeItem(const QVariantMap &treeItemMap);
-    WeaponItem *createWeaponItem(const QVariantMap &weaponItemMap);
-    QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
 
 signals:
     void sizeChanged(const QSize &size);

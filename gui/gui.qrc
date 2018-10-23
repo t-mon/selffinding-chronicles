@@ -15,5 +15,6 @@
         <file>inventory/InventoryTabButton.qml</file>
         <file>inventory/InventoryItem.qml</file>
         <file>inventory/InventoryPage.qml</file>
+        <file>gameitems/CharacterItem.qml</file>
     </qresource>
 </RCC>

@@ -1,5 +1,6 @@
 {
     "name": "Healing herb",
+    "type": "plant",
     "imageName": "/images/items/plants/healing-herb.png",
     "geometry": {
         "width": 1,

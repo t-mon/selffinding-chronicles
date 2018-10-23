@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import QtGraphicalEffects 1.0
 
 import Chronicles 1.0
 
@@ -14,6 +15,7 @@ Item {
     ColumnLayout {
         id: inventoryColumnLayout
         anchors.fill: parent
+        spacing: app.margins
 
         Rectangle {
             Layout.fillWidth: true
@@ -66,18 +68,31 @@ Item {
 
                 Component {
                     id: inventoryItemDelegate
+
                     Item {
                         width: inventoryGridView.cellWidth
                         height: inventoryGridView.cellHeight
+
+                        property bool selected: false
 
                         Rectangle {
                             id: itemRectangle
                             anchors.fill: parent
                             anchors.margins: app.margins / 2
-                            color: "#aaFFFFFF"
+                            //color: "#AAFFFFFF"
+                            //radius: width / 8
                             border.color: "white"
                             border.width: app.borderWidth
-                            radius: width / 8
+
+                            LinearGradient {
+                                anchors.fill: parent
+                                start: Qt.point(0, 0)
+                                end: Qt.point(0, parent.height)
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "white" }
+                                    GradientStop { position: 1.0; color: root.selected ? "green" : "gray" }
+                                }
+                            }
 
                             Image {
                                 id: itemImage

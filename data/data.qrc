@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>maps/example.json</file>
+        <file>maps/test-map.json</file>
         <file>mapdata/plants/healing-herb.json</file>
         <file>mapdata/trees/tree-1.json</file>
         <file>fonts/EBGaramond/EBGaramond08-Italic.ttf</file>
@@ -13,5 +13,6 @@
         <file>fonts/ArgosGeorge/ArgosGeorge.ttf</file>
         <file>fonts/ArgosGeorge/ArgosGeorgeContour.ttf</file>
         <file>mapdata/weapons/sword.json</file>
+        <file>mapdata/characters/test-character.json</file>
     </qresource>
 </RCC>

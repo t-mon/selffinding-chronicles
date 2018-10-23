@@ -64,6 +64,13 @@ void GameItems::addGameItem(GameItem *item)
     endInsertRows();
 }
 
+void GameItems::addGameItemList(QList<GameItem *> itemList)
+{
+    foreach (GameItem *item, itemList) {
+        addGameItem(item);
+    }
+}
+
 void GameItems::removeGameItem(GameItem *item)
 {
     if (!m_gameItems.contains(item))

@@ -1,4 +1,5 @@
 #include "map.h"
+#include "dataloader.h"
 #include "debugcategories.h"
 
 #include <QTime>
@@ -10,7 +11,7 @@
 
 Map::Map(QObject *parent) : QObject(parent)
 {
-
+    m_items = new GameItems(this);
 }
 
 Map::~Map()
@@ -65,7 +66,7 @@ QString Map::fileName() const
     return m_fileName;
 }
 
-QList<GameItem *> Map::items()
+GameItems *Map::items()
 {
     return m_items;
 }
@@ -88,7 +89,7 @@ void Map::loadMap(const QString &fileName)
 
     // Load map information
     qCDebug(dcMap()) << "--> load json data from file";
-    QVariantMap mapData = loadMapData(fileName);
+    QVariantMap mapData = DataLoader::loadMapData(fileName);
     if (mapData.isEmpty()) {
         qCWarning(dcMap()) << "The map file" << fileName << "does not contain any valid map data.";
         return;
@@ -118,8 +119,8 @@ void Map::loadMap(const QString &fileName)
         m_mapData.append(fields);
     }
 
-    qCDebug(dcMap()) << "--> initialize field neighbours";
     // Set field neighbours
+    qCDebug(dcMap()) << "--> initialize field neighbours";
     for (int y = 0; y < m_size.height(); y++) {
         for (int x = 0; x < m_size.width(); x++) {
             Field *currentField = getField(x, y);
@@ -144,7 +145,7 @@ void Map::loadMap(const QString &fileName)
 
         Field *field = getField(x, y);
         if (!field) {
-            qWarning() << "Ignore field form map data" << fieldMap;
+            qCWarning(dcMap()) << "Ignore field form map data" << fieldMap;
             continue;
         }
 
@@ -153,80 +154,15 @@ void Map::loadMap(const QString &fileName)
     }
 
     qCDebug(dcMap()) << "--> load items";
+    m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("items").toList()));
 
-    // Load plants
-    qCDebug(dcMap()) << "    --> load plants";
-    QVariantList plantsList = mapData.value("items").toMap().value("plants").toList();
-    foreach (const QVariant &plantVariant, plantsList) {
-        PlantItem *plantItem = createPlantItem(plantVariant.toMap());
-        if (!plantItem) {
-            qCWarning(dcMap()) << "Could not create plant item for" << plantVariant;
-            continue;
-        }
+    qCDebug(dcMap()) << "--> load characters";
+    m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("characters").toList()));
 
-        // Place the item into the field
-        Field *field = getField(static_cast<int>(plantItem->position().x()), static_cast<int>(plantItem->position().y()));
-        if (!field) {
-            qCWarning(dcMap()) << "Could not find any field for" << plantItem;
-            plantItem->deleteLater();
-            continue;
-        }
-        placeItemOnMap(plantItem);
-
-        qCDebug(dcMap()) << "        " << plantItem;
-        plantItem->moveToThread(QCoreApplication::instance()->thread());
-        m_plants.append(plantItem);
-        m_items.append(plantItem);
-    }
-
-    // Load plants
-    qCDebug(dcMap()) << "    --> load weapons";
-    QVariantList weaponsList = mapData.value("items").toMap().value("weapons").toList();
-    foreach (const QVariant &weaponVariant, weaponsList) {
-        WeaponItem *weaponItem = createWeaponItem(weaponVariant.toMap());
-        if (!weaponItem) {
-            qCWarning(dcMap()) << "Could not create weapon item for" << weaponVariant;
-            continue;
-        }
-
-        // Place the item into the field
-        Field *field = getField(static_cast<int>(weaponItem->position().x()), static_cast<int>(weaponItem->position().y()));
-        if (!field) {
-            qCWarning(dcMap()) << "Could not find any field for" << weaponItem;
-            weaponItem->deleteLater();
-            continue;
-        }
-        placeItemOnMap(weaponItem);
-
-        qCDebug(dcMap()) << "        " << weaponItem;
-        weaponItem->moveToThread(QCoreApplication::instance()->thread());
-        m_weapons.append(weaponItem);
-        m_items.append(weaponItem);
-    }
-
-
-    qCDebug(dcMap()) << "    --> load trees";
-    QVariantList treesList = mapData.value("items").toMap().value("trees").toList();
-    foreach (const QVariant &treeVariant, treesList) {
-        TreeItem *treeItem = createTreeItem(treeVariant.toMap());
-        if (!treeItem) {
-            qCWarning(dcMap()) << "Could not create tree item for" << treeVariant;
-            continue;
-        }
-
-        // Place the item into the field
-        Field *field = getField(static_cast<int>(treeItem->position().x()), static_cast<int>(treeItem->position().y()));
-        if (!field) {
-            qCWarning(dcMap()) << "Could not find any field for" << treeItem;
-            treeItem->deleteLater();
-            continue;
-        }
-        placeItemOnMap(treeItem);
-
-        qCDebug(dcMap()) << "        " << treeItem;
-        treeItem->moveToThread(QCoreApplication::instance()->thread());
-        m_trees.append(treeItem);
-        m_items.append(treeItem);
+    foreach (GameItem *item, m_items->gameItems()) {
+        placeItemOnMap(item);
+        qCDebug(dcMap()) << "        " << item;
+        item->moveToThread(QCoreApplication::instance()->thread());
     }
 
     // Move all the object back to the main thread
@@ -253,24 +189,6 @@ Field *Map::getField(const QPointF position) const
     return getField(static_cast<int>(position.x()), static_cast<int>(position.y()));
 }
 
-QVariantMap Map::loadMapData(const QString &mapDataFileName)
-{
-    QFile mapDataFile(mapDataFileName);
-    if (!mapDataFile.open(QFile::ReadOnly)) {
-        qCWarning(dcMap()) << "Could not open map data file" << mapDataFileName << "for reading.";
-        return QVariantMap();
-    }
-
-    QJsonParseError error;
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(mapDataFile.readAll(), &error);
-    if (error.error != QJsonParseError::NoError) {
-        qCWarning(dcMap()) << "Cannot parse map data file:" << error.errorString();
-        return QVariantMap();
-    }
-
-    return jsonDoc.toVariant().toMap();
-}
-
 void Map::placeItemOnMap(GameItem *item)
 {
     // Make fields unaccessable according to the unacessableMap
@@ -294,106 +212,6 @@ void Map::placeItemOnMap(GameItem *item)
     }
 }
 
-PlantItem *Map::createPlantItem(const QVariantMap &plantItemMap)
-{
-    QPoint position = QPoint(plantItemMap.value("x").toInt(), plantItemMap.value("y").toInt());
-    QString itemDescriptionFileName = plantItemMap.value("plant").toString();
-
-    QVariantMap description = loadMapData(itemDescriptionFileName);
-    if (description.isEmpty()) {
-        qCWarning(dcMap()) << "The plant file" << itemDescriptionFileName << "does not contains any valid data.";
-        return nullptr;
-    }
-
-    QVariantMap geometryMap = description.value("geometry").toMap();
-    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
-
-    PlantItem *plantItem = new PlantItem();
-    plantItem->setPosition(position);
-    plantItem->setSize(itemSize);
-    plantItem->setShape(PlantItem::ShapeCircle);
-    plantItem->setLayer(geometryMap.value("layer").toReal());
-    plantItem->setUnaccessableMap(unaccessableMap);
-    plantItem->setVisiblilityMap(visibilityMap);
-    plantItem->setName(description.value("name").toString());
-    plantItem->setImageName(description.value("imageName").toString());
-    plantItem->setPrice(description.value("price").toInt());
-    plantItem->setHealing(description.value("healing").toInt());
-    plantItem->setMana(description.value("mana").toInt());
-    plantItem->setSpeed(description.value("speed").toInt());
-    return plantItem;
-}
-
-TreeItem *Map::createTreeItem(const QVariantMap &treeItemMap)
-{
-    QPoint position = QPoint(treeItemMap.value("x").toInt(), treeItemMap.value("y").toInt());
-    QString itemDescriptionFileName = treeItemMap.value("tree").toString();
-
-    QVariantMap description = loadMapData(itemDescriptionFileName);
-    if (description.isEmpty()) {
-        qCWarning(dcMap()) << "The tree file" << itemDescriptionFileName << "does not contains any valid data.";
-        return nullptr;
-    }
-
-    QVariantMap geometryMap = description.value("geometry").toMap();
-    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
-
-    TreeItem *treeItem = new TreeItem();
-    treeItem->setPosition(position);
-    treeItem->setLayer(geometryMap.value("layer").toReal());
-    treeItem->setUnaccessableMap(unaccessableMap);
-    treeItem->setVisiblilityMap(visibilityMap);
-    treeItem->setSize(itemSize);
-    treeItem->setName(description.value("name").toString());
-    treeItem->setImageName(description.value("imageName").toString());
-
-    return treeItem;
-}
-
-WeaponItem *Map::createWeaponItem(const QVariantMap &weaponItemMap)
-{
-    QPoint position = QPoint(weaponItemMap.value("x").toInt(), weaponItemMap.value("y").toInt());
-    QString itemDescriptionFileName = weaponItemMap.value("weapon").toString();
-
-    QVariantMap description = loadMapData(itemDescriptionFileName);
-    if (description.isEmpty()) {
-        qCWarning(dcMap()) << "The weapon file" << itemDescriptionFileName << "does not contains any valid data.";
-        return nullptr;
-    }
-
-    QVariantMap geometryMap = description.value("geometry").toMap();
-    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
-
-    WeaponItem *weaponItem = new WeaponItem();
-    weaponItem->setPosition(position);
-    weaponItem->setSize(itemSize);
-    weaponItem->setShape(PlantItem::ShapeCircle);
-    weaponItem->setLayer(geometryMap.value("layer").toReal());
-    weaponItem->setUnaccessableMap(unaccessableMap);
-    weaponItem->setVisiblilityMap(visibilityMap);
-    weaponItem->setName(description.value("name").toString());
-    weaponItem->setImageName(description.value("imageName").toString());
-    weaponItem->setDamage(description.value("damage").toInt());
-    weaponItem->setPrice(description.value("price").toInt());
-
-    return weaponItem;
-}
-
-QList<QPoint> Map::loadFieldMap(const QVariantList &fieldMap)
-{
-    QList<QPoint> pointList;
-    foreach(const QVariant &pointVariant, fieldMap) {
-        QVariantMap pointMap = pointVariant.toMap();
-        pointList.append(QPoint(pointMap.value("x").toInt(), pointMap.value("y").toInt()));
-    }
-    return pointList;
-}
 
 void Map::clear()
 {
