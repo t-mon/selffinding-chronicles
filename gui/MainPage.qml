@@ -22,7 +22,7 @@ Page {
             font.family: app.fontFamily
             onClicked: {
                 console.log("Play pressed")
-                Game.world.loadMap(":/maps/example.json")
+                Game.world.loadMap(":/maps/test-map.json")
                 pageStack.push(Qt.resolvedUrl("GamePage.qml"))
             }
         }

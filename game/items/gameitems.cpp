@@ -62,6 +62,17 @@ void GameItems::addGameItem(GameItem *item)
     beginInsertRows(QModelIndex(), m_gameItems.count(), m_gameItems.count());
     m_gameItems.append(item);
     endInsertRows();
+
+    emit countChanged(m_gameItems.count());
+}
+
+void GameItems::addGameItemList(QList<GameItem *> itemList)
+{
+    foreach (GameItem *item, itemList) {
+        addGameItem(item);
+    }
+
+    emit countChanged(m_gameItems.count());
 }
 
 void GameItems::removeGameItem(GameItem *item)
@@ -71,8 +82,10 @@ void GameItems::removeGameItem(GameItem *item)
 
     int index = m_gameItems.indexOf(item);
     beginRemoveRows(QModelIndex(), index, index);
-    m_gameItems.removeOne(item);
+    m_gameItems.removeAll(item);
     endRemoveRows();
+
+    emit countChanged(m_gameItems.count());
 }
 
 void GameItems::clearModel()
@@ -80,6 +93,8 @@ void GameItems::clearModel()
     beginResetModel();
     m_gameItems.clear();
     endResetModel();
+
+    emit countChanged(m_gameItems.count());
 }
 
 QHash<int, QByteArray> GameItems::roleNames() const

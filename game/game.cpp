@@ -71,9 +71,6 @@ int Game::intermediateSteps() const
 
 void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
 {
-    if (!running())
-        return;
-
     if (autoRepeat)
         return;
 
@@ -91,9 +88,6 @@ void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
 
 void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
 {
-    if (!running())
-        return;
-
     if (autoRepeat)
         return;
 

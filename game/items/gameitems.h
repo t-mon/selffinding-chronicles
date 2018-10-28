@@ -31,6 +31,7 @@ public:
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
 
     void addGameItem(GameItem *item);
+    void addGameItemList(QList<GameItem *> itemList);
     void removeGameItem(GameItem *item);
 
     void clearModel();
@@ -40,6 +41,9 @@ protected:
 
 private:
     QList<GameItem *> m_gameItems;
+
+signals:
+    void countChanged(int count);
 
 };
 

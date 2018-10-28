@@ -6,59 +6,9 @@
 #include <QtMath>
 
 Player::Player(QObject *parent) :
-    GameObject(parent)
+    Character(parent)
 {
-    m_auraCircleObject = new GameObject(this);
-    m_auraCircleObject->setName("Aura");
-    m_auraCircleObject->setShape(GameObject::ShapeCircle);
 
-    m_inventory = new GameItems(this);
-    m_inventoryProxy = new GameItemsProxy(this);
-    m_inventoryProxy->setGameItems(m_inventory);
-
-    connect(this, &GameObject::positionChanged, this, &Player::onPositionChanged);
-    updateAuraObject();
-}
-
-GameObject *Player::auraCircleObject() const
-{
-    return m_auraCircleObject;
-}
-
-GameItems *Player::inventory() const
-{
-    return m_inventory;
-}
-
-GameItemsProxy *Player::inventoryProxy() const
-{
-    return m_inventoryProxy;
-}
-
-qreal Player::angle() const
-{
-    return m_angle;
-}
-
-void Player::setAngle(const qreal &angle)
-{
-    //qCDebug(dcPlayer()) << "angle" << angle;
-    m_angle = angle;
-    emit angleChanged(m_angle);
-}
-
-int Player::auraRange() const
-{
-    return m_auraRange;
-}
-
-void Player::setAuraRange(const int auraRange)
-{
-    qCDebug(dcPlayer()) << "Aura range changed" << auraRange;
-    m_auraRange = auraRange;
-    emit auraRangeChanged(m_auraRange);
-
-    updateAuraObject();
 }
 
 qreal Player::speed() const
@@ -123,16 +73,3 @@ void Player::setRunning(bool running)
         setSpeed(0.03);
     }
 }
-
-void Player::onPositionChanged(const QPointF newPosition)
-{
-    Q_UNUSED(newPosition)
-    updateAuraObject();
-}
-
-void Player::updateAuraObject()
-{
-    m_auraCircleObject->setSize(QSize(auraRange() * 2 + 1, auraRange() * 2 + 1));
-    m_auraCircleObject->setPosition(position() - QPointF(auraRange(), auraRange()));
-}
-

@@ -1,0 +1,35 @@
+{
+    "name": "Test character",
+    "type": "character",
+    "imageName": "/images/characters/player.svg",
+    "geometry": {
+        "width": 1,
+        "height": 1,
+        "layer": 3,
+        "unaccessableMap": [  ],
+        "visibilityMap": [
+            {
+                "x": 0,
+                "y": 0
+            }
+        ]
+    },
+    "gender": "female",
+    "role": "Friend",
+    "experience": 100,
+    "health": 100,
+    "healthMax": 100,
+    "mana": 10,
+    "manaMax": 10,
+    "wisdom": 10,
+    "strength": 10,
+    "stealth": 0,
+    "items": [
+        {
+            "data": ":/gamedata/plants/healing-herb.json"
+        },
+        {
+            "data": ":/gamedata/plants/healing-herb.json"
+        }
+    ]
+}

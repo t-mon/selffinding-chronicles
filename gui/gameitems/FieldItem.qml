@@ -10,6 +10,7 @@ Item {
     id: root
 
     property QtObject field: null
+    antialiasing: app.antialiasing
 
     Image {
         id: backgroundImage
@@ -40,6 +41,15 @@ Item {
         opacity: Game.debugging && !field.accessible ? 0.2 : 0
     }
 
+    Rectangle {
+        id: visibilityIndicator
+        anchors.fill: parent
+        color: "green"
+        border.color: "#AAFFAA"
+        border.width: 2
+        opacity: Game.debugging && field.hasItem ? 0.4 : 0
+    }
+
     Loader {
         id: itemLoader
         anchors.fill: parent
@@ -54,7 +64,7 @@ Item {
 
     Component.onCompleted: {
 //        if (field.gameItem) {
-//            itemLoader.source = Qt.resolvedUrl("gameitems/GameItem.qml", { field: root.field, cellSize: root.cellSize } )
+//            itemLoader.source = Qt.resolvedUrl("gameitems/GameItem.qml", { field: root.field, app.gridSize: root.app.gridSize } )
 //        }
     }
 }

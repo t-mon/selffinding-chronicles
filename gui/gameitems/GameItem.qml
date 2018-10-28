@@ -9,10 +9,54 @@ import "../components"
 Item {
     id: root
 
-    property var gameItem: null
+    property GameItem gameItem: Game.world.gameItems.get(model.index)
+    antialiasing: app.antialiasing
 
-    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
-    Component.onDestruction: console.log("Destroy item")
+    opacity: gameItem ? (gameItem.hidingPlayer ? 0.5 : 1) : 0
+
+    //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
+    //    Component.onDestruction: console.log("Destroy item")
+
+    Connections {
+        target: root.gameItem
+        onPlayerOnItemChanged: {
+            console.log("Player on item " + playerOnItem)
+            if (root.gameItem.itemType === GameItem.TypeTree && playerOnItem) {
+                console.log("Start animation")
+                playerOnItemAnimation.start()
+            }
+        }
+    }
+
+    SequentialAnimation {
+        id: playerOnItemAnimation
+        loops: 1
+
+        RotationAnimation {
+            target: root
+            property: "rotation"
+            to: 3
+            duration: 80
+        }
+        RotationAnimation {
+            target: root
+            property: "rotation"
+            to: 0
+            duration: 80
+        }
+        RotationAnimation {
+            target: root
+            property: "rotation"
+            to: -3
+            duration: 80
+        }
+        RotationAnimation {
+            target: root
+            property: "rotation"
+            to: 0
+            duration: 80
+        }
+    }
 
     Image {
         id: itemImage

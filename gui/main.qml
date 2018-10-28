@@ -20,6 +20,7 @@ ApplicationWindow {
     // General UI configurations
     property int margins: 14
     property int bigMargins: 20
+    property int borderWidth: 3
 
     property int smallFont: 14
     property int mediumFont: 18
@@ -30,11 +31,11 @@ ApplicationWindow {
 
     property string fontFamily: gameFont.name
     property real gridSize: Math.min(app.width / 30, app.height / 20)
+    property bool antialiasing: true
 
     FontLoader {
         id: gameFont
         source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
-        //source: "/fonts/ArgosGeorge/ArgosGeorge.ttf"
     }
 
     Settings {

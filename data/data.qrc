@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>maps/example.json</file>
-        <file>mapdata/plants/healing-herb.json</file>
-        <file>mapdata/trees/tree-1.json</file>
+        <file>maps/test-map.json</file>
+        <file>gamedata/plants/healing-herb.json</file>
+        <file>gamedata/trees/tree-1.json</file>
         <file>fonts/EBGaramond/EBGaramond08-Italic.ttf</file>
         <file>fonts/EBGaramond/EBGaramond08-Regular.ttf</file>
         <file>fonts/EBGaramond/EBGaramond12-AllSC.ttf</file>
@@ -10,7 +10,9 @@
         <file>fonts/EBGaramond/EBGaramond12-Regular.ttf</file>
         <file>fonts/EBGaramond/EBGaramondSC08-Regular.ttf</file>
         <file>fonts/EBGaramond/EBGaramondSC12-Regular.ttf</file>
-        <file>fonts/ArgosGeorge/ArgosGeorge.ttf</file>
-        <file>fonts/ArgosGeorge/ArgosGeorgeContour.ttf</file>
+        <file>gamedata/weapons/sword.json</file>
+        <file>gamedata/characters/test-character.json</file>
+        <file>gamedata/bushes/bush-1.json</file>
+        <file>gamedata/characters/player.json</file>
     </qresource>
 </RCC>
