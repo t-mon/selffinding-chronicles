@@ -86,6 +86,37 @@ void Character::setGender(Character::Gender gender)
     emit genderChanged(m_gender);
 }
 
+Character::Role Character::role() const
+{
+    return m_role;
+}
+
+void Character::setRole(Character::Role role)
+{
+    if (m_role == role)
+        return;
+
+    m_role = role;
+    emit roleChanged(role);
+
+    switch (m_role) {
+    case Player:
+    case Statist:
+        setInteraction(InteractionNone);
+        break;
+    case Friend:
+    case Professor:
+    case Magician:
+    case Warrior:
+    case Dealer:
+        setInteraction(InteractionTalk);
+        break;
+    case Enemy:
+        setInteraction(InteractionAttack);
+        break;
+    }
+}
+
 int Character::experience() const
 {
     return m_experience;

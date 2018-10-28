@@ -5,7 +5,6 @@
         <file>GamePage.qml</file>
         <file>GameScene.qml</file>
         <file>SettingsPage.qml</file>
-        <file>gameitems/PlayerItem.qml</file>
         <file>components/ChroniclesHeader.qml</file>
         <file>components/HeaderButton.qml</file>
         <file>AboutPage.qml</file>

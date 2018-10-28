@@ -25,6 +25,7 @@ World::World(QObject *parent) :
     m_collisionDetector = new CollisionDetector(this);
 
     m_gameItems = new GameItems(this);
+    m_characterItems = new GameItems(this);
 
     // Create map and loading watcher
     m_map = new Map(this);
@@ -92,6 +93,11 @@ GameItems *World::gameItems()
     return m_gameItems;
 }
 
+GameItems *World::characterItems()
+{
+    return m_characterItems;
+}
+
 PlayerController *World::playerController()
 {
     return m_playerController;
@@ -155,6 +161,18 @@ void World::setCurrentPlayerField(Field *field)
     if (m_currentPlayerField)
         m_currentPlayerField->setPlayerOnField(true);
 
+    // Set the property if a player is currently standing on an item
+    if (m_currentPlayerField->hasItem()) {
+        GameItem *item = m_currentPlayerField->gameItems()->gameItems().last();
+        item->setPlayerOnItem(true);
+        m_playerCurrentlyOnItem = item;
+    } else {
+        if (m_playerCurrentlyOnItem) {
+            m_playerCurrentlyOnItem->setPlayerOnItem(false);
+            m_playerCurrentlyOnItem = nullptr;
+        }
+    }
+
     emit currentPlayerFieldChanged(m_currentPlayerField);
 }
 
@@ -203,9 +221,17 @@ void World::doPlayerMovement()
     // Check collision with object
     evaluateInRangeFields(m_player->centerPosition() + delta);
     foreach (Field *field, m_fieldsInRange) {
-        if (field->hasItem() && field->gameItems()->gameItems().last()->interaction() != GameItem::InteractionNone) {
-            if (m_collisionDetector->checkCollision(m_player, field->gameItems()->gameItems().last())) {
-                qCDebug(dcWorld()) << "Player collision with" << field->gameItems()->gameItems().last();
+        if (field->hasItem()) {
+            GameItem *item = field->gameItems()->gameItems().last();
+//            if (m_collisionDetector->checkCollision(m_player, field->collitionObject())) {
+//                item->setPlayerOnItem(true);
+//            }
+
+            if (m_collisionDetector->checkCollision(m_player, item)) {
+                //qCDebug(dcWorld()) << "Player behind" << field->gameItems()->gameItems().last();
+                item->setHidingPlayer(true);
+            } else {
+                item->setHidingPlayer(false);
             }
         }
     }
@@ -541,7 +567,11 @@ void World::onLoadingFinished()
     foreach (Field *field, fields()) {
         foreach (GameItem *item, field->gameItems()->gameItems()) {
             item->setParent(this);
-            m_gameItems->addGameItem(item);
+            if (item->itemType() == GameItem::TypeCharacter) {
+                m_characterItems->addGameItem(item);
+            } else {
+                m_gameItems->addGameItem(item);
+            }
         }
     }
 
@@ -579,6 +609,13 @@ void World::onSecondaryActionPressedChanged(bool pressed)
                 pickItem(m_playerFocusItem);
                 m_playerFocusItem = nullptr;
                 evaluateInRangeFields(m_player->position());
+            }
+            break;
+        case GameItem::TypeCharacter:
+            if (m_playerFocusItem->interaction() == GameItem::InteractionTalk) {
+                m_playerFocusItem->performInteraction();
+                // Start dialog
+
             }
             break;
         default:

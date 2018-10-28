@@ -8,6 +8,7 @@ Field::Field(QPoint position, QObject *parent) :
     m_position(position)
 {
     m_gameItems = new GameItems(this);
+    connect(m_gameItems, &GameItems::countChanged, this, &Field::onGameItemsCountChanged);
 
     m_collitionObject = new GameObject(this);
     m_collitionObject->setName("Field");
@@ -184,6 +185,12 @@ void Field::setWestField(Field *field)
 void Field::setNorthWestField(Field *field)
 {
     m_northWestField = field;
+}
+
+void Field::onGameItemsCountChanged(int count)
+{
+    Q_UNUSED(count);
+    emit hasItemChanged(hasItem());
 }
 
 QDebug operator<<(QDebug debug, Field *field)

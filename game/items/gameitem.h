@@ -16,6 +16,8 @@ class GameItem : public GameObject
     Q_PROPERTY(int price READ price NOTIFY priceChanged)
     Q_PROPERTY(bool playerFocus READ playerFocus NOTIFY playerFocusChanged)
     Q_PROPERTY(bool playerVisible READ playerVisible NOTIFY playerVisibleChanged)
+    Q_PROPERTY(bool hidingPlayer READ hidingPlayer NOTIFY hidingPlayerChanged)
+    Q_PROPERTY(bool playerOnItem READ playerOnItem NOTIFY playerOnItemChanged)
 
 public:
     enum Type {
@@ -72,6 +74,12 @@ public:
     bool playerVisible() const;
     void setPlayerVisible(bool playerVisible);
 
+    bool hidingPlayer() const;
+    void setHidingPlayer(bool hidingPlayer);
+
+    bool playerOnItem() const;
+    void setPlayerOnItem(bool playerOnItem);
+
     Interaction interaction() const;
 
     QList<QPoint> unaccessableMap();
@@ -89,6 +97,8 @@ private:
     int m_price = 0;
     bool m_playerFocus = false;
     bool m_playerVisible = false;
+    bool m_hidingPlayer = false;
+    bool m_playerOnItem = false;
 
     QList<QPoint> m_unaccessableMap;
     QList<QPoint> m_visibilityMap;
@@ -103,6 +113,8 @@ signals:
     void priceChanged(int price);
     void playerFocusChanged(bool playerFocus);
     void playerVisibleChanged(bool playerVisible);
+    void hidingPlayerChanged(bool hidingPlayer);
+    void playerOnItemChanged(bool playerOnItem);
 
     // Interaction signals
     void picked();

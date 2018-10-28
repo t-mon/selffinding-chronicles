@@ -18,9 +18,6 @@ Item {
     Rectangle {
         anchors.fill: parent
         anchors.margins: app.margins / 2
-        //color: "#aaFFFFFF"
-        //border.width: app.borderWidth
-        //radius: root.height / 8
 
         LinearGradient {
             anchors.fill: parent

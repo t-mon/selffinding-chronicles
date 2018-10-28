@@ -25,6 +25,7 @@ class World : public Fields
     Q_PROPERTY(Map *map READ map CONSTANT)
     Q_PROPERTY(Player *player READ player CONSTANT)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
+    Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
 
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
@@ -53,6 +54,7 @@ public:
     Map *map();
     Player *player();
     GameItems *gameItems();
+    GameItems *characterItems();
     PlayerController *playerController();
 
     bool loaded() const;
@@ -67,6 +69,7 @@ private:
     Map *m_map = nullptr;
     Player *m_player = nullptr;
     GameItems *m_gameItems = nullptr;
+    GameItems *m_characterItems = nullptr;
     PlayerController *m_playerController = nullptr;
     CollisionDetector *m_collisionDetector = nullptr;
 
@@ -77,6 +80,7 @@ private:
     Field *m_currentPlayerField = nullptr;
     QList<Field *> m_fieldsInRange;
     GameItem *m_playerFocusItem = nullptr;
+    GameItem *m_playerCurrentlyOnItem = nullptr;
 
     // Map loading
     QFutureWatcher<void> *m_loadingWatcher = nullptr;

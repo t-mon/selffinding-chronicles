@@ -12,6 +12,7 @@
 Map::Map(QObject *parent) : QObject(parent)
 {
     m_items = new GameItems(this);
+    m_characters = new GameItems(this);
 }
 
 Map::~Map()
@@ -69,6 +70,11 @@ QString Map::fileName() const
 GameItems *Map::items()
 {
     return m_items;
+}
+
+GameItems *Map::characters()
+{
+    return m_characters;
 }
 
 void Map::loadMap(const QString &fileName)
@@ -157,13 +163,20 @@ void Map::loadMap(const QString &fileName)
     m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("items").toList()));
 
     qCDebug(dcMap()) << "--> load characters";
-    m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("characters").toList()));
+    m_characters->addGameItemList(DataLoader::loadGameItems(mapData.value("characters").toList()));
 
     foreach (GameItem *item, m_items->gameItems()) {
         placeItemOnMap(item);
         qCDebug(dcMap()) << "        " << item;
         item->moveToThread(QCoreApplication::instance()->thread());
     }
+
+    foreach (GameItem *item, m_characters->gameItems()) {
+        placeItemOnMap(item);
+        qCDebug(dcMap()) << "        " << item;
+        item->moveToThread(QCoreApplication::instance()->thread());
+    }
+
 
     // Move all the object back to the main thread
     foreach (Fields *fields, m_mapData) {

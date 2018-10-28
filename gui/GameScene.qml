@@ -12,9 +12,6 @@ import "inventory"
 Item {
     id: root
 
-    property real zoomLevel: 1.0
-    property real cellSize: zoomLevel * Math.min(root.width / 30, root.height / 20)
-
     property bool debugView: true
     property bool inventoryVisible: false
 
@@ -58,19 +55,19 @@ Item {
         contentHeight: worldBackground.height
 
         enabled: false
-        antialiasing: true
+        antialiasing: app.antialiasing
 
         onContentXChanged: {
             // Calculate the new screen position
-            var contentOffsetX = parseInt(contentX / cellSize)
-            var contentOffsetY = parseInt(contentY / cellSize)
+            var contentOffsetX = parseInt(contentX / app.gridSize)
+            var contentOffsetY = parseInt(contentY / app.gridSize)
             Game.world.currentViewOffset = Qt.point(contentOffsetX, contentOffsetY)
         }
 
         onContentYChanged: {
             // Calculate the new screen position
-            var contentOffsetX = parseInt(contentX / cellSize)
-            var contentOffsetY = parseInt(contentY / cellSize)
+            var contentOffsetX = parseInt(contentX / app.gridSize)
+            var contentOffsetY = parseInt(contentY / app.gridSize)
             Game.world.currentViewOffset = Qt.point(contentOffsetX, contentOffsetY)
         }
 
@@ -84,19 +81,19 @@ Item {
 
         Item {
             id: worldBackground
-            width: Game.world.map.width * cellSize
-            height: Game.world.map.height * cellSize
+            width: Game.world.map.width * app.gridSize
+            height: Game.world.map.height * app.gridSize
             z: Map.Layer0Lowest
 
             Repeater {
                 id: fieldRepeater
                 model: Game.world
                 delegate: FieldItem {
-                    width: cellSize
-                    height: cellSize
+                    width: app.gridSize
+                    height: app.gridSize
                     field: Game.world.get(model.index)
-                    x: field.position.x * cellSize
-                    y: field.position.y * cellSize
+                    x: field.position.x * app.gridSize
+                    y: field.position.y * app.gridSize
                 }
             }
 
@@ -105,11 +102,11 @@ Item {
                 color: "white"
                 border.color: "red"
                 border.width: 3
-                antialiasing: true
+                antialiasing: app.antialiasing
                 visible: Game.debugging
                 opacity: 0.2
-                width: Game.world.boundingSize.width * cellSize
-                height: Game.world.boundingSize.height * cellSize
+                width: Game.world.boundingSize.width * app.gridSize
+                height: Game.world.boundingSize.height * app.gridSize
                 z: Map.Layer1Lower
 
                 onXChanged: {
@@ -141,15 +138,15 @@ Item {
                 }
             }
 
-            PlayerItem {
+            CharacterItem {
                 id: playerItem
-                width: root.cellSize * Game.world.player.size.width
-                height: root.cellSize * Game.world.player.size.height
+                characterItem: Game.world.player
 
-                antialiasing: true
+                width: Game.world.player.size.width * app.gridSize
+                height: Game.world.player.size.height * app.gridSize
 
-                x: Game.world.player.position.x * cellSize
-                y: Game.world.player.position.y * cellSize
+                x: characterItem.position.x * app.gridSize
+                y: characterItem.position.y * app.gridSize
                 z: Map.Layer2Normal
 
                 onXChanged: evaluateBoundingRectangle()
@@ -158,44 +155,26 @@ Item {
                 Component.onCompleted: evaluateBoundingRectangle()
             }
 
-            Item {
-                id: auraItem
-                width: Game.world.player.auraCircleObject.size.width * cellSize
-                height: Game.world.player.auraCircleObject.size.height * cellSize
-                x: Game.world.player.auraCircleObject.position.x * cellSize
-                y: Game.world.player.auraCircleObject.position.y * cellSize
-                z: Game.world.player.auraCircleObject.layer
-
-                opacity: Game.debugging ? 0.5 : 0
-
-                Image {
-                    id: auraImage
-                    anchors.fill: parent
-                    source: dataDirectory + "/images/characters/player-aura.png"
-                }
-            }
-
-            GameLabel {
-                id: playerNameLabel
-                anchors.horizontalCenter: playerItem.horizontalCenter
-                anchors.bottom: playerItem.top
-                anchors.bottomMargin: 4
-                visible: Game.debugging
-                color: "black"
-                opacity: 1
-                z: Map.Layer4Highest
-                text: Game.world.player.name
-            }
-
             Repeater {
                 id: itemsRepeater
                 model: Game.world.gameItems
                 delegate: GameItem {
-                    gameItem: Game.world.gameItems.get(model.index)
-                    width: model.size.width * cellSize
-                    height: model.size.height * cellSize
-                    x: model.position.x * cellSize
-                    y: model.position.y * cellSize
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
+                    z: model.layer
+                }
+            }
+
+            Repeater {
+                id: characersRepeater
+                model: Game.world.characterItems
+                delegate: CharacterItem {
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
                     z: model.layer
                 }
             }
@@ -220,11 +199,11 @@ Item {
     //    }
 
     function evaluateBoundingRectangle() {
-        var worldWidth = Game.world.size.width * cellSize
-        var worldHeight = Game.world.size.height * cellSize
+        var worldWidth = Game.world.size.width * app.gridSize
+        var worldHeight = Game.world.size.height * app.gridSize
 
-        var offsetX = Game.world.player.position.x * cellSize - (boundingRectangle.x + boundingRectangle.width / 2)
-        var offsetY = Game.world.player.position.y * cellSize - (boundingRectangle.y + boundingRectangle.height / 2)
+        var offsetX = Game.world.player.position.x * app.gridSize - (boundingRectangle.x + boundingRectangle.width / 2)
+        var offsetY = Game.world.player.position.y * app.gridSize - (boundingRectangle.y + boundingRectangle.height / 2)
 
         var newPositionX = boundingRectangle.x;
         var newPositionY = boundingRectangle.y;
@@ -255,8 +234,8 @@ Item {
         if (!Game.running || Game.world.playerController.controlMode !== Game.ControlModeKeyBoardMouse)
             return;
 
-        var dx = (worldFlickable.contentX + sceenMouseArea.mouseX) - Game.world.player.position.x * cellSize
-        var dy = (worldFlickable.contentY + sceenMouseArea.mouseY) - Game.world.player.position.y * cellSize
+        var dx = (worldFlickable.contentX + sceenMouseArea.mouseX) - Game.world.player.position.x * app.gridSize
+        var dy = (worldFlickable.contentY + sceenMouseArea.mouseY) - Game.world.player.position.y * app.gridSize
         //console.log("--> ",  dy, " | ", dx)
         Game.world.player.angle = Math.atan2(dy , dx)
     }

@@ -20,6 +20,7 @@ class Field : public QObject
     Q_PROPERTY(bool accessible READ accessible WRITE setAccessible NOTIFY accessibleChanged)
     Q_PROPERTY(bool playerOnField READ playerOnField NOTIFY playerOnFieldChanged)
     Q_PROPERTY(bool inPlayerRange READ inPlayerRange NOTIFY inPlayerRangeChanged)
+    Q_PROPERTY(bool hasItem READ hasItem NOTIFY hasItemChanged)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
 
     friend class Map;
@@ -86,12 +87,16 @@ private:
     void setWestField(Field *field);
     void setNorthWestField(Field *field);
 
+private slots:
+    void onGameItemsCountChanged(int count);
+
 signals:
     void positionChanged(const QPoint &position);
     void imageNameChanged(const QString &imageName);
     void accessibleChanged(bool accessible);
     void playerOnFieldChanged(bool playerOnField);
     void inPlayerRangeChanged(bool inPlayerRange);
+    void hasItemChanged(bool hasGameItem);
 
 };
 

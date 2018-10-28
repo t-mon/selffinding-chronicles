@@ -31,6 +31,7 @@ ApplicationWindow {
 
     property string fontFamily: gameFont.name
     property real gridSize: Math.min(app.width / 30, app.height / 20)
+    property bool antialiasing: true
 
     FontLoader {
         id: gameFont

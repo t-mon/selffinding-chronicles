@@ -42,6 +42,9 @@ protected:
 private:
     QList<GameItem *> m_gameItems;
 
+signals:
+    void countChanged(int count);
+
 };
 
 #endif // GAMEITEMS_H

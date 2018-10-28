@@ -109,10 +109,29 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
     character->setSize(itemSize);
     character->setShape(PlantItem::ShapeCircle);
 
-    if (description.value("gender", "male").toString() == "male") {
+    if (description.value("gender", "male").toString().toLower() == "male") {
         character->setGender(Character::Male);
-    } else if (description.value("gender", "male").toString() == "female") {
+    } else if (description.value("gender", "male").toString().toLower() == "female") {
         character->setGender(Character::Female);
+    }
+
+    QString roleName = description.value("role", "player").toString().toLower();
+    if (roleName == "player") {
+        character->setRole(Character::Player);
+    } else if (roleName == "statist") {
+        character->setRole(Character::Statist);
+    } else if (roleName == "friend") {
+        character->setRole(Character::Friend);
+    } else if (roleName == "enemy") {
+        character->setRole(Character::Enemy);
+    } else if (roleName == "magician") {
+        character->setRole(Character::Magician);
+    } else if (roleName == "warrior") {
+        character->setRole(Character::Warrior);
+    } else if (roleName == "dealer") {
+        character->setRole(Character::Dealer);
+    } else {
+        qCWarning(dcMap()) << "Invalid role" << roleName;
     }
 
     character->setUnaccessableMap(unaccessableMap);

@@ -38,7 +38,7 @@ Page {
                 GameLabel {
                     Layout.fillWidth: true
                     font.pixelSize: app.largeFont
-                    text: qsTr("Simon Stürz")
+                    text: "Simon Stürz"
                 }
             }
         }

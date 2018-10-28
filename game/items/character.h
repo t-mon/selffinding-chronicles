@@ -18,6 +18,7 @@ class Character : public GameItem
     Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
 
     Q_PROPERTY(Gender gender READ gender NOTIFY genderChanged)
+    Q_PROPERTY(Role role READ role NOTIFY roleChanged)
     Q_PROPERTY(int experience READ experience NOTIFY experienceChanged)
     Q_PROPERTY(int health READ health NOTIFY healthChanged)
     Q_PROPERTY(int healthMax READ healthMax NOTIFY healthMaxChanged)
@@ -33,6 +34,18 @@ public:
         Female
     };
     Q_ENUM(Gender)
+
+    enum Role {
+        Player,
+        Statist,
+        Friend,
+        Enemy,
+        Professor,
+        Magician,
+        Warrior,
+        Dealer
+    };
+    Q_ENUM(Role)
 
     Character(QObject *parent = nullptr);
     ~Character() override = default;
@@ -55,6 +68,9 @@ public:
     // Properties
     Gender gender() const;
     void setGender(Gender gender);
+
+    Role role() const;
+    void setRole(Role role);
 
     int experience() const;
     void setExperience(int experience);
@@ -90,6 +106,7 @@ private:
 
     // Properties
     Gender m_gender = Male;
+    Role m_role = Player;
     int m_experience = 0;
 
     int m_health = 100;
@@ -111,6 +128,7 @@ signals:
     void auraRangeChanged(const int &auraRange);
 
     void genderChanged(Gender gender);
+    void roleChanged(Role role);
     void experienceChanged(int experience);
 
     void healthChanged(int healt);

@@ -67,6 +67,35 @@ void GameItem::setPlayerVisible(bool playerVisible)
     emit playerVisibleChanged(m_playerVisible);
 }
 
+bool GameItem::hidingPlayer() const
+{
+    return m_hidingPlayer;
+}
+
+void GameItem::setHidingPlayer(bool hidingPlayer)
+{
+    if (m_hidingPlayer == hidingPlayer)
+        return;
+
+    m_hidingPlayer = hidingPlayer;
+    emit hidingPlayerChanged(m_hidingPlayer);
+}
+
+bool GameItem::playerOnItem() const
+{
+    return m_playerOnItem;
+}
+
+void GameItem::setPlayerOnItem(bool playerOnItem)
+{
+    if (m_playerOnItem == playerOnItem)
+        return;
+
+    qCDebug(dcItem()) << "Player on item changed" << playerOnItem << this;
+    m_playerOnItem = playerOnItem;
+    emit playerOnItemChanged(m_playerOnItem);
+}
+
 GameItem::Interaction GameItem::interaction() const
 {
     return m_interaction;
