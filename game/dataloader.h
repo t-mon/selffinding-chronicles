@@ -22,7 +22,7 @@ public:
     static Character *createCharacterObject(const QVariantMap &description, const QPoint &position = QPoint());
 
     static QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
-    static QVariantMap loadMapData(const QString &mapDataFileName);
+    static QVariantMap loadJsonData(const QString &mapDataFileName);
 
 };
 

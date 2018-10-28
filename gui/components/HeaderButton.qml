@@ -3,8 +3,8 @@ import QtQuick.Controls 2.1
 
 ToolButton {
     property alias imageSource: image.source
-    property alias color: image.color
-    property alias keyColor: image.keyColor
+//    property alias color: image.color
+//    property alias keyColor: image.keyColor
 
     contentItem: Item {
         height: 20

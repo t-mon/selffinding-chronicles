@@ -1,0 +1,63 @@
+{
+    "uuid": "a2e5a369-387f-4489-9dad-cd54ac6e76e2",
+    "title": "Test dialog",
+    "start": "9a7e02c6-f1df-437a-9231-a1db07282b99",
+    "conversation": [
+        {
+            "uuid": "9a7e02c6-f1df-437a-9231-a1db07282b99",
+            "type": "text",
+            "speeker": "character",
+            "text": "Hello! Welcome to the game.",
+            "next": "129da328-6d36-473d-8706-51bba2f5e3c2"
+        },
+        {
+            "uuid": "129da328-6d36-473d-8706-51bba2f5e3c2",
+            "type": "text",
+            "speeker": "player",
+            "text": "Hello! Nice to meet you.",
+            "next": "9a7e02c6-f1df-437a-9231-a1db07282b99"
+        },
+        {
+            "uuid": "9a7e02c6-f1df-437a-9231-a1db07282b99",
+            "type": "choise",
+            "speeker": "player",
+            "choises": [
+                {
+                    "uuid": "9a7e02c6-f1df-437a-9231-a1db07282b99",
+                    "type": "text",
+                    "speeker": "player",
+                    "text": "Whats your name?",
+                    "next": "4d442ae2-bcd9-4879-b630-126797f77f39"
+                },
+                {
+                    "uuid": "98cd63ee-8121-4a72-948e-9cb5e13ef720",
+                    "type": "text",
+                    "speeker": "player",
+                    "text": "Where am I?",
+                    "next": "04474d70-cac0-45aa-ad54-038cf682358e"
+                }
+            ]
+        },
+        {
+            "uuid": "4d442ae2-bcd9-4879-b630-126797f77f39",
+            "type": "text",
+            "speeker": "character",
+            "text": "I'm a test character",
+            "next": "9a7e02c6-f1df-437a-9231-a1db07282b99"
+        },
+        {
+            "uuid": "04474d70-cac0-45aa-ad54-038cf682358e",
+            "type": "text",
+            "speeker": "character",
+            "text": "You are in a very small universe which has a large potential...",
+            "next": "9a7e02c6-f1df-437a-9231-a1db07282b99"
+        },
+        {
+            "uuid": "98cd63ee-8121-4a72-948e-9cb5e13ef720",
+            "type": "action",
+            "speeker": "player",
+            "text": "End conversation",
+            "action": "EndConversation"
+        }
+    ]
+}

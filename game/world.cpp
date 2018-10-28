@@ -614,7 +614,11 @@ void World::onSecondaryActionPressedChanged(bool pressed)
         case GameItem::TypeCharacter:
             if (m_playerFocusItem->interaction() == GameItem::InteractionTalk) {
                 m_playerFocusItem->performInteraction();
-                // Start dialog
+
+                // FIXME: load directly for now
+                Conversation *conversation = new Conversation(DataLoader::loadJsonData(":/dialogs/test-dialog.json"));
+
+                // Start conversation
 
             }
             break;

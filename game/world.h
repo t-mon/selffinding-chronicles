@@ -13,6 +13,7 @@
 #include "fields.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
+#include "conversation/conversation.h"
 
 class CollisionDetector;
 

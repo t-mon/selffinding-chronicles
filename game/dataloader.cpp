@@ -11,7 +11,7 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList)
 
     foreach (const QVariant &itemVariant, itemsList) {
         QVariantMap itemMap = itemVariant.toMap();
-        QVariantMap mapData = loadMapData(itemMap.value("data").toString());
+        QVariantMap mapData = loadJsonData(itemMap.value("data").toString());
 
         if (mapData.isEmpty()) {
             qCWarning(dcMap()) << "The map data file" << itemMap.value("data").toString() << "does not contains any valid data.";
@@ -159,7 +159,7 @@ QList<QPoint> DataLoader::loadFieldMap(const QVariantList &fieldMap)
     return pointList;
 }
 
-QVariantMap DataLoader::loadMapData(const QString &mapDataFileName)
+QVariantMap DataLoader::loadJsonData(const QString &mapDataFileName)
 {
     QFile mapDataFile(mapDataFileName);
     if (!mapDataFile.open(QFile::ReadOnly)) {

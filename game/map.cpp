@@ -1,5 +1,4 @@
 #include "map.h"
-#include "dataloader.h"
 #include "debugcategories.h"
 
 #include <QTime>
@@ -95,7 +94,7 @@ void Map::loadMap(const QString &fileName)
 
     // Load map information
     qCDebug(dcMap()) << "--> load json data from file";
-    QVariantMap mapData = DataLoader::loadMapData(fileName);
+    QVariantMap mapData = DataLoader::loadJsonData(fileName);
     if (mapData.isEmpty()) {
         qCWarning(dcMap()) << "The map file" << fileName << "does not contain any valid map data.";
         return;

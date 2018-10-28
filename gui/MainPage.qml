@@ -39,6 +39,17 @@ Page {
         }
 
         Button {
+            id: conversationCreatorButton
+            Layout.alignment: Qt.AlignHCenter
+            text: "Conversation creator"
+            font.pixelSize: app.largeFont
+            font.family: app.fontFamily
+            onClicked: {
+                pageStack.push(Qt.resolvedUrl("ConversationCreatorPage.qml"))
+            }
+        }
+
+        Button {
             id: aboutButton
             Layout.alignment: Qt.AlignHCenter
             text: "About"

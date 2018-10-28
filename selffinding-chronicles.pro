@@ -31,7 +31,11 @@ HEADERS += \
     game/items/gameitemsproxy.h \
     game/items/weaponitem.h \
     game/items/character.h \
-    game/dataloader.h
+    game/dataloader.h \
+    game/conversation/conversation.h \
+    game/conversation/conversationitem.h \
+    game/conversation/conversationchoise.h \
+    game/conversation/conversationaction.h
 
 SOURCES += game/main.cpp \
     game/player.cpp \
@@ -51,4 +55,7 @@ SOURCES += game/main.cpp \
     game/items/gameitemsproxy.cpp \
     game/items/weaponitem.cpp \
     game/items/character.cpp \
-    game/dataloader.cpp
+    game/dataloader.cpp \
+    game/conversation/conversation.cpp \
+    game/conversation/conversationitem.cpp \
+    game/conversation/conversationaction.cpp

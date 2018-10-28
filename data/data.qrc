@@ -14,5 +14,6 @@
         <file>gamedata/characters/test-character.json</file>
         <file>gamedata/bushes/bush-1.json</file>
         <file>gamedata/characters/player.json</file>
+        <file>dialogs/test-dialog.json</file>
     </qresource>
 </RCC>
