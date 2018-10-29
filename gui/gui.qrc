@@ -16,5 +16,6 @@
         <file>inventory/InventoryPage.qml</file>
         <file>gameitems/CharacterItem.qml</file>
         <file>ConversationCreatorPage.qml</file>
+        <file>conversation/ConversationPage.qml</file>
     </qresource>
 </RCC>

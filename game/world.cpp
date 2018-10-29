@@ -78,29 +78,34 @@ void World::setCurrentViewOffset(const QPoint &currentViewOffset)
     emit currentViewOffsetChanged(m_currentViewOffset);
 }
 
-Map *World::map()
+Map *World::map() const
 {
     return m_map;
 }
 
-Player *World::player()
+Player *World::player() const
 {
     return m_player;
 }
 
-GameItems *World::gameItems()
+GameItems *World::gameItems() const
 {
     return m_gameItems;
 }
 
-GameItems *World::characterItems()
+GameItems *World::characterItems() const
 {
     return m_characterItems;
 }
 
-PlayerController *World::playerController()
+PlayerController *World::playerController() const
 {
     return m_playerController;
+}
+
+Conversation *World::currentConversation() const
+{
+    return m_currentConversation;
 }
 
 bool World::loaded() const
@@ -132,7 +137,7 @@ QPoint World::currentPlayerPosition() const
     return m_currentPlayerPosition;
 }
 
-Field *World::currentPlayerField()
+Field *World::currentPlayerField() const
 {
     return m_currentPlayerField;
 }
@@ -204,13 +209,29 @@ void World::setLoading(bool loading)
     emit loadingChanged(m_loading);
 }
 
+void World::setCurrentConversation(Conversation *conversation)
+{
+    if (m_currentConversation == conversation)
+        return;
+
+    m_currentConversation = conversation;
+    emit currentConversationChanged(m_currentConversation);
+
+    if (m_currentConversation) {
+        m_player->setMovable(false);
+    } else {
+        m_player->setMovable(true);
+    }
+
+}
+
 void World::doPlayerMovement()
 {
     if (!m_player->movable())
         return;
 
     // FIXME: If primary pressed, default enable running for now
-    m_player->setRunning(m_playerController->primaryActionPressed());
+    m_player->setRunning(m_playerController->secondaryActionPressed());
 
     QPointF delta = m_playerController->delta();
 
@@ -592,15 +613,9 @@ void World::onLoadingFinished()
 void World::onPrimaryActionPressedChanged(bool pressed)
 {
     qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
-}
 
-void World::onSecondaryActionPressedChanged(bool pressed)
-{
-    if (!Game::instance()->running())
-        return;
-
-    qCDebug(dcWorld()) << "Secondary action" << (pressed ? "pressed" : "released");
-    if (m_playerFocusItem && pressed) {
+    bool conversationRunning = (m_currentConversation != nullptr);
+    if (m_playerFocusItem && pressed && Game::instance()->running() && !m_currentConversation) {
         switch (m_playerFocusItem->itemType()) {
         case GameItem::TypePlant:
         case GameItem::TypeWeapon:
@@ -614,12 +629,20 @@ void World::onSecondaryActionPressedChanged(bool pressed)
         case GameItem::TypeCharacter:
             if (m_playerFocusItem->interaction() == GameItem::InteractionTalk) {
                 m_playerFocusItem->performInteraction();
+                Character *character = qobject_cast<Character *>(m_playerFocusItem);
 
                 // FIXME: load directly for now
-                Conversation *conversation = new Conversation(DataLoader::loadJsonData(":/dialogs/test-dialog.json"));
+
+                Conversation *conversation = new Conversation(character, DataLoader::loadJsonData(":/dialogs/test-dialog.json"));
+                connect(conversation, &Conversation::conversationFinished, this, &World::onCurrentConversationFinished);
+
+                if (m_currentConversation) {
+                    m_currentConversation->deleteLater();
+                    m_currentConversation = nullptr;
+                }
 
                 // Start conversation
-
+                setCurrentConversation(conversation);
             }
             break;
         default:
@@ -630,7 +653,24 @@ void World::onSecondaryActionPressedChanged(bool pressed)
         //m_playerFocusItem->performInteraction();
     }
 
+    if (pressed && m_currentConversation && conversationRunning) {
+        m_currentConversation->confirmPressed();
+    }
+}
 
+void World::onSecondaryActionPressedChanged(bool pressed)
+{
+    qCDebug(dcWorld()) << "Secondary action" << (pressed ? "pressed" : "released");
+    if (pressed && m_currentConversation) {
+        m_currentConversation->confirmPressed();
+    }
+}
+
+void World::onCurrentConversationFinished()
+{
+    qCDebug(dcWorld()) << "Conversation finished";
+    m_currentConversation->deleteLater();
+    setCurrentConversation(nullptr);
 }
 
 void World::tick()

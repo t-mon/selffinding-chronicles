@@ -35,7 +35,8 @@ HEADERS += \
     game/conversation/conversation.h \
     game/conversation/conversationitem.h \
     game/conversation/conversationchoise.h \
-    game/conversation/conversationaction.h
+    game/conversation/conversationaction.h \
+    game/conversation/conversationitems.h
 
 SOURCES += game/main.cpp \
     game/player.cpp \
@@ -58,4 +59,5 @@ SOURCES += game/main.cpp \
     game/dataloader.cpp \
     game/conversation/conversation.cpp \
     game/conversation/conversationitem.cpp \
-    game/conversation/conversationaction.cpp
+    game/conversation/conversationaction.cpp \
+    game/conversation/conversationitems.cpp

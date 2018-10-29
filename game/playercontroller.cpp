@@ -71,10 +71,10 @@ void PlayerController::keyPressed(const Qt::Key &key)
     case Qt::Key_D:
         setRightPressed(true);
         break;
-    case Qt::Key_Space:
+    case Qt::Key_E:
         setPrimaryActionPressed(true);
         break;
-    case Qt::Key_E:
+    case Qt::Key_Space:
         setSecondaryActionPressed(true);
         break;
     case Qt::Key_Tab:
@@ -101,10 +101,10 @@ void PlayerController::keyReleased(const Qt::Key &key)
     case Qt::Key_D:
         setRightPressed(false);
         break;
-    case Qt::Key_Space:
+    case Qt::Key_E:
         setPrimaryActionPressed(false);
         break;
-    case Qt::Key_E:
+    case Qt::Key_Space:
         setSecondaryActionPressed(false);
         break;
     case Qt::Key_Tab:
@@ -141,26 +141,43 @@ QPointF PlayerController::delta()
 
 void PlayerController::setForwardPressed(bool forwaredPressed)
 {
+    if (m_forwaredPressed == forwaredPressed)
+        return;
+
     qCDebug(dcPlayerController()) << "Forwared" << (forwaredPressed ? "pressed" : "released");
     m_forwaredPressed = forwaredPressed;
+    emit forwaredPressedChanged(m_forwaredPressed);
+
 }
 
 void PlayerController::setBackwardPressed(bool backwardPressed)
 {
+    if (m_backwardPressed == backwardPressed)
+        return;
+
     qCDebug(dcPlayerController()) << "Backwards" << (backwardPressed ? "pressed" : "released");
     m_backwardPressed = backwardPressed;
+    emit backwardsPressedChanged(m_backwardPressed);
 }
 
 void PlayerController::setLeftPressed(bool leftPressed)
 {
+    if (m_leftPressed == leftPressed)
+        return;
+
     qCDebug(dcPlayerController()) << "Left" << (leftPressed ? "pressed" : "released");
     m_leftPressed = leftPressed;
+    emit leftPressedChanged(m_backwardPressed);
 }
 
 void PlayerController::setRightPressed(bool rightPressed)
 {
+    if (m_rightPressed == rightPressed)
+        return;
+
     qCDebug(dcPlayerController()) << "Right" << (rightPressed ? "pressed" : "released");
     m_rightPressed = rightPressed;
+    emit rightPressedChanged(m_rightPressed);
 }
 
 void PlayerController::setPrimaryActionPressed(bool primaryActionPressed)

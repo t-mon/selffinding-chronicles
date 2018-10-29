@@ -64,6 +64,11 @@ private:
 signals:
     void controlModeChanged(ControlMode controlMode);
 
+    void forwaredPressedChanged(bool pressed);
+    void backwardsPressedChanged(bool pressed);
+    void leftPressedChanged(bool pressed);
+    void rightPressedChanged(bool pressed);
+
     void primaryActionPressedChanged(bool pressed);
     void secondaryActionPressedChanged(bool pressed);
     void inventoryPressed();

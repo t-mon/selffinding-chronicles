@@ -1,4 +1,5 @@
 #include "conversationitem.h"
+#include "../debugcategories.h"
 
 ConversationItem::ConversationItem(QObject *parent) : QObject(parent)
 {
@@ -55,12 +56,27 @@ void ConversationItem::setText(const QString &text)
     m_text = text;
 }
 
-QList<ConversationItem *> ConversationItem::choises() const
+QString ConversationItem::visibleText() const
+{
+    return m_visibleText;
+}
+
+void ConversationItem::setVisibleText(const QString &text)
+{
+    if (m_visibleText == text)
+        return;
+
+    qCDebug(dcConversation()) << "Visible text" << text;
+    m_visibleText = text;
+    emit visibleTextChanged(m_visibleText);
+}
+
+ConversationItems *ConversationItem::choises() const
 {
     return m_choises;
 }
 
-void ConversationItem::setChoises(const QList<ConversationItem *> &choises)
+void ConversationItem::setChoises(ConversationItems *choises)
 {
     m_choises = choises;
 }
@@ -83,4 +99,18 @@ ConversationItem *ConversationItem::nextItem() const
 void ConversationItem::setNextItem(ConversationItem *nextItem)
 {
     m_nextItem = nextItem;
+}
+
+void ConversationItem::resetItem()
+{
+    setVisibleText(QString());
+}
+
+QDebug operator<<(QDebug debug, ConversationItem *conversationItem)
+{
+    debug.nospace() << "ConversationItem(" << conversationItem->uuid().toString();
+    debug.nospace() << ", " << conversationItem->type();
+    debug.nospace() << ", " << conversationItem->speeker();
+    debug.nospace() << ") ";
+    return debug;
 }

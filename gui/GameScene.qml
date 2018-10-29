@@ -1,4 +1,4 @@
-    import QtQuick 2.7
+import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
@@ -8,6 +8,7 @@ import Chronicles 1.0
 import "components"
 import "gameitems"
 import "inventory"
+import "conversation"
 
 Item {
     id: root
@@ -41,10 +42,22 @@ Item {
     }
 
     Connections {
+        target: Game.world
+        onCurrentConversationChanged: {
+            if (conversation && !inventoryItem.visible) {
+                conversationItem.visible = true
+            } else {
+                conversationItem.visible = false
+            }
+        }
+    }
+
+    Connections {
         target: Game.world.playerController
         onInventoryPressed: {
-            console.log("inventory pressed ")
-            inventoryItem.visible = !inventoryItem.visible
+            if (!conversationItem.visible) {
+                inventoryItem.visible = !inventoryItem.visible
+            }
         }
     }
 
@@ -328,6 +341,16 @@ Item {
         Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
         Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
         onVisibleChanged: visible ? Game.running = false : Game.running = true
+    }
+
+    ConversationPage {
+        id: conversationItem
+        anchors.fill: parent
+        visible: false
+
+        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
+        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
+        //onVisibleChanged: visible ? Game.running = false : Game.running = true
     }
 
 }

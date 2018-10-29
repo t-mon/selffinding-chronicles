@@ -28,6 +28,7 @@ class World : public Fields
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
     Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
+    Q_PROPERTY(Conversation* currentConversation READ currentConversation NOTIFY currentConversationChanged)
 
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
@@ -35,6 +36,7 @@ class World : public Fields
     Q_PROPERTY(Field* currentPlayerField READ currentPlayerField NOTIFY currentPlayerFieldChanged)
     Q_PROPERTY(QPoint currentPlayerPosition READ currentPlayerPosition NOTIFY currentPlayerPositionChanged)
     Q_PROPERTY(QPoint currentViewOffset READ currentViewOffset WRITE setCurrentViewOffset NOTIFY currentViewOffsetChanged)
+
 
 public:
     explicit World(QObject *parent = nullptr);
@@ -50,13 +52,14 @@ public:
     void setCurrentViewOffset(const QPoint &currentViewOffset);
 
     QPoint currentPlayerPosition() const;
-    Field *currentPlayerField();
+    Field *currentPlayerField() const;
 
-    Map *map();
-    Player *player();
-    GameItems *gameItems();
-    GameItems *characterItems();
-    PlayerController *playerController();
+    Map *map() const;
+    Player *player() const;
+    GameItems *gameItems() const;
+    GameItems *characterItems() const;
+    PlayerController *playerController() const;
+    Conversation *currentConversation() const;
 
     bool loaded() const;
     bool loading() const;
@@ -73,6 +76,7 @@ private:
     GameItems *m_characterItems = nullptr;
     PlayerController *m_playerController = nullptr;
     CollisionDetector *m_collisionDetector = nullptr;
+    Conversation *m_currentConversation = nullptr;
 
     // View properties
     QPoint m_currentPlayerPosition;
@@ -94,6 +98,7 @@ private:
     void setPlayerFocusItem(GameItem *focusItem);
     void setLoaded(bool loaded);
     void setLoading(bool loading);
+    void setCurrentConversation(Conversation *conversation);
 
     // Move methods
     void doPlayerMovement();
@@ -114,12 +119,14 @@ signals:
     void currentPlayerFieldChanged(Field *currentPlayerField);
     void currentPlayerPositionChanged(const QPoint &currentPlayerPosition);
     void currentViewOffsetChanged(const QPoint &currentViewOffset);
+    void currentConversationChanged(Conversation *conversation);
 
 private slots:
     void onPlayerPositionChanged();
     void onLoadingFinished();
     void onPrimaryActionPressedChanged(bool pressed);
     void onSecondaryActionPressedChanged(bool pressed);
+    void onCurrentConversationFinished();
 
 public slots:
     void tick();

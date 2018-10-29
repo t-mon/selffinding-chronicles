@@ -14,16 +14,16 @@
             "uuid": "129da328-6d36-473d-8706-51bba2f5e3c2",
             "type": "text",
             "speeker": "player",
-            "text": "Hello! Nice to meet you.",
-            "next": "9a7e02c6-f1df-437a-9231-a1db07282b99"
+            "text": "Hey! Nice to meet you.",
+            "next": "5d5b70b0-c137-4e93-b70a-c27cd4a8cebc"
         },
         {
-            "uuid": "9a7e02c6-f1df-437a-9231-a1db07282b99",
+            "uuid": "5d5b70b0-c137-4e93-b70a-c27cd4a8cebc",
             "type": "choise",
             "speeker": "player",
             "choises": [
                 {
-                    "uuid": "9a7e02c6-f1df-437a-9231-a1db07282b99",
+                    "uuid": "3d96bef9-0197-4c68-ba10-9729d34182a7",
                     "type": "text",
                     "speeker": "player",
                     "text": "Whats your name?",
@@ -35,6 +35,13 @@
                     "speeker": "player",
                     "text": "Where am I?",
                     "next": "04474d70-cac0-45aa-ad54-038cf682358e"
+                },
+                {
+                    "uuid": "d297231e-bd45-4196-bacf-e937096e68bd",
+                    "type": "action",
+                    "speeker": "player",
+                    "text": "End conversation",
+                    "action": "EndConversation"
                 }
             ]
         },
@@ -43,21 +50,14 @@
             "type": "text",
             "speeker": "character",
             "text": "I'm a test character",
-            "next": "9a7e02c6-f1df-437a-9231-a1db07282b99"
+            "next": "5d5b70b0-c137-4e93-b70a-c27cd4a8cebc"
         },
         {
             "uuid": "04474d70-cac0-45aa-ad54-038cf682358e",
             "type": "text",
             "speeker": "character",
             "text": "You are in a very small universe which has a large potential...",
-            "next": "9a7e02c6-f1df-437a-9231-a1db07282b99"
-        },
-        {
-            "uuid": "98cd63ee-8121-4a72-948e-9cb5e13ef720",
-            "type": "action",
-            "speeker": "player",
-            "text": "End conversation",
-            "action": "EndConversation"
+            "next": "5d5b70b0-c137-4e93-b70a-c27cd4a8cebc"
         }
     ]
 }
