@@ -52,8 +52,8 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            opacity: 0.4
-            color: "green"
+            opacity: 0.6
+            color: "steelblue"
             radius: app.gridSize
         }
 
@@ -90,6 +90,22 @@ Item {
                 color: "white"
             }
         }
+
+        Connections {
+            target: Game.world.playerController
+            onPrimaryActionPressedChanged: {
+                if (pressed && textItemCharacter.visible) {
+                    conversation.confirmPressed()
+                }
+            }
+
+            onSecondaryActionPressedChanged: {
+                if (pressed && textItemCharacter.visible) {
+                    conversation.confirmPressed()
+                }
+            }
+        }
+
     }
 
     Item {
@@ -102,7 +118,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            opacity: 0.4
+            opacity: 0.6
             color: "yellow"
             radius: app.gridSize
         }
@@ -140,6 +156,21 @@ Item {
                 color: "white"
             }
         }
+
+        Connections {
+            target: Game.world.playerController
+            onPrimaryActionPressedChanged: {
+                if (pressed && textItemPlayer.visible) {
+                    conversation.confirmPressed()
+                }
+            }
+
+            onSecondaryActionPressedChanged: {
+                if (pressed && textItemPlayer.visible) {
+                    conversation.confirmPressed()
+                }
+            }
+        }
     }
 
     Item {
@@ -152,7 +183,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            opacity: 0.4
+            opacity: 0.6
             color: "gray"
             radius: app.gridSize
         }
@@ -175,7 +206,7 @@ Item {
                 width: parent.width
                 highlighted: ListView.isCurrentItem
                 onClicked: {
-                    console.log("Player selected " + model.uuid + "-->" + model.text )
+                    console.log("Player selected " + model.uuid + " --> " + model.text )
                     choisesListView.currentIndex = index
                     conversation.selectItem(model.uuid)
                 }
@@ -225,9 +256,16 @@ Item {
                     }
                 }
 
+                onPrimaryActionPressedChanged: {
+                    if (pressed && choiseItem.visible) {
+                        console.log("Player selected " + conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid + " --> " + conversation.conversationItem.choises.get(choisesListView.currentIndex).text )
+                        conversation.selectItem(conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid)
+                    }
+                }
+
                 onSecondaryActionPressedChanged: {
                     if (pressed && choiseItem.visible) {
-                        console.log("Player selected " + conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid + "-->" + conversation.conversationItem.choises.get(choisesListView.currentIndex).text )
+                        console.log("Player selected " + conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid + " --> " + conversation.conversationItem.choises.get(choisesListView.currentIndex).text )
                         conversation.selectItem(conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid)
                     }
                 }

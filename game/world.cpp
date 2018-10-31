@@ -15,6 +15,7 @@ World::World(QObject *parent) :
     // Create the player
     m_player = new Player(this);
     m_player->setShape(GameObject::ShapeCircle);
+    m_player->setSize(QSize(3,3));
     connect(m_player, &Player::positionChanged, this, &World::onPlayerPositionChanged);
 
     // Create player controller
@@ -612,10 +613,18 @@ void World::onLoadingFinished()
 
 void World::onPrimaryActionPressedChanged(bool pressed)
 {
-    qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
+    // Note: during conversation the UI takes care about the pressed actions
+    if (m_currentConversation)
+        return;
 
-    bool conversationRunning = (m_currentConversation != nullptr);
-    if (m_playerFocusItem && pressed && Game::instance()->running() && !m_currentConversation) {
+    qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
+//    if (pressed && m_currentConversation && m_currentConversation->conversationItem()->type() == ConversationItem::TypeText) {
+//        qCDebug(dcWorld()) << "Confirm conversation";
+//        m_currentConversation->confirmPressed();
+//        return;
+//    }
+
+    if (pressed && m_playerFocusItem && Game::instance()->running() && !m_currentConversation) {
         switch (m_playerFocusItem->itemType()) {
         case GameItem::TypePlant:
         case GameItem::TypeWeapon:
@@ -653,17 +662,15 @@ void World::onPrimaryActionPressedChanged(bool pressed)
         //m_playerFocusItem->performInteraction();
     }
 
-    if (pressed && m_currentConversation && conversationRunning) {
-        m_currentConversation->confirmPressed();
-    }
 }
 
 void World::onSecondaryActionPressedChanged(bool pressed)
 {
+    // Note: during conversation the UI takes care about the pressed actions
+    if (m_currentConversation)
+        return;
+
     qCDebug(dcWorld()) << "Secondary action" << (pressed ? "pressed" : "released");
-    if (pressed && m_currentConversation) {
-        m_currentConversation->confirmPressed();
-    }
 }
 
 void World::onCurrentConversationFinished()

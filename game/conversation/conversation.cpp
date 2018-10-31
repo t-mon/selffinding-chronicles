@@ -176,6 +176,7 @@ void Conversation::performAction(ConversationItem::Action action)
 
     switch (action) {
     case ConversationItem::ActionEndConversation:
+        m_finished = true;
         emit conversationFinished();
         break;
     default:
@@ -204,7 +205,7 @@ void Conversation::onTimeout()
 
 void Conversation::confirmPressed()
 {
-    if (m_conversationItem->type() != ConversationItem::TypeText)
+    if (m_conversationItem->type() != ConversationItem::TypeText || m_finished)
         return;
 
     if (m_conversationItem->visibleText() != m_conversationItem->text()) {

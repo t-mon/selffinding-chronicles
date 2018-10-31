@@ -4,6 +4,8 @@ import QtQuick.Controls 2.0
 
 import Chronicles 1.0
 
+import "components"
+
 Page {
     id: root
 
@@ -11,13 +13,11 @@ Page {
 
         anchors.centerIn: parent
 
-
-
-        Button {
+        GameButton {
             id: playButton
             Layout.alignment: Qt.AlignHCenter
             text: "Play"
-            font.bold: true
+            //font.bold: true
             font.pixelSize: app.largeFont
             font.family: app.fontFamily
             onClicked: {

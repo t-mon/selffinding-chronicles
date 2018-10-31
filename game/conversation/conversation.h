@@ -38,6 +38,7 @@ private:
     QUuid m_startItemUuid;
     int m_timerIntervall = 50;
     int m_timerAnimationCount = 0;
+    bool m_finished = false;
     QHash<QUuid, ConversationItem *> m_itemsHash;
     ConversationItem *m_conversationItem = nullptr;
 

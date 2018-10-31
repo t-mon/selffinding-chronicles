@@ -25,6 +25,11 @@ void PlayerController::setControlMode(const PlayerController::ControlMode &contr
     emit controlModeChanged(m_controlMode);
 }
 
+PlayerController::Heading PlayerController::heading() const
+{
+    return m_heading;
+}
+
 bool PlayerController::forwardPressed() const
 {
     return m_forwaredPressed;
@@ -133,10 +138,26 @@ QPointF PlayerController::delta()
         break;
     }
 
-    if (!deltaOffset.isNull())
+    if (!deltaOffset.isNull()) {
         qCDebug(dcPlayerController()) << m_controlMode << "delta" << deltaOffset;
+        if (deltaOffset.x() > 0) {
+            setHeading(HeadingRight);
+        } else if (deltaOffset.x() < 0) {
+            setHeading(HeadingLeft);
+        }
+    }
 
     return deltaOffset;
+}
+
+void PlayerController::setHeading(PlayerController::Heading heading)
+{
+    if (m_heading == heading)
+        return;
+
+    qCDebug(dcPlayerController()) << "Player heading changed" << heading;
+    m_heading = heading;
+    emit headingChanged(m_heading);
 }
 
 void PlayerController::setForwardPressed(bool forwaredPressed)

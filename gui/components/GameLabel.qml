@@ -1,14 +1,14 @@
 import QtQuick 2.5
-import QtQuick.Controls 2.1
+import QtQuick.Controls 2.2
 
 import Chronicles 1.0
 
 Label {
     id: root
 
-    font.bold: true
+    //font.bold: true
+    //font.weight: Font.ExtraBold
     font.family: app.fontFamily
     font.pixelSize: app.mediumFont
-    font.weight: Font.ExtraBold
     z: Map.Layer4Highest
 }

@@ -35,7 +35,8 @@ ApplicationWindow {
 
     FontLoader {
         id: gameFont
-        source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
+        //source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
+        source: "/fonts/blackchancery/blkchcry.ttf"
     }
 
     Settings {

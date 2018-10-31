@@ -17,5 +17,7 @@
         <file>gameitems/CharacterItem.qml</file>
         <file>ConversationCreatorPage.qml</file>
         <file>conversation/ConversationPage.qml</file>
+        <file>components/GameButton.qml</file>
+        <file>components/ItemDescription.qml</file>
     </qresource>
 </RCC>

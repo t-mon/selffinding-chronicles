@@ -37,8 +37,7 @@ class World : public Fields
     Q_PROPERTY(QPoint currentPlayerPosition READ currentPlayerPosition NOTIFY currentPlayerPositionChanged)
     Q_PROPERTY(QPoint currentViewOffset READ currentViewOffset WRITE setCurrentViewOffset NOTIFY currentViewOffsetChanged)
 
-
-public:
+public:    
     explicit World(QObject *parent = nullptr);
     ~World() override = default;
 

@@ -35,12 +35,15 @@ void Game::setRunning(const bool &running)
 
     m_running = running;
 
-    if (m_running)
+    if (m_running) {
         m_timer->start();
-    else
+        setState(GameState::Running);
+    } else {
         m_timer->stop();
+        setState(GameState::Paused);
+    }
 
-    qCDebug(dcGame()) << "The game is now" << (running ? "running" : "paused");
+    //qCDebug(dcGame()) << "The game is now" << (running ? "running" : "paused");
     emit runningChanged(m_running);
 }
 
@@ -57,6 +60,23 @@ void Game::setDebugging(bool debugging)
     qCDebug(dcGame()) << "Debugging" << (debugging ? "enabled" : "disabled");
     m_debugging = debugging;
     emit debuggingChanged(m_debugging);
+}
+
+Game::GameState Game::state() const
+{
+    return m_state;
+}
+
+void Game::setState(Game::GameState state)
+{
+    if (m_state == state)
+        return;
+
+    qCDebug(dcGame()) << state;
+    m_state = state;
+    emit stateChanged(m_state);
+
+    // TODO: switch state
 }
 
 int Game::intervall() const
