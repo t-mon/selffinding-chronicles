@@ -13,10 +13,10 @@ World::World(QObject *parent) :
     m_size(QSize(40, 40))
 {
     // Create the player
-    m_player = new Player(this);
+    m_player = new Character(this);
     m_player->setShape(GameObject::ShapeCircle);
-    m_player->setSize(QSize(3,3));
-    connect(m_player, &Player::positionChanged, this, &World::onPlayerPositionChanged);
+    m_player->setSize(QSize(2,2));
+    connect(m_player, &Character::positionChanged, this, &World::onPlayerPositionChanged);
 
     // Create player controller
     m_playerController = new PlayerController(m_player, this);
@@ -84,7 +84,7 @@ Map *World::map() const
     return m_map;
 }
 
-Player *World::player() const
+Character *World::player() const
 {
     return m_player;
 }

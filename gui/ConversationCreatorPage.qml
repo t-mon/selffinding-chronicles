@@ -73,6 +73,35 @@ Page {
                     }
                 }
             }
+
+            GridLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.margins: app.margins
+
+                columns: 2
+
+                GameLabel {
+                    text: qsTr("Title")
+                }
+
+                GameTextField {
+                    id: conversationTitleTextField
+                    text: ""
+                    Layout.fillWidth: true
+                }
+
+                GameLabel {
+                    text: qsTr("Description")
+                }
+
+                GameTextField {
+                    id: descriptionTextField
+                    text: ""
+                    Layout.fillWidth: true
+                }
+            }
         }
     }
 

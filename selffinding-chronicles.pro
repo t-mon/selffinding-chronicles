@@ -14,7 +14,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    game/player.h \
     game/game.h \
     game/world.h \
     game/field.h \
@@ -39,7 +38,6 @@ HEADERS += \
     game/conversation/conversationitems.h
 
 SOURCES += game/main.cpp \
-    game/player.cpp \
     game/game.cpp \
     game/world.cpp \
     game/field.cpp \

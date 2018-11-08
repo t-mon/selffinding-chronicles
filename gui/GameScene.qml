@@ -153,13 +153,13 @@ Item {
 
             CharacterItem {
                 id: playerItem
-                characterItem: Game.world.player
+                character: Game.world.player
 
                 width: Game.world.player.size.width * app.gridSize
                 height: Game.world.player.size.height * app.gridSize
 
-                x: characterItem.position.x * app.gridSize
-                y: characterItem.position.y * app.gridSize
+                x: character.position.x * app.gridSize
+                y: character.position.y * app.gridSize
                 z: Map.Layer2Normal
 
                 onXChanged: evaluateBoundingRectangle()
@@ -184,6 +184,7 @@ Item {
                 id: characersRepeater
                 model: Game.world.characterItems
                 delegate: CharacterItem {
+                    character: Game.world.characterItems.get(model.index)
                     width: model.size.width * app.gridSize
                     height: model.size.height * app.gridSize
                     x: model.position.x * app.gridSize

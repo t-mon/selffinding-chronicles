@@ -1,10 +1,10 @@
 #include "playercontroller.h"
 #include "debugcategories.h"
-#include "player.h"
+#include "items/character.h"
 
 #include <QtMath>
 
-PlayerController::PlayerController(Player *player, QObject *parent) :
+PlayerController::PlayerController(Character *player, QObject *parent) :
     QObject(parent),
     m_player(player)
 {
@@ -23,11 +23,6 @@ void PlayerController::setControlMode(const PlayerController::ControlMode &contr
 
     m_controlMode = controlMode;
     emit controlModeChanged(m_controlMode);
-}
-
-PlayerController::Heading PlayerController::heading() const
-{
-    return m_heading;
 }
 
 bool PlayerController::forwardPressed() const
@@ -138,26 +133,7 @@ QPointF PlayerController::delta()
         break;
     }
 
-    if (!deltaOffset.isNull()) {
-        qCDebug(dcPlayerController()) << m_controlMode << "delta" << deltaOffset;
-        if (deltaOffset.x() > 0) {
-            setHeading(HeadingRight);
-        } else if (deltaOffset.x() < 0) {
-            setHeading(HeadingLeft);
-        }
-    }
-
     return deltaOffset;
-}
-
-void PlayerController::setHeading(PlayerController::Heading heading)
-{
-    if (m_heading == heading)
-        return;
-
-    qCDebug(dcPlayerController()) << "Player heading changed" << heading;
-    m_heading = heading;
-    emit headingChanged(m_heading);
 }
 
 void PlayerController::setForwardPressed(bool forwaredPressed)

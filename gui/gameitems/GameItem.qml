@@ -72,7 +72,7 @@ Item {
         border.color: "black"
         opacity: 0.1
         border.width: 2
-        visible: gameItem ? gameItem.playerFocus || Game.debugging : Game.debugging
+        visible: Game.debugging
         radius: gameItem ? (gameItem.shape === GameObject.ShapeCircle ? width / 2 : 0) : 0
     }
 

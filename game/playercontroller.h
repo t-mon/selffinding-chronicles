@@ -3,13 +3,12 @@
 
 #include <QObject>
 
-class Player;
+class Character;
 
 class PlayerController : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(ControlMode controlMode READ controlMode WRITE setControlMode NOTIFY controlModeChanged)
-    Q_PROPERTY(Heading heading READ heading NOTIFY headingChanged)
 
 public:
     enum ControlMode {
@@ -19,18 +18,10 @@ public:
     };
     Q_ENUM(ControlMode)
 
-    enum Heading {
-        HeadingLeft,
-        HeadingRight
-    };
-    Q_ENUM(Heading)
-
-    explicit PlayerController(Player *player, QObject *parent = nullptr);
+    explicit PlayerController(Character *player, QObject *parent = nullptr);
 
     ControlMode controlMode() const;
     void setControlMode(const ControlMode &controlMode);
-
-    Heading heading() const;
 
     bool forwardPressed() const;
     bool backwardPressed() const;
@@ -46,9 +37,8 @@ public:
     QPointF delta();
 
 private:
-    Player *m_player = nullptr;
+    Character *m_player = nullptr;
     ControlMode m_controlMode = ControlModeKeyBoard;
-    Heading m_heading = HeadingRight;
 
     bool m_forwaredPressed = false;
     bool m_backwardPressed = false;
@@ -58,8 +48,6 @@ private:
     bool m_primaryActionPressed = false;
     bool m_secondaryActionPressed = false;
     bool m_inventoryPressed = false;
-
-    void setHeading(Heading heading);
 
     void setForwardPressed(bool forwaredPressed);
     void setBackwardPressed(bool backwardPressed);
@@ -75,7 +63,6 @@ private:
 
 signals:
     void controlModeChanged(ControlMode controlMode);
-    void headingChanged(Heading heading);
 
     void forwaredPressedChanged(bool pressed);
     void backwardsPressedChanged(bool pressed);

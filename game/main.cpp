@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
-    s_loggingFilters.insert("Player", false);
+    s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("Map", false);
     s_loggingFilters.insert("Item", false);
@@ -117,7 +117,6 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
     qmlRegisterUncreatableType<World>("Chronicles", 1, 0, "World", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
-    qmlRegisterUncreatableType<Player>("Chronicles", 1, 0, "Player", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the World object.");
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
 
@@ -131,9 +130,11 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<WeaponItem>("Chronicles", 1, 0, "WeaponItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
-    qmlRegisterUncreatableType<Conversation>("Chronicles", 1, 0, "Conversation", "Can't create this in QML.");
-    qmlRegisterUncreatableType<ConversationItem>("Chronicles", 1, 0, "ConversationItem", "Can't create this in QML.");
-    qmlRegisterUncreatableType<ConversationItems>("Chronicles", 1, 0, "ConversationItems", "Can't create this in QML.");
+
+    // Conversation
+    qmlRegisterType<Conversation>("Chronicles", 1, 0, "Conversation");
+    qmlRegisterType<ConversationItem>("Chronicles", 1, 0, "ConversationItem");
+    qmlRegisterType<ConversationItems>("Chronicles", 1, 0, "ConversationItems");
 
     QDir dataDirectory(parser.value(dataOption));
     if (!dataDirectory.makeAbsolute()) {

@@ -8,7 +8,6 @@
 #include <QKeyEvent>
 
 #include "world.h"
-#include "player.h"
 
 class Game : public QObject
 {

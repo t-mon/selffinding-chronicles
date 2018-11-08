@@ -9,7 +9,6 @@
 #include <QFutureWatcher>
 
 #include "map.h"
-#include "player.h"
 #include "fields.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
@@ -24,7 +23,7 @@ class World : public Fields
     Q_PROPERTY(QSize boundingSize READ boundingSize WRITE setBoundingSize NOTIFY boundingSizeChanged)
 
     Q_PROPERTY(Map *map READ map CONSTANT)
-    Q_PROPERTY(Player *player READ player CONSTANT)
+    Q_PROPERTY(Character *player READ player CONSTANT)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
     Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
@@ -54,7 +53,7 @@ public:
     Field *currentPlayerField() const;
 
     Map *map() const;
-    Player *player() const;
+    Character *player() const;
     GameItems *gameItems() const;
     GameItems *characterItems() const;
     PlayerController *playerController() const;
@@ -70,7 +69,7 @@ private:
     QSize m_boundingSize;
 
     Map *m_map = nullptr;
-    Player *m_player = nullptr;
+    Character *m_player = nullptr;
     GameItems *m_gameItems = nullptr;
     GameItems *m_characterItems = nullptr;
     PlayerController *m_playerController = nullptr;

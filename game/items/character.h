@@ -16,6 +16,10 @@ class Character : public GameItem
     Q_PROPERTY(GameItemsProxy *inventoryProxy READ inventoryProxy CONSTANT)
     Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
     Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
+    Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
+    Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
+    Q_PROPERTY(Heading heading READ heading NOTIFY headingChanged)
 
     Q_PROPERTY(Gender gender READ gender NOTIFY genderChanged)
     Q_PROPERTY(Role role READ role NOTIFY roleChanged)
@@ -47,6 +51,12 @@ public:
     };
     Q_ENUM(Role)
 
+    enum Heading {
+        HeadingLeft,
+        HeadingRight
+    };
+    Q_ENUM(Heading)
+
     Character(QObject *parent = nullptr);
     ~Character() override = default;
 
@@ -59,11 +69,25 @@ public:
     GameItems *inventory() const;
     GameItemsProxy *inventoryProxy() const;
 
+    Heading heading() const;
+
     qreal angle() const;
     void setAngle(const qreal &angle);
 
+    qreal speed() const;
+    void setSpeed(const qreal speed);
+
     int auraRange() const;
     void setAuraRange(const int auraRange);
+
+    bool movable() const;
+    void setMovable(const bool &movable);
+
+    bool moving() const;
+    void setMoving(bool moving);
+
+    bool running() const;
+    void setRunning(bool running);
 
     // Properties
     Gender gender() const;
@@ -101,8 +125,13 @@ private:
     GameItems *m_inventory = nullptr;
     GameItemsProxy *m_inventoryProxy = nullptr;
 
-    qreal m_angle = 0;
+    Heading m_heading = HeadingRight;
     int m_auraRange = 3;
+    qreal m_angle = 0;
+    qreal m_speed = 0.03;
+    bool m_movable = true;
+    bool m_moving = false;
+    bool m_running = false;
 
     // Properties
     Gender m_gender = Male;
@@ -119,13 +148,20 @@ private:
     int m_strength = 5;
     int m_stealth = 5;
 
+    void setHeading(Character::Heading heading);
+
 private slots:
     void onPositionChanged(const QPointF newPosition);
     void updateAuraObject();
 
 signals:
+    void headingChanged(Heading heading);
     void angleChanged(const qreal &angle);
     void auraRangeChanged(const int &auraRange);
+    void speedChanged(const qreal &speed);
+    void movableChanged(bool movable);
+    void movingChanged(bool moving);
+    void runningChanged(bool running);
 
     void genderChanged(Gender gender);
     void roleChanged(Role role);

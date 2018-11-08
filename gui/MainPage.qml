@@ -6,13 +6,12 @@ import Chronicles 1.0
 
 import "components"
 
-Page {
+GamePage {
     id: root
 
     ColumnLayout {
 
         anchors.centerIn: parent
-
         GameButton {
             id: playButton
             Layout.alignment: Qt.AlignHCenter

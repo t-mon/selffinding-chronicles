@@ -2,6 +2,12 @@
 #include "conversationitems.h"
 #include "../debugcategories.h"
 
+Conversation::Conversation(QObject *parent) :
+    QObject(parent)
+{
+
+}
+
 Conversation::Conversation(Character *character, const QVariantMap conversationMap, QObject *parent) :
     QObject(parent),
     m_character(character),
@@ -166,7 +172,6 @@ ConversationItem *Conversation::createConversationItem(const QVariantMap &conver
     }
 
     qCDebug(dcConversation()) << "Loaded conversation item" << item;
-
     return item;
 }
 

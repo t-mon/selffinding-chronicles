@@ -19,6 +19,7 @@ class Conversation : public QObject
     Q_PROPERTY(ConversationItem *conversationItem READ conversationItem NOTIFY conversationItemChanged)
 
 public:
+    explicit Conversation(QObject *parent = nullptr);
     explicit Conversation(Character *character, const QVariantMap conversationMap, QObject *parent = nullptr);
 
     QString title() const;

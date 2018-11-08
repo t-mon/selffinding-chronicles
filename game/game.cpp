@@ -121,7 +121,7 @@ Game::Game(QObject *parent) :
     m_world(new World(this)),
     m_running(false),
     m_interval(5),
-    m_intermediateSteps(30)
+    m_intermediateSteps(10)
 {
     m_timer->setTimerType(Qt::PreciseTimer);
     m_timer->setInterval(m_interval);
