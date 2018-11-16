@@ -6,12 +6,10 @@ import Chronicles 1.0
 
 import "components"
 
-Page {
+GamePage {
     id: root
 
-    Component.onDestruction: {
-        Game.running = false
-    }
+    Component.onDestruction: Game.running = false
 
     GameScene {
         id: gameScene
@@ -30,6 +28,7 @@ Page {
             opacity: Game.debugging ? 1 : 0
             Layout.preferredHeight: app.gridSize * 3
             Layout.preferredWidth: app.gridSize * 3
+
             Image {
                 anchors.fill: parent
                 source: dataDirectory + "/images/game/koordinate-system.png"
@@ -40,7 +39,7 @@ Page {
     Rectangle {
         id: loadingScreen
         anchors.fill: parent
-
+        color: app.backgroundColor
         visible: Game.world.loading
 
         Column {
@@ -52,6 +51,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Loading..."
                 font.pixelSize: app.largeFont
+                color: "white"
             }
 
             BusyIndicator {

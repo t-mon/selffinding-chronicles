@@ -1,10 +1,10 @@
 {
     "name": "Player",
     "type": "character",
-    "imageName": "/images/characters/player.svg",
+    "imageName": "/images/characters/player-male.svg",
     "geometry": {
-        "width": 1,
-        "height": 1,
+        "width": 2,
+        "height": 2,
         "layer": 3,
         "unaccessableMap": [  ],
         "visibilityMap": [

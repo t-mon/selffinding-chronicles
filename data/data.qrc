@@ -14,5 +14,8 @@
         <file>gamedata/characters/test-character.json</file>
         <file>gamedata/bushes/bush-1.json</file>
         <file>gamedata/characters/player.json</file>
+        <file>dialogs/test-dialog.json</file>
+        <file>fonts/blackchancery/blkchcry.ttf</file>
+        <file>gamedata/chests/chest-1.json</file>
     </qresource>
 </RCC>

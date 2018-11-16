@@ -14,7 +14,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    game/player.h \
     game/game.h \
     game/world.h \
     game/field.h \
@@ -31,10 +30,16 @@ HEADERS += \
     game/items/gameitemsproxy.h \
     game/items/weaponitem.h \
     game/items/character.h \
-    game/dataloader.h
+    game/dataloader.h \
+    game/conversation/conversation.h \
+    game/conversation/conversationitem.h \
+    game/conversation/conversationchoise.h \
+    game/conversation/conversationaction.h \
+    game/conversation/conversationitems.h \
+    game/gamesettings.h \
+    game/items/chestitem.h
 
 SOURCES += game/main.cpp \
-    game/player.cpp \
     game/game.cpp \
     game/world.cpp \
     game/field.cpp \
@@ -51,4 +56,10 @@ SOURCES += game/main.cpp \
     game/items/gameitemsproxy.cpp \
     game/items/weaponitem.cpp \
     game/items/character.cpp \
-    game/dataloader.cpp
+    game/dataloader.cpp \
+    game/conversation/conversation.cpp \
+    game/conversation/conversationitem.cpp \
+    game/conversation/conversationaction.cpp \
+    game/conversation/conversationitems.cpp \
+    game/gamesettings.cpp \
+    game/items/chestitem.cpp

@@ -33,9 +33,13 @@ ApplicationWindow {
     property real gridSize: Math.min(app.width / 30, app.height / 20)
     property bool antialiasing: true
 
+    property color backgroundColor: "#333333"
+
+
     FontLoader {
         id: gameFont
-        source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
+        //source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
+        source: "/fonts/blackchancery/blkchcry.ttf"
     }
 
     Settings {

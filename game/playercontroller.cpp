@@ -1,10 +1,10 @@
 #include "playercontroller.h"
 #include "debugcategories.h"
-#include "player.h"
+#include "items/character.h"
 
 #include <QtMath>
 
-PlayerController::PlayerController(Player *player, QObject *parent) :
+PlayerController::PlayerController(Character *player, QObject *parent) :
     QObject(parent),
     m_player(player)
 {
@@ -71,14 +71,15 @@ void PlayerController::keyPressed(const Qt::Key &key)
     case Qt::Key_D:
         setRightPressed(true);
         break;
-    case Qt::Key_Space:
+    case Qt::Key_E:
         setPrimaryActionPressed(true);
         break;
-    case Qt::Key_E:
+    case Qt::Key_Space:
         setSecondaryActionPressed(true);
         break;
     case Qt::Key_Tab:
-        emit inventoryPressed();
+        qCDebug(dcPlayerController()) << "Inventory pressed";
+        setInventoryPressed(true);
         break;
     default:
         break;
@@ -101,13 +102,14 @@ void PlayerController::keyReleased(const Qt::Key &key)
     case Qt::Key_D:
         setRightPressed(false);
         break;
-    case Qt::Key_Space:
+    case Qt::Key_E:
         setPrimaryActionPressed(false);
         break;
-    case Qt::Key_E:
+    case Qt::Key_Space:
         setSecondaryActionPressed(false);
         break;
     case Qt::Key_Tab:
+        setInventoryPressed(false);
         break;
     default:
         break;
@@ -133,54 +135,86 @@ QPointF PlayerController::delta()
         break;
     }
 
-    if (!deltaOffset.isNull())
-        qCDebug(dcPlayerController()) << m_controlMode << "delta" << deltaOffset;
-
     return deltaOffset;
 }
 
-void PlayerController::setForwardPressed(bool forwaredPressed)
+void PlayerController::setForwardPressed(bool pressed)
 {
-    qCDebug(dcPlayerController()) << "Forwared" << (forwaredPressed ? "pressed" : "released");
-    m_forwaredPressed = forwaredPressed;
-}
-
-void PlayerController::setBackwardPressed(bool backwardPressed)
-{
-    qCDebug(dcPlayerController()) << "Backwards" << (backwardPressed ? "pressed" : "released");
-    m_backwardPressed = backwardPressed;
-}
-
-void PlayerController::setLeftPressed(bool leftPressed)
-{
-    qCDebug(dcPlayerController()) << "Left" << (leftPressed ? "pressed" : "released");
-    m_leftPressed = leftPressed;
-}
-
-void PlayerController::setRightPressed(bool rightPressed)
-{
-    qCDebug(dcPlayerController()) << "Right" << (rightPressed ? "pressed" : "released");
-    m_rightPressed = rightPressed;
-}
-
-void PlayerController::setPrimaryActionPressed(bool primaryActionPressed)
-{
-    if (m_primaryActionPressed == primaryActionPressed)
+    if (m_forwaredPressed == pressed)
         return;
 
-    qCDebug(dcPlayerController()) << "Primary action" << (primaryActionPressed ? "pressed" : "released");
-    m_primaryActionPressed = primaryActionPressed;
+    qCDebug(dcPlayerController()) << "Forwared" << (pressed ? "pressed" : "released");
+    m_forwaredPressed = pressed;
+    emit forwaredPressedChanged(m_forwaredPressed);
+
+    if (m_forwaredPressed) emit forwardClicked();
+}
+
+void PlayerController::setBackwardPressed(bool pressed)
+{
+    if (m_backwardPressed == pressed)
+        return;
+
+    qCDebug(dcPlayerController()) << "Backwards" << (pressed ? "pressed" : "released");
+    m_backwardPressed = pressed;
+    emit backwardsPressedChanged(m_backwardPressed);
+    if (m_backwardPressed) emit backwardClicked();
+}
+
+void PlayerController::setLeftPressed(bool pressed)
+{
+    if (m_leftPressed == pressed)
+        return;
+
+    qCDebug(dcPlayerController()) << "Left" << (pressed ? "pressed" : "released");
+    m_leftPressed = pressed;
+    emit leftPressedChanged(m_backwardPressed);
+    if (m_leftPressed) emit leftClicked();
+}
+
+void PlayerController::setRightPressed(bool pressed)
+{
+    if (m_rightPressed == pressed)
+        return;
+
+    qCDebug(dcPlayerController()) << "Right" << (pressed ? "pressed" : "released");
+    m_rightPressed = pressed;
+    emit rightPressedChanged(m_rightPressed);
+    if (m_rightPressed) emit rightClicked();
+}
+
+void PlayerController::setPrimaryActionPressed(bool pressed)
+{
+    if (m_primaryActionPressed == pressed)
+        return;
+
+    qCDebug(dcPlayerController()) << "Primary action" << (pressed ? "pressed" : "released");
+    m_primaryActionPressed = pressed;
     emit primaryActionPressedChanged(m_primaryActionPressed);
+    if (m_primaryActionPressed)
+        emit primaryActionPressed();
 }
 
-void PlayerController::setSecondaryActionPressed(bool secondaryActionPressed)
+void PlayerController::setSecondaryActionPressed(bool pressed)
 {
-    if (m_secondaryActionPressed == secondaryActionPressed)
+    if (m_secondaryActionPressed == pressed)
         return;
 
-    qCDebug(dcPlayerController()) << "Secondary action" << (secondaryActionPressed ? "pressed" : "released");
-    m_secondaryActionPressed = secondaryActionPressed;
+    qCDebug(dcPlayerController()) << "Secondary action" << (pressed ? "pressed" : "released");
+    m_secondaryActionPressed = pressed;
     emit secondaryActionPressedChanged(m_secondaryActionPressed);
+    if (m_secondaryActionPressed)
+        emit secondaryActionPressed();
+}
+
+void PlayerController::setInventoryPressed(bool pressed)
+{
+    if (m_inventoryPressed == pressed)
+        return;
+
+    m_inventoryPressed = pressed;
+    if (m_inventoryPressed)
+        emit inventoryPressed();
 }
 
 QPointF PlayerController::moveKeyBoard()

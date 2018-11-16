@@ -8,7 +8,7 @@
 #include <QKeyEvent>
 
 #include "world.h"
-#include "player.h"
+#include "gamesettings.h"
 
 class Game : public QObject
 {
@@ -19,6 +19,16 @@ class Game : public QObject
     Q_PROPERTY(bool debugging READ debugging WRITE setDebugging NOTIFY debuggingChanged)
 
 public:
+    enum GameState {
+        Uninitialized,
+        Loading,
+        Paused,
+        Running,
+        Inventory,
+        Conversation
+    };
+    Q_ENUM(GameState)
+
     static Game* instance();
     static QObject *qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
 
@@ -29,6 +39,9 @@ public:
 
     bool debugging() const;
     void setDebugging(bool debugging);
+
+    GameState state() const;
+    void setState(GameState state);
 
     int intervall() const;
     int intermediateSteps() const;
@@ -41,10 +54,12 @@ private:
     static Game *s_instance;
 
     QTimer *m_timer = nullptr;
+    World *m_world = nullptr;
+    GameSettings *m_settings = nullptr;
 
-    World *m_world;
     bool m_running = false;
     bool m_debugging = false;
+    GameState m_state = Uninitialized;
     int m_interval = 0;
     int m_intermediateSteps = 0;
     int m_tickCounter = 0;
@@ -55,6 +70,7 @@ signals:
 
     void runningChanged(bool running);
     void debuggingChanged(bool debugging);
+    void stateChanged(GameState state);
 
 private slots:
     void onTick();

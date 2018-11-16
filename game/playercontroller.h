@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class Player;
+class Character;
 
 class PlayerController : public QObject
 {
@@ -18,7 +18,7 @@ public:
     };
     Q_ENUM(ControlMode)
 
-    explicit PlayerController(Player *player, QObject *parent = nullptr);
+    explicit PlayerController(Character *player, QObject *parent = nullptr);
 
     ControlMode controlMode() const;
     void setControlMode(const ControlMode &controlMode);
@@ -37,7 +37,7 @@ public:
     QPointF delta();
 
 private:
-    Player *m_player = nullptr;
+    Character *m_player = nullptr;
     ControlMode m_controlMode = ControlModeKeyBoard;
 
     bool m_forwaredPressed = false;
@@ -49,13 +49,14 @@ private:
     bool m_secondaryActionPressed = false;
     bool m_inventoryPressed = false;
 
-    void setForwardPressed(bool forwaredPressed);
-    void setBackwardPressed(bool backwardPressed);
-    void setLeftPressed(bool leftPressed);
-    void setRightPressed(bool rightPressed);
+    void setForwardPressed(bool pressed);
+    void setBackwardPressed(bool pressed);
+    void setLeftPressed(bool pressed);
+    void setRightPressed(bool pressed);
 
-    void setPrimaryActionPressed(bool primaryActionPressed);
-    void setSecondaryActionPressed(bool secondaryActionPressed);
+    void setPrimaryActionPressed(bool pressed);
+    void setSecondaryActionPressed(bool pressed);
+    void setInventoryPressed(bool pressed);
 
     QPointF moveKeyBoard();
     QPointF moveKeyBoardMouse();
@@ -64,8 +65,19 @@ private:
 signals:
     void controlModeChanged(ControlMode controlMode);
 
+    void forwaredPressedChanged(bool pressed);
+    void backwardsPressedChanged(bool pressed);
+    void leftPressedChanged(bool pressed);
+    void rightPressedChanged(bool pressed);
     void primaryActionPressedChanged(bool pressed);
     void secondaryActionPressedChanged(bool pressed);
+
+    void forwardClicked();
+    void backwardClicked();
+    void leftClicked();
+    void rightClicked();
+    void primaryActionClicked();
+    void secondaryActionClicked();
     void inventoryPressed();
 
 };

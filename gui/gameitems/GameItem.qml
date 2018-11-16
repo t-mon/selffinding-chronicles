@@ -72,17 +72,17 @@ Item {
         border.color: "black"
         opacity: 0.1
         border.width: 2
-        visible: gameItem ? gameItem.playerFocus || Game.debugging : Game.debugging
+        visible: Game.debugging
         radius: gameItem ? (gameItem.shape === GameObject.ShapeCircle ? width / 2 : 0) : 0
     }
 
-    GameLabel {
+
+    ItemDescription {
         id: nameLabel
         anchors.bottom: root.top
         anchors.horizontalCenter: root.horizontalCenter
         text: gameItem ? gameItem.name : ""
-        color: "black"
-        visible: gameItem ? gameItem.playerFocus || Game.debugging : Game.debugging
+        opacity: gameItem ? (Game.debugging ? 0.5 : (gameItem.playerFocus ? 1 : 0)) : 0
     }
 
 }

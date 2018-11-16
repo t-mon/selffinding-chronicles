@@ -35,12 +35,15 @@ void Game::setRunning(const bool &running)
 
     m_running = running;
 
-    if (m_running)
+    if (m_running) {
         m_timer->start();
-    else
+        setState(GameState::Running);
+    } else {
         m_timer->stop();
+        setState(GameState::Paused);
+    }
 
-    qCDebug(dcGame()) << "The game is now" << (running ? "running" : "paused");
+    //qCDebug(dcGame()) << "The game is now" << (running ? "running" : "paused");
     emit runningChanged(m_running);
 }
 
@@ -59,6 +62,23 @@ void Game::setDebugging(bool debugging)
     emit debuggingChanged(m_debugging);
 }
 
+Game::GameState Game::state() const
+{
+    return m_state;
+}
+
+void Game::setState(Game::GameState state)
+{
+    if (m_state == state)
+        return;
+
+    qCDebug(dcGame()) << state;
+    m_state = state;
+    emit stateChanged(m_state);
+
+    // TODO: switch state
+}
+
 int Game::intervall() const
 {
     return m_interval;
@@ -74,7 +94,7 @@ void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
     if (autoRepeat)
         return;
 
-    //qCDebug(dcGame()) << "Key pressed" << key;
+    qCDebug(dcGame()) << "Key pressed" << key;
     m_world->playerController()->keyPressed(key);
 
     switch (key) {
@@ -99,9 +119,10 @@ Game::Game(QObject *parent) :
     QObject(parent),
     m_timer(new QTimer(this)),
     m_world(new World(this)),
+    m_settings(new GameSettings(this)),
     m_running(false),
     m_interval(5),
-    m_intermediateSteps(30)
+    m_intermediateSteps(10)
 {
     m_timer->setTimerType(Qt::PreciseTimer);
     m_timer->setInterval(m_interval);

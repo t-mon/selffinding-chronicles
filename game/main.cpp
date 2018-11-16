@@ -27,6 +27,8 @@
 
 #include "game.h"
 #include "debugcategories.h"
+#include "conversation/conversationitem.h"
+#include "conversation/conversationitems.h"
 
 static const char *const normal = "\033[0m";
 static const char *const warning = "\e[33m";
@@ -100,11 +102,13 @@ int main(int argc, char *argv[])
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
-    s_loggingFilters.insert("Player", false);
+    s_loggingFilters.insert("Character", true);
+    s_loggingFilters.insert("Settings", true);
     s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("Item", true);
     s_loggingFilters.insert("Collision", false);
+    s_loggingFilters.insert("Conversation", true);
 
     s_loggingFilters.insert("qml", true);
 
@@ -114,7 +118,6 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
     qmlRegisterUncreatableType<World>("Chronicles", 1, 0, "World", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
-    qmlRegisterUncreatableType<Player>("Chronicles", 1, 0, "Player", "Can't create this in QML. Get it from the world object.");
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the World object.");
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
 
@@ -126,8 +129,14 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<TreeItem>("Chronicles", 1, 0, "TreeItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<WeaponItem>("Chronicles", 1, 0, "WeaponItem", "Can't create this in QML.");
+    qmlRegisterUncreatableType<ChestItem>("Chronicles", 1, 0, "ChestItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
+
+    // Conversation
+    qmlRegisterType<Conversation>("Chronicles", 1, 0, "Conversation");
+    qmlRegisterType<ConversationItem>("Chronicles", 1, 0, "ConversationItem");
+    qmlRegisterType<ConversationItems>("Chronicles", 1, 0, "ConversationItems");
 
     QDir dataDirectory(parser.value(dataOption));
     if (!dataDirectory.makeAbsolute()) {

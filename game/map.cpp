@@ -1,5 +1,4 @@
 #include "map.h"
-#include "dataloader.h"
 #include "debugcategories.h"
 
 #include <QTime>
@@ -95,7 +94,7 @@ void Map::loadMap(const QString &fileName)
 
     // Load map information
     qCDebug(dcMap()) << "--> load json data from file";
-    QVariantMap mapData = DataLoader::loadMapData(fileName);
+    QVariantMap mapData = DataLoader::loadJsonData(fileName);
     if (mapData.isEmpty()) {
         qCWarning(dcMap()) << "The map file" << fileName << "does not contain any valid map data.";
         return;
@@ -161,6 +160,9 @@ void Map::loadMap(const QString &fileName)
 
     qCDebug(dcMap()) << "--> load items";
     m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("items").toList()));
+
+    qCDebug(dcMap()) << "--> load chests";
+    m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("chests").toList()));
 
     qCDebug(dcMap()) << "--> load characters";
     m_characters->addGameItemList(DataLoader::loadGameItems(mapData.value("characters").toList()));

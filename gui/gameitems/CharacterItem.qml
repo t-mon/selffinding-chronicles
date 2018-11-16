@@ -9,28 +9,27 @@ import "../components"
 Item {
     id: root
 
-    property var characterItem: Game.world.characterItems.get(model.index)
+    property Character character: null
 
-    GameLabel {
+    ItemDescription {
         id: nameLabel
         anchors.bottom: root.top
         anchors.horizontalCenter: root.horizontalCenter
-        text: characterItem ? characterItem.name : ""
-        color: "black"
-        visible: characterItem ? characterItem.playerFocus || Game.debugging : Game.debugging
+        text: character ? character.name : ""
+        opacity: character ? (Game.debugging ? 0.5 : (character.playerFocus ? 1 : 0)) : 0
+    }
+
+    Image {
+        id: playerImage
+        anchors.fill: parent
+        source: character.heading === Character.HeadingRight ? dataDirectory + "/images/characters/player-male.png" : dataDirectory + "/images/characters/player-male-mirror.png"
+        opacity: Game.debugging ? 0.5 : 1
     }
 
     Item {
         anchors.fill: parent
-        rotation: characterItem.angle * 180 / Math.PI + 90
+        rotation: character.angle * 180 / Math.PI + 90
         antialiasing: app.antialiasing
-
-        Image {
-            id: playerImage
-            anchors.fill: parent
-            source: dataDirectory + "/images/characters/player.png"
-            opacity: Game.debugging ? 0.5 : 1
-        }
 
         Rectangle {
             id: wireFrame
@@ -45,10 +44,10 @@ Item {
 
         Item {
             id: auraItem
-            width: characterItem.auraCircleObject.size.width * app.gridSize
-            height: characterItem.auraCircleObject.size.height * app.gridSize
+            width: character.auraCircleObject.size.width * app.gridSize
+            height: character.auraCircleObject.size.height * app.gridSize
             anchors.centerIn: parent
-            z: characterItem.auraCircleObject.layer
+            z: character.auraCircleObject.layer
 
             opacity: Game.debugging ? 0.5 : 0
 

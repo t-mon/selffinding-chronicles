@@ -11,21 +11,26 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList)
 
     foreach (const QVariant &itemVariant, itemsList) {
         QVariantMap itemMap = itemVariant.toMap();
-        QVariantMap mapData = loadMapData(itemMap.value("data").toString());
+        QVariantMap mapData = loadJsonData(itemMap.value("data").toString());
 
         if (mapData.isEmpty()) {
             qCWarning(dcMap()) << "The map data file" << itemMap.value("data").toString() << "does not contains any valid data.";
             continue;
         }
 
-        if (mapData.value("type").toString() == "plant") {
+        QString itemTypeString = mapData.value("type").toString();
+        if (itemTypeString == "plant") {
             gameItems.append(createPlantItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
-        } else if (mapData.value("type").toString() == "weapon") {
+        } else if (itemTypeString == "weapon") {
             gameItems.append(createWeaponItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
-        } else if (mapData.value("type").toString() == "tree") {
+        } else if (itemTypeString == "tree") {
             gameItems.append(createTreeItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
-        } else if (mapData.value("type").toString() == "character") {
+        } else if (itemTypeString == "character") {
             gameItems.append(createCharacterObject(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+        } else if (itemTypeString == "chest") {
+            gameItems.append(createChestItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+        } else {
+            qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
         }
     }
 
@@ -149,6 +154,39 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
     return character;
 }
 
+ChestItem *DataLoader::createChestItem(const QVariantMap &description, const QPoint &position)
+{
+    QVariantMap geometryMap = description.value("geometry").toMap();
+    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
+    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
+    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
+
+    ChestItem *chestItem = new ChestItem();
+    chestItem->setName(description.value("name").toString());
+    chestItem->setPosition(position);
+    chestItem->setSize(itemSize);
+    chestItem->setShape(PlantItem::ShapeCircle);
+    chestItem->setUnaccessableMap(unaccessableMap);
+    chestItem->setVisiblilityMap(visibilityMap);
+    chestItem->setName(description.value("name").toString());
+    chestItem->setImageName(description.value("imageName").toString());
+
+    // Items
+    chestItem->items()->addGameItemList(loadGameItems(description.value("items").toList()));
+
+    // Lock combination
+    QStringList lockCombination = description.value("lockCombination").toStringList();
+    qCDebug(dcItem()) << chestItem << lockCombination;
+    if (lockCombination.isEmpty())
+        chestItem->setLocked(false);
+    else {
+        chestItem->setLocked(true);
+        chestItem->setLockCombination(lockCombination);
+    }
+
+    return chestItem;
+}
+
 QList<QPoint> DataLoader::loadFieldMap(const QVariantList &fieldMap)
 {
     QList<QPoint> pointList;
@@ -159,7 +197,7 @@ QList<QPoint> DataLoader::loadFieldMap(const QVariantList &fieldMap)
     return pointList;
 }
 
-QVariantMap DataLoader::loadMapData(const QString &mapDataFileName)
+QVariantMap DataLoader::loadJsonData(const QString &mapDataFileName)
 {
     QFile mapDataFile(mapDataFileName);
     if (!mapDataFile.open(QFile::ReadOnly)) {

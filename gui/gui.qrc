@@ -13,7 +13,16 @@
         <file>components/GameLabel.qml</file>
         <file>inventory/InventoryTabButton.qml</file>
         <file>inventory/InventoryItem.qml</file>
-        <file>inventory/InventoryPage.qml</file>
+        <file>gamepages/InventoryPage.qml</file>
         <file>gameitems/CharacterItem.qml</file>
+        <file>ConversationCreatorPage.qml</file>
+        <file>gamepages/ConversationPage.qml</file>
+        <file>components/GameButton.qml</file>
+        <file>components/ItemDescription.qml</file>
+        <file>components/GameTextField.qml</file>
+        <file>components/GamePage.qml</file>
+        <file>gamepages/UnlockingPage.qml</file>
+        <file>gamepages/LoadingPage.qml</file>
+        <file>gamepages/PlunderPage.qml</file>
     </qresource>
 </RCC>

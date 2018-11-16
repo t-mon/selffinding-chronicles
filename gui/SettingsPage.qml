@@ -5,7 +5,7 @@ import QtQuick.Controls 2.0
 import Chronicles 1.0
 import "components"
 
-Page {
+GamePage {
     id: root
 
     header: ChroniclesHeader {

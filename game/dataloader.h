@@ -8,6 +8,7 @@
 #include "items/plantitem.h"
 #include "items/weaponitem.h"
 #include "items/character.h"
+#include "items/chestitem.h"
 
 class DataLoader
 {
@@ -20,9 +21,10 @@ public:
     static TreeItem *createTreeItem(const QVariantMap &description, const QPoint &position = QPoint());
     static WeaponItem *createWeaponItem(const QVariantMap &description, const QPoint &position = QPoint());
     static Character *createCharacterObject(const QVariantMap &description, const QPoint &position = QPoint());
+    static ChestItem *createChestItem(const QVariantMap &description, const QPoint &position = QPoint());
 
     static QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
-    static QVariantMap loadMapData(const QString &mapDataFileName);
+    static QVariantMap loadJsonData(const QString &mapDataFileName);
 
 };
 

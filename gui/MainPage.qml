@@ -4,20 +4,19 @@ import QtQuick.Controls 2.0
 
 import Chronicles 1.0
 
-Page {
+import "components"
+
+GamePage {
     id: root
 
     ColumnLayout {
 
         anchors.centerIn: parent
-
-
-
-        Button {
+        GameButton {
             id: playButton
             Layout.alignment: Qt.AlignHCenter
             text: "Play"
-            font.bold: true
+            //font.bold: true
             font.pixelSize: app.largeFont
             font.family: app.fontFamily
             onClicked: {
@@ -35,6 +34,17 @@ Page {
             font.family: app.fontFamily
             onClicked: {
                 pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
+            }
+        }
+
+        Button {
+            id: conversationCreatorButton
+            Layout.alignment: Qt.AlignHCenter
+            text: "Conversation creator"
+            font.pixelSize: app.largeFont
+            font.family: app.fontFamily
+            onClicked: {
+                pageStack.push(Qt.resolvedUrl("ConversationCreatorPage.qml"))
             }
         }
 

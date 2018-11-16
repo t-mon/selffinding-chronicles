@@ -7,6 +7,7 @@
 #include <QAbstractItemModel>
 
 #include "fields.h"
+#include "dataloader.h"
 #include "items/treeitem.h"
 #include "items/gameitems.h"
 #include "items/plantitem.h"
