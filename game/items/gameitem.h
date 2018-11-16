@@ -27,7 +27,7 @@ public:
         TypeTree,
         TypeWeapon,
         TypeFirearm,
-        TypeTreasureChest,
+        TypeChest,
         TypeDoor,
         TypeTeleportStone,
         TypeBox,

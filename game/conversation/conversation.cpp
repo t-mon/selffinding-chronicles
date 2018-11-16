@@ -40,18 +40,6 @@ ConversationItem *Conversation::conversationItem() const
     return m_conversationItem;
 }
 
-void Conversation::selectItem(const QUuid &itemUuid)
-{
-    qCDebug(dcConversation()) << "Select item" << itemUuid.toString();
-
-    if (!m_itemsHash.contains(itemUuid)) {
-        qCWarning(dcConversation()) << "Could not find item for" << m_startItemUuid.toString();
-        return;
-    }
-
-    setConversationItem(m_itemsHash.value(itemUuid));
-}
-
 void Conversation::setConversationItem(ConversationItem *conversationItem)
 {
     if (m_conversationItem == conversationItem)
@@ -190,6 +178,18 @@ void Conversation::performAction(ConversationItem::Action action)
 
 }
 
+void Conversation::selectItem(const QUuid &itemUuid)
+{
+    qCDebug(dcConversation()) << "Select item" << itemUuid.toString();
+
+    if (!m_itemsHash.contains(itemUuid)) {
+        qCWarning(dcConversation()) << "Could not find item for" << m_startItemUuid.toString();
+        return;
+    }
+
+    setConversationItem(m_itemsHash.value(itemUuid));
+}
+
 void Conversation::onTimeout()
 {
     QString currentText = m_conversationItem->visibleText().left(m_timerAnimationCount);
@@ -210,19 +210,49 @@ void Conversation::onTimeout()
 
 void Conversation::confirmPressed()
 {
-    if (m_conversationItem->type() != ConversationItem::TypeText || m_finished)
+    if (m_conversationItem->type() == ConversationItem::TypeChoise) {
+        selectItem(m_conversationItem->choises()->get(m_conversationItem->currentChoiseIndex())->uuid());
         return;
+    }
 
-    if (m_conversationItem->visibleText() != m_conversationItem->text()) {
-        qCDebug(dcConversation()) << "Confirm pressed: stopping animation";
-        m_timer->stop();
-        m_conversationItem->setVisibleText(m_conversationItem->text());
-    } else {
-        qCDebug(dcConversation()) << "Confirm pressed: set next conversation item.";
-        if (m_conversationItem->nextItem()) {
-            setConversationItem(m_conversationItem->nextItem());
+    if (m_conversationItem->type() == ConversationItem::TypeText) {
+        if (m_conversationItem->visibleText() != m_conversationItem->text()) {
+            qCDebug(dcConversation()) << "Confirm pressed: stopping animation";
+            m_timer->stop();
+            m_conversationItem->setVisibleText(m_conversationItem->text());
         } else {
-            qCWarning(dcConversation()) << "Could not find next conversation item for" << m_conversationItem;
+            qCDebug(dcConversation()) << "Confirm pressed: set next conversation item.";
+            if (m_conversationItem->nextItem()) {
+                setConversationItem(m_conversationItem->nextItem());
+            } else {
+                qCWarning(dcConversation()) << "Could not find next conversation item for" << m_conversationItem;
+            }
         }
+    }
+}
+
+void Conversation::upPressed()
+{
+    if (m_conversationItem->type() == ConversationItem::TypeChoise) {
+        if (m_conversationItem->currentChoiseIndex() <= 0) {
+            m_conversationItem->setCurrentChoiseIndex(m_conversationItem->choises()->count() - 1);
+        } else {
+            m_conversationItem->setCurrentChoiseIndex(m_conversationItem->currentChoiseIndex() - 1);
+        }
+    } else {
+        confirmPressed();
+    }
+}
+
+void Conversation::downPressed()
+{
+    if (m_conversationItem->type() == ConversationItem::TypeChoise) {
+        if (m_conversationItem->currentChoiseIndex() >= m_conversationItem->choises()->count() - 1) {
+            m_conversationItem->setCurrentChoiseIndex(0);
+        } else {
+            m_conversationItem->setCurrentChoiseIndex(m_conversationItem->currentChoiseIndex() + 1);
+        }
+    } else {
+        confirmPressed();
     }
 }

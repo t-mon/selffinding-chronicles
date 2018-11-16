@@ -12,7 +12,7 @@ Field::Field(QPoint position, QObject *parent) :
 
     m_collitionObject = new GameObject(this);
     m_collitionObject->setName("Field");
-    m_collitionObject->setSize(QSize(1,1));
+    m_collitionObject->setSize(QSize(1, 1));
     m_collitionObject->setShape(GameObject::ShapeRectangle);
     m_collitionObject->setPosition(m_position);
 }

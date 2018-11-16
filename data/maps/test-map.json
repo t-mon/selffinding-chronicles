@@ -107,6 +107,13 @@
             "data": ":/gamedata/characters/test-character.json"
         }
     ],
+    "chests": [
+        {
+            "x": 9,
+            "y": 9,
+            "data": ":/gamedata/chests/chest-1.json"
+        }
+    ],
     "fields": [
         {
             "x": 6,

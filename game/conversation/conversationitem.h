@@ -16,6 +16,7 @@ class ConversationItem : public QObject
     Q_PROPERTY(QString text READ text CONSTANT)
     Q_PROPERTY(QString visibleText READ visibleText NOTIFY visibleTextChanged)
     Q_PROPERTY(ConversationItems *choises READ choises CONSTANT)
+    Q_PROPERTY(int currentChoiseIndex READ currentChoiseIndex WRITE setCurrentChoiseIndex NOTIFY currentChoiseIndexChanged)
 
 public:
     enum Type {
@@ -61,6 +62,9 @@ public:
     ConversationItems *choises() const;
     void setChoises(ConversationItems *choises);
 
+    int currentChoiseIndex() const;
+    void setCurrentChoiseIndex(int currentChoiseIndex);
+
     QUuid nextItemUuid() const;
     void setNextItemUuid(const QUuid &nextItemUuid);
 
@@ -75,11 +79,13 @@ private:
     QString m_text;
     QString m_visibleText;
     QUuid m_nextItemUuid;
+    int m_currentChoiseIndex = 0;
     ConversationItems *m_choises = nullptr;
     ConversationItem *m_nextItem = nullptr;
 
 signals:
     void visibleTextChanged(const QString &text);
+    void currentChoiseIndexChanged(int currentChoiseIndex);
 
 public slots:
     void resetItem();

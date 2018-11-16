@@ -161,6 +161,9 @@ void Map::loadMap(const QString &fileName)
     qCDebug(dcMap()) << "--> load items";
     m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("items").toList()));
 
+    qCDebug(dcMap()) << "--> load chests";
+    m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("chests").toList()));
+
     qCDebug(dcMap()) << "--> load characters";
     m_characters->addGameItemList(DataLoader::loadGameItems(mapData.value("characters").toList()));
 

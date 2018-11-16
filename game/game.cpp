@@ -94,7 +94,7 @@ void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
     if (autoRepeat)
         return;
 
-    //qCDebug(dcGame()) << "Key pressed" << key;
+    qCDebug(dcGame()) << "Key pressed" << key;
     m_world->playerController()->keyPressed(key);
 
     switch (key) {
@@ -119,6 +119,7 @@ Game::Game(QObject *parent) :
     QObject(parent),
     m_timer(new QTimer(this)),
     m_world(new World(this)),
+    m_settings(new GameSettings(this)),
     m_running(false),
     m_interval(5),
     m_intermediateSteps(10)

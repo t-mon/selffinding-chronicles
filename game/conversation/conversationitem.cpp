@@ -81,6 +81,21 @@ void ConversationItem::setChoises(ConversationItems *choises)
     m_choises = choises;
 }
 
+int ConversationItem::currentChoiseIndex() const
+{
+    return m_currentChoiseIndex;
+}
+
+void ConversationItem::setCurrentChoiseIndex(int currentChoiseIndex)
+{
+    if (m_currentChoiseIndex == currentChoiseIndex)
+        return;
+
+    qCDebug(dcConversation()) << "Current choise index changed" << currentChoiseIndex;
+    m_currentChoiseIndex = currentChoiseIndex;
+    emit currentChoiseIndexChanged(m_currentChoiseIndex);
+}
+
 QUuid ConversationItem::nextItemUuid() const
 {
     return m_nextItemUuid;

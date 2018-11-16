@@ -21,13 +21,15 @@ class World : public Fields
     Q_OBJECT
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)
     Q_PROPERTY(QSize boundingSize READ boundingSize WRITE setBoundingSize NOTIFY boundingSizeChanged)
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
     Q_PROPERTY(Map *map READ map CONSTANT)
     Q_PROPERTY(Character *player READ player CONSTANT)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
     Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
-    Q_PROPERTY(Conversation* currentConversation READ currentConversation NOTIFY currentConversationChanged)
+    Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
+    Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
 
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
@@ -36,9 +38,25 @@ class World : public Fields
     Q_PROPERTY(QPoint currentPlayerPosition READ currentPlayerPosition NOTIFY currentPlayerPositionChanged)
     Q_PROPERTY(QPoint currentViewOffset READ currentViewOffset WRITE setCurrentViewOffset NOTIFY currentViewOffsetChanged)
 
-public:    
+public:
+
+    enum State {
+        StateUnitialized,
+        StateLoading,
+        StateRunning,
+        StatePaused,
+        StateInventory,
+        StateTrade,
+        StateConversation,
+        StateUnlocking,
+        StatePlunder
+    };
+    Q_ENUM(State)
+
     explicit World(QObject *parent = nullptr);
     ~World() override = default;
+
+    State state() const;
 
     QSize size() const;
     void setSize(const QSize &size);
@@ -57,14 +75,18 @@ public:
     GameItems *gameItems() const;
     GameItems *characterItems() const;
     PlayerController *playerController() const;
+
     Conversation *currentConversation() const;
+    ChestItem *currentChestItem() const;
 
     bool loaded() const;
     bool loading() const;
 
     Q_INVOKABLE void loadMap(const QString &fileName);
+    Q_INVOKABLE void giveUpUnlocking();
 
 private:
+    State m_state = StateUnitialized;
     QSize m_size;
     QSize m_boundingSize;
 
@@ -75,6 +97,7 @@ private:
     PlayerController *m_playerController = nullptr;
     CollisionDetector *m_collisionDetector = nullptr;
     Conversation *m_currentConversation = nullptr;
+    ChestItem *m_currentChestItem = nullptr;
 
     // View properties
     QPoint m_currentPlayerPosition;
@@ -91,12 +114,14 @@ private:
     bool m_loading = false;
 
     // Set methods
+    void setState(State state);
     void setCurrentPlayerPosition(const QPoint &currentPosition);
     void setCurrentPlayerField(Field *field);
     void setPlayerFocusItem(GameItem *focusItem);
     void setLoaded(bool loaded);
     void setLoading(bool loading);
     void setCurrentConversation(Conversation *conversation);
+    void setCurrentChestItem(ChestItem *chestItem);
 
     // Move methods
     void doPlayerMovement();
@@ -109,6 +134,7 @@ private:
     void pickItem(GameItem *item);
 
 signals:
+    void stateChanged(State state);
     void sizeChanged(const QSize &size);
     void boundingSizeChanged(const QSize &boundingSize);
     void loadingChanged(bool loading);
@@ -118,12 +144,18 @@ signals:
     void currentPlayerPositionChanged(const QPoint &currentPlayerPosition);
     void currentViewOffsetChanged(const QPoint &currentViewOffset);
     void currentConversationChanged(Conversation *conversation);
+    void currentChestItemChanged(ChestItem *chestItem);
 
 private slots:
     void onPlayerPositionChanged();
     void onLoadingFinished();
     void onPrimaryActionPressedChanged(bool pressed);
     void onSecondaryActionPressedChanged(bool pressed);
+    void onLeftClicked();
+    void onRightClicked();
+    void onForwardClicked();
+    void onBackwardClicked();
+    void onInventoryClicked();
     void onCurrentConversationFinished();
 
 public slots:

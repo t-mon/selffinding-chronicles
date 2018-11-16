@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 
 #include "world.h"
+#include "gamesettings.h"
 
 class Game : public QObject
 {
@@ -53,8 +54,9 @@ private:
     static Game *s_instance;
 
     QTimer *m_timer = nullptr;
+    World *m_world = nullptr;
+    GameSettings *m_settings = nullptr;
 
-    World *m_world;
     bool m_running = false;
     bool m_debugging = false;
     GameState m_state = Uninitialized;

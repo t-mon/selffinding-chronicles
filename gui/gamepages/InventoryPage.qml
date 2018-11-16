@@ -5,6 +5,7 @@ import QtQuick.Controls 2.0
 import Chronicles 1.0
 
 import "../components"
+import "../inventory"
 
 Item {
     id: root

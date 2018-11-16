@@ -49,13 +49,14 @@ private:
     bool m_secondaryActionPressed = false;
     bool m_inventoryPressed = false;
 
-    void setForwardPressed(bool forwaredPressed);
-    void setBackwardPressed(bool backwardPressed);
-    void setLeftPressed(bool leftPressed);
-    void setRightPressed(bool rightPressed);
+    void setForwardPressed(bool pressed);
+    void setBackwardPressed(bool pressed);
+    void setLeftPressed(bool pressed);
+    void setRightPressed(bool pressed);
 
-    void setPrimaryActionPressed(bool primaryActionPressed);
-    void setSecondaryActionPressed(bool secondaryActionPressed);
+    void setPrimaryActionPressed(bool pressed);
+    void setSecondaryActionPressed(bool pressed);
+    void setInventoryPressed(bool pressed);
 
     QPointF moveKeyBoard();
     QPointF moveKeyBoardMouse();
@@ -68,9 +69,15 @@ signals:
     void backwardsPressedChanged(bool pressed);
     void leftPressedChanged(bool pressed);
     void rightPressedChanged(bool pressed);
-
     void primaryActionPressedChanged(bool pressed);
     void secondaryActionPressedChanged(bool pressed);
+
+    void forwardClicked();
+    void backwardClicked();
+    void leftClicked();
+    void rightClicked();
+    void primaryActionClicked();
+    void secondaryActionClicked();
     void inventoryPressed();
 
 };

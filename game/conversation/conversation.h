@@ -28,8 +28,6 @@ public:
     Character *character() const;
     ConversationItem *conversationItem() const;
 
-    Q_INVOKABLE void selectItem(const QUuid &itemUuid);
-
 private:
     QTimer *m_timer = nullptr;
     Character *m_character = nullptr;
@@ -50,6 +48,7 @@ private:
     ConversationItem *createConversationItem(const QVariantMap &conversationItemMap);
 
     void performAction(ConversationItem::Action action);
+    void selectItem(const QUuid &itemUuid);
 
 signals:
     void conversationFinished();
@@ -60,8 +59,8 @@ private slots:
 
 public slots:
     void confirmPressed();
-
-
+    void upPressed();
+    void downPressed();
 };
 
 #endif // CONVERSATION_H

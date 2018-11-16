@@ -8,7 +8,7 @@ GameLabel {
     color: "black"
     Behavior on opacity {
         NumberAnimation {
-            duration: 250
+            duration: 300
         }
     }
 }

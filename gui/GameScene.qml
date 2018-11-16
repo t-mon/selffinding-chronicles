@@ -8,7 +8,7 @@ import Chronicles 1.0
 import "components"
 import "gameitems"
 import "inventory"
-import "conversation"
+import "gamepages"
 
 Item {
     id: root
@@ -24,15 +24,15 @@ Item {
     Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
     Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
 
-    Connections {
-        target: Game
-        onTick: {
-            calculateAngle()
-        }
-        onPaintEvent: {
-            //console.log("paint event")
-        }
-    }
+    //    Connections {
+    //        target: Game
+    //        onTick: {
+    //            calculateAngle()
+    //        }
+    //        onPaintEvent: {
+    //            //console.log("paint event")
+    //        }
+    //    }
 
     Connections {
         target: Game.world.player
@@ -41,25 +41,33 @@ Item {
         }
     }
 
-    Connections {
-        target: Game.world
-        onCurrentConversationChanged: {
-            if (conversation && !inventoryItem.visible) {
-                conversationItem.visible = true
-            } else {
-                conversationItem.visible = false
-            }
-        }
-    }
+    //    Connections {
+    //        target: Game.world
+    //        onCurrentConversationChanged: {
+    //            if (conversation && !inventoryItem.visible) {
+    //                conversationItem.visible = true
+    //            } else {
+    //                conversationItem.visible = false
+    //            }
+    //        }
 
-    Connections {
-        target: Game.world.playerController
-        onInventoryPressed: {
-            if (!conversationItem.visible) {
-                inventoryItem.visible = !inventoryItem.visible
-            }
-        }
-    }
+    //        onCurrentChestItemChanged: {
+    //            if (chestItem && !unlockingItem.visible) {
+    //                unlockingItem.visible = true
+    //            } else {
+    //                unlockingItem.visible = false
+    //            }
+    //        }
+    //    }
+
+//    Connections {
+//        target: Game.world.playerController
+//        onInventoryPressed: {
+//            if (!conversationItem.visible) {
+//                inventoryItem.visible = !inventoryItem.visible
+//            }
+//        }
+//    }
 
     Flickable {
         id: worldFlickable
@@ -334,24 +342,145 @@ Item {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     }
 
+    states: [
+        State {
+            name: "loadingState"
+            when: Game.world.state === World.StateLoading
+            PropertyChanges { target: loadingItem; visible: true }
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "runningState"
+            when: Game.world.state === World.StateRunning
+            PropertyChanges { target: loadingItem; visible: false }
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "pausedState"
+            when: Game.world.state === World.StatePaused
+            PropertyChanges { target: loadingItem; visible: false }
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "inventoryState"
+            when: Game.world.state === World.StateInventory
+            PropertyChanges { target: loadingItem; visible: false }
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 1 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "conversationState"
+            when: Game.world.state === World.StateConversation
+            PropertyChanges { target: loadingItem; visible: false }
+            PropertyChanges { target: conversationItem; opacity: 1 }
+            PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "unlockingState"
+            when: Game.world.state === World.StateUnlocking
+            PropertyChanges { target: loadingItem; visible: false }
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 1 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "tradeState"
+            when: Game.world.state === World.StateTrade
+            PropertyChanges { target: loadingItem; visible: false }
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "plunderState"
+            when: Game.world.state === World.StatePlunder
+            PropertyChanges { target: loadingItem; visible: false }
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 1 }
+        }
+    ]
+
+
     InventoryPage {
         id: inventoryItem
         anchors.fill: parent
-        visible: false
+        opacity: 0
 
         Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
         Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
-        onVisibleChanged: visible ? Game.running = false : Game.running = true
+        //onVisibleChanged: visible ? Game.running = false : Game.running = true
     }
 
     ConversationPage {
         id: conversationItem
         anchors.fill: parent
-        visible: false
+        opacity: 0
 
         Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
         Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
         //onVisibleChanged: visible ? Game.running = false : Game.running = true
+    }
+
+    UnlockingPage {
+        id: unlockingItem
+        anchors.fill: parent
+        opacity: 0
+
+        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
+        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
+        //onVisibleChanged: visible ? Game.running = false : Game.running = true
+    }
+
+    PlunderPage {
+        id: plunderItem
+        anchors.fill: parent
+        opacity: 0
+
+        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
+        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
+        //onVisibleChanged: visible ? Game.running = false : Game.running = true
+    }
+
+
+    Rectangle {
+        id: loadingItem
+        anchors.fill: parent
+        color: app.backgroundColor
+        visible: false
+
+        Column {
+            id: loadingColumn
+            anchors.centerIn: parent
+
+            GameLabel {
+                id: loadingLabel
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Loading..."
+                font.pixelSize: app.largeFont
+                color: "white"
+            }
+
+            BusyIndicator {
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
     }
 
 }

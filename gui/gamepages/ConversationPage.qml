@@ -90,22 +90,6 @@ Item {
                 color: "white"
             }
         }
-
-        Connections {
-            target: Game.world.playerController
-            onPrimaryActionPressedChanged: {
-                if (pressed && textItemCharacter.visible) {
-                    conversation.confirmPressed()
-                }
-            }
-
-            onSecondaryActionPressedChanged: {
-                if (pressed && textItemCharacter.visible) {
-                    conversation.confirmPressed()
-                }
-            }
-        }
-
     }
 
     Item {
@@ -156,21 +140,6 @@ Item {
                 color: "white"
             }
         }
-
-        Connections {
-            target: Game.world.playerController
-            onPrimaryActionPressedChanged: {
-                if (pressed && textItemPlayer.visible) {
-                    conversation.confirmPressed()
-                }
-            }
-
-            onSecondaryActionPressedChanged: {
-                if (pressed && textItemPlayer.visible) {
-                    conversation.confirmPressed()
-                }
-            }
-        }
     }
 
     Item {
@@ -207,8 +176,9 @@ Item {
                 highlighted: ListView.isCurrentItem
                 onClicked: {
                     console.log("Player selected " + model.uuid + " --> " + model.text )
+                    conversation.conversationItem.currentChoiseIndex = index
                     choisesListView.currentIndex = index
-                    conversation.selectItem(model.uuid)
+                    conversation.confirmPressed()
                 }
 
                 GameLabel {
@@ -231,45 +201,7 @@ Item {
             model: conversation ? conversation.conversationItem.choises : 0
             delegate: choiseComponent
 
-            Connections {
-                target: Game.world.playerController
-                onForwaredPressedChanged: {
-                    if (pressed && choiseItem.visible) {
-                        console.log("Choise up")
-                        if (choisesListView.currentIndex - 1  < 0) {
-                            choisesListView.currentIndex = conversation.conversationItem.choises.count() - 1
-                            console.log("Current choise index " + choisesListView.currentIndex)
-                        } else {
-                            choisesListView.currentIndex -= 1
-                        }
-                    }
-                }
-                onBackwardsPressedChanged: {
-                    if (pressed && choiseItem.visible) {
-                        console.log("Choise down")
-                        if (choisesListView.currentIndex + 1  >= conversation.conversationItem.choises.count()) {
-                            choisesListView.currentIndex = 0
-                            console.log("Current choise index " + choisesListView.currentIndex)
-                        } else {
-                            choisesListView.currentIndex += 1
-                        }
-                    }
-                }
-
-                onPrimaryActionPressedChanged: {
-                    if (pressed && choiseItem.visible) {
-                        console.log("Player selected " + conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid + " --> " + conversation.conversationItem.choises.get(choisesListView.currentIndex).text )
-                        conversation.selectItem(conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid)
-                    }
-                }
-
-                onSecondaryActionPressedChanged: {
-                    if (pressed && choiseItem.visible) {
-                        console.log("Player selected " + conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid + " --> " + conversation.conversationItem.choises.get(choisesListView.currentIndex).text )
-                        conversation.selectItem(conversation.conversationItem.choises.get(choisesListView.currentIndex).uuid)
-                    }
-                }
-            }
+            currentIndex: conversation ? conversation.conversationItem.currentChoiseIndex : 0
         }
     }
 }

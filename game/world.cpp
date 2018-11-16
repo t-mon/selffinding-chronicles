@@ -22,6 +22,11 @@ World::World(QObject *parent) :
     m_playerController = new PlayerController(m_player, this);
     connect(m_playerController, &PlayerController::primaryActionPressedChanged, this, &World::onPrimaryActionPressedChanged);
     connect(m_playerController, &PlayerController::secondaryActionPressedChanged, this, &World::onSecondaryActionPressedChanged);
+    connect(m_playerController, &PlayerController::leftClicked, this, &World::onLeftClicked);
+    connect(m_playerController, &PlayerController::rightClicked, this, &World::onRightClicked);
+    connect(m_playerController, &PlayerController::forwardClicked, this, &World::onForwardClicked);
+    connect(m_playerController, &PlayerController::backwardClicked, this, &World::onBackwardClicked);
+    connect(m_playerController, &PlayerController::inventoryPressed, this, &World::onInventoryClicked);
 
     m_collisionDetector = new CollisionDetector(this);
 
@@ -32,6 +37,11 @@ World::World(QObject *parent) :
     m_map = new Map(this);
     m_loadingWatcher = new QFutureWatcher<void>(this);
     connect(m_loadingWatcher, &QFutureWatcher<void>::finished, this, &World::onLoadingFinished);
+}
+
+World::State World::state() const
+{
+    return m_state;
 }
 
 QSize World::size() const
@@ -109,6 +119,11 @@ Conversation *World::currentConversation() const
     return m_currentConversation;
 }
 
+ChestItem *World::currentChestItem() const
+{
+    return m_currentChestItem;
+}
+
 bool World::loaded() const
 {
     return m_loaded;
@@ -121,8 +136,9 @@ bool World::loading() const
 
 void World::loadMap(const QString &fileName)
 {
+    setState(StateLoading);
     if (m_map->fileName() == fileName && m_loaded) {
-        qCDebug(dcWorld()) << "Map" << fileName <<"already loaded.";
+        qCDebug(dcWorld()) << "Map" << fileName << "already loaded.";
         onLoadingFinished();
         return;
     }
@@ -131,6 +147,52 @@ void World::loadMap(const QString &fileName)
     setLoaded(false);
     setLoading(true);
     m_loadingWatcher->setFuture(QtConcurrent::run(m_map, &Map::loadMap, fileName));
+}
+
+void World::giveUpUnlocking()
+{
+    if (m_currentChestItem) {
+        qCDebug(dcWorld()) << "Give up unlocking.";
+        setCurrentChestItem(nullptr);
+        setState(StateRunning);
+    }
+}
+
+void World::setState(World::State state)
+{
+    if (m_state == state)
+        return;
+
+    qCDebug(dcWorld()) << "--> State changed:" << state;
+    m_state = state;
+    emit stateChanged(m_state);
+
+    switch (state) {
+    case StateLoading:
+
+        break;
+    case StateRunning:
+        m_player->setMovable(true);
+        Game::instance()->setRunning(true);
+        break;
+    case StatePaused:
+        m_player->setMovable(false);
+        break;
+    case StateInventory:
+        m_player->setMovable(false);
+        Game::instance()->setRunning(false);
+        break;
+    case StateUnlocking:
+        m_player->setMovable(false);
+        Game::instance()->setRunning(false);
+        break;
+    case StateConversation:
+        m_player->setMovable(false);
+        break;
+    default:
+        break;
+    }
+
 }
 
 QPoint World::currentPlayerPosition() const
@@ -220,10 +282,31 @@ void World::setCurrentConversation(Conversation *conversation)
 
     if (m_currentConversation) {
         m_player->setMovable(false);
+        setState(StateConversation);
+    } else {
+        m_player->setMovable(true);
+        setState(StateRunning);
+    }
+}
+
+void World::setCurrentChestItem(ChestItem *chestItem)
+{
+    if (m_currentChestItem == chestItem)
+        return;
+
+    m_currentChestItem = chestItem;
+    emit currentChestItemChanged(m_currentChestItem);
+
+    if (m_currentChestItem) {
+        m_player->setMovable(false);
+        if (m_currentChestItem->locked()) {
+            setState(StateUnlocking);
+        } else {
+            setState(StatePlunder);
+        }
     } else {
         m_player->setMovable(true);
     }
-
 }
 
 void World::doPlayerMovement()
@@ -245,10 +328,6 @@ void World::doPlayerMovement()
     foreach (Field *field, m_fieldsInRange) {
         if (field->hasItem()) {
             GameItem *item = field->gameItems()->gameItems().last();
-//            if (m_collisionDetector->checkCollision(m_player, field->collitionObject())) {
-//                item->setPlayerOnItem(true);
-//            }
-
             if (m_collisionDetector->checkCollision(m_player, item)) {
                 //qCDebug(dcWorld()) << "Player behind" << field->gameItems()->gameItems().last();
                 item->setHidingPlayer(true);
@@ -606,6 +685,7 @@ void World::onLoadingFinished()
 
     setLoading(false);
     setLoaded(true);
+    setState(StateRunning);
 
     // Start the game after loading
     Game::instance()->setRunning(true);
@@ -613,16 +693,16 @@ void World::onLoadingFinished()
 
 void World::onPrimaryActionPressedChanged(bool pressed)
 {
-    // Note: during conversation the UI takes care about the pressed actions
-    if (m_currentConversation)
-        return;
-
     qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
-//    if (pressed && m_currentConversation && m_currentConversation->conversationItem()->type() == ConversationItem::TypeText) {
-//        qCDebug(dcWorld()) << "Confirm conversation";
-//        m_currentConversation->confirmPressed();
-//        return;
-//    }
+
+    switch (m_state) {
+    case StateConversation:
+        if (m_currentConversation && pressed) m_currentConversation->confirmPressed();
+        return;
+    default:
+        break;
+    }
+
 
     if (pressed && m_playerFocusItem && Game::instance()->running() && !m_currentConversation) {
         switch (m_playerFocusItem->itemType()) {
@@ -633,6 +713,17 @@ void World::onPrimaryActionPressedChanged(bool pressed)
                 pickItem(m_playerFocusItem);
                 m_playerFocusItem = nullptr;
                 evaluateInRangeFields(m_player->position());
+            }
+            break;
+        case GameItem::TypeChest:
+            if (m_playerFocusItem->interaction() == GameItem::InteractionOpen) {
+                ChestItem *chestItem = qobject_cast<ChestItem *>(m_playerFocusItem);
+                if (chestItem->locked()) {
+                    qCDebug(dcWorld()) << "The chest is locked. Show unlock screen";
+                } else {
+                    qCDebug(dcWorld()) << "The chest is not locked. Show items screen";
+                }
+                setCurrentChestItem(chestItem);
             }
             break;
         case GameItem::TypeCharacter:
@@ -655,6 +746,7 @@ void World::onPrimaryActionPressedChanged(bool pressed)
             }
             break;
         default:
+            qCWarning(dcWorld()) << "Unhandled action on item" << m_playerFocusItem;
             break;
         }
 
@@ -666,11 +758,81 @@ void World::onPrimaryActionPressedChanged(bool pressed)
 
 void World::onSecondaryActionPressedChanged(bool pressed)
 {
-    // Note: during conversation the UI takes care about the pressed actions
-    if (m_currentConversation)
-        return;
+    switch (m_state) {
+    case StateConversation:
+        if (m_currentConversation && pressed) m_currentConversation->confirmPressed();
+        break;
+    default:
+        qCDebug(dcWorld()) << "Secondary action" << (pressed ? "pressed" : "released");
+        break;
+    }
+}
 
-    qCDebug(dcWorld()) << "Secondary action" << (pressed ? "pressed" : "released");
+void World::onLeftClicked()
+{
+    switch (m_state) {
+    case StateUnlocking:
+        m_currentChestItem->unlockLeftMovement();
+        if (!m_currentChestItem->locked()) {
+            qCDebug(dcWorld()) << "Chest unlocked!";
+            setState(StatePlunder);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void World::onRightClicked()
+{
+    switch (m_state) {
+    case StateUnlocking:
+        m_currentChestItem->unlockRightMovement();
+        if (!m_currentChestItem->locked()) {
+            qCDebug(dcWorld()) << "Chest unlocked!";
+            setState(StatePlunder);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void World::onForwardClicked()
+{
+    switch (m_state) {
+    case StateConversation:
+        if (m_currentConversation) m_currentConversation->upPressed();
+        break;
+    default:
+        break;
+    }
+}
+
+void World::onBackwardClicked()
+{
+    switch (m_state) {
+    case StateConversation:
+        if (m_currentConversation) m_currentConversation->downPressed();
+        break;
+    default:
+        break;
+    }
+}
+
+void World::onInventoryClicked()
+{
+    qCDebug(dcWorld()) << "Inventory clicked";
+    switch (m_state) {
+    case StateRunning:
+        setState(StateInventory);
+        break;
+    case StateInventory:
+        setState(StateRunning);
+        break;
+    default:
+        break;
+    }
 }
 
 void World::onCurrentConversationFinished()
@@ -678,6 +840,7 @@ void World::onCurrentConversationFinished()
     qCDebug(dcWorld()) << "Conversation finished";
     m_currentConversation->deleteLater();
     setCurrentConversation(nullptr);
+    setState(StateRunning);
 }
 
 void World::tick()
