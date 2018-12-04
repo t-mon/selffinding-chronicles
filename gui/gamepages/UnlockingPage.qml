@@ -58,12 +58,6 @@ Item {
                         value: chestItem ? chestItem.unlockProgress : 0
                     }
                 }
-
-                GameButton {
-                    Layout.fillWidth: true
-                    text: qsTr("Give up")
-                    onClicked: { Game.world.giveUpUnlocking() }
-                }
             }
         }
 
@@ -72,7 +66,13 @@ Item {
             Layout.preferredHeight: app.gridSize * 3
 
             RowLayout {
-
+                anchors.left: parent.left
+                anchors.right: parent.right
+                GameButton {
+                    Layout.fillWidth: true
+                    text: qsTr("Give up")
+                    onClicked: { Game.world.giveUpUnlocking() }
+                }
             }
 
             //Rectangle {anchors.fill: parent; color: "blue" }

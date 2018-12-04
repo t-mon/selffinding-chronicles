@@ -111,7 +111,7 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
     if (autoRepeat)
         return;
 
-    //qCDebug(dcGame()) << "Key released" << key;
+    qCDebug(dcGame()) << "Key released" << key;
     m_world->playerController()->keyReleased(key);
 }
 

@@ -30,6 +30,7 @@ class World : public Fields
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
+    Q_PROPERTY(GameItems *currentPlunderItems READ currentPlunderItems NOTIFY currentPlunderItemsChanged)
 
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
@@ -78,12 +79,14 @@ public:
 
     Conversation *currentConversation() const;
     ChestItem *currentChestItem() const;
+    GameItems *currentPlunderItems() const;
 
     bool loaded() const;
     bool loading() const;
 
     Q_INVOKABLE void loadMap(const QString &fileName);
     Q_INVOKABLE void giveUpUnlocking();
+    Q_INVOKABLE void finishPlunder();
 
 private:
     State m_state = StateUnitialized;
@@ -98,6 +101,7 @@ private:
     CollisionDetector *m_collisionDetector = nullptr;
     Conversation *m_currentConversation = nullptr;
     ChestItem *m_currentChestItem = nullptr;
+    GameItems *m_currentPlunderItems = nullptr;
 
     // View properties
     QPoint m_currentPlayerPosition;
@@ -122,6 +126,7 @@ private:
     void setLoading(bool loading);
     void setCurrentConversation(Conversation *conversation);
     void setCurrentChestItem(ChestItem *chestItem);
+    void setCurrentPlunderItems(GameItems *plunderItems);
 
     // Move methods
     void doPlayerMovement();
@@ -145,6 +150,7 @@ signals:
     void currentViewOffsetChanged(const QPoint &currentViewOffset);
     void currentConversationChanged(Conversation *conversation);
     void currentChestItemChanged(ChestItem *chestItem);
+    void currentPlunderItemsChanged(GameItems *plunderItems);
 
 private slots:
     void onPlayerPositionChanged();

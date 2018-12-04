@@ -346,7 +346,6 @@ Item {
         State {
             name: "loadingState"
             when: Game.world.state === World.StateLoading
-            PropertyChanges { target: loadingItem; visible: true }
             PropertyChanges { target: conversationItem; opacity: 0 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
@@ -355,7 +354,6 @@ Item {
         State {
             name: "runningState"
             when: Game.world.state === World.StateRunning
-            PropertyChanges { target: loadingItem; visible: false }
             PropertyChanges { target: conversationItem; opacity: 0 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
@@ -364,7 +362,6 @@ Item {
         State {
             name: "pausedState"
             when: Game.world.state === World.StatePaused
-            PropertyChanges { target: loadingItem; visible: false }
             PropertyChanges { target: conversationItem; opacity: 0 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
@@ -373,7 +370,6 @@ Item {
         State {
             name: "inventoryState"
             when: Game.world.state === World.StateInventory
-            PropertyChanges { target: loadingItem; visible: false }
             PropertyChanges { target: conversationItem; opacity: 0 }
             PropertyChanges { target: inventoryItem; opacity: 1 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
@@ -382,7 +378,6 @@ Item {
         State {
             name: "conversationState"
             when: Game.world.state === World.StateConversation
-            PropertyChanges { target: loadingItem; visible: false }
             PropertyChanges { target: conversationItem; opacity: 1 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
@@ -391,7 +386,6 @@ Item {
         State {
             name: "unlockingState"
             when: Game.world.state === World.StateUnlocking
-            PropertyChanges { target: loadingItem; visible: false }
             PropertyChanges { target: conversationItem; opacity: 0 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
             PropertyChanges { target: unlockingItem; opacity: 1 }
@@ -400,7 +394,6 @@ Item {
         State {
             name: "tradeState"
             when: Game.world.state === World.StateTrade
-            PropertyChanges { target: loadingItem; visible: false }
             PropertyChanges { target: conversationItem; opacity: 0 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
@@ -409,7 +402,6 @@ Item {
         State {
             name: "plunderState"
             when: Game.world.state === World.StatePlunder
-            PropertyChanges { target: loadingItem; visible: false }
             PropertyChanges { target: conversationItem; opacity: 0 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
@@ -423,8 +415,8 @@ Item {
         anchors.fill: parent
         opacity: 0
 
-        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
-        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
+        //Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
+        //Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
         //onVisibleChanged: visible ? Game.running = false : Game.running = true
     }
 
@@ -456,31 +448,6 @@ Item {
         Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
         Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
         //onVisibleChanged: visible ? Game.running = false : Game.running = true
-    }
-
-
-    Rectangle {
-        id: loadingItem
-        anchors.fill: parent
-        color: app.backgroundColor
-        visible: false
-
-        Column {
-            id: loadingColumn
-            anchors.centerIn: parent
-
-            GameLabel {
-                id: loadingLabel
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "Loading..."
-                font.pixelSize: app.largeFont
-                color: "white"
-            }
-
-            BusyIndicator {
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-        }
     }
 
 }

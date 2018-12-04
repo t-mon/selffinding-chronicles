@@ -124,6 +124,11 @@ ChestItem *World::currentChestItem() const
     return m_currentChestItem;
 }
 
+GameItems *World::currentPlunderItems() const
+{
+    return m_currentPlunderItems;
+}
+
 bool World::loaded() const
 {
     return m_loaded;
@@ -158,6 +163,12 @@ void World::giveUpUnlocking()
     }
 }
 
+void World::finishPlunder()
+{
+    setCurrentPlunderItems(nullptr);
+    setState(StateRunning);
+}
+
 void World::setState(World::State state)
 {
     if (m_state == state)
@@ -169,7 +180,6 @@ void World::setState(World::State state)
 
     switch (state) {
     case StateLoading:
-
         break;
     case StateRunning:
         m_player->setMovable(true);
@@ -177,6 +187,7 @@ void World::setState(World::State state)
         break;
     case StatePaused:
         m_player->setMovable(false);
+        Game::instance()->setRunning(false);
         break;
     case StateInventory:
         m_player->setMovable(false);
@@ -302,11 +313,21 @@ void World::setCurrentChestItem(ChestItem *chestItem)
         if (m_currentChestItem->locked()) {
             setState(StateUnlocking);
         } else {
+            m_currentPlunderItems = m_currentChestItem->items();
             setState(StatePlunder);
         }
     } else {
         m_player->setMovable(true);
     }
+}
+
+void World::setCurrentPlunderItems(GameItems *plunderItems)
+{
+    if (m_currentPlunderItems == plunderItems)
+        return;
+
+    m_currentPlunderItems = plunderItems;
+    emit currentPlunderItemsChanged(m_currentPlunderItems);
 }
 
 void World::doPlayerMovement()
@@ -686,9 +707,6 @@ void World::onLoadingFinished()
     setLoading(false);
     setLoaded(true);
     setState(StateRunning);
-
-    // Start the game after loading
-    Game::instance()->setRunning(true);
 }
 
 void World::onPrimaryActionPressedChanged(bool pressed)
