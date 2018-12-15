@@ -335,6 +335,7 @@ void World::doPlayerMovement()
     if (!m_player->movable())
         return;
 
+    qCDebug(dcWorld()) << "Do player movement";
     // FIXME: If primary pressed, default enable running for now
     m_player->setRunning(m_playerController->secondaryActionPressed());
 

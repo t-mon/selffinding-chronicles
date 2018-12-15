@@ -197,6 +197,6 @@ QDebug operator<<(QDebug debug, Field *field)
 {
     debug.nospace() << "Field(" << field->position();
     debug.nospace() << ", " << (field->accessible() ? "accessable" : "unaccessable");
-    debug.nospace() << ") ";
-    return debug;
+    debug.nospace() << ")";
+    return debug.space();
 }

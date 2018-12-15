@@ -36,52 +36,52 @@ GamePage {
 
                 TextField {
                     id: playerNameField
-                    text: settings.playerName
+                    text: Game.settings.playerName
                     Layout.fillWidth: true
-
+                    focus: true
                     onEditingFinished: {
-                        settings.playerName = text
+                        Game.settings.playerName = text
                         Game.world.player.name = text
                     }
                 }
             }
 
-            RowLayout {
-                Layout.fillWidth: true
+            //            RowLayout {
+            //                Layout.fillWidth: true
 
-                GameLabel {
-                    Layout.preferredWidth: settingsColumn.width / 2
-                    text: qsTr("Controll mode")
-                }
+            //                GameLabel {
+            //                    Layout.preferredWidth: settingsColumn.width / 2
+            //                    text: qsTr("Controll mode")
+            //                }
 
-                ComboBox {
-                    Layout.fillWidth: true
-                    model: [qsTr("Keyboard"), qsTr("Keyboard + Mouse"), qsTr("Touchscreen")]
-                    currentIndex: {
-                        switch (settings.controlMode) {
-                        case PlayerController.ControlModeKeyBoard:
-                            return 0;
-                        case PlayerController.ControlModeKeyBoardMouse:
-                            return 1;
-                        case PlayerController.ControlModeTouchscreen:
-                            return 2;
-                        }
-                    }
+            //                ComboBox {
+            //                    Layout.fillWidth: true
+            //                    model: [qsTr("Keyboard"), qsTr("Keyboard + Mouse"), qsTr("Touchscreen")]
+            //                    currentIndex: {
+            //                        switch (Game.settings.controlMode) {
+            //                        case PlayerController.ControlModeKeyBoard:
+            //                            return 0;
+            //                        case PlayerController.ControlModeKeyBoardMouse:
+            //                            return 1;
+            //                        case PlayerController.ControlModeTouchscreen:
+            //                            return 2;
+            //                        }
+            //                    }
 
-                    onCurrentIndexChanged: {
-                        if (currentIndex == 0) {
-                            settings.controlMode = PlayerController.ControlModeKeyBoard
-                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoard
-                        } else if (currentIndex == 1) {
-                            settings.controlMode = PlayerController.ControlModeKeyBoardMouse
-                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoardMouse
-                        } else if (currentIndex == 2) {
-                            settings.controlMode = PlayerController.ControlModeTouchscreen
-                            Game.world.playerController.controlMode = PlayerController.ControlModeTouchscreen
-                        }
-                    }
-                }
-            }
+            //                    onCurrentIndexChanged: {
+            //                        if (currentIndex == 0) {
+            //                            Game.settings.controlMode = PlayerController.ControlModeKeyBoard
+            //                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoard
+            //                        } else if (currentIndex == 1) {
+            //                            Game.settings.controlMode = PlayerController.ControlModeKeyBoardMouse
+            //                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoardMouse
+            //                        } else if (currentIndex == 2) {
+            //                            Game.settings.controlMode = PlayerController.ControlModeTouchscreen
+            //                            Game.world.playerController.controlMode = PlayerController.ControlModeTouchscreen
+            //                        }
+            //                    }
+            //                }
+            //            }
 
             RowLayout {
                 Layout.fillWidth: true
@@ -95,12 +95,12 @@ GamePage {
                     Layout.fillWidth: true
                     model: [qsTr("Windowed"), qsTr("Maximized"), qsTr("Fullscreen")]
                     currentIndex: {
-                        switch (settings.viewMode) {
-                        case ApplicationWindow.Windowed:
+                        switch (Game.settings.visibility) {
+                        case GameWindow.Windowed:
                             return 0;
-                        case ApplicationWindow.Maximized:
+                        case GameWindow.Maximized:
                             return 1;
-                        case ApplicationWindow.FullScreen:
+                        case GameWindow.FullScreen:
                             return 2;
                         }
                     }
@@ -108,13 +108,13 @@ GamePage {
                     onCurrentIndexChanged: {
                         switch (currentIndex) {
                         case 0:
-                            settings.viewMode = ApplicationWindow.Windowed;
+                            Game.settings.visibility = GameWindow.Windowed;
                             break;
                         case 1:
-                            settings.viewMode = ApplicationWindow.Maximized;
+                            Game.settings.visibility = GameWindow.Maximized;
                             break;
                         case 2:
-                            settings.viewMode = ApplicationWindow.FullScreen;
+                            Game.settings.visibility = GameWindow.FullScreen;
                             break;
                         }
                     }

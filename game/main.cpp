@@ -27,6 +27,7 @@
 
 #include "game.h"
 #include "debugcategories.h"
+#include "gameapplication.h"
 #include "conversation/conversationitem.h"
 #include "conversation/conversationitems.h"
 
@@ -82,8 +83,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     qInstallMessageHandler(consoleLogHandler);
 
-    QGuiApplication app(argc, argv);
+    GameApplication app(argc, argv);
     app.setApplicationName("Self finding chronicles");
+    app.setOrganizationName("self-finding-cronicles");
     app.setApplicationDisplayName("Self finding chronicles");
     app.setApplicationVersion("0.0.1");
 
@@ -92,12 +94,15 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
     parser.setApplicationDescription(QString("\nFantasy role play game.\n\n"
                                              "Copyright %1 2018 Simon Stürz <stuerz.simon@gmail.com>\n"
-                                             "Released under the GNU GPLv3.").arg(QChar(0xA9)));
+                                             "Released under the GNU GPLv3.\n\nVersion: %2\n")
+                                     .arg(QChar(0xA9))
+                                     .arg(app.applicationVersion()));
 
-    QCommandLineOption dataOption({"d", "data"}, "Specify the relative or absolut path to the game data folder. Default value relative to executable: ../selffinding-chronicles/data", "datapath", "../selffinding-chronicles/data");
+    QCommandLineOption dataOption({"d", "data"}, "Specify the relative or absolut path to the game data folder. "
+                                  "Default value relative to executable: ../selffinding-chronicles/data", "datapath",
+                                  "../selffinding-chronicles/data");
     parser.addOption(dataOption);
     parser.process(app);
-
 
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
@@ -109,7 +114,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Item", true);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", true);
-
+    s_loggingFilters.insert("Render", true);
     s_loggingFilters.insert("qml", true);
 
     QLoggingCategory::installFilter(loggingCategoryFilter);
@@ -138,6 +143,9 @@ int main(int argc, char *argv[])
     qmlRegisterType<ConversationItem>("Chronicles", 1, 0, "ConversationItem");
     qmlRegisterType<ConversationItems>("Chronicles", 1, 0, "ConversationItems");
 
+    qmlRegisterType<GameWindow>("Chronicles", 1, 0, "GameWindow");
+
+
     QDir dataDirectory(parser.value(dataOption));
     if (!dataDirectory.makeAbsolute()) {
         qCCritical(dcGame()) << "Invalid data path passed:" << parser.value(dataOption);
@@ -149,13 +157,14 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());
+    app.qmlEngine()->rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());
+    app.qmlEngine()->rootContext()->setContextProperty("gameVersion", app.applicationVersion());
 
-    qCDebug(dcGame()) << "Data directory:" << engine.rootContext()->contextProperty("dataDirectory").toString();
+    qCDebug(dcGame()) << "Data directory:" << app.qmlEngine()->rootContext()->contextProperty("dataDirectory").toString();
 
-    engine.rootContext()->setContextProperty("gameVersion", app.applicationVersion());
-    engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+    // Run the app
+    Game::instance();
+    app.init();
 
     return app.exec();
 }

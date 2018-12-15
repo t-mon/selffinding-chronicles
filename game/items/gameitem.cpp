@@ -200,6 +200,6 @@ QDebug operator<<(QDebug debug, GameItem *gameItem)
     debug.nospace() << ", " << gameItem->size();
     debug.nospace() << ", price: " << gameItem->price();
     debug.nospace() << ", " << gameItem->interaction();
-    debug.nospace() << ") ";
-    return debug;
+    debug.nospace() << ")";
+    return debug.space();
 }

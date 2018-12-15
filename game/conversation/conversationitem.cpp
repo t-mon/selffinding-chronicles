@@ -126,6 +126,6 @@ QDebug operator<<(QDebug debug, ConversationItem *conversationItem)
     debug.nospace() << "ConversationItem(" << conversationItem->uuid().toString();
     debug.nospace() << ", " << conversationItem->type();
     debug.nospace() << ", " << conversationItem->speeker();
-    debug.nospace() << ") ";
-    return debug;
+    debug.nospace() << ")";
+    return debug.space();
 }

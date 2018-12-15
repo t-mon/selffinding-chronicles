@@ -5,10 +5,20 @@ Game* Game::s_instance = nullptr;
 
 Game *Game::instance()
 {
-    if (!s_instance)
+    if (!s_instance) {
+        qCDebug(dcGame()) << "Create game instance";
         s_instance = new Game();
-
+    }
     return s_instance;
+}
+
+void Game::destroy()
+{
+    qCDebug(dcGame()) << "Destroy game instance";
+    if (s_instance) {
+        delete s_instance;
+        s_instance = nullptr;
+    }
 }
 
 QObject *Game::qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
@@ -18,9 +28,14 @@ QObject *Game::qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
     return Game::instance();
 }
 
-World *Game::world()
+World *Game::world() const
 {
     return m_world;
+}
+
+GameSettings *Game::settings() const
+{
+    return m_settings;
 }
 
 bool Game::running() const
@@ -79,16 +94,6 @@ void Game::setState(Game::GameState state)
     // TODO: switch state
 }
 
-int Game::intervall() const
-{
-    return m_interval;
-}
-
-int Game::intermediateSteps() const
-{
-    return m_intermediateSteps;
-}
-
 void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
 {
     if (autoRepeat)
@@ -96,6 +101,7 @@ void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
 
     qCDebug(dcGame()) << "Key pressed" << key;
     m_world->playerController()->keyPressed(key);
+    gameTick();
 
     switch (key) {
     case Qt::Key_NumberSign:
@@ -113,6 +119,7 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
 
     qCDebug(dcGame()) << "Key released" << key;
     m_world->playerController()->keyReleased(key);
+    gameTick();
 }
 
 Game::Game(QObject *parent) :
@@ -120,29 +127,16 @@ Game::Game(QObject *parent) :
     m_timer(new QTimer(this)),
     m_world(new World(this)),
     m_settings(new GameSettings(this)),
-    m_running(false),
-    m_interval(5),
-    m_intermediateSteps(10)
+    m_running(false)
 {
-    m_timer->setTimerType(Qt::PreciseTimer);
-    m_timer->setInterval(m_interval);
-    m_timer->setSingleShot(false);
-
-    connect(m_timer, &QTimer::timeout, this, &Game::onTick);
+    // Init settings
+    m_world->player()->setName(m_settings->playerName());
 }
 
-void Game::onTick()
+void Game::gameTick()
 {
-    m_tickCounter++;
-    emit paintEvent();
+    if (!m_running)
+        return;
 
-    // Emit tick for the world
     m_world->tick();
-
-    if (m_tickCounter >= m_intermediateSteps) {
-        m_tickCounter = 0;
-
-        // Emit tick for the UI
-        emit tick();
-    }
 }

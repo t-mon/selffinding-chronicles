@@ -21,53 +21,12 @@ Item {
         forceActiveFocus()
     }
 
-    Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
-    Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
-
-    //    Connections {
-    //        target: Game
-    //        onTick: {
-    //            calculateAngle()
-    //        }
-    //        onPaintEvent: {
-    //            //console.log("paint event")
-    //        }
-    //    }
-
     Connections {
         target: Game.world.player
         onPositionChanged: {
             evaluateBoundingRectangle()
         }
     }
-
-    //    Connections {
-    //        target: Game.world
-    //        onCurrentConversationChanged: {
-    //            if (conversation && !inventoryItem.visible) {
-    //                conversationItem.visible = true
-    //            } else {
-    //                conversationItem.visible = false
-    //            }
-    //        }
-
-    //        onCurrentChestItemChanged: {
-    //            if (chestItem && !unlockingItem.visible) {
-    //                unlockingItem.visible = true
-    //            } else {
-    //                unlockingItem.visible = false
-    //            }
-    //        }
-    //    }
-
-//    Connections {
-//        target: Game.world.playerController
-//        onInventoryPressed: {
-//            if (!conversationItem.visible) {
-//                inventoryItem.visible = !inventoryItem.visible
-//            }
-//        }
-//    }
 
     Flickable {
         id: worldFlickable

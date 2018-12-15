@@ -5,13 +5,10 @@ import Qt.labs.settings 1.0
 
 import Chronicles 1.0
 
-ApplicationWindow {
+Item {
     id: app
     visible: true
-    width: 800
-    height: 600
-    title: gameName
-    visibility: ApplicationWindow.Windowed
+    anchors.fill: parent
 
     property int controlMode: PlayerController.ControlModeKeyBoard
 
@@ -35,20 +32,10 @@ ApplicationWindow {
 
     property color backgroundColor: "#333333"
 
-
     FontLoader {
         id: gameFont
         //source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
         source: "/fonts/blackchancery/blkchcry.ttf"
-    }
-
-    Settings {
-        id: settings
-        property string playerName: "Player"
-        property alias viewMode: app.visibility
-        property alias controlMode: app.controlMode
-
-        onControlModeChanged: Game.world.playerController.controlMode = controlMode
     }
 
     StackView {
@@ -56,10 +43,5 @@ ApplicationWindow {
         anchors.fill: parent
     }
 
-    Component.onCompleted: {
-        Game.world.player.name = settings.playerName
-        Game.world.playerController.controlMode = settings.controlMode
-
-        pageStack.push(Qt.resolvedUrl("MainPage.qml"))
-    }
+    Component.onCompleted: pageStack.push(Qt.resolvedUrl("MainPage.qml"))
 }
