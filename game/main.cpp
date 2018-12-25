@@ -25,6 +25,8 @@
 #include <QCommandLineParser>
 #include <QQmlApplicationEngine>
 
+#include <box2dplugin.h>
+
 #include "game.h"
 #include "debugcategories.h"
 #include "conversation/conversationitem.h"
@@ -149,6 +151,9 @@ int main(int argc, char *argv[])
         qWarning() << dataDirectory.path() << "does not exist.";
         exit(-1);
     }
+
+    Box2DPlugin plugin;
+    plugin.registerTypes("Box2D");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());

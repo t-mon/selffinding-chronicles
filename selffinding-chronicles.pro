@@ -5,6 +5,8 @@ CONFIG += c++11
 RESOURCES += gui/gui.qrc \
              data/data.qrc
 
+include(qml-box2d/box2d-static.pri)
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = gui/*.qml
 
