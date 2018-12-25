@@ -5,13 +5,6 @@
     "geometry": {
         "width": 3,
         "height": 3,
-        "layer": 3,
-        "unaccessableMap": [ ],
-        "visibilityMap": [
-            {
-                "x": 1,
-                "y": 2
-            }
-        ]
+        "layer": 3
     }
 }

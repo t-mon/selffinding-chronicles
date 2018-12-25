@@ -15,7 +15,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     game/game.h \
-    game/world.h \
     game/field.h \
     game/fields.h \
     game/map.h \
@@ -37,11 +36,11 @@ HEADERS += \
     game/conversation/conversationaction.h \
     game/conversation/conversationitems.h \
     game/gamesettings.h \
-    game/items/chestitem.h
+    game/items/chestitem.h \
+    game/gameworld.h
 
 SOURCES += game/main.cpp \
     game/game.cpp \
-    game/world.cpp \
     game/field.cpp \
     game/fields.cpp \
     game/map.cpp \
@@ -62,4 +61,5 @@ SOURCES += game/main.cpp \
     game/conversation/conversationaction.cpp \
     game/conversation/conversationitems.cpp \
     game/gamesettings.cpp \
-    game/items/chestitem.cpp
+    game/items/chestitem.cpp \
+    game/gameworld.cpp

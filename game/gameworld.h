@@ -16,7 +16,7 @@
 
 class CollisionDetector;
 
-class World : public Fields
+class GameWorld : public Fields
 {
     Q_OBJECT
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)
@@ -54,8 +54,8 @@ public:
     };
     Q_ENUM(State)
 
-    explicit World(QObject *parent = nullptr);
-    ~World() override = default;
+    explicit GameWorld(QObject *parent = nullptr);
+    ~GameWorld() override = default;
 
     State state() const;
 
@@ -139,6 +139,7 @@ private:
     void pickItem(GameItem *item);
 
 signals:
+    void worldPostTick();
     void stateChanged(State state);
     void sizeChanged(const QSize &size);
     void boundingSizeChanged(const QSize &boundingSize);

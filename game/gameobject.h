@@ -10,7 +10,7 @@ class GameObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QPointF position READ position NOTIFY positionChanged)
+    Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QPointF centerPosition READ centerPosition NOTIFY positionChanged)
     Q_PROPERTY(qreal layer READ layer NOTIFY layerChanged)
     Q_PROPERTY(Shape shape READ shape NOTIFY shapeChanged)
@@ -23,6 +23,19 @@ public:
         ShapeCircle
     };
     Q_ENUM(Shape)
+
+
+    enum CategoryFlag {CategoryCharacter = 0x0001,
+                       CategoryObstacle = 0x0002,
+                       CategoryFriend = 0x0004,
+                       CategoryEnemey = 0x0008,
+                       CategoryBullet = 0x0010,
+                       Category = 0x0020, Category7 = 0x0040, Category8 = 0x0080,
+                       Category9 = 0x0100, Category10 = 0x0200, Category11 = 0x0400, Category12 = 0x0800,
+                       Category13 = 0x1000, Category14 = 0x2000, Category15 = 0x4000, Category16 = 0x8000,
+                       All = 0xFFFF, None=0x0000};
+
+    Q_DECLARE_FLAGS(CategoryFlags, CategoryFlag)
 
     explicit GameObject(QObject *parent = nullptr);
     virtual ~GameObject() = default;

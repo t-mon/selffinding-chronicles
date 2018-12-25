@@ -5,14 +5,7 @@
     "geometry": {
         "width": 1,
         "height": 1,
-        "layer": 1,
-        "unaccessableMap": [ ],
-        "visibilityMap": [
-            {
-                "x": 0,
-                "y": 0
-            }
-        ]
+        "layer": 1
     },
     "price": 100,
     "damage": 30

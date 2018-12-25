@@ -17,5 +17,6 @@
         <file>dialogs/test-dialog.json</file>
         <file>fonts/blackchancery/blkchcry.ttf</file>
         <file>gamedata/chests/chest-1.json</file>
+        <file>maps/test-environment.json</file>
     </qresource>
 </RCC>

@@ -116,6 +116,11 @@ void PlayerController::keyReleased(const Qt::Key &key)
     }
 }
 
+QPointF PlayerController::velocityVector()
+{
+    return delta();
+}
+
 QPointF PlayerController::delta()
 {
     QPointF deltaOffset;

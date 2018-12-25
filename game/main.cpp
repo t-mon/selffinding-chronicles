@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("World", true);
     s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("Settings", true);
-    s_loggingFilters.insert("PlayerController", false);
+    s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("Item", true);
     s_loggingFilters.insert("Collision", false);
@@ -116,9 +116,10 @@ int main(int argc, char *argv[])
 
     // Game
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
-    qmlRegisterUncreatableType<World>("Chronicles", 1, 0, "World", "Can't create this in QML. Get it from the Game instance.");
+
+    qmlRegisterUncreatableType<GameWorld>("Chronicles", 1, 0, "GameWorld", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
-    qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the World object.");
+    qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the GameWorld object.");
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
 
     // Items

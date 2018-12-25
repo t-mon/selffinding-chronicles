@@ -5,17 +5,10 @@
 Character::Character(QObject *parent):
     GameItem(parent)
 {
-    m_auraCircleObject = new GameObject(this);
-    m_auraCircleObject->setName("Aura");
-    m_auraCircleObject->setShape(GameObject::ShapeCircle);
-
     m_inventory = new GameItems(this);
     m_inventoryProxy = new GameItemsProxy(this);
     m_inventoryProxy->setGameItems(m_inventory);
     m_inventoryProxy->setItemTypeFilter(GameItem::TypeWeapon);
-
-    connect(this, &GameObject::positionChanged, this, &Character::onPositionChanged);
-    updateAuraObject();
 }
 
 QString Character::itemTypeName() const
@@ -31,11 +24,6 @@ GameItem::Type Character::itemType() const
 void Character::performInteraction()
 {
     qCDebug(dcItem()) << itemTypeName() << name() << "perform interaction" << m_interaction;
-}
-
-GameObject *Character::auraCircleObject() const
-{
-    return m_auraCircleObject;
 }
 
 qreal Character::speed() const
@@ -95,9 +83,9 @@ void Character::setRunning(bool running)
     emit runningChanged(m_running);
 
     if (m_running) {
-        setSpeed(m_speed * 1.8);
+        setSpeed(7);
     } else {
-        setSpeed(0.03);
+        setSpeed(5);
     }
 }
 
@@ -146,8 +134,6 @@ void Character::setAuraRange(const int auraRange)
 {
     m_auraRange = auraRange;
     emit auraRangeChanged(m_auraRange);
-
-    updateAuraObject();
 }
 
 Character::Gender Character::gender() const
@@ -326,17 +312,5 @@ void Character::setHeading(Character::Heading heading)
     qCDebug(dcCharacter()) << name() << "heading changed" << heading;
     m_heading = heading;
     emit headingChanged(m_heading);
-}
-
-void Character::onPositionChanged(const QPointF newPosition)
-{
-    Q_UNUSED(newPosition)
-    updateAuraObject();
-}
-
-void Character::updateAuraObject()
-{
-    m_auraCircleObject->setSize(QSize(auraRange() * 2 + 1, auraRange() * 2 + 1));
-    m_auraCircleObject->setPosition(position() - QPointF(auraRange(), auraRange()));
 }
 

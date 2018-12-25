@@ -106,7 +106,6 @@ void Map::loadMap(const QString &fileName)
 
     // Default field information
     QVariantMap defaultFieldMap = mapData.value("defaultField").toMap();
-    bool defaultAccessable = defaultFieldMap.value("accessable").toBool();
     QString defaultImageName = defaultFieldMap.value("imageName").toString();
 
     // Initialize fields
@@ -116,7 +115,6 @@ void Map::loadMap(const QString &fileName)
         for (int x = 0; x < m_size.width(); x++) {
             // Create field for x,y coordinate and init with default
             Field *field = new Field(QPoint(x, y), fields);
-            field->setAccessible(defaultAccessable);
             field->setImageName(defaultImageName);
             //qCDebug(dcMap()) << "Map: create field" << field->position();
             fields->addField(field);
@@ -154,7 +152,7 @@ void Map::loadMap(const QString &fileName)
             continue;
         }
 
-        field->setAccessible(fieldMap.value("accessable").toBool());
+        //field->setAccessible(fieldMap.value("accessable").toBool());
         field->setImageName(fieldMap.value("imageName").toString());
     }
 
@@ -178,7 +176,6 @@ void Map::loadMap(const QString &fileName)
         qCDebug(dcMap()) << "        " << item;
         item->moveToThread(QCoreApplication::instance()->thread());
     }
-
 
     // Move all the object back to the main thread
     foreach (Fields *fields, m_mapData) {
@@ -206,27 +203,12 @@ Field *Map::getField(const QPointF position) const
 
 void Map::placeItemOnMap(GameItem *item)
 {
-    // Make fields unaccessable according to the unacessableMap
-    foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
-        QPointF absolutCoordinate(item->position() + unaccessableOffset);
-        Field *field = getField(absolutCoordinate);
-        if (!field)
-            continue;
+    Field *field = getField(item->position());
+    if (!field)
+        return;
 
-        field->setAccessible(false);
-    }
-
-    // Place visible item parts on the map fields
-    foreach(const QPoint &visibilityOffset, item->visibilityMap()) {
-        QPointF absolutCoordinate(item->position() + visibilityOffset);
-        Field *field = getField(absolutCoordinate);
-        if (!field)
-            continue;
-
-        field->gameItems()->addGameItem(item);
-    }
+    field->gameItems()->addGameItem(item);
 }
-
 
 void Map::clear()
 {

@@ -35,14 +35,10 @@ QVariant Fields::data(const QModelIndex &index, int role) const
 
     if (role == PositionRole) {
         return field->position();
-    } else if (role == AccessibleRole) {
-        return field->accessible();
     } else if (role == ImageNameRole) {
         return field->imageName();
     } else if (role == PlayerOnFieldRole) {
         return field->playerOnField();
-    } else if (role == InPlayerRangeRole) {
-        return field->inPlayerRange();
     }
 
     return QVariant();
@@ -54,10 +50,8 @@ void Fields::addField(Field *field)
     m_fields.append(field);
     endInsertRows();
 
-    connect(field, &Field::accessibleChanged, this, &Fields::onFieldAccessableChanged);
     connect(field, &Field::imageNameChanged, this, &Fields::onFieldImageNameChanged);
     connect(field, &Field::playerOnFieldChanged, this, &Fields::onPlayerOnFieldChanged);
-    connect(field, &Field::inPlayerRangeChanged, this, &Fields::onFieldInPlayerRangeChanged);
 }
 
 void Fields::removeField(Field *field)
@@ -65,10 +59,8 @@ void Fields::removeField(Field *field)
     if (!m_fields.contains(field))
         return;
 
-    disconnect(field, &Field::accessibleChanged, this, &Fields::onFieldAccessableChanged);
     disconnect(field, &Field::imageNameChanged, this, &Fields::onFieldImageNameChanged);
     disconnect(field, &Field::playerOnFieldChanged, this, &Fields::onPlayerOnFieldChanged);
-    disconnect(field, &Field::inPlayerRangeChanged, this, &Fields::onFieldInPlayerRangeChanged);
 
     int index = m_fields.indexOf(field);
     beginRemoveRows(QModelIndex(), index, index);
@@ -87,21 +79,9 @@ QHash<int, QByteArray> Fields::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[PositionRole] = "position";
-    roles[AccessibleRole] = "accessible";
     roles[ImageNameRole] = "imageName";
     roles[PlayerOnFieldRole] = "playerOnField";
-    roles[InPlayerRangeRole] = "inPlayerRange";
     return roles;
-}
-
-void Fields::onFieldAccessableChanged(bool accessable)
-{
-    Q_UNUSED(accessable)
-
-    Field *field = static_cast<Field *>(sender());
-    int idx = m_fields.indexOf(field);
-    if (idx < 0) return;
-    emit dataChanged(index(idx), index(idx), {AccessibleRole});
 }
 
 void Fields::onFieldImageNameChanged(const QString &imageName)
@@ -124,12 +104,3 @@ void Fields::onPlayerOnFieldChanged(bool playerOnField)
     emit dataChanged(index(idx), index(idx), {PlayerOnFieldRole});
 }
 
-void Fields::onFieldInPlayerRangeChanged(bool inPlayerRange)
-{
-    Q_UNUSED(inPlayerRange)
-
-    Field *field = static_cast<Field *>(sender());
-    int idx = m_fields.indexOf(field);
-    if (idx < 0) return;
-    emit dataChanged(index(idx), index(idx), {InPlayerRangeRole});
-}

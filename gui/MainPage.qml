@@ -10,7 +10,6 @@ GamePage {
     id: root
 
     ColumnLayout {
-
         anchors.centerIn: parent
         GameButton {
             id: playButton
@@ -21,8 +20,8 @@ GamePage {
             font.family: app.fontFamily
             onClicked: {
                 console.log("Play pressed")
-                Game.world.loadMap(":/maps/test-map.json")
-                pageStack.push(Qt.resolvedUrl("GamePage.qml"))
+                Game.world.loadMap(":/maps/test-environment.json")
+                pageStack.push(Qt.resolvedUrl("LoadingPage.qml"))
             }
         }
 

@@ -12,6 +12,8 @@ Item {
 
     property real cellSize
 
+    focus: true
+
     ColumnLayout {
         id: inventoryColumnLayout
         anchors.fill: parent

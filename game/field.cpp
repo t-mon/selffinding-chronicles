@@ -9,12 +9,6 @@ Field::Field(QPoint position, QObject *parent) :
 {
     m_gameItems = new GameItems(this);
     connect(m_gameItems, &GameItems::countChanged, this, &Field::onGameItemsCountChanged);
-
-    m_collitionObject = new GameObject(this);
-    m_collitionObject->setName("Field");
-    m_collitionObject->setSize(QSize(1, 1));
-    m_collitionObject->setShape(GameObject::ShapeRectangle);
-    m_collitionObject->setPosition(m_position);
 }
 
 QPoint Field::position() const
@@ -36,20 +30,6 @@ void Field::setImageName(const QString &imageName)
     emit imageNameChanged(m_imageName);
 }
 
-bool Field::accessible() const
-{
-    return m_accessible;
-}
-
-void Field::setAccessible(bool accessible)
-{
-    if (m_accessible == accessible)
-        return;
-
-    m_accessible = accessible;
-    emit accessibleChanged(m_accessible);
-}
-
 bool Field::playerOnField() const
 {
     return m_playerOnField;
@@ -62,20 +42,6 @@ void Field::setPlayerOnField(bool playerOnField)
 
     m_playerOnField = playerOnField;
     emit playerOnFieldChanged(m_playerOnField);
-}
-
-bool Field::inPlayerRange() const
-{
-    return m_inPlayerRange;
-}
-
-void Field::setInPlayerRange(bool inPlayerRange)
-{
-    if (m_inPlayerRange == inPlayerRange)
-        return;
-
-    m_inPlayerRange = inPlayerRange;
-    emit inPlayerRangeChanged(m_inPlayerRange);
 }
 
 bool Field::hasItem() const
@@ -195,8 +161,6 @@ void Field::onGameItemsCountChanged(int count)
 
 QDebug operator<<(QDebug debug, Field *field)
 {
-    debug.nospace() << "Field(" << field->position();
-    debug.nospace() << ", " << (field->accessible() ? "accessable" : "unaccessable");
-    debug.nospace() << ") ";
+    debug.nospace() << "Field(" << field->position() << ")";
     return debug;
 }

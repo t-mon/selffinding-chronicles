@@ -5,14 +5,7 @@
     "geometry": {
         "width": 2,
         "height": 2,
-        "layer": 3,
-        "unaccessableMap": [  ],
-        "visibilityMap": [
-            {
-                "x": 0,
-                "y": 0
-            }
-        ]
+        "layer": 3
     },
     "gender": "female",
     "role": "Player",

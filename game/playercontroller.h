@@ -1,6 +1,7 @@
 #ifndef PLAYERCONTROLLER_H
 #define PLAYERCONTROLLER_H
 
+#include <QPointF>
 #include <QObject>
 
 class Character;
@@ -34,11 +35,15 @@ public:
     void keyPressed(const Qt::Key &key);
     void keyReleased(const Qt::Key &key);
 
+    Q_INVOKABLE QPointF velocityVector();
+
     QPointF delta();
 
 private:
     Character *m_player = nullptr;
     ControlMode m_controlMode = ControlModeKeyBoard;
+
+    QPointF m_velocityVector;
 
     bool m_forwaredPressed = false;
     bool m_backwardPressed = false;

@@ -11,7 +11,6 @@
 class Character : public GameItem
 {
     Q_OBJECT
-    Q_PROPERTY(GameObject *auraCircleObject READ auraCircleObject CONSTANT)
     Q_PROPERTY(GameItems *inventory READ inventory CONSTANT)
     Q_PROPERTY(GameItemsProxy *inventoryProxy READ inventoryProxy CONSTANT)
     Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
@@ -65,7 +64,6 @@ public:
 
     Q_INVOKABLE void performInteraction() override;
 
-    GameObject *auraCircleObject() const;
     GameItems *inventory() const;
     GameItemsProxy *inventoryProxy() const;
 
@@ -121,15 +119,14 @@ public:
     void setStrealth(int stealth);
 
 private:
-    GameObject *m_auraCircleObject = nullptr;
     GameItems *m_inventory = nullptr;
     GameItemsProxy *m_inventoryProxy = nullptr;
 
     Heading m_heading = HeadingRight;
     int m_auraRange = 3;
     qreal m_angle = 0;
-    qreal m_speed = 0.03;
-    bool m_movable = true;
+    qreal m_speed = 5;
+    bool m_movable = false;
     bool m_moving = false;
     bool m_running = false;
 
@@ -149,10 +146,6 @@ private:
     int m_stealth = 5;
 
     void setHeading(Character::Heading heading);
-
-private slots:
-    void onPositionChanged(const QPointF newPosition);
-    void updateAuraObject();
 
 signals:
     void headingChanged(Heading heading);

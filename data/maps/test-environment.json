@@ -1,0 +1,62 @@
+{
+    "name": "Test world",
+    "width": 100,
+    "height": 100,
+    "playerStartX": 5,
+    "playerStartY": 5,
+    "defaultField": {
+        "accessable": true,
+        "imageName": "/images/world/base/accessable.png"
+    },
+    "items": [
+        {
+            "x": 10,
+            "y": 5,
+            "data": ":/gamedata/plants/healing-herb.json"
+        },
+        {
+            "x": 10,
+            "y": 10,
+            "data": ":/gamedata/plants/healing-herb.json"
+        },
+        {
+            "x": 10,
+            "y": 15,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 10,
+            "y": 20,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 15,
+            "y": 5,
+            "data": ":/gamedata/bushes/bush-1.json"
+        },
+        {
+            "x": 15,
+            "y": 10,
+            "data": ":/gamedata/bushes/bush-1.json"
+        }
+    ],
+    "characters": [
+        {
+            "x": 25,
+            "y": 10,
+            "data": ":/gamedata/characters/test-character.json"
+        },
+        {
+            "x": 25,
+            "y": 20,
+            "data": ":/gamedata/characters/test-character.json"
+        }
+    ],
+    "chests": [
+        {
+            "x": 5,
+            "y": 10,
+            "data": ":/gamedata/chests/chest-1.json"
+        }
+    ]
+}
