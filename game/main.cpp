@@ -100,7 +100,6 @@ int main(int argc, char *argv[])
     parser.addOption(dataOption);
     parser.process(app);
 
-
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
@@ -152,6 +151,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
+    // Load Box2D qml plugin and register it
     Box2DPlugin plugin;
     plugin.registerTypes("Box2D");
 

@@ -83,9 +83,9 @@ void Character::setRunning(bool running)
     emit runningChanged(m_running);
 
     if (m_running) {
-        setSpeed(7);
+        setSpeed(0.3);
     } else {
-        setSpeed(5);
+        setSpeed(0.2);
     }
 }
 

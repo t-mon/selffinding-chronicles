@@ -27,13 +27,6 @@ PhysicsItem {
     bodyType: character.movable ? Body.Dynamic : Body.Static
     //rotation: character.angle * 180 / Math.PI
 
-//    Connections {
-//        target: root.character
-//        onAngleChanged: {
-//            body.t
-//        }
-//    }
-
     fixtures: [
         Circle {
             id: bodyCircle
@@ -49,11 +42,11 @@ PhysicsItem {
             sensor: true
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 4), root.width / 2 + auraRadius * Math.sin(Math.PI / 4)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 8), root.width / 2 + auraRadius * Math.sin(Math.PI / 8)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(0), root.width / 2 + auraRadius * Math.sin(0)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 8), root.width / 2 + auraRadius * Math.sin(-Math.PI / 8)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 4), root.width / 2 + auraRadius * Math.sin(-Math.PI / 4))
+                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle + Math.PI / 4), root.width / 2 + auraRadius * Math.sin(character.angle + Math.PI / 4)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle + Math.PI / 8), root.width / 2 + auraRadius * Math.sin(character.angle + Math.PI / 8)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle), root.width / 2 + auraRadius * Math.sin(character.angle)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle - Math.PI / 8), root.width / 2 + auraRadius * Math.sin(character.angle - Math.PI / 8)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle - Math.PI / 4), root.width / 2 + auraRadius * Math.sin(character.angle - Math.PI / 4))
             ]
 
             onBeginContact: {

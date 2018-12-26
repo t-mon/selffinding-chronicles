@@ -36,10 +36,10 @@ void Game::setRunning(const bool &running)
     m_running = running;
 
     if (m_running) {
-        m_timer->start();
+        //m_timer->start();
         setState(GameState::Running);
     } else {
-        m_timer->stop();
+        //m_timer->stop();
         setState(GameState::Paused);
     }
 
@@ -129,7 +129,6 @@ Game::Game(QObject *parent) :
 
 void Game::onTick()
 {
-
     //qCDebug(dcGame()) << "Tick" << m_elapsedTimer.elapsed() << "ms";
     m_world->tick();
     //m_elapsedTimer.restart();

@@ -28,6 +28,8 @@ GamePage {
     World {
         id: physicsWorld
         gravity: Qt.point(0, 0)
+        onTimeStepChanged: console.log("----" + timeStep)
+        onStepped: Game.onTick()
         running: Game.running
     }
 
@@ -93,8 +95,8 @@ GamePage {
                     target: Game.world
                     onWorldPostTick: {
                         var currentVelocity = playerItem.body.linearVelocity
-                        var dvx = Game.world.playerController.velocityVector().x - currentVelocity.x
-                        var dvy = Game.world.playerController.velocityVector().y - currentVelocity.y
+                        var dvx = Game.world.playerController.velocityVector().x * app.gridSize - currentVelocity.x
+                        var dvy = Game.world.playerController.velocityVector().y * app.gridSize - currentVelocity.y
                         playerItem.body.applyLinearImpulse(Qt.point(playerItem.body.getMass() * dvx, playerItem.body.getMass() * dvy), playerItem.body.getWorldCenter())
                     }
                 }

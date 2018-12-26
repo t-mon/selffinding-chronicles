@@ -74,7 +74,7 @@ signals:
     void debuggingChanged(bool debugging);
     void stateChanged(GameState state);
 
-private slots:
+public slots:
     void onTick();
 
 };

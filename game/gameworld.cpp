@@ -862,7 +862,7 @@ void GameWorld::onCurrentConversationFinished()
 
 void GameWorld::tick()
 {
-    // doPlayerMovement();
+    doPlayerMovement();
 
     // Do enemy movements
 

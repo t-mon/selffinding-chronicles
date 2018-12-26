@@ -125,7 +125,7 @@ private:
     Heading m_heading = HeadingRight;
     int m_auraRange = 3;
     qreal m_angle = 0;
-    qreal m_speed = 5;
+    qreal m_speed = 0.2;
     bool m_movable = false;
     bool m_moving = false;
     bool m_running = false;
