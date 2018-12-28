@@ -24,10 +24,12 @@ class GameWorld : public Fields
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
     Q_PROPERTY(Map *map READ map CONSTANT)
+    Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
+
     Q_PROPERTY(Character *player READ player CONSTANT)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
     Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
-    Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
+
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
     Q_PROPERTY(GameItems *currentPlunderItems READ currentPlunderItems NOTIFY currentPlunderItemsChanged)
@@ -109,6 +111,7 @@ private:
 
     Field *m_currentPlayerField = nullptr;
     QList<Field *> m_fieldsInRange;
+    QList<GameItem *> m_playerVisibleItems;
     GameItem *m_playerFocusItem = nullptr;
     GameItem *m_playerCurrentlyOnItem = nullptr;
 
@@ -156,6 +159,7 @@ signals:
 private slots:
     void onPlayerPositionChanged();
     void onLoadingFinished();
+    void onItemPlayerVisibleChanged();
     void onPrimaryActionPressedChanged(bool pressed);
     void onSecondaryActionPressedChanged(bool pressed);
     void onLeftClicked();

@@ -25,7 +25,7 @@ PhysicsItem {
 
     antialiasing: app.antialiasing
     bodyType: character.movable ? Body.Dynamic : Body.Static
-    //rotation: character.angle * 180 / Math.PI
+    onPlayerAuraRangeChanged: character.playerVisible = playerAuraRange
 
     fixtures: [
         Circle {

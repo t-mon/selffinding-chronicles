@@ -12,7 +12,7 @@ PhysicsItem {
     id: root
 
     property GameItem gameItem: Game.world.gameItems.get(model.index)
-    property int itemType: gameItem.itemType
+    property int itemType: gameItem ? gameItem.itemType : GameItem.TypeNone
 
     antialiasing: app.antialiasing
     opacity: gameItem ? (gameItem.hidingPlayer ? 0.5 : 1) : 0
@@ -28,6 +28,9 @@ PhysicsItem {
             friction: 0
             restitution: 0.0
             categories: {
+                if (!gameItem)
+                    return Box.Category2
+
                 if (gameItem.itemType == gameItem.TypeChest) {
                     return Box.All
                 } else {
@@ -102,7 +105,7 @@ PhysicsItem {
         anchors.bottom: root.top
         anchors.horizontalCenter: root.horizontalCenter
         text: gameItem ? gameItem.name : ""
-        opacity: gameItem ? (Game.debugging ? 0.5 : (root.playerAuraRange ? 1 : 0)) : 0
+        opacity: gameItem ? (Game.debugging ? 0.5 : (gameItem.playerFocus ? 1 : 0)) : 0
     }
 
     //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)

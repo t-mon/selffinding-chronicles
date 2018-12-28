@@ -18,5 +18,6 @@
         <file>fonts/blackchancery/blkchcry.ttf</file>
         <file>gamedata/chests/chest-1.json</file>
         <file>maps/test-environment.json</file>
+        <file>gamedata/enemies/test-enemy.json</file>
     </qresource>
 </RCC>

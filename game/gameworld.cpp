@@ -260,6 +260,12 @@ void GameWorld::setPlayerFocusItem(GameItem *focusItem)
     if (m_playerFocusItem == focusItem)
         return;
 
+    if (focusItem) {
+        qCDebug(dcWorld()) << "Player focus item" << focusItem;
+    } else {
+        qCDebug(dcWorld()) << "Player has no item in focus";
+    }
+
     m_playerFocusItem = focusItem;
 }
 
@@ -632,10 +638,10 @@ void GameWorld::pickItem(GameItem *item)
 {
     qCDebug(dcWorld()) << "Pick up item" << item;
 
-//    item->setPlayerFocus(false);
-//    item->setPlayerVisible(false);
+    item->setPlayerFocus(false);
+    item->setPlayerVisible(false);
 
-//    m_gameItems->removeGameItem(item);
+    m_gameItems->removeGameItem(item);
 
 //    // Make fields accessable according to the unacessableMap
 //    foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
@@ -657,8 +663,8 @@ void GameWorld::pickItem(GameItem *item)
 //        //field->gameItems()->removeGameItem(item);
 //    }
 
-//    qCDebug(dcWorld()) << "Picked item and add it to the inventory" << item;
-//    m_player->inventory()->addGameItem(item);
+    qCDebug(dcWorld()) << "Picked item and add it to the inventory" << item;
+    m_player->inventory()->addGameItem(item);
 }
 
 void GameWorld::onPlayerPositionChanged()
@@ -688,6 +694,7 @@ void GameWorld::onLoadingFinished()
     qCDebug(dcWorld()) << "--> Initialize items";
     foreach (Field *field, fields()) {
         foreach (GameItem *item, field->gameItems()->gameItems()) {
+            connect(item, &GameItem::playerVisibleChanged, this, &GameWorld::onItemPlayerVisibleChanged);
             item->setParent(this);
             if (item->itemType() == GameItem::TypeCharacter) {
                 m_characterItems->addGameItem(item);
@@ -709,6 +716,65 @@ void GameWorld::onLoadingFinished()
     setState(StateRunning);
 }
 
+void GameWorld::onItemPlayerVisibleChanged()
+{
+    GameItem *item = qobject_cast<GameItem *>(sender());
+    // Add / remove item from visible items list
+    if (item->playerVisible()) {
+        m_playerVisibleItems.append(item);
+    } else {
+        m_playerVisibleItems.removeAll(item);
+    }
+
+    // If there is no visible item left
+    if (m_playerVisibleItems.isEmpty()) {
+        // If there was a focus item
+        if (m_playerFocusItem) {
+            m_playerFocusItem->setPlayerFocus(false);
+        }
+
+        setPlayerFocusItem(nullptr);
+        return;
+    }
+
+    // If there is only one item visible
+    if (m_playerVisibleItems.count() == 1) {
+
+        if (item == m_playerFocusItem)
+            return;
+
+        // Unset current focus item
+        if (m_playerFocusItem) {
+            m_playerFocusItem->setPlayerFocus(false);
+        }
+
+        item->setPlayerFocus(true);
+        setPlayerFocusItem(item);
+        return;
+    }
+
+    // Multiple items visible, get the closest item
+    QPair<GameItem *, double> closestItem;
+    foreach (GameItem *visibleItem, m_playerVisibleItems) {
+        if (!closestItem.first) {
+            closestItem.first = visibleItem;
+            closestItem.second = m_collisionDetector->calculateCenterDistance(m_player, visibleItem);
+            continue;
+        } else {
+            double distance = m_collisionDetector->calculateCenterDistance(m_player, visibleItem);
+            if (distance < closestItem.second) {
+                closestItem.first = visibleItem;
+                closestItem.second = distance;
+            }
+        }
+    }
+
+    if (closestItem.first) {
+        closestItem.first->setPlayerFocus(true);
+        setPlayerFocusItem(closestItem.first);
+    }
+}
+
 void GameWorld::onPrimaryActionPressedChanged(bool pressed)
 {
     qCDebug(dcWorld()) << "Primary action" << (pressed ? "pressed" : "released");
@@ -720,7 +786,6 @@ void GameWorld::onPrimaryActionPressedChanged(bool pressed)
     default:
         break;
     }
-
 
     if (pressed && m_playerFocusItem && Game::instance()->running() && !m_currentConversation) {
         switch (m_playerFocusItem->itemType()) {
@@ -767,7 +832,6 @@ void GameWorld::onPrimaryActionPressedChanged(bool pressed)
             qCWarning(dcWorld()) << "Unhandled action on item" << m_playerFocusItem;
             break;
         }
-
         //qCDebug(dcWorld()) << "Perform interaction" << m_playerFocusItem->interaction();
         //m_playerFocusItem->performInteraction();
     }

@@ -182,36 +182,24 @@ GamePage {
         id: inventoryItem
         anchors.fill: parent
         opacity: 0
-
-//        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
-//        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
     }
 
     ConversationPage {
         id: conversationItem
         anchors.fill: parent
         opacity: 0
-
-//        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
-//        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
     }
 
     UnlockingPage {
         id: unlockingItem
         anchors.fill: parent
         opacity: 0
-
-//        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
-//        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
     }
 
     PlunderPage {
         id: plunderItem
         anchors.fill: parent
         opacity: 0
-
-//        Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
-//        Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
     }
 
     // States
@@ -241,18 +229,18 @@ GamePage {
             PropertyChanges { target: plunderItem; opacity: 0 }
         },
         State {
-            name: "inventoryState"
-            when: Game.world.state === GameWorld.StateInventory
-            PropertyChanges { target: conversationItem; opacity: 0 }
-            PropertyChanges { target: inventoryItem; opacity: 1 }
-            PropertyChanges { target: unlockingItem; opacity: 0 }
-            PropertyChanges { target: plunderItem; opacity: 0 }
-        },
-        State {
             name: "conversationState"
             when: Game.world.state === GameWorld.StateConversation
             PropertyChanges { target: conversationItem; opacity: 1 }
             PropertyChanges { target: inventoryItem; opacity: 0 }
+            PropertyChanges { target: unlockingItem; opacity: 0 }
+            PropertyChanges { target: plunderItem; opacity: 0 }
+        },
+        State {
+            name: "inventoryState"
+            when: Game.world.state === GameWorld.StateInventory
+            PropertyChanges { target: conversationItem; opacity: 0 }
+            PropertyChanges { target: inventoryItem; opacity: 1 }
             PropertyChanges { target: unlockingItem; opacity: 0 }
             PropertyChanges { target: plunderItem; opacity: 0 }
         },
