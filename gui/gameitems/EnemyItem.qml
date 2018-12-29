@@ -54,6 +54,7 @@ PhysicsItem {
         onDamaged: {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
+            damageAnimation.restart()
         }
 
         onHealed: {
@@ -111,6 +112,48 @@ PhysicsItem {
             Layout.fillHeight: true
             Layout.fillWidth: true
         }
+    }
+
+
+
+    ParallelAnimation {
+        id: damageAnimation
+
+        ScaleAnimator {
+            target: damageIndicator
+            duration: 400
+            from: 1.2
+            to: 1.5
+        }
+
+        SequentialAnimation {
+
+            NumberAnimation {
+                target: damageIndicator
+                properties: "opacity"
+                duration: 200
+                from: 0
+                to: 0.5
+            }
+
+            NumberAnimation {
+                target: damageIndicator
+                properties: "opacity"
+                duration:  200
+                to: 0
+            }
+        }
+    }
+
+    Rectangle {
+        id: damageIndicator
+        width: parent.width
+        height: parent.height
+        radius: parent.width / 2
+        color: "transparent"
+        border.color: "red"
+        border.width: parent.width / 6
+        opacity: 0
     }
 
 }

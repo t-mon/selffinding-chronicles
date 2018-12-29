@@ -165,6 +165,8 @@ PhysicsItem {
                 return
 
             console.log("Hit !!!!!")
+            healthIndicator.opacity = 1
+            healthIndicatorTimer.restart()
             root.hitAttackRadius = character.size.width / 2 * app.gridSize + (2 * app.gridSize)
             hitAttackTimer.restart()
         }
@@ -200,8 +202,8 @@ PhysicsItem {
         }
 
         onKilled: {
-            healthIndicator.opacity = 1
-            healthIndicatorTimer.restart()
+            healthIndicator.opacity = 0
+            healthIndicatorTimer.stop()
         }
 
         onPlayerOnItemChanged: {
@@ -251,31 +253,32 @@ PhysicsItem {
         }
     }
 
-    SequentialAnimation {
+    ParallelAnimation {
         id: damageAnimation
 
-        ParallelAnimation {
+        ScaleAnimator {
+            target: damageIndicator
+            duration: 200
+            from: 1.2
+            to: 1.5
+        }
+
+        SequentialAnimation {
+
             NumberAnimation {
                 target: damageIndicator
                 properties: "opacity"
-                duration:  300
+                duration: 100
                 from: 0
-                to: 0.6
+                to: 0.5
             }
 
-            ScaleAnimator {
+            NumberAnimation {
                 target: damageIndicator
-                duration:  300
-                from: 1
-                to: 1.5
+                properties: "opacity"
+                duration:  100
+                to: 0
             }
-        }
-
-        NumberAnimation {
-            target: damageIndicator
-            properties: "opacity"
-            duration:  100
-            to: 0
         }
     }
 
@@ -289,14 +292,6 @@ PhysicsItem {
         border.color: "red"
         border.width: parent.width / 6
         opacity: 0
-//        RadialGradient {
-//            anchors.fill: parent
-//            gradient: Gradient {
-//                GradientStop { position: 0.0; color: "transparent" }
-//                GradientStop { position: 0.5; color: "red" }
-//            }
-//        }
-
     }
 
 }

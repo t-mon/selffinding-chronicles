@@ -141,25 +141,6 @@ GamePage {
                     z: model.layer
                 }
             }
-
-//            PhysicsItem {
-//                id: obstacle
-//                width: app.gridSize
-//                height: app.gridSize * 10
-//                x: app.gridSize * 2
-//                y: app.gridSize * 2
-
-//                fixtures: Box {
-//                    width: obstacle.width
-//                    height: obstacle.height
-//                }
-
-//                Rectangle {
-//                    anchors.fill: parent
-//                    color: "black"
-//                    opacity: 0.5
-//                }
-//            }
         }
 
         DebugDraw {
@@ -167,6 +148,11 @@ GamePage {
             world: physicsWorld
             opacity: 0.5
             visible: Game.debugging
+        }
+
+        MouseArea {
+            anchors.fill: parent
+
         }
 
     }

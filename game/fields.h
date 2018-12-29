@@ -41,7 +41,6 @@ private slots:
     void onFieldImageNameChanged(const QString &imageName);
     void onPlayerOnFieldChanged(bool playerOnField);
 
-
 };
 
 #endif // FIELDS_H

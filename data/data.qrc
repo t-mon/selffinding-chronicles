@@ -19,6 +19,6 @@
         <file>gamedata/chests/chest-1.json</file>
         <file>maps/test-environment.json</file>
         <file>gamedata/enemies/test-enemy.json</file>
-        <file>gamedata/enemies/trap.json</file>
+        <file>gamedata/enemies/fire.json</file>
     </qresource>
 </RCC>

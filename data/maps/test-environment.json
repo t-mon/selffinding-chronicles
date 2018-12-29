@@ -93,7 +93,12 @@
         {
             "x": 5,
             "y": 10,
-            "data": ":/gamedata/enemies/trap.json"
+            "data": ":/gamedata/enemies/fire.json"
+        },
+        {
+            "x": 3,
+            "y": 10,
+            "data": ":/gamedata/enemies/fire.json"
         }
     ]
 }
