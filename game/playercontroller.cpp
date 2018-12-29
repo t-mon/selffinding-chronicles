@@ -77,7 +77,7 @@ void PlayerController::keyPressed(const Qt::Key &key)
     case Qt::Key_Space:
         setSecondaryActionPressed(true);
         break;
-    case Qt::Key_Tab:
+    case Qt::Key_Q:
         qCDebug(dcPlayerController()) << "Inventory pressed";
         setInventoryPressed(true);
         break;
@@ -108,12 +108,17 @@ void PlayerController::keyReleased(const Qt::Key &key)
     case Qt::Key_Space:
         setSecondaryActionPressed(false);
         break;
-    case Qt::Key_Tab:
+    case Qt::Key_Q:
         setInventoryPressed(false);
         break;
     default:
         break;
     }
+}
+
+QPointF PlayerController::velocityVector()
+{
+    return delta();
 }
 
 QPointF PlayerController::delta()

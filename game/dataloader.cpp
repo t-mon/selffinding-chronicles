@@ -27,6 +27,8 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList)
             gameItems.append(createTreeItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
         } else if (itemTypeString == "character") {
             gameItems.append(createCharacterObject(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+        } else if (itemTypeString == "enemy") {
+            gameItems.append(createEnemyObject(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
         } else if (itemTypeString == "chest") {
             gameItems.append(createChestItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
         } else {
@@ -41,16 +43,12 @@ PlantItem *DataLoader::createPlantItem(const QVariantMap &description, const QPo
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
 
     PlantItem *plantItem = new PlantItem();
     plantItem->setPosition(position);
     plantItem->setSize(itemSize);
     plantItem->setShape(PlantItem::ShapeCircle);
     plantItem->setLayer(geometryMap.value("layer").toReal());
-    plantItem->setUnaccessableMap(unaccessableMap);
-    plantItem->setVisiblilityMap(visibilityMap);
     plantItem->setName(description.value("name").toString());
     plantItem->setImageName(description.value("imageName").toString());
     plantItem->setPrice(description.value("price").toInt());
@@ -64,14 +62,10 @@ TreeItem *DataLoader::createTreeItem(const QVariantMap &description, const QPoin
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
 
     TreeItem *treeItem = new TreeItem();
     treeItem->setPosition(position);
     treeItem->setLayer(geometryMap.value("layer").toReal());
-    treeItem->setUnaccessableMap(unaccessableMap);
-    treeItem->setVisiblilityMap(visibilityMap);
     treeItem->setSize(itemSize);
     treeItem->setName(description.value("name").toString());
     treeItem->setImageName(description.value("imageName").toString());
@@ -83,16 +77,12 @@ WeaponItem *DataLoader::createWeaponItem(const QVariantMap &description, const Q
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
 
     WeaponItem *weaponItem = new WeaponItem();
     weaponItem->setPosition(position);
     weaponItem->setSize(itemSize);
     weaponItem->setShape(PlantItem::ShapeCircle);
     weaponItem->setLayer(geometryMap.value("layer").toReal());
-    weaponItem->setUnaccessableMap(unaccessableMap);
-    weaponItem->setVisiblilityMap(visibilityMap);
     weaponItem->setName(description.value("name").toString());
     weaponItem->setImageName(description.value("imageName").toString());
     weaponItem->setDamage(description.value("damage").toInt());
@@ -105,8 +95,6 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
 
     Character *character = new Character();
     character->setName(description.value("name").toString());
@@ -139,8 +127,6 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
         qCWarning(dcMap()) << "Invalid role" << roleName;
     }
 
-    character->setUnaccessableMap(unaccessableMap);
-    character->setVisiblilityMap(visibilityMap);
     character->setExperience(description.value("experience").toInt());
     character->setHealth(description.value("health").toInt());
     character->setHealthMax(description.value("healthMax").toInt());
@@ -154,20 +140,69 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
     return character;
 }
 
+Enemy *DataLoader::createEnemyObject(const QVariantMap &description, const QPoint &position)
+{
+    QVariantMap geometryMap = description.value("geometry").toMap();
+    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
+
+    Enemy *enemy = new Enemy();
+    enemy->setName(description.value("name").toString());
+    enemy->setPosition(position);
+    enemy->setSize(itemSize);
+    enemy->setShape(PlantItem::ShapeCircle);
+
+    if (description.value("gender", "male").toString().toLower() == "male") {
+        enemy->setGender(Character::Male);
+    } else if (description.value("gender", "male").toString().toLower() == "female") {
+        enemy->setGender(Character::Female);
+    }
+
+    QString roleName = description.value("role", "player").toString().toLower();
+    if (roleName == "player") {
+        enemy->setRole(Character::Player);
+    } else if (roleName == "statist") {
+        enemy->setRole(Character::Statist);
+    } else if (roleName == "friend") {
+        enemy->setRole(Character::Friend);
+    } else if (roleName == "enemy") {
+        enemy->setRole(Character::Enemy);
+    } else if (roleName == "magician") {
+        enemy->setRole(Character::Magician);
+    } else if (roleName == "warrior") {
+        enemy->setRole(Character::Warrior);
+    } else if (roleName == "dealer") {
+        enemy->setRole(Character::Dealer);
+    } else {
+        qCWarning(dcMap()) << "Invalid role" << roleName;
+    }
+
+    enemy->setImageName(description.value("imageName").toString());
+    enemy->setExperience(description.value("experience").toInt());
+    enemy->setHealth(description.value("health").toInt());
+    enemy->setHealthMax(description.value("healthMax").toInt());
+    enemy->setMana(description.value("mana").toInt());
+    enemy->setManaMax(description.value("manaMax").toInt());
+    enemy->setWisdom(description.value("wisdom").toInt());
+    enemy->setStrength(description.value("strength").toInt());
+    enemy->setStrealth(description.value("stealth").toInt());
+    enemy->inventory()->addGameItemList(loadGameItems(description.value("items").toList()));
+    enemy->setTouchDamage(description.value("touchDamage").toInt());
+    enemy->setShootDamage(description.value("shootDamage").toInt());
+    enemy->setHitDamage(description.value("hitDamage").toInt());
+
+    return enemy;
+}
+
 ChestItem *DataLoader::createChestItem(const QVariantMap &description, const QPoint &position)
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
-    QList<QPoint> unaccessableMap = loadFieldMap(geometryMap.value("unaccessableMap").toList());
-    QList<QPoint> visibilityMap = loadFieldMap(geometryMap.value("visibilityMap").toList());
 
     ChestItem *chestItem = new ChestItem();
     chestItem->setName(description.value("name").toString());
     chestItem->setPosition(position);
     chestItem->setSize(itemSize);
     chestItem->setShape(PlantItem::ShapeCircle);
-    chestItem->setUnaccessableMap(unaccessableMap);
-    chestItem->setVisiblilityMap(visibilityMap);
     chestItem->setName(description.value("name").toString());
     chestItem->setImageName(description.value("imageName").toString());
 

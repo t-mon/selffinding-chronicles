@@ -35,7 +35,6 @@ ApplicationWindow {
 
     property color backgroundColor: "#333333"
 
-
     FontLoader {
         id: gameFont
         //source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"

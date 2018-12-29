@@ -3,7 +3,6 @@
         <file>main.qml</file>
         <file>MainPage.qml</file>
         <file>GamePage.qml</file>
-        <file>GameScene.qml</file>
         <file>SettingsPage.qml</file>
         <file>components/ChroniclesHeader.qml</file>
         <file>components/HeaderButton.qml</file>
@@ -24,5 +23,14 @@
         <file>gamepages/UnlockingPage.qml</file>
         <file>gamepages/LoadingPage.qml</file>
         <file>gamepages/PlunderPage.qml</file>
+        <file>physics/PhysicsItem.qml</file>
+        <file>physics/RectangleBoxBody.qml</file>
+        <file>physics/BoxBody.qml</file>
+        <file>physics/CircleBody.qml</file>
+        <file>physics/WorldBoundaries.qml</file>
+        <file>physics/EdgeBody.qml</file>
+        <file>physics/ChainBody.qml</file>
+        <file>LoadingPage.qml</file>
+        <file>gameitems/EnemyItem.qml</file>
     </qresource>
 </RCC>

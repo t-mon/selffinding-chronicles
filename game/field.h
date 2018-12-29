@@ -17,9 +17,7 @@ class Field : public QObject
 
     Q_PROPERTY(QPoint position READ position NOTIFY positionChanged)
     Q_PROPERTY(QString imageName READ imageName NOTIFY imageNameChanged)
-    Q_PROPERTY(bool accessible READ accessible WRITE setAccessible NOTIFY accessibleChanged)
     Q_PROPERTY(bool playerOnField READ playerOnField NOTIFY playerOnFieldChanged)
-    Q_PROPERTY(bool inPlayerRange READ inPlayerRange NOTIFY inPlayerRangeChanged)
     Q_PROPERTY(bool hasItem READ hasItem NOTIFY hasItemChanged)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
 
@@ -33,14 +31,8 @@ public:
     QString imageName() const;
     void setImageName(const QString &imageName);
 
-    bool accessible() const;
-    void setAccessible(bool accessible);
-
     bool playerOnField() const;
     void setPlayerOnField(bool playerOnField);
-
-    bool inPlayerRange() const;
-    void setInPlayerRange(bool inPlayerRange);
 
     bool hasItem() const;
 
@@ -93,11 +85,8 @@ private slots:
 signals:
     void positionChanged(const QPoint &position);
     void imageNameChanged(const QString &imageName);
-    void accessibleChanged(bool accessible);
     void playerOnFieldChanged(bool playerOnField);
-    void inPlayerRangeChanged(bool inPlayerRange);
     void hasItemChanged(bool hasGameItem);
-
 };
 
 QDebug operator<<(QDebug debug, Field *field);

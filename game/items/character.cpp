@@ -5,17 +5,10 @@
 Character::Character(QObject *parent):
     GameItem(parent)
 {
-    m_auraCircleObject = new GameObject(this);
-    m_auraCircleObject->setName("Aura");
-    m_auraCircleObject->setShape(GameObject::ShapeCircle);
-
     m_inventory = new GameItems(this);
     m_inventoryProxy = new GameItemsProxy(this);
     m_inventoryProxy->setGameItems(m_inventory);
     m_inventoryProxy->setItemTypeFilter(GameItem::TypeWeapon);
-
-    connect(this, &GameObject::positionChanged, this, &Character::onPositionChanged);
-    updateAuraObject();
 }
 
 QString Character::itemTypeName() const
@@ -31,11 +24,6 @@ GameItem::Type Character::itemType() const
 void Character::performInteraction()
 {
     qCDebug(dcItem()) << itemTypeName() << name() << "perform interaction" << m_interaction;
-}
-
-GameObject *Character::auraCircleObject() const
-{
-    return m_auraCircleObject;
 }
 
 qreal Character::speed() const
@@ -95,9 +83,9 @@ void Character::setRunning(bool running)
     emit runningChanged(m_running);
 
     if (m_running) {
-        setSpeed(m_speed * 1.8);
+        setSpeed(0.3);
     } else {
-        setSpeed(0.03);
+        setSpeed(0.2);
     }
 }
 
@@ -146,8 +134,6 @@ void Character::setAuraRange(const int auraRange)
 {
     m_auraRange = auraRange;
     emit auraRangeChanged(m_auraRange);
-
-    updateAuraObject();
 }
 
 Character::Gender Character::gender() const
@@ -217,13 +203,36 @@ int Character::health() const
     return m_health;
 }
 
+double Character::healthPercentage() const
+{
+    return 100.0 * m_health / m_healthMax;
+}
+
 void Character::setHealth(int health)
 {
     if (m_health == health)
         return;
 
+    if (m_health <= 0)
+        return;
+
     qCDebug(dcCharacter()) << name() << "health changed" << health;
-    m_health = health;
+    if (health > m_healthMax) {
+        m_health = m_healthMax;
+    } else if (health <= 0) {
+        qCDebug(dcCharacter()) << name() << "killed!";
+        m_health = 0;
+        emit killed();
+    } else if (health > m_health) {
+        qCDebug(dcCharacter()) << name() << "healed!";
+        m_health = health;
+        emit healed();
+    } else {
+        qCDebug(dcCharacter()) << name() << "damaged!";
+        m_health = health;
+        emit damaged();
+    }
+
     emit healthChanged(m_health);
 }
 
@@ -317,6 +326,34 @@ void Character::setStrealth(int stealth)
     emit stealthChanged(m_stealth);
 }
 
+int Character::hitNumber() const
+{
+    return m_hitNumber;
+}
+
+void Character::setHitNumber(int hitNumber)
+{
+    if (m_hitNumber == hitNumber)
+        return;
+
+    m_hitNumber = hitNumber;
+    emit hitNumberChanged(m_hitNumber);
+    emit hit();
+}
+
+int Character::shootNumber() const
+{
+    return m_shootNumber;
+}
+
+void Character::setShootNumber(int shootNumber)
+{
+    if (m_shootNumber == shootNumber)
+        return;
+
+    m_shootNumber = shootNumber;
+    emit shootNumberChanged(m_shootNumber);
+}
 
 void Character::setHeading(Character::Heading heading)
 {
@@ -326,17 +363,5 @@ void Character::setHeading(Character::Heading heading)
     qCDebug(dcCharacter()) << name() << "heading changed" << heading;
     m_heading = heading;
     emit headingChanged(m_heading);
-}
-
-void Character::onPositionChanged(const QPointF newPosition)
-{
-    Q_UNUSED(newPosition)
-    updateAuraObject();
-}
-
-void Character::updateAuraObject()
-{
-    m_auraCircleObject->setSize(QSize(auraRange() * 2 + 1, auraRange() * 2 + 1));
-    m_auraCircleObject->setPosition(position() - QPointF(auraRange(), auraRange()));
 }
 

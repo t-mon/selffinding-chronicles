@@ -1,0 +1,39 @@
+{
+    "name": "Test monster",
+    "type": "enemy",
+    "imageName": "/images/enemies/test-monster.png",
+    "geometry": {
+        "width": 3,
+        "height": 3,
+        "layer": 2
+    },
+    "physicsObject": {
+        "width": 1,
+        "height": 1,
+        "shape": "circle"
+    },
+    "gender": "male",
+    "role": "Enemy",
+    "experience": 100,
+    "health": 100,
+    "healthMax": 100,
+    "mana": 10,
+    "manaMax": 10,
+    "wisdom": 10,
+    "strength": 10,
+    "stealth": 0,
+    "items": [
+        {
+            "data": ":/gamedata/plants/healing-herb.json"
+        },
+        {
+            "data": ":/gamedata/plants/healing-herb.json"
+        },
+        {
+            "data": ":/gamedata/weapons/sword.json"
+        }
+    ],
+    "touchDamage": 20,
+    "hitDamage": 5,
+    "shootDamage": 5
+}

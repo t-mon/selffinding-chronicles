@@ -12,10 +12,8 @@ class Fields : public QAbstractListModel
 public:
     enum FieldRole {
         PositionRole,
-        AccessibleRole,
         ImageNameRole,
-        PlayerOnFieldRole,
-        InPlayerRangeRole
+        PlayerOnFieldRole
     };
     Q_ENUM(FieldRole)
 
@@ -40,11 +38,8 @@ private:
     QList<Field *> m_fields;
 
 private slots:
-    void onFieldAccessableChanged(bool accessable);
     void onFieldImageNameChanged(const QString &imageName);
     void onPlayerOnFieldChanged(bool playerOnField);
-    void onFieldInPlayerRangeChanged(bool inPlayerRange);
-
 
 };
 

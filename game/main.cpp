@@ -25,6 +25,8 @@
 #include <QCommandLineParser>
 #include <QQmlApplicationEngine>
 
+#include <box2dplugin.h>
+
 #include "game.h"
 #include "debugcategories.h"
 #include "conversation/conversationitem.h"
@@ -98,13 +100,12 @@ int main(int argc, char *argv[])
     parser.addOption(dataOption);
     parser.process(app);
 
-
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
     s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("Settings", true);
-    s_loggingFilters.insert("PlayerController", false);
+    s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("Item", true);
     s_loggingFilters.insert("Collision", false);
@@ -116,9 +117,10 @@ int main(int argc, char *argv[])
 
     // Game
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
-    qmlRegisterUncreatableType<World>("Chronicles", 1, 0, "World", "Can't create this in QML. Get it from the Game instance.");
+
+    qmlRegisterUncreatableType<GameWorld>("Chronicles", 1, 0, "GameWorld", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
-    qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the World object.");
+    qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the GameWorld object.");
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
 
     // Items
@@ -132,6 +134,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<ChestItem>("Chronicles", 1, 0, "ChestItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
+    qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");
 
     // Conversation
     qmlRegisterType<Conversation>("Chronicles", 1, 0, "Conversation");
@@ -148,6 +151,10 @@ int main(int argc, char *argv[])
         qWarning() << dataDirectory.path() << "does not exist.";
         exit(-1);
     }
+
+    // Load Box2D qml plugin and register it
+    Box2DPlugin plugin;
+    plugin.registerTypes("Box2D");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());

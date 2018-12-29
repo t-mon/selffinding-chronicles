@@ -113,25 +113,5 @@
             "y": 9,
             "data": ":/gamedata/chests/chest-1.json"
         }
-    ],
-    "fields": [
-        {
-            "x": 6,
-            "y": 8,
-            "accessable": false,
-            "imageName": "/images/world/base/unaccessable.png"
-        },
-        {
-            "x": 6,
-            "y": 9,
-            "accessable": false,
-            "imageName": "/images/world/base/unaccessable.png"
-        },
-        {
-            "x": 6,
-            "y": 10,
-            "accessable": false,
-            "imageName": "/images/world/base/unaccessable.png"
-        }
     ]
 }

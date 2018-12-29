@@ -2,20 +2,53 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
+import Box2D 2.0
 import Chronicles 1.0
 
 import "../components"
+import "../physics"
 
-Item {
+PhysicsItem {
     id: root
 
     property GameItem gameItem: Game.world.gameItems.get(model.index)
+    property int itemType: gameItem ? gameItem.itemType : GameItem.TypeNone
+
     antialiasing: app.antialiasing
-
     opacity: gameItem ? (gameItem.hidingPlayer ? 0.5 : 1) : 0
+    onPlayerAuraRangeChanged: gameItem.playerVisible = playerAuraRange
+    onPlayerOnItemChanged: gameItem.playerOnItem = playerOnItem
 
-    //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
-    //    Component.onDestruction: console.log("Destroy item")
+    bodyType: Body.Dynamic
+
+    fixtures: [
+        Circle {
+            id: itemBody
+            radius: root.width / 2
+            density: 100
+            friction: 0
+            restitution: 0.0
+            categories: {
+                if (!gameItem)
+                    return Box.Category2
+
+                if (gameItem.itemType == gameItem.TypeChest) {
+                    return Box.All
+                } else {
+                    return Box.Category2
+                }
+            }
+        },
+
+        Circle {
+            id: itemSensor
+            radius: root.width / 2
+            density: 0
+            friction: 0
+            restitution: 0
+            sensor: true
+        }
+    ]
 
     Connections {
         target: root.gameItem
@@ -38,18 +71,21 @@ Item {
             to: 3
             duration: 80
         }
+
         RotationAnimation {
             target: root
             property: "rotation"
             to: 0
             duration: 80
         }
+
         RotationAnimation {
             target: root
             property: "rotation"
             to: -3
             duration: 80
         }
+
         RotationAnimation {
             target: root
             property: "rotation"
@@ -65,18 +101,6 @@ Item {
         opacity: Game.debugging ? 0.5 : 1
     }
 
-    Rectangle {
-        id: wireFrame
-        anchors.fill: parent
-        color: "gray"
-        border.color: "black"
-        opacity: 0.1
-        border.width: 2
-        visible: Game.debugging
-        radius: gameItem ? (gameItem.shape === GameObject.ShapeCircle ? width / 2 : 0) : 0
-    }
-
-
     ItemDescription {
         id: nameLabel
         anchors.bottom: root.top
@@ -84,6 +108,9 @@ Item {
         text: gameItem ? gameItem.name : ""
         opacity: gameItem ? (Game.debugging ? 0.5 : (gameItem.playerFocus ? 1 : 0)) : 0
     }
+
+    //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
+    //    Component.onDestruction: console.log("Destroy item")
 
 }
 

@@ -18,7 +18,7 @@ QObject *Game::qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
     return Game::instance();
 }
 
-World *Game::world()
+GameWorld *Game::world()
 {
     return m_world;
 }
@@ -36,10 +36,10 @@ void Game::setRunning(const bool &running)
     m_running = running;
 
     if (m_running) {
-        m_timer->start();
+        //m_timer->start();
         setState(GameState::Running);
     } else {
-        m_timer->stop();
+        //m_timer->stop();
         setState(GameState::Paused);
     }
 
@@ -84,11 +84,6 @@ int Game::intervall() const
     return m_interval;
 }
 
-int Game::intermediateSteps() const
-{
-    return m_intermediateSteps;
-}
-
 void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
 {
     if (autoRepeat)
@@ -118,31 +113,16 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
 Game::Game(QObject *parent) :
     QObject(parent),
     m_timer(new QTimer(this)),
-    m_world(new World(this)),
+    m_world(new GameWorld(this)),
     m_settings(new GameSettings(this)),
-    m_running(false),
-    m_interval(5),
-    m_intermediateSteps(10)
+    m_running(false)
 {
-    m_timer->setTimerType(Qt::PreciseTimer);
-    m_timer->setInterval(m_interval);
-    m_timer->setSingleShot(false);
 
-    connect(m_timer, &QTimer::timeout, this, &Game::onTick);
 }
 
 void Game::onTick()
 {
-    m_tickCounter++;
-    emit paintEvent();
-
-    // Emit tick for the world
+    //qCDebug(dcGame()) << "Tick" << m_elapsedTimer.elapsed() << "ms";
     m_world->tick();
-
-    if (m_tickCounter >= m_intermediateSteps) {
-        m_tickCounter = 0;
-
-        // Emit tick for the UI
-        emit tick();
-    }
+    //m_elapsedTimer.restart();
 }
