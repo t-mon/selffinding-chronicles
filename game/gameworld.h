@@ -28,6 +28,7 @@ class GameWorld : public Fields
 
     Q_PROPERTY(Character *player READ player CONSTANT)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
+    Q_PROPERTY(GameItems *enemyItems READ enemyItems CONSTANT)
     Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
 
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
@@ -77,6 +78,7 @@ public:
     Character *player() const;
     GameItems *gameItems() const;
     GameItems *characterItems() const;
+    GameItems *enemyItems() const;
     PlayerController *playerController() const;
 
     Conversation *currentConversation() const;
@@ -89,6 +91,7 @@ public:
     Q_INVOKABLE void loadMap(const QString &fileName);
     Q_INVOKABLE void giveUpUnlocking();
     Q_INVOKABLE void finishPlunder();
+    Q_INVOKABLE void performHitAttack(Character *attacker, Character *victim);
 
 private:
     State m_state = StateUnitialized;
@@ -98,6 +101,7 @@ private:
     Map *m_map = nullptr;
     Character *m_player = nullptr;
     GameItems *m_gameItems = nullptr;
+    GameItems *m_enemyItems = nullptr;
     GameItems *m_characterItems = nullptr;
     PlayerController *m_playerController = nullptr;
     CollisionDetector *m_collisionDetector = nullptr;
@@ -136,9 +140,7 @@ private:
 
     // Helper methods
     Field *getFieldFromPosition(const QPointF position) const;
-    QPointF adjustCollition(QPointF delta);
-    void evaluateInRangeFields(const QPointF &playerPosition);
-
+    void evaluatePlayerFocus();
     void pickItem(GameItem *item);
 
 signals:
@@ -159,7 +161,11 @@ signals:
 private slots:
     void onPlayerPositionChanged();
     void onLoadingFinished();
-    void onItemPlayerVisibleChanged();
+
+    void onItemPlayerVisibleChanged(bool playerVisible);
+    void onItemPlayerOnItemChanged(bool playerOnItem);
+    void onEnemyKilled();
+
     void onPrimaryActionPressedChanged(bool pressed);
     void onSecondaryActionPressedChanged(bool pressed);
     void onLeftClicked();

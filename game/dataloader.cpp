@@ -27,6 +27,8 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList)
             gameItems.append(createTreeItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
         } else if (itemTypeString == "character") {
             gameItems.append(createCharacterObject(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+        } else if (itemTypeString == "enemy") {
+            gameItems.append(createEnemyObject(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
         } else if (itemTypeString == "chest") {
             gameItems.append(createChestItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
         } else {
@@ -136,6 +138,59 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
     character->inventory()->addGameItemList(loadGameItems(description.value("items").toList()));
 
     return character;
+}
+
+Enemy *DataLoader::createEnemyObject(const QVariantMap &description, const QPoint &position)
+{
+    QVariantMap geometryMap = description.value("geometry").toMap();
+    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
+
+    Enemy *enemy = new Enemy();
+    enemy->setName(description.value("name").toString());
+    enemy->setPosition(position);
+    enemy->setSize(itemSize);
+    enemy->setShape(PlantItem::ShapeCircle);
+
+    if (description.value("gender", "male").toString().toLower() == "male") {
+        enemy->setGender(Character::Male);
+    } else if (description.value("gender", "male").toString().toLower() == "female") {
+        enemy->setGender(Character::Female);
+    }
+
+    QString roleName = description.value("role", "player").toString().toLower();
+    if (roleName == "player") {
+        enemy->setRole(Character::Player);
+    } else if (roleName == "statist") {
+        enemy->setRole(Character::Statist);
+    } else if (roleName == "friend") {
+        enemy->setRole(Character::Friend);
+    } else if (roleName == "enemy") {
+        enemy->setRole(Character::Enemy);
+    } else if (roleName == "magician") {
+        enemy->setRole(Character::Magician);
+    } else if (roleName == "warrior") {
+        enemy->setRole(Character::Warrior);
+    } else if (roleName == "dealer") {
+        enemy->setRole(Character::Dealer);
+    } else {
+        qCWarning(dcMap()) << "Invalid role" << roleName;
+    }
+
+    enemy->setImageName(description.value("imageName").toString());
+    enemy->setExperience(description.value("experience").toInt());
+    enemy->setHealth(description.value("health").toInt());
+    enemy->setHealthMax(description.value("healthMax").toInt());
+    enemy->setMana(description.value("mana").toInt());
+    enemy->setManaMax(description.value("manaMax").toInt());
+    enemy->setWisdom(description.value("wisdom").toInt());
+    enemy->setStrength(description.value("strength").toInt());
+    enemy->setStrealth(description.value("stealth").toInt());
+    enemy->inventory()->addGameItemList(loadGameItems(description.value("items").toList()));
+    enemy->setTouchDamage(description.value("touchDamage").toInt());
+    enemy->setShootDamage(description.value("shootDamage").toInt());
+    enemy->setHitDamage(description.value("hitDamage").toInt());
+
+    return enemy;
 }
 
 ChestItem *DataLoader::createChestItem(const QVariantMap &description, const QPoint &position)

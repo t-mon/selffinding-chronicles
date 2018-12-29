@@ -17,7 +17,7 @@ class GameItem : public GameObject
     Q_PROPERTY(bool playerFocus READ playerFocus NOTIFY playerFocusChanged)
     Q_PROPERTY(bool playerVisible READ playerVisible WRITE setPlayerVisible NOTIFY playerVisibleChanged)
     Q_PROPERTY(bool hidingPlayer READ hidingPlayer NOTIFY hidingPlayerChanged)
-    Q_PROPERTY(bool playerOnItem READ playerOnItem NOTIFY playerOnItemChanged)
+    Q_PROPERTY(bool playerOnItem READ playerOnItem WRITE setPlayerOnItem NOTIFY playerOnItemChanged)
 
 public:
     enum Type {
@@ -56,6 +56,29 @@ public:
     };
     Q_ENUM(Interaction)
 
+    enum PhysicsFlag {
+        PhysicsCharacter = 0x0001,
+        PhysicsEnemy = 0x0002,
+        PhysicsPickableItem = 0x0004,
+        PhysicsStaticItem = 0x0008,
+        PhysicsWalkableItem = 0x0010,
+        PhysicsSensor = 0x0020,
+        PhysicsCategory7 = 0x0040,
+        PhysicsCategory8 = 0x0080,
+        PhysicsCategory9 = 0x0100,
+        PhysicsCategory10 = 0x0200,
+        PhysicsCategory11 = 0x0400,
+        PhysicsCategory12 = 0x0800,
+        PhysicsCategory13 = 0x1000,
+        PhysicsCategory14 = 0x2000,
+        PhysicsCategory15 = 0x4000,
+        PhysicsCategory16 = 0x8000,
+        PhysicsAll = 0xFFFF,
+        PhysicsNone =0x0000
+    };
+    Q_ENUM(PhysicsFlag)
+    Q_DECLARE_FLAGS(PhysicsFlags, PhysicsFlag)
+
     explicit GameItem(QObject *parent = nullptr);
     ~GameItem() override = default;
 
@@ -93,7 +116,7 @@ public:
     static QString interactionToString(const Interaction &interaction);
 
 private:
-    QString m_imageName = "/images/items/placeholder.svg";
+    QString m_imageName = "/images/world/base/placeholder.png";
     int m_price = 0;
     bool m_playerFocus = false;
     bool m_playerVisible = false;

@@ -1,0 +1,24 @@
+{
+    "name": "Trap",
+    "type": "enemy",
+    "imageName": "/images/enemies/trap.jpg",
+    "geometry": {
+        "width": 1,
+        "height": 1,
+        "layer": 2
+    },
+    "physicsObject": {
+        "x": 0,
+        "y": 0,
+        "width": 1,
+        "height": 1,
+        "shape": "circle"
+    },
+    "role": "Enemy",
+    "experience": 10,
+    "health": 10,
+    "healthMax": 10,
+    "touchDamage": 10,
+    "hitDamage": 0,
+    "shootDamage": 0
+}

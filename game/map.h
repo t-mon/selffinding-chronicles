@@ -47,6 +47,7 @@ public:
     QString fileName() const;
 
     GameItems *items();
+    GameItems *enemies();
     GameItems *characters();
 
     void loadMap(const QString &fileName);
@@ -61,6 +62,7 @@ private:
     QString m_fileName;
 
     GameItems *m_items = nullptr;
+    GameItems *m_enemies = nullptr;
     GameItems *m_characters = nullptr;
     QList<Fields *> m_mapData;
 

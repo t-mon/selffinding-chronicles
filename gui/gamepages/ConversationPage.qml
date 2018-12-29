@@ -189,7 +189,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     textFormat: Text.PlainText
                     font.family: "Monospace"
-                    color: choiseDelegate.ListView.isCurrentItem ? "black" : "gray"
+                    color: choiseDelegate.ListView.isCurrentItem ? "black" : "#333333"
                 }
             }
         }

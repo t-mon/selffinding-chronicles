@@ -117,14 +117,7 @@ Game::Game(QObject *parent) :
     m_settings(new GameSettings(this)),
     m_running(false)
 {
-    m_interval = qRound(1000.0 / m_fps);
 
-    m_timer->setTimerType(Qt::PreciseTimer);
-    m_timer->setInterval(m_interval);
-    m_timer->setSingleShot(false);
-
-    qCDebug(dcGame()) << "FPS:" << m_fps << "[ms] interval:" << m_interval << "[ms]";
-    connect(m_timer, &QTimer::timeout, this, &Game::onTick, Qt::DirectConnection);
 }
 
 void Game::onTick()

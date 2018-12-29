@@ -129,6 +129,19 @@ GamePage {
                 }
             }
 
+            Repeater {
+                id: enemiesRepeater
+                model: Game.world.enemyItems
+                delegate: EnemyItem {
+                    enemy: Game.world.enemyItems.get(model.index)
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
+                    z: model.layer
+                }
+            }
+
 //            PhysicsItem {
 //                id: obstacle
 //                width: app.gridSize

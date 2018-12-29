@@ -31,5 +31,6 @@
         <file>physics/EdgeBody.qml</file>
         <file>physics/ChainBody.qml</file>
         <file>LoadingPage.qml</file>
+        <file>gameitems/EnemyItem.qml</file>
     </qresource>
 </RCC>

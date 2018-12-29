@@ -4,8 +4,10 @@ import Box2D 2.0
 Item {
     id: item
 
-    property bool playerAuraRange: false
     property alias body: itemBody
+
+    property bool playerOnItem: false
+    property bool playerAuraRange: false
 
     // Body properties
     property alias world: itemBody.world

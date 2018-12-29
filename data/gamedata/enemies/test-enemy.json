@@ -1,14 +1,19 @@
 {
-    "name": "Enemy",
+    "name": "Test monster",
     "type": "enemy",
-    "imageName": "/images/characters/player-male.svg",
+    "imageName": "/images/enemies/test-monster.png",
     "geometry": {
-        "width": 2,
-        "height": 2,
-        "layer": 3
+        "width": 3,
+        "height": 3,
+        "layer": 2
     },
-    "gender": "female",
-    "role": "Player",
+    "physicsObject": {
+        "width": 1,
+        "height": 1,
+        "shape": "circle"
+    },
+    "gender": "male",
+    "role": "Enemy",
     "experience": 100,
     "health": 100,
     "healthMax": 100,
@@ -27,5 +32,8 @@
         {
             "data": ":/gamedata/weapons/sword.json"
         }
-    ]
+    ],
+    "touchDamage": 20,
+    "hitDamage": 5,
+    "shootDamage": 5
 }

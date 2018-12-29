@@ -26,6 +26,31 @@
         },
         {
             "x": 10,
+            "y": 16,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 10,
+            "y": 17,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 11,
+            "y": 17,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 12,
+            "y": 17,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 13,
+            "y": 17,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 10,
             "y": 20,
             "data": ":/gamedata/weapons/sword.json"
         },
@@ -57,6 +82,18 @@
             "x": 5,
             "y": 10,
             "data": ":/gamedata/chests/chest-1.json"
+        }
+    ],
+    "enemies": [
+        {
+            "x": 5,
+            "y": 15,
+            "data": ":/gamedata/enemies/test-enemy.json"
+        },
+        {
+            "x": 5,
+            "y": 10,
+            "data": ":/gamedata/enemies/trap.json"
         }
     ]
 }

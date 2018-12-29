@@ -203,13 +203,36 @@ int Character::health() const
     return m_health;
 }
 
+double Character::healthPercentage() const
+{
+    return 100.0 * m_health / m_healthMax;
+}
+
 void Character::setHealth(int health)
 {
     if (m_health == health)
         return;
 
+    if (m_health <= 0)
+        return;
+
     qCDebug(dcCharacter()) << name() << "health changed" << health;
-    m_health = health;
+    if (health > m_healthMax) {
+        m_health = m_healthMax;
+    } else if (health <= 0) {
+        qCDebug(dcCharacter()) << name() << "killed!";
+        m_health = 0;
+        emit killed();
+    } else if (health > m_health) {
+        qCDebug(dcCharacter()) << name() << "healed!";
+        m_health = health;
+        emit healed();
+    } else {
+        qCDebug(dcCharacter()) << name() << "damaged!";
+        m_health = health;
+        emit damaged();
+    }
+
     emit healthChanged(m_health);
 }
 
@@ -303,6 +326,34 @@ void Character::setStrealth(int stealth)
     emit stealthChanged(m_stealth);
 }
 
+int Character::hitNumber() const
+{
+    return m_hitNumber;
+}
+
+void Character::setHitNumber(int hitNumber)
+{
+    if (m_hitNumber == hitNumber)
+        return;
+
+    m_hitNumber = hitNumber;
+    emit hitNumberChanged(m_hitNumber);
+    emit hit();
+}
+
+int Character::shootNumber() const
+{
+    return m_shootNumber;
+}
+
+void Character::setShootNumber(int shootNumber)
+{
+    if (m_shootNumber == shootNumber)
+        return;
+
+    m_shootNumber = shootNumber;
+    emit shootNumberChanged(m_shootNumber);
+}
 
 void Character::setHeading(Character::Heading heading)
 {

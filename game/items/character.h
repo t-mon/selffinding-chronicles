@@ -24,12 +24,16 @@ class Character : public GameItem
     Q_PROPERTY(Role role READ role NOTIFY roleChanged)
     Q_PROPERTY(int experience READ experience NOTIFY experienceChanged)
     Q_PROPERTY(int health READ health NOTIFY healthChanged)
+    Q_PROPERTY(double healthPercentage READ healthPercentage NOTIFY healthChanged)
     Q_PROPERTY(int healthMax READ healthMax NOTIFY healthMaxChanged)
     Q_PROPERTY(int mana READ mana NOTIFY manaChanged)
     Q_PROPERTY(int manaMax READ manaMax NOTIFY manaMaxChanged)
     Q_PROPERTY(int wisdom READ wisdom NOTIFY wisdomChanged)
     Q_PROPERTY(int strength READ strength NOTIFY strengthChanged)
     Q_PROPERTY(int stealth READ stealth NOTIFY stealthChanged)
+
+    Q_PROPERTY(int hitNumber READ hitNumber WRITE setHitNumber NOTIFY hitNumberChanged)
+    Q_PROPERTY(int shootNumber READ shootNumber WRITE setShootNumber NOTIFY shootNumberChanged)
 
 public:
     enum Gender {
@@ -98,6 +102,7 @@ public:
     void setExperience(int experience);
 
     int health() const;
+    double healthPercentage() const;
     void setHealth(int health);
 
     int healthMax() const;
@@ -117,6 +122,12 @@ public:
 
     int stealth() const;
     void setStrealth(int stealth);
+
+    int hitNumber() const;
+    void setHitNumber(int hitNumber);
+
+    int shootNumber() const;
+    void setShootNumber(int shootNumber);
 
 private:
     GameItems *m_inventory = nullptr;
@@ -145,6 +156,9 @@ private:
     int m_strength = 5;
     int m_stealth = 5;
 
+    int m_hitNumber = 0;
+    int m_shootNumber = 0;
+
     void setHeading(Character::Heading heading);
 
 signals:
@@ -169,6 +183,15 @@ signals:
     void wisdomChanged(int wisom);
     void strengthChanged(int strength);
     void stealthChanged(int stealth);
+
+    void hitNumberChanged(int hitNumber);
+    void shootNumberChanged(int shootNumber);
+
+    void damaged();
+    void healed();
+    void killed();
+    void hit();
+    void shoot();
 
 };
 

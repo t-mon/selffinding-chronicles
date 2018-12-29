@@ -11,6 +11,7 @@
 Map::Map(QObject *parent) : QObject(parent)
 {
     m_items = new GameItems(this);
+    m_enemies = new GameItems(this);
     m_characters = new GameItems(this);
 }
 
@@ -165,6 +166,9 @@ void Map::loadMap(const QString &fileName)
     qCDebug(dcMap()) << "--> load characters";
     m_characters->addGameItemList(DataLoader::loadGameItems(mapData.value("characters").toList()));
 
+    qCDebug(dcMap()) << "--> load enemies";
+    m_enemies->addGameItemList(DataLoader::loadGameItems(mapData.value("enemies").toList()));
+
     foreach (GameItem *item, m_items->gameItems()) {
         placeItemOnMap(item);
         qCDebug(dcMap()) << "        " << item;
@@ -172,6 +176,12 @@ void Map::loadMap(const QString &fileName)
     }
 
     foreach (GameItem *item, m_characters->gameItems()) {
+        placeItemOnMap(item);
+        qCDebug(dcMap()) << "        " << item;
+        item->moveToThread(QCoreApplication::instance()->thread());
+    }
+
+    foreach (GameItem *item, m_enemies->gameItems()) {
         placeItemOnMap(item);
         qCDebug(dcMap()) << "        " << item;
         item->moveToThread(QCoreApplication::instance()->thread());
