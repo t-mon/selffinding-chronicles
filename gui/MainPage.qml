@@ -9,6 +9,8 @@ import "components"
 GamePage {
     id: root
 
+    Component.onCompleted: console.log("Window size " + root.width + "x" + root.height)
+
     ColumnLayout {
         anchors.centerIn: parent
         GameButton {

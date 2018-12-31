@@ -4,7 +4,7 @@
 
 GameObject::GameObject(QObject *parent) : QObject(parent)
 {
-
+    qRegisterMetaType<PhysicsFlags>("PhysicsFlags");
 }
 
 QString GameObject::name() const
@@ -77,6 +77,90 @@ void GameObject::setShape(GameObject::Shape shape)
 
     m_shape = shape;
     emit shapeChanged(m_shape);
+}
+
+GameObject::BodyType GameObject::bodyType() const
+{
+    return m_bodyType;
+}
+
+void GameObject::setBodyType(GameObject::BodyType bodyType)
+{
+    if (m_bodyType == bodyType)
+        return;
+
+    m_bodyType = bodyType;
+    emit bodyTypeChanged(m_bodyType);
+}
+
+QSize GameObject::physicsSize() const
+{
+    return m_physicsSize;
+}
+
+void GameObject::setPhysicsSize(const QSize &physicsSize)
+{
+    if (m_physicsSize == physicsSize)
+        return;
+
+    m_physicsSize = physicsSize;
+    emit physicsSizeChanged(m_physicsSize);
+}
+
+QPointF GameObject::physicsPosition() const
+{
+    return m_physicsPosition;
+}
+
+void GameObject::setPhysicsPosition(const QPointF &physicsPosition)
+{
+    if (m_physicsPosition == physicsPosition)
+        return;
+
+    m_physicsPosition = physicsPosition;
+    emit physicsPositionChanged(m_physicsPosition);
+}
+
+GameObject::PhysicsFlags GameObject::categoryFlag() const
+{
+    return m_categoryFlag;
+}
+
+void GameObject::setCategoryFlag(GameObject::PhysicsFlags categoryFlag)
+{
+    if (m_categoryFlag == categoryFlag)
+        return;
+
+    m_categoryFlag = categoryFlag;
+    emit categoryFlagChanged(m_categoryFlag);
+}
+
+GameObject::PhysicsFlags GameObject::collisionFlag() const
+{
+    return m_collisionFlag;
+}
+
+void GameObject::setCollisionFlag(PhysicsFlags collisionFlag)
+{
+    if (m_collisionFlag == collisionFlag)
+        return;
+
+    m_collisionFlag = collisionFlag;
+    emit collisionFlagChanged(m_collisionFlag);
+}
+
+QQmlListProperty<QPointF> GameObject::vertices() const
+{
+    return m_vertices;
+}
+
+void GameObject::setVertices(const QQmlListProperty<QPointF> &vertices)
+{
+    if (m_vertices == vertices)
+        return;
+
+    m_vertices = vertices;
+    emit verticesChanged(m_vertices);
 }
 
 QDebug operator<<(QDebug debug, GameObject *gameObject)

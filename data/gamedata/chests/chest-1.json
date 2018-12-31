@@ -7,6 +7,17 @@
         "height": 2,
         "layer": 3
     },
+    "physicsGeometry": {
+        "body": "static",
+        "shape": "circle",
+        "width": 2,
+        "height": 2,
+        "x": 0,
+        "y": 0,
+        "category": 8,
+        "collision": 43,
+        "vertices": []
+    },
     "items": [
         {
             "data": ":/gamedata/plants/healing-herb.json"

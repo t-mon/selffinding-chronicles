@@ -18,9 +18,14 @@ QObject *Game::qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
     return Game::instance();
 }
 
-GameWorld *Game::world()
+GameWorld *Game::world() const
 {
     return m_world;
+}
+
+GameSettings *Game::settings() const
+{
+    return m_settings;
 }
 
 bool Game::running() const
@@ -33,17 +38,8 @@ void Game::setRunning(const bool &running)
     if (m_running == running)
         return;
 
+    qCDebug(dcGame()) << "The game is now" << (running ? "running" : "paused");
     m_running = running;
-
-    if (m_running) {
-        //m_timer->start();
-        setState(GameState::Running);
-    } else {
-        //m_timer->stop();
-        setState(GameState::Paused);
-    }
-
-    //qCDebug(dcGame()) << "The game is now" << (running ? "running" : "paused");
     emit runningChanged(m_running);
 }
 
@@ -60,28 +56,6 @@ void Game::setDebugging(bool debugging)
     qCDebug(dcGame()) << "Debugging" << (debugging ? "enabled" : "disabled");
     m_debugging = debugging;
     emit debuggingChanged(m_debugging);
-}
-
-Game::GameState Game::state() const
-{
-    return m_state;
-}
-
-void Game::setState(Game::GameState state)
-{
-    if (m_state == state)
-        return;
-
-    qCDebug(dcGame()) << state;
-    m_state = state;
-    emit stateChanged(m_state);
-
-    // TODO: switch state
-}
-
-int Game::intervall() const
-{
-    return m_interval;
 }
 
 void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
@@ -112,7 +86,6 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
 
 Game::Game(QObject *parent) :
     QObject(parent),
-    m_timer(new QTimer(this)),
     m_world(new GameWorld(this)),
     m_settings(new GameSettings(this)),
     m_running(false)
@@ -122,7 +95,5 @@ Game::Game(QObject *parent) :
 
 void Game::onTick()
 {
-    //qCDebug(dcGame()) << "Tick" << m_elapsedTimer.elapsed() << "ms";
     m_world->tick();
-    //m_elapsedTimer.restart();
 }

@@ -1,7 +1,7 @@
 {
     "name": "Test world",
-    "width": 100,
-    "height": 100,
+    "width": 500,
+    "height": 500,
     "playerStartX": 5,
     "playerStartY": 5,
     "defaultField": {
@@ -63,6 +63,11 @@
             "x": 15,
             "y": 10,
             "data": ":/gamedata/bushes/bush-1.json"
+        },
+        {
+            "x": 15,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
         }
     ],
     "characters": [
@@ -79,7 +84,7 @@
     ],
     "chests": [
         {
-            "x": 5,
+            "x": 6,
             "y": 10,
             "data": ":/gamedata/chests/chest-1.json"
         }
@@ -91,12 +96,17 @@
             "data": ":/gamedata/enemies/test-enemy.json"
         },
         {
-            "x": 5,
+            "x": 2,
             "y": 10,
             "data": ":/gamedata/enemies/fire.json"
         },
         {
             "x": 3,
+            "y": 10,
+            "data": ":/gamedata/enemies/fire.json"
+        },
+        {
+            "x": 4,
             "y": 10,
             "data": ":/gamedata/enemies/fire.json"
         }

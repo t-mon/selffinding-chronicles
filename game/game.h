@@ -15,36 +15,22 @@ class Game : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(GameWorld *world READ world CONSTANT)
-    Q_PROPERTY(int intervall READ intervall CONSTANT)
+    Q_PROPERTY(GameSettings *settings READ settings CONSTANT)
     Q_PROPERTY(bool running READ running WRITE setRunning NOTIFY runningChanged)
     Q_PROPERTY(bool debugging READ debugging WRITE setDebugging NOTIFY debuggingChanged)
 
 public:
-    enum GameState {
-        Uninitialized,
-        Loading,
-        Paused,
-        Running,
-        Inventory,
-        Conversation
-    };
-    Q_ENUM(GameState)
-
     static Game* instance();
     static QObject *qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
 
-    GameWorld *world();
+    GameWorld *world() const;
+    GameSettings *settings() const;
 
     bool running() const;
     void setRunning(const bool &running);
 
     bool debugging() const;
     void setDebugging(bool debugging);
-
-    GameState state() const;
-    void setState(GameState state);
-
-    int intervall() const;
 
     Q_INVOKABLE void keyPressed(const Qt::Key &key, bool autoRepeat);
     Q_INVOKABLE void keyReleased(const Qt::Key &key, bool autoRepeat);
@@ -53,26 +39,18 @@ private:
     explicit Game(QObject *parent = nullptr);
     static Game *s_instance;
 
-    QTimer *m_timer = nullptr;
-    QElapsedTimer m_elapsedTimer;
     GameWorld *m_world = nullptr;
     GameSettings *m_settings = nullptr;
     quint32 m_currentTimer = 0;
-    int m_fps = 60;
 
     bool m_running = false;
     bool m_debugging = false;
-    GameState m_state = Uninitialized;
-    int m_interval = 0;
-    int m_tickCounter = 0;
 
 signals:
     void tick();
-    void paintEvent();
 
     void runningChanged(bool running);
     void debuggingChanged(bool debugging);
-    void stateChanged(GameState state);
 
 public slots:
     void onTick();

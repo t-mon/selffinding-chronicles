@@ -43,6 +43,7 @@ public:
     Q_ENUM(Gender)
 
     enum Role {
+        None,
         Player,
         Statist,
         Friend,

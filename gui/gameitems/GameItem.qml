@@ -18,28 +18,20 @@ PhysicsItem {
     opacity: gameItem ? (gameItem.hidingPlayer ? 0.5 : 1) : 0
     onPlayerAuraRangeChanged: gameItem.playerVisible = playerAuraRange
     onPlayerOnItemChanged: gameItem.playerOnItem = playerOnItem
-
-    bodyType: Body.Dynamic
+    bodyType: gameItem ? gameItem.bodyType : GameObject.BodyTypeStatic
+    linearDamping: 1
+    fixedRotation: true
 
     fixtures: [
         Circle {
             id: itemBody
             radius: root.width / 2
-            density: 100
-            friction: 0
+            density: 1
+            friction: 1
             restitution: 0.0
-            categories: {
-                if (!gameItem)
-                    return Box.Category2
-
-                if (gameItem.itemType == gameItem.TypeChest) {
-                    return Box.All
-                } else {
-                    return Box.Category2
-                }
-            }
+            categories: gameItem ? gameItem.categoryFlag : GameObject.PhysicsNone
+            collidesWith: gameItem ? gameItem.collisionFlag : GameObject.PhysicsNone
         },
-
         Circle {
             id: itemSensor
             radius: root.width / 2

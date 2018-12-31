@@ -7,6 +7,17 @@
         "height": 1,
         "layer": 1
     },
+    "physicsGeometry": {
+        "body": "dynamic",
+        "shape": "circle",
+        "width": 1,
+        "height": 1,
+        "x": 0,
+        "y": 0,
+        "category": 4,
+        "collision": 32,
+        "vertices": []
+    },
     "price": 25,
     "mana": 0,
     "health": 25,

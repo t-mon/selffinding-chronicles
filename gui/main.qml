@@ -7,14 +7,15 @@ import Chronicles 1.0
 
 ApplicationWindow {
     id: app
-    visible: true
-    width: 800
-    height: 600
     title: gameName
+    visible: true
+    width: Game.settings.windowSize.width
+    height: Game.settings.windowSize.height
+    x: Game.settings.windowPosition.x
+    y: Game.settings.windowPosition.y
     visibility: ApplicationWindow.Windowed
 
     property int controlMode: PlayerController.ControlModeKeyBoard
-
     property string gameName: qsTr("Self finding chronicles")
 
     // General UI configurations
@@ -31,23 +32,25 @@ ApplicationWindow {
 
     property string fontFamily: gameFont.name
     property real gridSize: Math.min(app.width / 30, app.height / 20)
-    property bool antialiasing: true
+    property bool antialiasing: false
 
     property color backgroundColor: "#333333"
+
+    onWidthChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
+    onHeightChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
+    onXChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
+    onYChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
+
+    Connections {
+        id: settingsConnections
+        target: Game.settings
+        onVisibilityChanged: app.visibility = Game.settings.visibility
+    }
 
     FontLoader {
         id: gameFont
         //source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
         source: "/fonts/blackchancery/blkchcry.ttf"
-    }
-
-    Settings {
-        id: settings
-        property string playerName: "Player"
-        property alias viewMode: app.visibility
-        property alias controlMode: app.controlMode
-
-        onControlModeChanged: Game.world.playerController.controlMode = controlMode
     }
 
     StackView {
@@ -56,9 +59,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        Game.world.player.name = settings.playerName
-        Game.world.playerController.controlMode = settings.controlMode
-
+        app.visibility = Game.settings.visibility
         pageStack.push(Qt.resolvedUrl("MainPage.qml"))
     }
 }

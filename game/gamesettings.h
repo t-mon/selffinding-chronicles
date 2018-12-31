@@ -2,36 +2,70 @@
 #define GAMESETTINGS_H
 
 #include <QObject>
-#include <QWindow>
+#include <QSettings>
+#include <QQuickWindow>
+
+#include "playercontroller.h"
 
 class GameSettings : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QWindow::Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
-    Q_PROPERTY(QString playerName READ playerName WRITE setPlayerName NOTIFY playerNameChanged)
+    Q_PROPERTY(QQuickWindow::Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
+    Q_PROPERTY(QSize windowSize READ windowSize WRITE setWindowSize NOTIFY windowSizeChanged)
+    Q_PROPERTY(QPoint windowPosition READ windowPosition WRITE setWindowPosition NOTIFY windowPositionChanged)
+    Q_PROPERTY(PlayerController::ControlMode controlMode READ controlMode WRITE setControlMode NOTIFY controlModeChanged)
 
+    Q_PROPERTY(QString playerName READ playerName WRITE setPlayerName NOTIFY playerNameChanged)
 
 public:
     explicit GameSettings(QObject *parent = nullptr);
 
+    // Game window
+    QQuickWindow::Visibility visibility() const;
+    void setVisibility(QQuickWindow::Visibility visibility);
+
+    QSize windowSize() const;
+    void setWindowSize(const QSize &windowSize);
+
+    QPoint windowPosition() const;
+    void setWindowPosition(const QPoint &windowPosition);
+
+    // Game
+    PlayerController::ControlMode controlMode() const;
+    void setControlMode(PlayerController::ControlMode controlMode);
+
+    // Player
     QString playerName() const;
     void setPlayerName(const QString &playerName);
 
-    QWindow::Visibility visibility() const;
-    void setVisibility(QWindow::Visibility visibility);
-
 
 private:
+    QSettings *m_settings = nullptr;
+
+    // Game window
+    QQuickWindow::Visibility m_visibility;
+    QSize m_windowSize;
+    QPoint m_windowPosition;
+
     // Game
-    QWindow::Visibility m_visibility;
+    PlayerController::ControlMode m_controlMode;
 
     // Player
     QString m_playerName;
 
+    // Init
     void loadSettings();
 
 signals:
-    void visibilityChanged(QWindow::Visibility visibility);
+    // Game window
+    void visibilityChanged(QQuickWindow::Visibility visibility);
+    void windowSizeChanged(const QSize &windowSize);
+    void windowPositionChanged(const QPoint &windowPosition);
+
+    // Game
+    void controlModeChanged(PlayerController::ControlMode controlMode);
+
+    // Player
     void playerNameChanged(const QString &playerName);
 
 };

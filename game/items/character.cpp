@@ -180,6 +180,8 @@ void Character::setRole(Character::Role role)
     case Enemy:
         setInteraction(InteractionAttack);
         break;
+    default:
+        break;
     }
 }
 

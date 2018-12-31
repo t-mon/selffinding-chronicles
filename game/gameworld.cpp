@@ -15,7 +15,13 @@ GameWorld::GameWorld(QObject *parent) :
     // Create the player
     m_player = new Character(this);
     m_player->setShape(GameObject::ShapeCircle);
+    m_player->setPhysicsSize(QSize(2,2));
+    m_player->setPhysicsPosition(QPointF(0,0));
     m_player->setSize(QSize(2,2));
+    m_player->setCategoryFlag(GameObject::PhysicsCharacter);
+    m_player->setCollisionFlag(static_cast<GameObject::PhysicsFlags>(491));
+    m_player->setBodyType(GameObject::BodyTypeDynamic);
+
     connect(m_player, &Character::positionChanged, this, &GameWorld::onPlayerPositionChanged);
 
     // Create player controller
@@ -490,7 +496,11 @@ void GameWorld::onLoadingFinished()
     // Init stuff
     setBoundingSize(QSize(15, 15));
     m_currentViewOffset = QPoint(0, 0);
+
     m_player->setPosition(m_map->playerStartPosition());
+    m_player->setName(Game::instance()->settings()->playerName());
+    m_playerController->setControlMode(Game::instance()->settings()->controlMode());
+
     doPlayerMovement();
     evaluatePlayerFocus();
     setLoading(false);

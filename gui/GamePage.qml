@@ -20,7 +20,6 @@ GamePage {
         forceActiveFocus()
     }
 
-    Keys.onTabPressed: Game.keyPressed(event.key, event.isAutoRepeat)
     Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
     Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
 
@@ -48,7 +47,7 @@ GamePage {
 
             Rectangle {
                 anchors.fill: parent
-                color: "white"
+                color: "black"
             }
 
             WorldBoundaries {
@@ -143,19 +142,31 @@ GamePage {
             }
         }
 
+
+
         DebugDraw {
             id: debugDraw
             world: physicsWorld
-            opacity: 0.5
+            opacity: 0.4
             visible: Game.debugging
         }
+    }
 
-        MouseArea {
-            anchors.fill: parent
-
+    MouseArea {
+        id: screenMouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
+        preventStealing: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
+        onMouseXChanged: {
+            calculateAngle()
+        }
+        onMouseYChanged: {
+            calculateAngle()
         }
 
     }
+
 
     function moveCamera() {
         var worldWidth = Game.world.size.width * app.gridSize
@@ -174,6 +185,22 @@ GamePage {
         } else {
             worldFlickable.contentY = 0
         }
+    }
+
+    function calculateAngle() {
+        if (!Game.running)
+            return;
+
+        if (Game.world.playerController.controlMode !== PlayerController.ControlModeKeyBoardMouse)
+            return;
+
+        if (!Game.world.player.movable)
+            return;
+
+        var dx = (worldFlickable.contentX + screenMouseArea.mouseX) - Game.world.player.position.x * app.gridSize
+        var dy = (worldFlickable.contentY + screenMouseArea.mouseY) - Game.world.player.position.y * app.gridSize
+        //console.log("--> ",  dy, " | ", dx , " ", Math.atan2(dy , dx))
+        Game.world.player.angle = Math.atan2(dy , dx)
     }
 
     // Game overlays
@@ -269,4 +296,63 @@ GamePage {
         }
     ]
 
+
+//    PhysicsItem {
+//        id: testItem
+//        width: 3 * app.gridSize
+//        height: app.gridSize
+//        x: 4 * app.gridSize
+//        y: 4 * app.gridSize
+
+//        bodyType: Body.Dynamic
+//        onRotationChanged: console.log("##Rotation " + rotation)
+//        transform: Rotation { origin.x: -2 * app.gridSize + app.gridSize / 2; origin.y: app.gridSize / 2; axis { x: 0; y: 0; z: 1 } }
+
+//        rotation: Game.world.player.angle * 180 / Math.PI
+
+//        Rectangle {
+//            anchors.fill: parent
+//            color: "black"
+//            opacity: 0.2
+//        }
+
+//        fixtures: [
+//            Box {
+//                id: rotationBody
+//                density: 1.0
+//                friction: 0.0
+//                restitution: 0.0
+//                width:  testItem.width
+//                height:  testItem.height
+//                collidesWith: GameObject.PhysicsNone
+//            },
+//            Circle {
+//                id: fixedBody
+//                density: 1.0
+//                friction: 0.0
+//                restitution: 0.0
+//                radius: app.gridSize / 2
+//                collidesWith: GameObject.PhysicsNone
+//            }
+//        ]
+
+
+//        Connections {
+//            target: Game.world
+//            onWorldPostTick: {
+//                var totalRotation = Game.world.player.angle - testItem.rotation * Math.PI / 180
+//                var desiredAngularVelocity = totalRotation * 60;
+//                while ( totalRotation < -180 * 57.295779513 ) totalRotation += 360 * 57.295779513;
+//                while ( totalRotation >  180 * 57.295779513 ) totalRotation -= 360 * 57.295779513;
+//                var impulse = testItem.body.getInertia() * desiredAngularVelocity;
+//                testItem.body.applyAngularImpulse(impulse);
+
+
+//                //                var currentVelocity = playerItem.body.linearVelocity
+//                //                var dvx = Game.world.playerController.velocityVector().x * app.gridSize - currentVelocity.x
+//                //                var dvy = Game.world.playerController.velocityVector().y * app.gridSize - currentVelocity.y
+//                //                playerItem.body.applyLinearImpulse(Qt.point(playerItem.body.getMass() * dvx, playerItem.body.getMass() * dvy), playerItem.body.getWorldCenter())
+//            }
+//        }
+//    }
 }

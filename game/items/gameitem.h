@@ -56,29 +56,6 @@ public:
     };
     Q_ENUM(Interaction)
 
-    enum PhysicsFlag {
-        PhysicsCharacter = 0x0001,
-        PhysicsEnemy = 0x0002,
-        PhysicsPickableItem = 0x0004,
-        PhysicsStaticItem = 0x0008,
-        PhysicsWalkableItem = 0x0010,
-        PhysicsSensor = 0x0020,
-        PhysicsCategory7 = 0x0040,
-        PhysicsCategory8 = 0x0080,
-        PhysicsCategory9 = 0x0100,
-        PhysicsCategory10 = 0x0200,
-        PhysicsCategory11 = 0x0400,
-        PhysicsCategory12 = 0x0800,
-        PhysicsCategory13 = 0x1000,
-        PhysicsCategory14 = 0x2000,
-        PhysicsCategory15 = 0x4000,
-        PhysicsCategory16 = 0x8000,
-        PhysicsAll = 0xFFFF,
-        PhysicsNone =0x0000
-    };
-    Q_ENUM(PhysicsFlag)
-    Q_DECLARE_FLAGS(PhysicsFlags, PhysicsFlag)
-
     explicit GameItem(QObject *parent = nullptr);
     ~GameItem() override = default;
 

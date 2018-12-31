@@ -32,15 +32,16 @@ GamePage {
                 GameLabel {
                     Layout.preferredWidth: settingsColumn.width / 2
                     text: qsTr("Name")
+                    color: "white"
                 }
 
                 TextField {
                     id: playerNameField
-                    text: settings.playerName
+                    text: Game.settings.playerName
                     Layout.fillWidth: true
 
                     onEditingFinished: {
-                        settings.playerName = text
+                        Game.settings.playerName = text
                         Game.world.player.name = text
                     }
                 }
@@ -52,13 +53,14 @@ GamePage {
                 GameLabel {
                     Layout.preferredWidth: settingsColumn.width / 2
                     text: qsTr("Controll mode")
+                    color: "white"
                 }
 
                 ComboBox {
                     Layout.fillWidth: true
                     model: [qsTr("Keyboard"), qsTr("Keyboard + Mouse"), qsTr("Touchscreen")]
                     currentIndex: {
-                        switch (settings.controlMode) {
+                        switch (Game.settings.controlMode) {
                         case PlayerController.ControlModeKeyBoard:
                             return 0;
                         case PlayerController.ControlModeKeyBoardMouse:
@@ -70,13 +72,13 @@ GamePage {
 
                     onCurrentIndexChanged: {
                         if (currentIndex == 0) {
-                            settings.controlMode = PlayerController.ControlModeKeyBoard
+                            Game.settings.controlMode = PlayerController.ControlModeKeyBoard
                             Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoard
                         } else if (currentIndex == 1) {
-                            settings.controlMode = PlayerController.ControlModeKeyBoardMouse
+                            Game.settings.controlMode = PlayerController.ControlModeKeyBoardMouse
                             Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoardMouse
                         } else if (currentIndex == 2) {
-                            settings.controlMode = PlayerController.ControlModeTouchscreen
+                            Game.settings.controlMode = PlayerController.ControlModeTouchscreen
                             Game.world.playerController.controlMode = PlayerController.ControlModeTouchscreen
                         }
                     }
@@ -89,13 +91,14 @@ GamePage {
                 GameLabel {
                     Layout.preferredWidth: settingsColumn.width / 2
                     text: qsTr("View mode")
+                    color: "white"
                 }
 
                 ComboBox {
                     Layout.fillWidth: true
                     model: [qsTr("Windowed"), qsTr("Maximized"), qsTr("Fullscreen")]
                     currentIndex: {
-                        switch (settings.viewMode) {
+                        switch (Game.settings.visibility) {
                         case ApplicationWindow.Windowed:
                             return 0;
                         case ApplicationWindow.Maximized:
@@ -108,13 +111,13 @@ GamePage {
                     onCurrentIndexChanged: {
                         switch (currentIndex) {
                         case 0:
-                            settings.viewMode = ApplicationWindow.Windowed;
+                            Game.settings.visibility = ApplicationWindow.Windowed;
                             break;
                         case 1:
-                            settings.viewMode = ApplicationWindow.Maximized;
+                            Game.settings.visibility = ApplicationWindow.Maximized;
                             break;
                         case 2:
-                            settings.viewMode = ApplicationWindow.FullScreen;
+                            Game.settings.visibility = ApplicationWindow.FullScreen;
                             break;
                         }
                     }

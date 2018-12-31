@@ -314,7 +314,6 @@ QPointF PlayerController::moveKeyBoardMouse()
     double deltaX = qRound(m_player->speed() * qCos(angle) * 10000.0) / 10000.0;
     double deltaY = qRound(m_player->speed() * qSin(angle) * 10000.0) / 10000.0;
 
-    m_player->setAngle(angle);
     return QPointF(deltaX, deltaY);
 }
 

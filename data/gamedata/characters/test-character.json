@@ -7,6 +7,17 @@
         "height": 2,
         "layer": 3
     },
+    "physicsGeometry": {
+        "body": "dynamic",
+        "shape": "circle",
+        "width": 2,
+        "height": 2,
+        "x": 0,
+        "y": 0,
+        "category": 1,
+        "collision": 491,
+        "vertices": []
+    },
     "gender": "female",
     "role": "Friend",
     "experience": 100,

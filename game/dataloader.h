@@ -28,6 +28,11 @@ public:
     static QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
     static QVariantMap loadJsonData(const QString &mapDataFileName);
 
+    static GameObject::Shape convertShapeString(const QString &shapeString);
+    static GameObject::BodyType convertBodyTypeString(const QString &bodyTypeString);
+    static Character::Gender convertGenderString(const QString &genderString);
+    static Character::Role convertRoleString(const QString &roleString);
+
 };
 
 #endif // DATALOADER_H

@@ -103,11 +103,11 @@ int main(int argc, char *argv[])
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
-    s_loggingFilters.insert("Character", true);
+    s_loggingFilters.insert("Character", false);
     s_loggingFilters.insert("Settings", true);
     s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("Map", true);
-    s_loggingFilters.insert("Item", true);
+    s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", true);
 
@@ -121,9 +121,11 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<GameWorld>("Chronicles", 1, 0, "GameWorld", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the GameWorld object.");
+    qmlRegisterUncreatableType<GameSettings>("Chronicles", 1, 0, "GameSettings", "Can't create this in QML. Get it from the Game object.");
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
 
     // Items
+    qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItem>("Chronicles", 1, 0, "GameItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItemsProxy>("Chronicles", 1, 0, "GameItemsProxy", "Can't create this in QML.");
@@ -132,7 +134,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<WeaponItem>("Chronicles", 1, 0, "WeaponItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<ChestItem>("Chronicles", 1, 0, "ChestItem", "Can't create this in QML.");
-    qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
     qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");
 
@@ -158,9 +159,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());
-
     qCDebug(dcGame()) << "Data directory:" << engine.rootContext()->contextProperty("dataDirectory").toString();
-
     engine.rootContext()->setContextProperty("gameVersion", app.applicationVersion());
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 

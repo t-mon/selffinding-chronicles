@@ -17,20 +17,25 @@ PhysicsItem {
 
     property real auraRadius: (character.auraRange + character.size.width / 2) * app.gridSize
     property real hitAttackRadius: character.size.width / 3 * app.gridSize
+    property real hitAttackRadiusBase: character.size.width / 3 * app.gridSize
 
     antialiasing: app.antialiasing
-    bodyType: character.movable ? Body.Dynamic : Body.Static
+    bodyType: character.movable ? character.bodyType : GameObject.BodyTypeStatic
     onPlayerAuraRangeChanged: character.playerVisible = playerAuraRange
+    linearDamping: 1
+    fixedRotation: true
+
+    rotation: character.angle * 180 / Math.PI
 
     fixtures: [
         Circle {
             id: bodyCircle
             radius: root.width / 2
-            density: 100
+            density: 1
             friction: 0.0
             restitution: 0.0
-            categories: GameItem.PhysicsCharacter
-            collidesWith: GameItem.PhysicsStaticItem | GameItem.PhysicsCharacter
+            categories: character.categoryFlag
+            collidesWith: character.collisionFlag
 
             onBeginContact: {
                 if (!isPlayer)
@@ -38,7 +43,6 @@ PhysicsItem {
 
                 var target = other.getBody().target
                 if (target.itemType) {
-                    //console.log("---------> Begin contact " + other + " | " + target.itemType)
                     target.playerOnItem = true
                 }
             }
@@ -49,7 +53,6 @@ PhysicsItem {
 
                 var target = other.getBody().target
                 if (target.itemType) {
-                    //console.log("---------> End contact " + other + " | " + target.itemType)
                     target.playerOnItem = false
                 }
             }
@@ -71,7 +74,6 @@ PhysicsItem {
 
                 var target = other.getBody().target
                 if (target.itemType) {
-                    //console.log("---------> Begin contact " + other + " | " + target.itemType)
                     target.playerOnItem = true
                 }
             }
@@ -82,24 +84,26 @@ PhysicsItem {
 
                 var target = other.getBody().target
                 if (target.itemType) {
-                    //console.log("---------> End contact " + other + " | " + target.itemType)
                     target.playerOnItem = false
                 }
             }
-
         },
         Polygon {
             id: auraSensor
             sensor: true
+            density: 0.0
+            friction: 0.0
+            restitution: 0.0
             categories: GameItem.PhysicsSensor
             collidesWith: GameItem.PhysicsAll
+
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle + Math.PI / 4), root.width / 2 + auraRadius * Math.sin(character.angle + Math.PI / 4)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle + Math.PI / 8), root.width / 2 + auraRadius * Math.sin(character.angle + Math.PI / 8)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle), root.width / 2 + auraRadius * Math.sin(character.angle)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle - Math.PI / 8), root.width / 2 + auraRadius * Math.sin(character.angle - Math.PI / 8)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(character.angle - Math.PI / 4), root.width / 2 + auraRadius * Math.sin(character.angle - Math.PI / 4))
+                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 4), root.width / 2 + auraRadius * Math.sin(Math.PI / 4)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 8), root.width / 2 + auraRadius * Math.sin(Math.PI / 8)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(0), root.width / 2 + auraRadius * Math.sin(0)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 8), root.width / 2 + auraRadius * Math.sin(-Math.PI / 8)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 4), root.width / 2 + auraRadius * Math.sin(-Math.PI / 4))
             ]
 
             onBeginContact: {
@@ -108,7 +112,6 @@ PhysicsItem {
 
                 var target = other.getBody().target
                 if (target.itemType) {
-                    //console.log("---------> Begin contact " + other + " | " + target.itemType)
                     target.playerAuraRange = true
                 }
             }
@@ -119,7 +122,6 @@ PhysicsItem {
 
                 var target = other.getBody().target
                 if (target.itemType) {
-                    //console.log("---------> End contact " + other + " | " + target.itemType)
                     target.playerAuraRange = false
                 }
             }
@@ -127,34 +129,89 @@ PhysicsItem {
         Polygon {
             id: hitAttackSensor
             sensor: true
-            categories: hitAttackTimer.running ? GameItem.PhysicsAll : GameItem.PhysicsNone
+            density: 0.0
+            friction: 0.0
+            restitution: 0.0
+            categories: GameItem.PhysicsSensor
             collidesWith: GameItem.PhysicsAll
-
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
-                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(character.angle + Math.PI / 8), root.width / 2 + hitAttackRadius * Math.sin(character.angle + Math.PI / 8)),
-                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(character.angle), root.width / 2 + hitAttackRadius * Math.sin(character.angle)),
-                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(character.angle - Math.PI / 8), root.width / 2 + hitAttackRadius * Math.sin(character.angle - Math.PI / 8)),
+                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(Math.PI / 8), root.width / 2 + hitAttackRadius * Math.sin(Math.PI / 8)),
+                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(0), root.width / 2 + hitAttackRadius * Math.sin(0)),
+                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(-Math.PI / 8), root.width / 2 + hitAttackRadius * Math.sin(-Math.PI / 8)),
             ]
 
             onBeginContact: {
+                if (root.hitAttackRadius === root.hitAttackRadiusBase)
+                    return
+
                 var target = other.getBody().target
                 if (target.itemType && target.enemy) {
-                    //console.log("---------> Attack begin contact " + other + " | " + target.enemy)
-                    hitAttackTimer.restart()
+                    //hitAttackTimer.restart()
                     Game.world.performHitAttack(root.character, target.enemy)
-                    //target.body.applyLinearImpulse(Qt.point(target.body.getMass() * 0.01, target.body.getMass() * 0), target.body.getWorldCenter())
                 }
             }
         }
     ]
 
+    Item {
+        id: frame
+        anchors.fill: parent;
+        rotation: -root.rotation
+
+        Rectangle {
+            id: frameWire
+            color: "transparent";
+            border.color: "red";
+            border.width: 2;
+            opacity: Game.debugging ? 0.5 : 0
+        }
+
+        ItemDescription {
+            id: nameLabel
+            anchors.bottom: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: character ? character.name : ""
+            opacity: character ? (Game.debugging ? 0.5 : (root.character.playerFocus && !root.isPlayer ? 1 : 0)) : 0
+        }
+
+        RowLayout {
+            id: healthIndicator
+            height: app.gridSize / 6
+            width: app.gridSize * 2
+            anchors.bottom: nameLabel.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 0
+            opacity: 0
+
+            Behavior on opacity { NumberAnimation { duration: 200 } }
+
+            Rectangle {
+                color: "red"
+                Layout.fillHeight: true
+                Layout.preferredWidth: parent.width * character.healthPercentage / 100
+            }
+
+            Rectangle {
+                color: "gray"
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
+        }
+
+        Image {
+            id: playerImage
+            anchors.fill: frame
+            source: character.heading === Character.HeadingRight ? dataDirectory + "/images/characters/player-male.png" : dataDirectory + "/images/characters/player-male-mirror.png"
+            opacity: Game.debugging ? 0.5 : 1
+        }
+    }
 
     Timer {
         id: hitAttackTimer
-        interval: 400
+        interval: 300 // FIXME: depend on selected weapon
         repeat: false
-        onTriggered: root.hitAttackRadius = character.size.width / 3 * app.gridSize
+        onTriggered: root.hitAttackRadius = root.hitAttackRadiusBase
     }
 
     Connections {
@@ -167,26 +224,12 @@ PhysicsItem {
             console.log("Hit !!!!!")
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
-            root.hitAttackRadius = character.size.width / 2 * app.gridSize + (2 * app.gridSize)
+            root.hitAttackRadius = character.size.width / 2 * app.gridSize + (2 * app.gridSize) // FIXME: range depend on selected weapon
             hitAttackTimer.restart()
         }
     }
 
-    ItemDescription {
-        id: nameLabel
-        anchors.bottom: root.top
-        anchors.horizontalCenter: root.horizontalCenter
-        text: character ? character.name : ""
-        opacity: character ? (Game.debugging ? 0.5 : (root.character.playerFocus && !root.isPlayer ? 1 : 0)) : 0
-    }
-
-    Image {
-        id: playerImage
-        anchors.fill: parent
-        source: character.heading === Character.HeadingRight ? dataDirectory + "/images/characters/player-male.png" : dataDirectory + "/images/characters/player-male-mirror.png"
-        opacity: Game.debugging ? 0.5 : 1
-    }
-
+    // Health indicator
     Connections {
         id: healthIndicatorConnections
         target: root.character
@@ -229,30 +272,7 @@ PhysicsItem {
         onTriggered: healthIndicator.opacity = 0
     }
 
-    RowLayout {
-        id: healthIndicator
-        height: app.gridSize / 6
-        width: app.gridSize * 2
-        anchors.horizontalCenter: root.horizontalCenter
-        anchors.bottom: nameLabel.top
-        spacing: 0
-        opacity: 0
-
-        Behavior on opacity { NumberAnimation { duration: 200 } }
-
-        Rectangle {
-            color: "red"
-            Layout.fillHeight: true
-            Layout.preferredWidth: parent.width * character.healthPercentage / 100
-        }
-
-        Rectangle {
-            color: "gray"
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-        }
-    }
-
+    // Damage
     ParallelAnimation {
         id: damageAnimation
 
@@ -282,6 +302,25 @@ PhysicsItem {
         }
     }
 
+    Item {
+        id: directionIndicator
+        visible: root.isPlayer
+        width: parent.width / 2 + character.auraRange * app.gridSize
+        height: app.gridSize
+        opacity: 0.4
+        x: parent.width / 2
+        y: parent.height / 2 - height / 2
+
+        Image {
+            id: directionIndicatorImage
+            anchors.right: parent.right
+            anchors.top: parent.top
+            width: character.auraRange * app.gridSize
+            height: parent.height
+            source: dataDirectory + "/images/game/direction-indicator.svg"
+            opacity: Game.debugging ? 0.5 : 1
+        }
+    }
 
     Rectangle {
         id: damageIndicator
@@ -293,5 +332,4 @@ PhysicsItem {
         border.width: parent.width / 6
         opacity: 0
     }
-
 }

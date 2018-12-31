@@ -7,12 +7,16 @@
         "height": 1,
         "layer": 2
     },
-    "physicsObject": {
-        "x": 0,
-        "y": 0,
+    "physicsGeometry": {
+        "body": "dynamic",
+        "shape": "circle",
         "width": 1,
         "height": 1,
-        "shape": "circle"
+        "x": 0,
+        "y": 0,
+        "category": 16,
+        "collision": 491,
+        "vertices": []
     },
     "role": "Enemy",
     "experience": 10,

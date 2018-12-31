@@ -6,5 +6,16 @@
         "width": 3,
         "height": 3,
         "layer": 3
+    },
+    "physicsGeometry": {
+        "body": "static",
+        "shape": "circle",
+        "width": 1,
+        "height": 1,
+        "x": 1,
+        "y": 1,
+        "category": 16,
+        "collision": 32,
+        "vertices": []
     }
 }
