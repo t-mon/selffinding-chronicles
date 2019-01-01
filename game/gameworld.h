@@ -10,6 +10,7 @@
 
 #include "map.h"
 #include "fields.h"
+#include "items/bullet.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
 #include "conversation/conversation.h"
@@ -91,7 +92,8 @@ public:
     Q_INVOKABLE void loadMap(const QString &fileName);
     Q_INVOKABLE void giveUpUnlocking();
     Q_INVOKABLE void finishPlunder();
-    Q_INVOKABLE void performHitAttack(Character *attacker, Character *victim);
+    Q_INVOKABLE void performHitAttack(Character *attacker, Character *victim, int damage);
+    Q_INVOKABLE void performShootImpact(Character *attacker, Character *victim, int damage);
 
 private:
     State m_state = StateUnitialized;

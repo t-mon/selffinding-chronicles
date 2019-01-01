@@ -81,6 +81,10 @@ void PlayerController::keyPressed(const Qt::Key &key)
         qCDebug(dcPlayerController()) << "Inventory pressed";
         setInventoryPressed(true);
         break;
+    case Qt::Key_F:
+        qCDebug(dcPlayerController()) << "Shoot pressed";
+        setShootPressed(true);
+        break;
     default:
         break;
     }
@@ -110,6 +114,9 @@ void PlayerController::keyReleased(const Qt::Key &key)
         break;
     case Qt::Key_Q:
         setInventoryPressed(false);
+        break;
+    case Qt::Key_F:
+        setShootPressed(false);
         break;
     default:
         break;
@@ -220,6 +227,16 @@ void PlayerController::setInventoryPressed(bool pressed)
     m_inventoryPressed = pressed;
     if (m_inventoryPressed)
         emit inventoryPressed();
+}
+
+void PlayerController::setShootPressed(bool pressed)
+{
+    if (m_shootPressed == pressed)
+        return;
+
+    m_shootPressed = pressed;
+    if (m_shootPressed)
+        emit shoot();
 }
 
 QPointF PlayerController::moveKeyBoard()

@@ -53,6 +53,7 @@ private:
     bool m_primaryActionPressed = false;
     bool m_secondaryActionPressed = false;
     bool m_inventoryPressed = false;
+    bool m_shootPressed = false;
 
     void setForwardPressed(bool pressed);
     void setBackwardPressed(bool pressed);
@@ -62,6 +63,7 @@ private:
     void setPrimaryActionPressed(bool pressed);
     void setSecondaryActionPressed(bool pressed);
     void setInventoryPressed(bool pressed);
+    void setShootPressed(bool pressed);
 
     QPointF moveKeyBoard();
     QPointF moveKeyBoardMouse();
@@ -84,6 +86,7 @@ signals:
     void primaryActionClicked();
     void secondaryActionClicked();
     void inventoryPressed();
+    void shoot();
 
 };
 

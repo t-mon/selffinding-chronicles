@@ -11,7 +11,7 @@ import "../physics"
 PhysicsItem {
     id: root
 
-    property Character character: null
+    property Character character
     property bool isPlayer: false
     property int itemType: character.itemType
 
@@ -56,7 +56,6 @@ PhysicsItem {
                     target.playerOnItem = false
                 }
             }
-
         },
         Circle {
             id: bodySensorCircle
@@ -148,11 +147,26 @@ PhysicsItem {
                 var target = other.getBody().target
                 if (target.itemType && target.enemy) {
                     //hitAttackTimer.restart()
-                    Game.world.performHitAttack(root.character, target.enemy)
+                    Game.world.performHitAttack(root.character, target.enemy, 10)
                 }
             }
         }
     ]
+
+    function getBulletX() {
+        var centerX = root.x + root.width / 2
+        return (centerX + (root.width / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.cos(character.angle)) - app.gridSize / 4
+    }
+
+    function getBulletY() {
+        var centerY = root.y + root.height / 2
+        return (centerY + (root.height / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.sin(character.angle)) - app.gridSize / 4
+    }
+
+    function getBulletAngle() {
+        var angle = root.character.angle * 180 / Math.PI;
+        return angle
+    }
 
     Item {
         id: frame
@@ -171,7 +185,8 @@ PhysicsItem {
             id: nameLabel
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text: character ? character.name : ""
+            //text: character ? character.name : ""
+            text: character.name
             opacity: character ? (Game.debugging ? 0.5 : (root.character.playerFocus && !root.isPlayer ? 1 : 0)) : 0
         }
 

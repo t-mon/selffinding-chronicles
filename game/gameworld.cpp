@@ -181,11 +181,17 @@ void GameWorld::finishPlunder()
     setState(StateRunning);
 }
 
-void GameWorld::performHitAttack(Character *attacker, Character *victim)
+void GameWorld::performHitAttack(Character *attacker, Character *victim, int damage)
 {
     // TODO: get sword damage
     qCDebug(dcWorld()) << attacker << "HITTING" << victim;
-    victim->setHealth(victim->health() - 5);
+    victim->setHealth(victim->health() - damage);
+}
+
+void GameWorld::performShootImpact(Character *attacker, Character *victim, int damage)
+{
+    qCDebug(dcWorld()) << attacker << "SHOT" << victim << damage;
+    victim->setHealth(victim->health() - damage);
 }
 
 void GameWorld::setState(GameWorld::State state)

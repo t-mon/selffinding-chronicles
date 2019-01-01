@@ -18,9 +18,8 @@ PhysicsItem {
     opacity: enemy ? (enemy.hidingPlayer ? 0.5 : 1) : 0
     onPlayerAuraRangeChanged: enemy.playerVisible = playerAuraRange
     onPlayerOnItemChanged: enemy.playerOnItem = playerOnItem
-
     bodyType: enemy ? enemy.bodyType : GameObject.BodyTypeStatic
-    linearDamping: 1
+    linearDamping: 5
     fixedRotation: true
 
     fixtures: [
@@ -86,11 +85,7 @@ PhysicsItem {
                 Layout.fillWidth: true
             }
         }
-
     }
-
-
-
 
     Connections {
         id: healthIndicatorConnections

@@ -130,6 +130,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItemsProxy>("Chronicles", 1, 0, "GameItemsProxy", "Can't create this in QML.");
 
+    qmlRegisterType<Bullet>("Chronicles", 1, 0, "Bullet");
     qmlRegisterUncreatableType<TreeItem>("Chronicles", 1, 0, "TreeItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<WeaponItem>("Chronicles", 1, 0, "WeaponItem", "Can't create this in QML.");

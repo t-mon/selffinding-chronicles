@@ -19,6 +19,8 @@ class GameItem : public GameObject
     Q_PROPERTY(bool hidingPlayer READ hidingPlayer NOTIFY hidingPlayerChanged)
     Q_PROPERTY(bool playerOnItem READ playerOnItem WRITE setPlayerOnItem NOTIFY playerOnItemChanged)
 
+    Q_ENUMS(Type)
+
 public:
     enum Type {
         TypeNone,

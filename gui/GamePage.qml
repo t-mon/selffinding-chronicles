@@ -13,10 +13,10 @@ import "gamepages"
 import "physics"
 
 GamePage {
-    id: root
+    id: gamePage
 
     Component.onCompleted: {
-        console.log("Game scene size: " + root.width + "/" + root.height)
+        console.log("Game scene size: " + gamePage.width + "/" + gamePage.height)
         forceActiveFocus()
     }
 
@@ -89,6 +89,18 @@ GamePage {
                     moveCamera()
                 }
 
+                function shoot() {
+                    console.log(character.name + " SHOOOT! " + character.angle * 180 / Math.PI)
+                    var bulletObject = bulletComponent.createObject(worldItem, {shooter: playerItem.character, damage: 10 } )
+                    var power = 3
+                    bulletObject.x = playerItem.getBulletX()
+                    bulletObject.y = playerItem.getBulletY()
+                    bulletObject.z = Map.Layer2Normal
+                    bulletObject.rotation = playerItem.getBulletAngle()
+                    bulletObject.body.applyLinearImpulse(Qt.point(power * Math.cos(character.angle), power * Math.sin(character.angle)), bulletObject.body.getWorldCenter());
+                }
+
+
                 // Player movement
                 Connections {
                     target: Game.world
@@ -97,6 +109,14 @@ GamePage {
                         var dvx = Game.world.playerController.velocityVector().x * app.gridSize - currentVelocity.x
                         var dvy = Game.world.playerController.velocityVector().y * app.gridSize - currentVelocity.y
                         playerItem.body.applyLinearImpulse(Qt.point(playerItem.body.getMass() * dvx, playerItem.body.getMass() * dvy), playerItem.body.getWorldCenter())
+                    }
+                }
+
+                Connections {
+                    target: Game.world.playerController
+                    onShoot: {
+                        // TODO: check weapon, and damage
+                        playerItem.shoot()
                     }
                 }
 
@@ -142,8 +162,6 @@ GamePage {
             }
         }
 
-
-
         DebugDraw {
             id: debugDraw
             world: physicsWorld
@@ -166,7 +184,6 @@ GamePage {
         }
 
     }
-
 
     function moveCamera() {
         var worldWidth = Game.world.size.width * app.gridSize
@@ -296,63 +313,81 @@ GamePage {
         }
     ]
 
+    Component {
+        id: bulletComponent
 
-//    PhysicsItem {
-//        id: testItem
-//        width: 3 * app.gridSize
-//        height: app.gridSize
-//        x: 4 * app.gridSize
-//        y: 4 * app.gridSize
+        PhysicsItem {
+            id: bulletItem
+            smooth: true
+            width: app.gridSize / 2
+            height: width
+            bullet: true
+            fixedRotation: true
+            bodyType: Body.Dynamic
 
-//        bodyType: Body.Dynamic
-//        onRotationChanged: console.log("##Rotation " + rotation)
-//        transform: Rotation { origin.x: -2 * app.gridSize + app.gridSize / 2; origin.y: app.gridSize / 2; axis { x: 0; y: 0; z: 1 } }
+            property Character shooter
+            property int damage
 
-//        rotation: Game.world.player.angle * 180 / Math.PI
+            fixtures:  Circle {
+                id: circleBody
+                categories: GameObject.PhysicsBullet
+                collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy | GameObject.PhysicsStaticItem | GameObject.PhysicsBullet
 
-//        Rectangle {
-//            anchors.fill: parent
-//            color: "black"
-//            opacity: 0.2
-//        }
+                radius: bulletItem.width / 2
+                density: 1
+                friction: 0
+                restitution: 0
 
-//        fixtures: [
-//            Box {
-//                id: rotationBody
-//                density: 1.0
-//                friction: 0.0
-//                restitution: 0.0
-//                width:  testItem.width
-//                height:  testItem.height
-//                collidesWith: GameObject.PhysicsNone
-//            },
-//            Circle {
-//                id: fixedBody
-//                density: 1.0
-//                friction: 0.0
-//                restitution: 0.0
-//                radius: app.gridSize / 2
-//                collidesWith: GameObject.PhysicsNone
-//            }
-//        ]
+                onBeginContact: {
+                    var target = other.getBody().target
+                    var victim = null
 
+                    if (target.gameItem) {
+                        // If we have a collision with an item
+                        switch (target.itemType) {
+                        case GameItem.TypeChest:
+                            console.log("Bullet collision with chest")
+                            bulletItem.destroy()
+                            break;
+                        case GameItem.TypeTree:
+                            console.log("Bullet collision with tree")
+                            bulletItem.destroy()
+                            break;
+                        default:
+                            break
+                        }
+                        return
+                    }
 
-//        Connections {
-//            target: Game.world
-//            onWorldPostTick: {
-//                var totalRotation = Game.world.player.angle - testItem.rotation * Math.PI / 180
-//                var desiredAngularVelocity = totalRotation * 60;
-//                while ( totalRotation < -180 * 57.295779513 ) totalRotation += 360 * 57.295779513;
-//                while ( totalRotation >  180 * 57.295779513 ) totalRotation -= 360 * 57.295779513;
-//                var impulse = testItem.body.getInertia() * desiredAngularVelocity;
-//                testItem.body.applyAngularImpulse(impulse);
+                    if (target.enemy)
+                        victim = target.enemy
+                    else if (target.character)
+                        victim = target.character
+                    else
+                        return
 
+                    console.log("Bullet collision " + bulletItem.shooter + " --> " + victim )
+                    Game.world.performShootImpact(bulletItem.shooter, victim, 10)
+                    bulletItem.destroy()
+                }
+            }
 
-//                //                var currentVelocity = playerItem.body.linearVelocity
-//                //                var dvx = Game.world.playerController.velocityVector().x * app.gridSize - currentVelocity.x
-//                //                var dvy = Game.world.playerController.velocityVector().y * app.gridSize - currentVelocity.y
-//                //                playerItem.body.applyLinearImpulse(Qt.point(playerItem.body.getMass() * dvx, playerItem.body.getMass() * dvy), playerItem.body.getWorldCenter())
-//            }
-//        }
-//    }
+            Image {
+                id: arrowImage
+                anchors.fill: parent
+                source: dataDirectory + "/images/items/weapons/arrow.png"
+            }
+
+            Timer {
+                id: destroyTimer
+                interval: 1500
+                onTriggered: bulletItem.destroy()
+            }
+
+            Component.onCompleted: {
+                destroyTimer.start()
+            }
+        }
+    }
+
 }
