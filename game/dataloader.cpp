@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonParseError>
+#include <QCryptographicHash>
 
 QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList)
 {
@@ -19,19 +20,24 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList)
             continue;
         }
 
+        QString itemId = QString(QCryptographicHash::hash(itemMap.value("data").toString().toUtf8(), QCryptographicHash::Md5).toHex());
+        QPoint position = QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt());
+
         QString itemTypeString = mapData.value("type").toString();
         if (itemTypeString == "plant") {
-            gameItems.append(createPlantItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+            gameItems.append(createPlantItem(itemId, mapData, position));
         } else if (itemTypeString == "weapon") {
-            gameItems.append(createWeaponItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+            gameItems.append(createWeaponItem(itemId, mapData, position));
+        } else if (itemTypeString == "firearm") {
+            gameItems.append(createFirearmItem(itemId, mapData, position));
         } else if (itemTypeString == "tree") {
-            gameItems.append(createTreeItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+            gameItems.append(createTreeItem(itemId, mapData, position));
         } else if (itemTypeString == "character") {
-            gameItems.append(createCharacterObject(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+            gameItems.append(createCharacterObject(itemId, mapData, position));
         } else if (itemTypeString == "enemy") {
-            gameItems.append(createEnemyObject(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+            gameItems.append(createEnemyObject(itemId, mapData, position));
         } else if (itemTypeString == "chest") {
-            gameItems.append(createChestItem(mapData, QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt())));
+            gameItems.append(createChestItem(itemId, mapData, position));
         } else {
             qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
         }
@@ -40,7 +46,7 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList)
     return gameItems;
 }
 
-PlantItem *DataLoader::createPlantItem(const QVariantMap &description, const QPoint &position)
+PlantItem *DataLoader::createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position)
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
@@ -52,6 +58,7 @@ PlantItem *DataLoader::createPlantItem(const QVariantMap &description, const QPo
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
     PlantItem *plantItem = new PlantItem();
+    plantItem->setItemId(itemId);
     plantItem->setName(description.value("name").toString());
     plantItem->setImageName(description.value("imageName").toString());
     plantItem->setPosition(position);
@@ -72,7 +79,7 @@ PlantItem *DataLoader::createPlantItem(const QVariantMap &description, const QPo
     return plantItem;
 }
 
-TreeItem *DataLoader::createTreeItem(const QVariantMap &description, const QPoint &position)
+TreeItem *DataLoader::createTreeItem(const QString &itemId, const QVariantMap &description, const QPoint &position)
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
@@ -84,6 +91,7 @@ TreeItem *DataLoader::createTreeItem(const QVariantMap &description, const QPoin
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
     TreeItem *treeItem = new TreeItem();    
+    treeItem->setItemId(itemId);
     treeItem->setName(description.value("name").toString());
     treeItem->setImageName(description.value("imageName").toString());
     treeItem->setPosition(position);
@@ -100,7 +108,7 @@ TreeItem *DataLoader::createTreeItem(const QVariantMap &description, const QPoin
     return treeItem;
 }
 
-WeaponItem *DataLoader::createWeaponItem(const QVariantMap &description, const QPoint &position)
+WeaponItem *DataLoader::createWeaponItem(const QString &itemId, const QVariantMap &description, const QPoint &position)
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
@@ -112,6 +120,7 @@ WeaponItem *DataLoader::createWeaponItem(const QVariantMap &description, const Q
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
     WeaponItem *weaponItem = new WeaponItem();
+    weaponItem->setItemId(itemId);
     weaponItem->setName(description.value("name").toString());
     weaponItem->setImageName(description.value("imageName").toString());
     weaponItem->setPosition(position);
@@ -131,7 +140,39 @@ WeaponItem *DataLoader::createWeaponItem(const QVariantMap &description, const Q
     return weaponItem;
 }
 
-Character *DataLoader::createCharacterObject(const QVariantMap &description, const QPoint &position)
+FirearmItem *DataLoader::createFirearmItem(const QString &itemId, const QVariantMap &description, const QPoint &position)
+{
+    QVariantMap geometryMap = description.value("geometry").toMap();
+    QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
+
+    QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
+    QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
+    GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
+
+    FirearmItem *firearmItem = new FirearmItem();
+    firearmItem->setItemId(itemId);
+    firearmItem->setName(description.value("name").toString());
+    firearmItem->setImageName(description.value("imageName").toString());
+    firearmItem->setPosition(position);
+    firearmItem->setSize(itemSize);
+
+    firearmItem->setShape(convertShapeString(physicsGeometryMap.value("shape", "none").toString()));
+    firearmItem->setBodyType(convertBodyTypeString(physicsGeometryMap.value("body", "static").toString()));
+    firearmItem->setPhysicsSize(physicsSize);
+    firearmItem->setPhysicsPosition(physicsPosition);
+    firearmItem->setCategoryFlag(categoryFlag);
+    firearmItem->setCollisionFlag(collisionFlag);
+
+    firearmItem->setLayer(geometryMap.value("layer").toReal());
+    firearmItem->setDamage(description.value("damage").toInt());
+    firearmItem->setPrice(description.value("price").toInt());
+
+    return firearmItem;
+}
+
+Character *DataLoader::createCharacterObject(const QString &itemId, const QVariantMap &description, const QPoint &position)
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
@@ -143,6 +184,7 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
     Character *character = new Character();
+    character->setItemId(itemId);
     character->setName(description.value("name").toString());
     character->setPosition(position);
     character->setSize(itemSize);
@@ -171,7 +213,7 @@ Character *DataLoader::createCharacterObject(const QVariantMap &description, con
     return character;
 }
 
-Enemy *DataLoader::createEnemyObject(const QVariantMap &description, const QPoint &position)
+Enemy *DataLoader::createEnemyObject(const QString &itemId, const QVariantMap &description, const QPoint &position)
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
@@ -183,6 +225,7 @@ Enemy *DataLoader::createEnemyObject(const QVariantMap &description, const QPoin
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
     Enemy *enemy = new Enemy();
+    enemy->setItemId(itemId);
     enemy->setName(description.value("name").toString());
     enemy->setImageName(description.value("imageName").toString());
     enemy->setPosition(position);
@@ -217,7 +260,7 @@ Enemy *DataLoader::createEnemyObject(const QVariantMap &description, const QPoin
     return enemy;
 }
 
-ChestItem *DataLoader::createChestItem(const QVariantMap &description, const QPoint &position)
+ChestItem *DataLoader::createChestItem(const QString &itemId, const QVariantMap &description, const QPoint &position)
 {
     QVariantMap geometryMap = description.value("geometry").toMap();
     QSize itemSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt());
@@ -229,6 +272,7 @@ ChestItem *DataLoader::createChestItem(const QVariantMap &description, const QPo
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
     ChestItem *chestItem = new ChestItem();
+    chestItem->setItemId(itemId);
     chestItem->setName(description.value("name").toString());
     chestItem->setImageName(description.value("imageName").toString());
     chestItem->setPosition(position);

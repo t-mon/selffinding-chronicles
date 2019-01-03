@@ -16,6 +16,31 @@
         },
         {
             "x": 10,
+            "y": 6,
+            "data": ":/gamedata/plants/healing-herb.json"
+        },
+        {
+            "x": 11,
+            "y": 5,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 11,
+            "y": 6,
+            "data": ":/gamedata/weapons/sword.json"
+        },
+        {
+            "x": 12,
+            "y": 5,
+            "data": ":/gamedata/firearms/hunting-bow.json"
+        },
+        {
+            "x": 12,
+            "y": 6,
+            "data": ":/gamedata/firearms/hunting-bow.json"
+        },
+        {
+            "x": 10,
             "y": 10,
             "data": ":/gamedata/plants/healing-herb.json"
         },

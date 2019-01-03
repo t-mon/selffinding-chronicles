@@ -19,6 +19,7 @@ public:
         InteractionRole,
         ImageNameRole,
         ItemTypeRole,
+        ItemIdRole
     };
     Q_ENUM(ItemRole)
 

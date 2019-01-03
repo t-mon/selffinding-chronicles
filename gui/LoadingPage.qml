@@ -36,7 +36,7 @@ GamePage {
                 color: "white"
             }
 
-            BusyIndicator {
+            GameBusyIndicator {
                 anchors.horizontalCenter: parent.horizontalCenter
                 running: true
             }

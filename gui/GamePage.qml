@@ -8,7 +8,6 @@ import Chronicles 1.0
 
 import "components"
 import "gameitems"
-import "inventory"
 import "gamepages"
 import "physics"
 
@@ -92,7 +91,7 @@ GamePage {
                 function shoot() {
                     console.log(character.name + " SHOOOT! " + character.angle * 180 / Math.PI)
                     var bulletObject = bulletComponent.createObject(worldItem, {shooter: playerItem.character, damage: 10 } )
-                    var power = 3
+                    var power = 2
                     bulletObject.x = playerItem.getBulletX()
                     bulletObject.y = playerItem.getBulletY()
                     bulletObject.z = Map.Layer2Normal
@@ -175,7 +174,7 @@ GamePage {
         anchors.fill: parent
         hoverEnabled: true
         enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
-        preventStealing: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
+        preventStealing: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse && Game.world.state === GameWorld.StateRunning
         onMouseXChanged: {
             calculateAngle()
         }
@@ -214,9 +213,8 @@ GamePage {
         if (!Game.world.player.movable)
             return;
 
-        var dx = (worldFlickable.contentX + screenMouseArea.mouseX) - Game.world.player.position.x * app.gridSize
-        var dy = (worldFlickable.contentY + screenMouseArea.mouseY) - Game.world.player.position.y * app.gridSize
-        //console.log("--> ",  dy, " | ", dx , " ", Math.atan2(dy , dx))
+        var dx = (worldFlickable.contentX + screenMouseArea.mouseX) - playerItem.x - playerItem.width / 2
+        var dy = (worldFlickable.contentY + screenMouseArea.mouseY) - playerItem.y - playerItem.height / 2
         Game.world.player.angle = Math.atan2(dy , dx)
     }
 
@@ -378,14 +376,25 @@ GamePage {
                 source: dataDirectory + "/images/items/weapons/arrow.png"
             }
 
+            PropertyAnimation {
+                id: dissapearAnimation
+                target: arrowImage
+                property: "opacity"
+                to: 0
+                duration: 400
+                loops: 1
+                onRunningChanged: if (!running) bulletItem.destroy()
+            }
+
+
             Timer {
-                id: destroyTimer
-                interval: 1500
-                onTriggered: bulletItem.destroy()
+                id: selfDestructionTimer
+                interval: 400
+                onTriggered: dissapearAnimation.start()
             }
 
             Component.onCompleted: {
-                destroyTimer.start()
+                selfDestructionTimer.start()
             }
         }
     }

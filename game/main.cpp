@@ -105,11 +105,11 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("World", true);
     s_loggingFilters.insert("Character", false);
     s_loggingFilters.insert("Settings", true);
-    s_loggingFilters.insert("PlayerController", true);
+    s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("Collision", false);
-    s_loggingFilters.insert("Conversation", true);
+    s_loggingFilters.insert("Conversation", false);
 
     s_loggingFilters.insert("qml", true);
 
@@ -128,9 +128,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItem>("Chronicles", 1, 0, "GameItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML.");
-    qmlRegisterUncreatableType<GameItemsProxy>("Chronicles", 1, 0, "GameItemsProxy", "Can't create this in QML.");
+    qmlRegisterType<GameItemsProxy>("Chronicles", 1, 0, "GameItemsProxy");
 
-    qmlRegisterType<Bullet>("Chronicles", 1, 0, "Bullet");
     qmlRegisterUncreatableType<TreeItem>("Chronicles", 1, 0, "TreeItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<WeaponItem>("Chronicles", 1, 0, "WeaponItem", "Can't create this in QML.");
@@ -160,8 +159,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());
-    qCDebug(dcGame()) << "Data directory:" << engine.rootContext()->contextProperty("dataDirectory").toString();
     engine.rootContext()->setContextProperty("gameVersion", app.applicationVersion());
+    qCDebug(dcGame()) << "Data directory:" << engine.rootContext()->contextProperty("dataDirectory").toString();
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     return app.exec();

@@ -6,7 +6,7 @@ import Chronicles 1.0
 
 import "../components"
 
-Item {
+GameOverlayPage {
     id: root
 
     property Conversation conversation: Game.world.currentConversation

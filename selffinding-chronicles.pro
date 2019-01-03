@@ -41,7 +41,7 @@ HEADERS += \
     game/items/chestitem.h \
     game/gameworld.h \
     game/items/enemy.h \
-    game/items/bullet.h
+    game/items/firearmitem.h
 
 SOURCES += game/main.cpp \
     game/game.cpp \
@@ -68,4 +68,4 @@ SOURCES += game/main.cpp \
     game/items/chestitem.cpp \
     game/gameworld.cpp \
     game/items/enemy.cpp \
-    game/items/bullet.cpp
+    game/items/firearmitem.cpp

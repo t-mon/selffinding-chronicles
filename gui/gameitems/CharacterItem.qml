@@ -16,8 +16,8 @@ PhysicsItem {
     property int itemType: character.itemType
 
     property real auraRadius: (character.auraRange + character.size.width / 2) * app.gridSize
-    property real hitAttackRadius: character.size.width / 3 * app.gridSize
-    property real hitAttackRadiusBase: character.size.width / 3 * app.gridSize
+    property real hitAttackRadius: root.width / 2 + 2 * app.gridSize // TODO: use range of current weapon
+    property real hitAttackRadiusBase: root.width / 3
 
     antialiasing: app.antialiasing
     bodyType: character.movable ? character.bodyType : GameObject.BodyTypeStatic
@@ -98,11 +98,11 @@ PhysicsItem {
 
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 4), root.width / 2 + auraRadius * Math.sin(Math.PI / 4)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 8), root.width / 2 + auraRadius * Math.sin(Math.PI / 8)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(0), root.width / 2 + auraRadius * Math.sin(0)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 8), root.width / 2 + auraRadius * Math.sin(-Math.PI / 8)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 4), root.width / 2 + auraRadius * Math.sin(-Math.PI / 4))
+                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 4), root.height / 2 + auraRadius * Math.sin(Math.PI / 4)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 8), root.height / 2 + auraRadius * Math.sin(Math.PI / 8)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(0), root.height / 2 + auraRadius * Math.sin(0)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 8), root.height / 2 + auraRadius * Math.sin(-Math.PI / 8)),
+                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 4), root.height / 2 + auraRadius * Math.sin(-Math.PI / 4))
             ]
 
             onBeginContact: {
@@ -133,15 +133,18 @@ PhysicsItem {
             restitution: 0.0
             categories: GameItem.PhysicsSensor
             collidesWith: GameItem.PhysicsAll
+
+            property real currentRadius: hitAttackTimer.running ? root.hitAttackRadius : root.hitAttackRadiusBase
+
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
-                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(Math.PI / 8), root.width / 2 + hitAttackRadius * Math.sin(Math.PI / 8)),
-                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(0), root.width / 2 + hitAttackRadius * Math.sin(0)),
-                Qt.point(root.width / 2 + hitAttackRadius * Math.cos(-Math.PI / 8), root.width / 2 + hitAttackRadius * Math.sin(-Math.PI / 8)),
+                Qt.point(root.width / 2 + currentRadius * Math.cos(Math.PI / 8), root.height / 2 + currentRadius * Math.sin(Math.PI / 8)),
+                Qt.point(root.width / 2 + currentRadius * Math.cos(0), root.height / 2 + currentRadius * Math.sin(0)),
+                Qt.point(root.width / 2 + currentRadius * Math.cos(-Math.PI / 8), root.height / 2 + currentRadius * Math.sin(-Math.PI / 8)),
             ]
 
             onBeginContact: {
-                if (root.hitAttackRadius === root.hitAttackRadiusBase)
+                if (currentRadius === root.hitAttackRadiusBase)
                     return
 
                 var target = other.getBody().target
@@ -224,9 +227,8 @@ PhysicsItem {
 
     Timer {
         id: hitAttackTimer
-        interval: 300 // FIXME: depend on selected weapon
+        interval: 300 // TODO: depend on selected weapon
         repeat: false
-        onTriggered: root.hitAttackRadius = root.hitAttackRadiusBase
     }
 
     Connections {
@@ -239,7 +241,6 @@ PhysicsItem {
             console.log("Hit !!!!!")
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
-            root.hitAttackRadius = character.size.width / 2 * app.gridSize + (2 * app.gridSize) // FIXME: range depend on selected weapon
             hitAttackTimer.restart()
         }
     }

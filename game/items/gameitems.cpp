@@ -49,6 +49,8 @@ QVariant GameItems::data(const QModelIndex &index, int role) const
         return gameItem->itemType();
     } else if (role == LayerRole) {
         return gameItem->layer();
+    } else if (role == ItemIdRole) {
+        return gameItem->itemId();
     }
 
     return QVariant();
@@ -107,6 +109,7 @@ QHash<int, QByteArray> GameItems::roleNames() const
     roles[InteractionRole] = "interaction";
     roles[ImageNameRole] = "imageName";
     roles[ItemTypeRole] = "itemType";
+    roles[ItemIdRole] = "itemId";
     roles[LayerRole] = "layer";
     return roles;
 }

@@ -11,15 +11,24 @@ GamePage {
 
     Component.onCompleted: console.log("Window size " + root.width + "x" + root.height)
 
+    GameLabel {
+        anchors.left: parent.left
+        anchors.leftMargin: app.margins
+        anchors.top: parent.top
+        anchors.topMargin: app.margins
+        text: "v " + gameVersion
+        color: "white"
+
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
+        width: parent.width / 3
+
         GameButton {
             id: playButton
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             text: "Play"
-            //font.bold: true
-            font.pixelSize: app.largeFont
-            font.family: app.fontFamily
             onClicked: {
                 console.log("Play pressed")
                 Game.world.loadMap(":/maps/test-environment.json")
@@ -27,34 +36,33 @@ GamePage {
             }
         }
 
-        Button {
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: app.gridSize * 2
+        }
+
+        GameButton {
             id: settingsButton
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             text: "Settings"
-            font.pixelSize: app.largeFont
-            font.family: app.fontFamily
             onClicked: {
                 pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
             }
         }
 
-        Button {
+        GameButton {
             id: conversationCreatorButton
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             text: "Conversation creator"
-            font.pixelSize: app.largeFont
-            font.family: app.fontFamily
             onClicked: {
                 pageStack.push(Qt.resolvedUrl("ConversationCreatorPage.qml"))
             }
         }
 
-        Button {
+        GameButton {
             id: aboutButton
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             text: "About"
-            font.pixelSize: app.largeFont
-            font.family: app.fontFamily
             onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
         }
     }

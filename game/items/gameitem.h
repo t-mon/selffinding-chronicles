@@ -13,6 +13,7 @@ class GameItem : public GameObject
     Q_PROPERTY(QString imageName READ imageName NOTIFY imageNameChanged)
     Q_PROPERTY(Type itemType READ itemType CONSTANT)
     Q_PROPERTY(QString itemTypeName READ itemTypeName CONSTANT)
+    Q_PROPERTY(QString itemId READ itemId CONSTANT)
     Q_PROPERTY(int price READ price NOTIFY priceChanged)
     Q_PROPERTY(bool playerFocus READ playerFocus NOTIFY playerFocusChanged)
     Q_PROPERTY(bool playerVisible READ playerVisible WRITE setPlayerVisible NOTIFY playerVisibleChanged)
@@ -64,6 +65,9 @@ public:
     virtual Type itemType() const = 0;
     virtual QString itemTypeName() const = 0;
 
+    QString itemId() const;
+    void setItemId(const QString &itemId);
+
     QString imageName() const;
     void setImageName(const QString &imageName);
 
@@ -95,6 +99,7 @@ public:
     static QString interactionToString(const Interaction &interaction);
 
 private:
+    QString m_itemId;
     QString m_imageName = "/images/world/base/placeholder.png";
     int m_price = 0;
     bool m_playerFocus = false;

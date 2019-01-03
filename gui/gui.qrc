@@ -10,8 +10,8 @@
         <file>gameitems/FieldItem.qml</file>
         <file>gameitems/GameItem.qml</file>
         <file>components/GameLabel.qml</file>
-        <file>inventory/InventoryTabButton.qml</file>
-        <file>inventory/InventoryItem.qml</file>
+        <file>components/InventoryTabButton.qml</file>
+        <file>components/ContentItem.qml</file>
         <file>gamepages/InventoryPage.qml</file>
         <file>gameitems/CharacterItem.qml</file>
         <file>ConversationCreatorPage.qml</file>
@@ -21,7 +21,6 @@
         <file>components/GameTextField.qml</file>
         <file>components/GamePage.qml</file>
         <file>gamepages/UnlockingPage.qml</file>
-        <file>gamepages/LoadingPage.qml</file>
         <file>gamepages/PlunderPage.qml</file>
         <file>physics/PhysicsItem.qml</file>
         <file>physics/RectangleBoxBody.qml</file>
@@ -33,5 +32,11 @@
         <file>LoadingPage.qml</file>
         <file>gameitems/EnemyItem.qml</file>
         <file>gameitems/BulletItem.qml</file>
+        <file>components/ObjectContentItem.qml</file>
+        <file>components/InventoryContentItem.qml</file>
+        <file>components/GameBusyIndicator.qml</file>
+        <file>components/CharacterDescription.qml</file>
+        <file>components/ContentItemDescription.qml</file>
+        <file>gamepages/GameOverlayPage.qml</file>
     </qresource>
 </RCC>

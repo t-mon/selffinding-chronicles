@@ -20,5 +20,6 @@
         <file>maps/test-environment.json</file>
         <file>gamedata/enemies/test-enemy.json</file>
         <file>gamedata/enemies/fire.json</file>
+        <file>gamedata/firearms/hunting-bow.json</file>
     </qresource>
 </RCC>

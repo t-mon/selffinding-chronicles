@@ -2,6 +2,7 @@
 #define GAMEITEMSPROXY_H
 
 #include <QObject>
+#include <QStringList>
 #include <QSortFilterProxyModel>
 
 #include "gameitems.h"
@@ -9,7 +10,10 @@
 class GameItemsProxy : public QSortFilterProxyModel
 {
     Q_OBJECT
+    Q_PROPERTY(GameItems *gameItems READ gameItems WRITE setGameItems NOTIFY gameItemsChanged)
+    Q_PROPERTY(QString itemIdFilter READ itemIdFilter WRITE setItemIdFilter NOTIFY itemIdFilterChanged)
     Q_PROPERTY(GameItem::Type itemTypeFilter READ itemTypeFilter WRITE setItemTypeFilter NOTIFY itemTypeFilterChanged)
+    Q_PROPERTY(bool filterDuplicates READ filterDuplicates WRITE setFilterDuplicates NOTIFY filterDuplicatesChanged)
 
 public:
     explicit GameItemsProxy(QObject *parent = nullptr);
@@ -23,9 +27,19 @@ public:
     Q_INVOKABLE GameItem *get(int index) const;
     Q_INVOKABLE void resetFilter();
 
+    QString itemIdFilter() const;
+    void setItemIdFilter(const QString &itemIdFilter);
+
+    bool filterDuplicates() const;
+    void setFilterDuplicates(bool filterDuplicates);
+
 private:
     GameItems *m_gameItems = nullptr;
+
+    QStringList m_shownItemIds;
+    QString m_itemIdFilter;
     GameItem::Type m_itemTypeFilter = GameItem::TypeNone;
+    bool m_filterDuplicates = false;
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
@@ -33,7 +47,9 @@ protected:
 
 signals:
     void gameItemsChanged(GameItems *gameItems);
+    void itemIdFilterChanged(const QString &itemIdFilter);
     void itemTypeFilterChanged(GameItem::Type itemTypeFilter);
+    void filterDuplicatesChanged(bool filterDuplicates);
 
 };
 

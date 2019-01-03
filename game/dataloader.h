@@ -7,6 +7,7 @@
 #include "items/gameitems.h"
 #include "items/plantitem.h"
 #include "items/weaponitem.h"
+#include "items/firearmitem.h"
 #include "items/character.h"
 #include "items/enemy.h"
 #include "items/chestitem.h"
@@ -18,16 +19,20 @@ public:
 
     static QList<GameItem *> loadGameItems(const QVariantList &itemsList);
 
-    static PlantItem *createPlantItem(const QVariantMap &description, const QPoint &position = QPoint());
-    static TreeItem *createTreeItem(const QVariantMap &description, const QPoint &position = QPoint());
-    static WeaponItem *createWeaponItem(const QVariantMap &description, const QPoint &position = QPoint());
-    static Character *createCharacterObject(const QVariantMap &description, const QPoint &position = QPoint());
-    static Enemy *createEnemyObject(const QVariantMap &description, const QPoint &position = QPoint());
-    static ChestItem *createChestItem(const QVariantMap &description, const QPoint &position = QPoint());
+    // Create
+    static PlantItem *createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
+    static TreeItem *createTreeItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
+    static WeaponItem *createWeaponItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
+    static FirearmItem *createFirearmItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
+    static Character *createCharacterObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
+    static Enemy *createEnemyObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
+    static ChestItem *createChestItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
 
+    // Load
     static QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
     static QVariantMap loadJsonData(const QString &mapDataFileName);
 
+    // Convert
     static GameObject::Shape convertShapeString(const QString &shapeString);
     static GameObject::BodyType convertBodyTypeString(const QString &bodyTypeString);
     static Character::Gender convertGenderString(const QString &genderString);

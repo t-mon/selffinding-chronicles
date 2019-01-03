@@ -1,18 +1,18 @@
-#ifndef WEAPONITEM_H
-#define WEAPONITEM_H
+#ifndef FIREARMITEM_H
+#define FIREARMITEM_H
 
 #include <QObject>
 
 #include "gameitem.h"
 
-class WeaponItem : public GameItem
+class FirearmItem : public GameItem
 {
     Q_OBJECT
     Q_PROPERTY(int damage READ damage NOTIFY damageChanged)
 
 public:
-    explicit WeaponItem(QObject *parent = nullptr);
-    ~WeaponItem() override = default;
+    explicit FirearmItem(QObject *parent = nullptr);
+    ~FirearmItem() override = default;
 
     QString itemTypeName() const override;
     Type itemType() const override;
@@ -30,4 +30,4 @@ signals:
 
 };
 
-#endif // WEAPONITEM_H
+#endif // FIREARMITEM_H

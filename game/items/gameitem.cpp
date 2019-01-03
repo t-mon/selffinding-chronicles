@@ -8,6 +8,16 @@ GameItem::GameItem(QObject *parent) :
 
 }
 
+QString GameItem::itemId() const
+{
+    return m_itemId;
+}
+
+void GameItem::setItemId(const QString &itemId)
+{
+    m_itemId = itemId;
+}
+
 QString GameItem::imageName() const
 {
     return m_imageName;
@@ -196,6 +206,7 @@ QDebug operator<<(QDebug debug, GameItem *gameItem)
 {
     debug.nospace() << "GameItem(" << gameItem->itemTypeName();
     debug.nospace() << ", " << gameItem->name();
+    debug.nospace() << ", " << gameItem->itemId();
     debug.nospace() << ", " << gameItem->position();
     debug.nospace() << ", " << gameItem->size();
     debug.nospace() << ", price: " << gameItem->price();

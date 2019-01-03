@@ -136,9 +136,9 @@ ChestItem *GameWorld::currentChestItem() const
     return m_currentChestItem;
 }
 
-GameItems *GameWorld::currentPlunderItems() const
+GameItemsProxy *GameWorld::currentPlunderItemsProxy() const
 {
-    return m_currentPlunderItems;
+    return m_currentPlunderItemsProxy;
 }
 
 bool GameWorld::loaded() const
@@ -168,16 +168,20 @@ void GameWorld::loadMap(const QString &fileName)
 
 void GameWorld::giveUpUnlocking()
 {
-    if (m_currentChestItem) {
-        qCDebug(dcWorld()) << "Give up unlocking.";
-        setCurrentChestItem(nullptr);
-        setState(StateRunning);
-    }
+    qCDebug(dcWorld()) << "Give up unlocking.";
+    setCurrentChestItem(nullptr);
+    setCurrentPlunderItemsProxy(nullptr);
+    setState(StateRunning);
 }
 
 void GameWorld::finishPlunder()
 {
-    setCurrentPlunderItems(nullptr);
+    qCDebug(dcWorld()) << "Finish plundering";
+
+    if (m_currentChestItem)
+        setCurrentChestItem(nullptr);
+
+    setCurrentPlunderItemsProxy(nullptr);
     setState(StateRunning);
 }
 
@@ -329,25 +333,29 @@ void GameWorld::setCurrentChestItem(ChestItem *chestItem)
     emit currentChestItemChanged(m_currentChestItem);
 
     if (m_currentChestItem) {
-        m_player->setMovable(false);
         if (m_currentChestItem->locked()) {
+            qCDebug(dcWorld()) << "The chest is locked. Show unlock screen";
+            setCurrentPlunderItemsProxy(m_currentChestItem->itemsProxy());
             setState(StateUnlocking);
         } else {
-            m_currentPlunderItems = m_currentChestItem->items();
+            qCDebug(dcWorld()) << "The chest is not locked. Show plunder screen";
+            setCurrentPlunderItemsProxy(m_currentChestItem->itemsProxy());
             setState(StatePlunder);
         }
     } else {
+        qCDebug(dcWorld()) << "Reset chest item.";
+        setCurrentPlunderItemsProxy(nullptr);
         m_player->setMovable(true);
     }
 }
 
-void GameWorld::setCurrentPlunderItems(GameItems *plunderItems)
+void GameWorld::setCurrentPlunderItemsProxy(GameItemsProxy *plunderItemsProxy)
 {
-    if (m_currentPlunderItems == plunderItems)
+    if (m_currentPlunderItemsProxy == plunderItemsProxy)
         return;
 
-    m_currentPlunderItems = plunderItems;
-    emit currentPlunderItemsChanged(m_currentPlunderItems);
+    m_currentPlunderItemsProxy = plunderItemsProxy;
+    emit currentPlunderItemsProxyChanged(m_currentPlunderItemsProxy);
 }
 
 void GameWorld::doPlayerMovement()
@@ -357,7 +365,6 @@ void GameWorld::doPlayerMovement()
 
     // FIXME: If primary pressed, default enable running for now
     m_player->setRunning(m_playerController->secondaryActionPressed());
-
 }
 
 Field *GameWorld::getFieldFromPosition(const QPointF position) const
@@ -431,26 +438,6 @@ void GameWorld::pickItem(GameItem *item)
     item->setPlayerVisible(false);
 
     m_gameItems->removeGameItem(item);
-
-//    // Make fields accessable according to the unacessableMap
-//    foreach(const QPoint &unaccessableOffset, item->unaccessableMap()) {
-//        QPointF absolutCoordinate(item->position() + unaccessableOffset);
-//        Field *field = m_map->getField(absolutCoordinate);
-//        if (!field)
-//            continue;
-
-//        //field->setAccessible(true);
-//    }
-
-//    // Remove visible item parts from the map fields
-//    foreach(const QPoint &visibilityOffset, item->visibilityMap()) {
-//        QPointF absolutCoordinate(item->position() + visibilityOffset);
-//        Field *field = m_map->getField(absolutCoordinate);
-//        if (!field)
-//            continue;
-
-//        //field->gameItems()->removeGameItem(item);
-//    }
 
     qCDebug(dcWorld()) << "Picked item and add it to the inventory" << item;
     m_player->inventory()->addGameItem(item);
@@ -580,6 +567,7 @@ void GameWorld::onPrimaryActionPressedChanged(bool pressed)
     if (pressed && m_playerFocusItem && Game::instance()->running() && !m_currentConversation) {
         switch (m_playerFocusItem->itemType()) {
         case GameItem::TypePlant:
+        case GameItem::TypeFirearm:
         case GameItem::TypeWeapon:
             if (m_playerFocusItem->interaction() == GameItem::InteractionPick) {
                 m_playerFocusItem->performInteraction();
@@ -591,11 +579,6 @@ void GameWorld::onPrimaryActionPressedChanged(bool pressed)
         case GameItem::TypeChest:
             if (m_playerFocusItem->interaction() == GameItem::InteractionOpen) {
                 ChestItem *chestItem = qobject_cast<ChestItem *>(m_playerFocusItem);
-                if (chestItem->locked()) {
-                    qCDebug(dcWorld()) << "The chest is locked. Show unlock screen";
-                } else {
-                    qCDebug(dcWorld()) << "The chest is not locked. Show items screen";
-                }
                 setCurrentChestItem(chestItem);
             }
             break;

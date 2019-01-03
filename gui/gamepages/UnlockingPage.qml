@@ -6,7 +6,7 @@ import Chronicles 1.0
 
 import "../components"
 
-Item {
+GameOverlayPage {
     id: root
 
     property ChestItem chestItem: Game.world.currentChestItem
@@ -62,12 +62,14 @@ Item {
         }
 
         Item {
-            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: root.width * 2 / 3
             Layout.preferredHeight: app.gridSize * 3
 
             RowLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
+
                 GameButton {
                     Layout.fillWidth: true
                     text: qsTr("Give up")

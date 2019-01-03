@@ -10,7 +10,6 @@
 
 #include "map.h"
 #include "fields.h"
-#include "items/bullet.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
 #include "conversation/conversation.h"
@@ -34,7 +33,7 @@ class GameWorld : public Fields
 
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
-    Q_PROPERTY(GameItems *currentPlunderItems READ currentPlunderItems NOTIFY currentPlunderItemsChanged)
+    Q_PROPERTY(GameItemsProxy *currentPlunderItemsProxy READ currentPlunderItemsProxy NOTIFY currentPlunderItemsProxyChanged)
 
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
@@ -84,7 +83,7 @@ public:
 
     Conversation *currentConversation() const;
     ChestItem *currentChestItem() const;
-    GameItems *currentPlunderItems() const;
+    GameItemsProxy *currentPlunderItemsProxy() const;
 
     bool loaded() const;
     bool loading() const;
@@ -109,7 +108,7 @@ private:
     CollisionDetector *m_collisionDetector = nullptr;
     Conversation *m_currentConversation = nullptr;
     ChestItem *m_currentChestItem = nullptr;
-    GameItems *m_currentPlunderItems = nullptr;
+    GameItemsProxy *m_currentPlunderItemsProxy = nullptr;
 
     // View properties
     QPoint m_currentPlayerPosition;
@@ -135,7 +134,7 @@ private:
     void setLoading(bool loading);
     void setCurrentConversation(Conversation *conversation);
     void setCurrentChestItem(ChestItem *chestItem);
-    void setCurrentPlunderItems(GameItems *plunderItems);
+    void setCurrentPlunderItemsProxy(GameItemsProxy *plunderItemsProxy);
 
     // Move methods
     void doPlayerMovement();
@@ -158,7 +157,7 @@ signals:
     void currentViewOffsetChanged(const QPoint &currentViewOffset);
     void currentConversationChanged(Conversation *conversation);
     void currentChestItemChanged(ChestItem *chestItem);
-    void currentPlunderItemsChanged(GameItems *plunderItems);
+    void currentPlunderItemsProxyChanged(GameItemsProxy *plunderItemsProxy);
 
 private slots:
     void onPlayerPositionChanged();
