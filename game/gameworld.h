@@ -33,7 +33,7 @@ class GameWorld : public Fields
 
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
-    Q_PROPERTY(GameItemsProxy *currentPlunderItemsProxy READ currentPlunderItemsProxy NOTIFY currentPlunderItemsProxyChanged)
+    Q_PROPERTY(GameItems *currentPlunderItems READ currentPlunderItems NOTIFY currentPlunderItemsChanged)
 
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
@@ -83,7 +83,7 @@ public:
 
     Conversation *currentConversation() const;
     ChestItem *currentChestItem() const;
-    GameItemsProxy *currentPlunderItemsProxy() const;
+    GameItems *currentPlunderItems() const;
 
     bool loaded() const;
     bool loading() const;
@@ -93,6 +93,9 @@ public:
     Q_INVOKABLE void finishPlunder();
     Q_INVOKABLE void performHitAttack(Character *attacker, Character *victim, int damage);
     Q_INVOKABLE void performShootImpact(Character *attacker, Character *victim, int damage);
+
+    Q_INVOKABLE void takeItem(GameItems *gameItems, GameItem *item);
+    Q_INVOKABLE void takeAllItems(GameItems *gameItems);
 
 private:
     State m_state = StateUnitialized;
@@ -108,7 +111,7 @@ private:
     CollisionDetector *m_collisionDetector = nullptr;
     Conversation *m_currentConversation = nullptr;
     ChestItem *m_currentChestItem = nullptr;
-    GameItemsProxy *m_currentPlunderItemsProxy = nullptr;
+    GameItems *m_currentPlunderItems = nullptr;
 
     // View properties
     QPoint m_currentPlayerPosition;
@@ -134,7 +137,7 @@ private:
     void setLoading(bool loading);
     void setCurrentConversation(Conversation *conversation);
     void setCurrentChestItem(ChestItem *chestItem);
-    void setCurrentPlunderItemsProxy(GameItemsProxy *plunderItemsProxy);
+    void setCurrentPlunderItems(GameItems *plunderItems);
 
     // Move methods
     void doPlayerMovement();
@@ -142,6 +145,7 @@ private:
     // Helper methods
     Field *getFieldFromPosition(const QPointF position) const;
     void evaluatePlayerFocus();
+
     void pickItem(GameItem *item);
 
 signals:
@@ -157,7 +161,7 @@ signals:
     void currentViewOffsetChanged(const QPoint &currentViewOffset);
     void currentConversationChanged(Conversation *conversation);
     void currentChestItemChanged(ChestItem *chestItem);
-    void currentPlunderItemsProxyChanged(GameItemsProxy *plunderItemsProxy);
+    void currentPlunderItemsChanged(GameItems *plunderItems);
 
 private slots:
     void onPlayerPositionChanged();

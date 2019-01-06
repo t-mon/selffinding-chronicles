@@ -18,20 +18,23 @@ ApplicationWindow {
     property int controlMode: PlayerController.ControlModeKeyBoard
     property string gameName: qsTr("Self finding chronicles")
 
+    // This is the main scaling property. Everything scales with the gridSize
+    property real gridSize: Math.min(app.width / 30, app.height / 20)
+    property real menuItemSize: gridSize * 2.5
+
     // General UI configurations
-    property int margins: 14
-    property int bigMargins: 20
-    property int borderWidth: 3
+    property real margins: gridSize / 2
+    property real bigMargins: gridSize * 2 / 3
+    property real borderWidth: gridSize / 14
 
-    property int smallFont: 14
-    property int mediumFont: 18
-    property int largeFont: 24
+    property real smallFont: gridSize * 0.5
+    property real mediumFont: gridSize * 0.6
+    property real largeFont: gridSize * 0.8
 
-    property int iconSize: 40
-    property int delegateHeight: 60
+    property real iconSize: 40
+    property real delegateHeight: 60
 
     property string fontFamily: gameFont.name
-    property real gridSize: Math.min(app.width / 30, app.height / 20)
     property bool antialiasing: false
 
     property color backgroundColor: "#333333"

@@ -21,5 +21,6 @@
         <file>gamedata/enemies/test-enemy.json</file>
         <file>gamedata/enemies/fire.json</file>
         <file>gamedata/firearms/hunting-bow.json</file>
+        <file>gamedata/firearms/crossbow.json</file>
     </qresource>
 </RCC>

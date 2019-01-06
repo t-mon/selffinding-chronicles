@@ -1,4 +1,4 @@
-#ifndef GAMEITEMSPROXY_H
+    #ifndef GAMEITEMSPROXY_H
 #define GAMEITEMSPROXY_H
 
 #include <QObject>
@@ -14,12 +14,15 @@ class GameItemsProxy : public QSortFilterProxyModel
     Q_PROPERTY(QString itemIdFilter READ itemIdFilter WRITE setItemIdFilter NOTIFY itemIdFilterChanged)
     Q_PROPERTY(GameItem::Type itemTypeFilter READ itemTypeFilter WRITE setItemTypeFilter NOTIFY itemTypeFilterChanged)
     Q_PROPERTY(bool filterDuplicates READ filterDuplicates WRITE setFilterDuplicates NOTIFY filterDuplicatesChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
     explicit GameItemsProxy(QObject *parent = nullptr);
 
     GameItems *gameItems() const;
     void setGameItems(GameItems *gameItems);
+
+    int count() const;
 
     GameItem::Type itemTypeFilter() const;
     void setItemTypeFilter(GameItem::Type type);
@@ -47,9 +50,15 @@ protected:
 
 signals:
     void gameItemsChanged(GameItems *gameItems);
+    void countChanged();
     void itemIdFilterChanged(const QString &itemIdFilter);
     void itemTypeFilterChanged(GameItem::Type itemTypeFilter);
     void filterDuplicatesChanged(bool filterDuplicates);
+
+private slots:
+    void onSourceModelCountChanged();
+    void onRowsInseted(const QModelIndex &parent, int first, int last);
+    void onRowsRemoved(const QModelIndex &parent, int first, int last);
 
 };
 

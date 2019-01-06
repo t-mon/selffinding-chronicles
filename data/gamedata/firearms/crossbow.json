@@ -1,7 +1,7 @@
 {
-    "name": "Hunting bow",
+    "name": "Crossbow",
     "type": "firearm",
-    "imageName": "/images/items/firearms/hunting-bow.png",
+    "imageName": "/images/items/firearms/crossbow.png",
     "geometry": {
         "width": 1,
         "height": 1,
@@ -18,7 +18,7 @@
         "collision": 32,
         "vertices": []
     },
-    "price": 80,
-    "damage": 15,
-    "range": 15
+    "price": 100,
+    "damage": 32,
+    "range": 20
 }

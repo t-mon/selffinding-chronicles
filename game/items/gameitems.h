@@ -31,6 +31,8 @@ public:
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
 
+    void setAutoParent(bool autoParent);
+
     void addGameItem(GameItem *item);
     void addGameItemList(QList<GameItem *> itemList);
     void removeGameItem(GameItem *item);
@@ -42,6 +44,7 @@ protected:
 
 private:
     QList<GameItem *> m_gameItems;
+    bool m_autoParent = false;
 
 signals:
     void countChanged(int count);

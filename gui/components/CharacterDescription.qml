@@ -12,45 +12,119 @@ Item {
     Rectangle {
         id: backgroundRectangle
         anchors.fill: parent
-        color: "transparent"
+        color: "#55000000"
         border.color: "white"
         border.width: app.borderWidth
     }
 
-    Column {
+    ColumnLayout {
         id: playerPropertyLayout
         spacing: app.margins / 2
         anchors.fill: parent
         anchors.margins: app.margins
 
         GameLabel {
+            Layout.alignment: Qt.AlignHCenter
+            text: character ? character.name : ""
+            font.pixelSize: largeFont
             color: "white"
-            text: qsTr("Experience") + ": " + character.experience
         }
 
-        GameLabel {
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: app.borderWidth / 2
             color: "white"
-            text: qsTr("Health") + ": " + character.health  + "/" + character.healthMax
         }
 
-        GameLabel {
-            color: "white"
-            text: qsTr("Mana") + ": " + character.mana  + "/" + character.manaMax
+        RowLayout {
+            Layout.fillWidth: true
+
+            GameLabel {
+                Layout.fillWidth: true
+                color: "white"
+                text: qsTr("Experience")
+            }
+
+            GameLabel {
+                color: "white"
+                text: character.experience
+            }
         }
 
-        GameLabel {
-            color: "white"
-            text: qsTr("Wisdom") + ": " + character.wisdom
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            GameLabel {
+                Layout.fillWidth: true
+                color: "white"
+                text: qsTr("Health")
+            }
+
+            GameLabel {
+                color: "white"
+                text: character.health  + "/" + character.healthMax
+            }
         }
 
-        GameLabel {
-            color: "white"
-            text: qsTr("Strength") + ": " + character.strength
+        RowLayout {
+            Layout.fillWidth: true
+
+            GameLabel {
+                Layout.fillWidth: true
+                color: "white"
+                text: qsTr("Mana")
+            }
+
+            GameLabel {
+                color: "white"
+                text: character.mana  + "/" + character.manaMax
+            }
         }
 
-        GameLabel {
-            color: "white"
-            text: qsTr("Stealth") + ": " + character.stealth
+        RowLayout {
+            Layout.fillWidth: true
+
+            GameLabel {
+                Layout.fillWidth: true
+                color: "white"
+                text: qsTr("Wisdom")
+            }
+
+            GameLabel {
+                color: "white"
+                text: character.wisdom
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            GameLabel {
+                Layout.fillWidth: true
+                color: "white"
+                text: qsTr("Strength")
+            }
+
+            GameLabel {
+                color: "white"
+                text: character.strength
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            GameLabel {
+                Layout.fillWidth: true
+                color: "white"
+                text: qsTr("Stealth")
+            }
+
+            GameLabel {
+                color: "white"
+                text: character.stealth
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ GamePage {
     id: gamePage
 
     Component.onCompleted: {
-        console.log("Game scene size: " + gamePage.width + "/" + gamePage.height)
+        console.log("Game scene size:", gamePage.width, "/", gamePage.height, "grid size:", app.gridSize)
         forceActiveFocus()
     }
 
@@ -26,7 +26,6 @@ GamePage {
     World {
         id: physicsWorld
         gravity: Qt.point(0, 0)
-        onTimeStepChanged: console.log("----" + timeStep)
         onStepped: Game.onTick()
         running: Game.running
     }
@@ -89,14 +88,21 @@ GamePage {
                 }
 
                 function shoot() {
-                    console.log(character.name + " SHOOOT! " + character.angle * 180 / Math.PI)
-                    var bulletObject = bulletComponent.createObject(worldItem, {shooter: playerItem.character, damage: 10 } )
-                    var power = 2
-                    bulletObject.x = playerItem.getBulletX()
-                    bulletObject.y = playerItem.getBulletY()
-                    bulletObject.z = Map.Layer2Normal
-                    bulletObject.rotation = playerItem.getBulletAngle()
-                    bulletObject.body.applyLinearImpulse(Qt.point(power * Math.cos(character.angle), power * Math.sin(character.angle)), bulletObject.body.getWorldCenter());
+                    console.log(character.name + " SHOOOT!")
+                    var bulletObject = bulletComponent.createObject(worldItem,
+                                                                    {
+                                                                        shooter: playerItem.character,
+                                                                        damage: 10,
+                                                                        x: playerItem.getBulletX(),
+                                                                        y: playerItem.getBulletY(),
+                                                                        z: Map.Layer2Normal,
+                                                                        rotation: playerItem.getBulletAngle(),
+                                                                        startPositionX: playerItem.getBulletX(),
+                                                                        startPositionY: playerItem.getBulletY(),
+                                                                        shootRange: 20
+                                                                    } )
+                    var velocity = app.gridSize
+                    bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
                 }
 
 
@@ -159,7 +165,19 @@ GamePage {
                     z: model.layer
                 }
             }
+
+            FlameItem {
+                id: fireItem
+                turbulence: Game.debugging
+                enabled: true
+                width: app.gridSize * 3
+                height: app.gridSize * 3
+                x: app.gridSize * 4
+                y: app.gridSize * 4
+            }
         }
+
+
 
         DebugDraw {
             id: debugDraw
@@ -175,13 +193,8 @@ GamePage {
         hoverEnabled: true
         enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
         preventStealing: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse && Game.world.state === GameWorld.StateRunning
-        onMouseXChanged: {
-            calculateAngle()
-        }
-        onMouseYChanged: {
-            calculateAngle()
-        }
-
+        onMouseXChanged: calculateAngle()
+        onMouseYChanged: calculateAngle()
     }
 
     function moveCamera() {
@@ -320,13 +333,35 @@ GamePage {
             width: app.gridSize / 2
             height: width
             bullet: true
-            fixedRotation: true
+            fixedRotation: false
             bodyType: Body.Dynamic
 
             property Character shooter
             property int damage
+            property int shootRange
 
-            fixtures:  Circle {
+            property real startPositionX
+            property real startPositionY
+
+            property real maxDistance: shootRange * app.gridSize
+
+            onXChanged: evaluateDistance()
+            onYChanged: evaluateDistance()
+
+            function evaluateDistance() {
+                if (body.linearVelocity == Qt.point(0, 0) || dissapearAnimation.running)
+                    return
+
+                var distance = Math.sqrt(Math.pow(bulletItem.x - bulletItem.startPositionX, 2) + Math.pow(bulletItem.y - bulletItem.startPositionY, 2))
+                //console.log("Bullet distance traveld", distance, "/", bulletItem.maxDistance)
+                if (distance >= maxDistance) {
+                    console.log("Bullet reached max distance", distance, ">=", bulletItem.maxDistance)
+                    bulletItem.body.linearVelocity = Qt.point(0, 0)
+                    dissapearAnimation.start()
+                }
+            }
+
+            fixtures: Circle {
                 id: circleBody
                 categories: GameObject.PhysicsBullet
                 collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy | GameObject.PhysicsStaticItem | GameObject.PhysicsBullet
@@ -339,22 +374,26 @@ GamePage {
                 onBeginContact: {
                     var target = other.getBody().target
                     var victim = null
-
                     if (target.gameItem) {
                         // If we have a collision with an item
                         switch (target.itemType) {
                         case GameItem.TypeChest:
                             console.log("Bullet collision with chest")
-                            bulletItem.destroy()
+                            bulletItem.body.linearVelocity = Qt.point(0, 0)
+                            dissapearAnimation.start()
                             break;
                         case GameItem.TypeTree:
                             console.log("Bullet collision with tree")
-                            bulletItem.destroy()
+                            bulletItem.body.linearVelocity = Qt.point(0, 0)
+                            dissapearAnimation.start()
                             break;
                         default:
                             break
                         }
                         return
+                    } else {
+                        bulletItem.body.linearVelocity = Qt.point(0, 0)
+                        dissapearAnimation.start()
                     }
 
                     if (target.enemy)
@@ -365,38 +404,40 @@ GamePage {
                         return
 
                     console.log("Bullet collision " + bulletItem.shooter + " --> " + victim )
-                    Game.world.performShootImpact(bulletItem.shooter, victim, 10)
+                    Game.world.performShootImpact(bulletItem.shooter, victim, damage)
                     bulletItem.destroy()
                 }
+            }
+
+            FlameItem {
+                id: flameItem
+                anchors.fill: parent
+                rotation: -90
+                enabled: true
             }
 
             Image {
                 id: arrowImage
                 anchors.fill: parent
-                source: dataDirectory + "/images/items/weapons/arrow.png"
+                source: dataDirectory + "/images/items/firearms/arrow.png"
             }
 
             PropertyAnimation {
                 id: dissapearAnimation
-                target: arrowImage
+                target: bulletItem
                 property: "opacity"
                 to: 0
-                duration: 400
+                duration: 1000
                 loops: 1
-                onRunningChanged: if (!running) bulletItem.destroy()
-            }
 
-
-            Timer {
-                id: selfDestructionTimer
-                interval: 400
-                onTriggered: dissapearAnimation.start()
-            }
-
-            Component.onCompleted: {
-                selfDestructionTimer.start()
+                onRunningChanged: {
+                    if (running) {
+                        flameItem.turbulence = true
+                    } else {
+                        bulletItem.destroy()
+                    }
+                }
             }
         }
     }
-
 }

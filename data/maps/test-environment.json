@@ -2,8 +2,8 @@
     "name": "Test world",
     "width": 500,
     "height": 500,
-    "playerStartX": 5,
-    "playerStartY": 5,
+    "playerStartX": 0,
+    "playerStartY": 0,
     "defaultField": {
         "accessable": true,
         "imageName": "/images/world/base/accessable.png"
@@ -38,6 +38,16 @@
             "x": 12,
             "y": 6,
             "data": ":/gamedata/firearms/hunting-bow.json"
+        },
+        {
+            "x": 13,
+            "y": 5,
+            "data": ":/gamedata/firearms/crossbow.json"
+        },
+        {
+            "x": 13,
+            "y": 6,
+            "data": ":/gamedata/firearms/crossbow.json"
         },
         {
             "x": 10,
@@ -96,6 +106,11 @@
         }
     ],
     "characters": [
+        {
+            "x": 20,
+            "y": 0,
+            "data": ":/gamedata/characters/test-character.json"
+        },
         {
             "x": 25,
             "y": 10,

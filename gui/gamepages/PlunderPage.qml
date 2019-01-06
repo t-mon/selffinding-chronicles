@@ -9,8 +9,6 @@ import "../components"
 GameOverlayPage {
     id: root
 
-    property real cellSize: width * 0.1
-
     Rectangle {
         anchors.fill: parent
         color: "black"
@@ -28,10 +26,9 @@ GameOverlayPage {
             Layout.fillWidth: true
             spacing: app.margins / 2
 
-
             Item {
+                Layout.preferredWidth: app.menuItemSize * 5 + app.margins
                 Layout.fillHeight: true
-                Layout.fillWidth: true
 
                 ColumnLayout {
                     id: plunderInventoryItem
@@ -42,19 +39,49 @@ GameOverlayPage {
                         id: plunderInventory
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        itemsProxy: Game.world.currentPlunderItemsProxy
+                        gameItems: Game.world.currentPlunderItems
+                        onSelectedGameItemChanged: {
+                            if (!selectedGameItem) {
+                                itemDescription.item = null
+                                return
+                            }
+
+                            console.log("Selected item " + selectedGameItem.name)
+                            itemDescription.item = selectedGameItem
+                        }
+                    }
+
+
+                    ContentItemDescription {
+                        id: itemDescription
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: app.gridSize * 10
+                        item: null
                     }
 
                     RowLayout {
                         id: plunderOptionsRow
                         Layout.fillWidth: true
-                        Layout.preferredHeight: app.gridSize * 3
                         spacing: app.margins / 2
 
                         GameButton {
                             Layout.fillWidth: true
                             text: qsTr("Take all")
-                            onClicked: Game.world.finishPlunder()
+                            onClicked: {
+                                Game.world.takeAllItems(Game.world.currentPlunderItems)
+                                Game.world.finishPlunder()
+                            }
+                        }
+
+                        GameButton {
+                            Layout.fillWidth: true
+                            text: qsTr("Take")
+                            onClicked: {
+                                if (plunderInventory.selectedGameItem) {
+                                    console.log("Take item", plunderInventory.selectedGameItem.name)
+                                    Game.world.takeItem(Game.world.currentPlunderItems, plunderInventory.selectedGameItem)
+                                }
+                            }
                         }
 
                         GameButton {
@@ -67,9 +94,15 @@ GameOverlayPage {
             }
 
             Item {
+                id: spacingItem
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+
+            Item {
                 id: playerInventoryItem
                 Layout.fillHeight: true
-                Layout.fillWidth: true
+                Layout.preferredWidth: app.gridSize * 15
 
                 InventoryContentItem {
                     id: playerInventory

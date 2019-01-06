@@ -14,7 +14,7 @@ Item {
     property bool selected: false
     property int itemCount: 0
 
-    onItemCountChanged: console.log("Item count changed for", item.name, itemCount)
+    //onItemCountChanged: console.log("Item count changed for", (item ? item.name : ""), itemCount)
 
     signal clicked()
 
@@ -34,10 +34,14 @@ Item {
         }
     }
 
-    Label {
-        anchors.centerIn: parent
+    GameLabel {
+        anchors.right: parent.right
+        anchors.rightMargin: app.margins
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: app.margins / 2
         text: root.itemCount
         color: "white"
+        visible: root.itemCount > 1
     }
 
     MouseArea {

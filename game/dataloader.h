@@ -17,16 +17,16 @@ class DataLoader
 public:
     explicit DataLoader() = default;
 
-    static QList<GameItem *> loadGameItems(const QVariantList &itemsList);
+    static QList<GameItem *> loadGameItems(const QVariantList &itemsList, QObject *parent = nullptr);
 
     // Create
-    static PlantItem *createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
-    static TreeItem *createTreeItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
-    static WeaponItem *createWeaponItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
-    static FirearmItem *createFirearmItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
-    static Character *createCharacterObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
-    static Enemy *createEnemyObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
-    static ChestItem *createChestItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint());
+    static PlantItem *createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static TreeItem *createTreeItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static WeaponItem *createWeaponItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static FirearmItem *createFirearmItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static Character *createCharacterObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static Enemy *createEnemyObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static ChestItem *createChestItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
 
     // Load
     static QList<QPoint> loadFieldMap(const QVariantList &fieldMap);

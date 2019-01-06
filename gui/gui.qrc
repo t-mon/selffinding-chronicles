@@ -31,12 +31,12 @@
         <file>physics/ChainBody.qml</file>
         <file>LoadingPage.qml</file>
         <file>gameitems/EnemyItem.qml</file>
-        <file>gameitems/BulletItem.qml</file>
         <file>components/ObjectContentItem.qml</file>
         <file>components/InventoryContentItem.qml</file>
         <file>components/GameBusyIndicator.qml</file>
         <file>components/CharacterDescription.qml</file>
         <file>components/ContentItemDescription.qml</file>
         <file>gamepages/GameOverlayPage.qml</file>
+        <file>components/FlameItem.qml</file>
     </qresource>
 </RCC>

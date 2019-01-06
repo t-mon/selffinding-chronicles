@@ -27,6 +27,7 @@ PhysicsItem {
 
     rotation: character.angle * 180 / Math.PI
 
+
     fixtures: [
         Circle {
             id: bodyCircle
@@ -323,7 +324,6 @@ PhysicsItem {
         visible: root.isPlayer
         width: parent.width / 2 + character.auraRange * app.gridSize
         height: app.gridSize
-        opacity: 0.4
         x: parent.width / 2
         y: parent.height / 2 - height / 2
 
@@ -331,10 +331,21 @@ PhysicsItem {
             id: directionIndicatorImage
             anchors.right: parent.right
             anchors.top: parent.top
+            opacity: 0.4
             width: character.auraRange * app.gridSize
             height: parent.height
             source: dataDirectory + "/images/game/direction-indicator.svg"
-            opacity: Game.debugging ? 0.5 : 1
+        }
+
+        Image {
+            id: weaponImage
+            anchors.left: directionIndicatorImage.left
+            anchors.verticalCenter: directionIndicatorImage.verticalCenter
+            rotation: 45
+            width: app.gridSize * 1.5
+            height: width
+            visible: hitAttackTimer.running
+            source: dataDirectory + "/images/items/weapons/sword.png"
         }
     }
 

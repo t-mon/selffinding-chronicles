@@ -29,6 +29,7 @@ GamePage {
             id: playButton
             Layout.fillWidth: true
             text: "Play"
+            font.pixelSize: app.largeFont
             onClicked: {
                 console.log("Play pressed")
                 Game.world.loadMap(":/maps/test-environment.json")

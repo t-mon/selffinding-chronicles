@@ -56,10 +56,18 @@ QVariant GameItems::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+void GameItems::setAutoParent(bool autoParent)
+{
+    m_autoParent = autoParent;
+}
+
 void GameItems::addGameItem(GameItem *item)
 {
     if (m_gameItems.contains(item))
         return;
+
+    if (m_autoParent)
+        item->setParent(this);
 
     beginInsertRows(QModelIndex(), m_gameItems.count(), m_gameItems.count());
     m_gameItems.append(item);
@@ -73,8 +81,6 @@ void GameItems::addGameItemList(QList<GameItem *> itemList)
     foreach (GameItem *item, itemList) {
         addGameItem(item);
     }
-
-    emit countChanged(m_gameItems.count());
 }
 
 void GameItems::removeGameItem(GameItem *item)

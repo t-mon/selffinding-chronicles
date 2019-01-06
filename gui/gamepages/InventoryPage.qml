@@ -25,7 +25,7 @@ GameOverlayPage {
         Item {
             id: informationItem
             Layout.fillHeight: true
-            Layout.preferredWidth: app.gridSize * 10
+            Layout.preferredWidth: app.menuItemSize * 5 + app.margins
 
             ColumnLayout {
                 id: informationColumnLayout
@@ -35,16 +35,51 @@ GameOverlayPage {
                 CharacterDescription {
                     id: characterDescription
                     Layout.fillWidth: true
-                    Layout.minimumHeight: app.gridSize * 6
-                    Layout.preferredHeight: app.gridSize * 8
+                    Layout.preferredHeight: app.gridSize * 9
                     character: Game.world.player
                 }
 
                 ContentItemDescription {
                     id: itemDescription
                     Layout.fillWidth: true
+                    Layout.minimumHeight: app.gridSize * 7
                     Layout.fillHeight: true
                     item: null
+                }
+
+
+            }
+        }
+
+        Item {
+            id: spacingItem
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
+        Item {
+            id: inventoryItem
+            Layout.fillHeight: true
+            Layout.preferredWidth: app.menuItemSize * 5 + app.margins
+
+            ColumnLayout {
+                id: inventoryColumnLayout
+                anchors.fill: parent
+                spacing: app.margins / 2
+
+                InventoryContentItem {
+                    id: inventoryContentItem
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    onSelectedItemChanged: {
+                        if (!selectedItem) {
+                            itemDescription.item = null
+                            return
+                        }
+
+                        console.log("Selected item " + selectedItem.name)
+                        itemDescription.item = selectedItem
+                    }
                 }
 
                 RowLayout {
@@ -64,19 +99,6 @@ GameOverlayPage {
                         onClicked: console.log("Drop clicked")
                     }
                 }
-            }
-        }
-
-        InventoryContentItem {
-            id: inventoryContentItem
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            onSelectedItemChanged: {
-                if (!selectedItem)
-                    return
-
-                console.log("Selected item " + selectedItem.name)
-                itemDescription.item = selectedItem
             }
         }
     }

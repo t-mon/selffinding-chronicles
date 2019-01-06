@@ -5,45 +5,72 @@ import QtGraphicalEffects 1.0
 
 import Chronicles 1.0
 
-import "../components"
-
 Item {
     id: root
 
-    property GameItemsProxy itemsProxy
+    property GameItems gameItems
+    property GameItem selectedGameItem
+
+    //onSelectedGameItemChanged: console.log("Selected item:", (selectedGameItem ? selectedGameItem.name : "no item left"))
+
+    property real itemSize: app.gridSize * 2.5
 
     Rectangle {
         anchors.fill: parent
-        color: "transparent"
+        color: "#55000000"
         border.color: "white"
         border.width: app.borderWidth
 
         GridView {
-            id: gridView
+            id: itemsGridView
             anchors.fill: parent
             anchors.margins: app.margins
-            cellWidth: width / 6
+            cellWidth: width / 5
             cellHeight: cellWidth
             clip: true
-            model: root.itemsProxy
+            focus: true
+
+            model: GameItemsProxy {
+                id: itemModel
+                gameItems: root.gameItems
+                filterDuplicates: true
+            }
 
             delegate: ContentItem {
+                id: contetItem
                 selected: GridView.isCurrentItem
-                item: itemsProxy.get(index)
-                width: gridView.cellWidth
-                height: gridView.cellHeight
+                item: itemModel.get(index)
+                width: itemsGridView.cellWidth
+                height: itemsGridView.cellHeight
+                itemCount: countModel.count
+                onItemCountChanged: {
+                    if (itemCount === 0) {
+                        selectedGameItem = null
+                    }
+                }
+
+                onSelectedChanged: {
+                    if (selected) {
+                        root.selectedGameItem = itemModel.get(index)
+                    }
+                }
+
+                GameItemsProxy {
+                    id: countModel
+                    gameItems: root.gameItems
+                    itemIdFilter: item ? item.itemId : ""
+                }
             }
         }
 
         MouseArea {
-            anchors.fill: parent
+            anchors.fill: itemsGridView
             onClicked: {
-                //var clickedItem = gridView.itemAt(mouseX, mouseY)
-                var clickedIndex = gridView.indexAt(mouseX, mouseY)
+                var clickedIndex = itemsGridView.indexAt(mouseX, mouseY)
                 console.log("Clicked on --> " + clickedIndex)
 
                 if (clickedIndex >= 0)
-                    gridView.currentIndex = clickedIndex
+                    itemsGridView.currentIndex = clickedIndex
 
             }
         }

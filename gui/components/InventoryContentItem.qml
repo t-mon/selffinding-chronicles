@@ -19,8 +19,8 @@ Item {
         Rectangle {
             id: tabsRectangle
             Layout.fillWidth: true
-            Layout.minimumHeight: app.gridSize * 3
-            color: "transparent"
+            Layout.preferredHeight: app.menuItemSize
+            color: "#55000000"
             border.color: "white"
             border.width: app.borderWidth
 
@@ -61,7 +61,12 @@ Item {
                     onSelectedChanged: {
                         if (selected) {
                             inventoryGridView.model.itemTypeFilter = type
-                            root.selectedItem = inventoryItemModel.get(inventoryGridView.currentIndex)
+                            if (inventoryItemModel.count === 0) {
+                                root.selectedItem = null
+                            } else {
+                                root.selectedItem = inventoryItemModel.get(inventoryGridView.currentIndex)
+                            }
+
                         }
                     }
 
@@ -74,19 +79,20 @@ Item {
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            color: "transparent"
+            color: "#55000000"
             border.color: "white"
             border.width: app.borderWidth
 
             GridView {
                 id: inventoryGridView
                 anchors.fill: parent
-                anchors.margins: app.margins
-                cellWidth: width / 6
+                anchors.margins: app.margins / 2
+
+                cellWidth: width / 5
                 cellHeight: cellWidth
-                //highlightFollowsCurrentItem: true
                 clip: true
                 focus: true
+
                 model: GameItemsProxy {
                     id: inventoryItemModel
                     gameItems: Game.world.player.inventory
@@ -99,7 +105,7 @@ Item {
                     item: inventoryItemModel.get(index)
                     width: inventoryGridView.cellWidth
                     height: inventoryGridView.cellHeight
-                    itemCount: countModel.rowCount()
+                    itemCount: countModel.count
 
                     GameItemsProxy {
                         id: countModel
@@ -114,7 +120,7 @@ Item {
             }
 
             MouseArea {
-                anchors.fill: parent
+                anchors.fill: inventoryGridView
                 onClicked: {
                     var clickedIndex = inventoryGridView.indexAt(mouseX, mouseY)
                     console.log("Clicked on --> " + clickedIndex)

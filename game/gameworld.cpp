@@ -21,6 +21,7 @@ GameWorld::GameWorld(QObject *parent) :
     m_player->setCategoryFlag(GameObject::PhysicsCharacter);
     m_player->setCollisionFlag(static_cast<GameObject::PhysicsFlags>(491));
     m_player->setBodyType(GameObject::BodyTypeDynamic);
+    m_player->inventory()->setAutoParent(true);
 
     connect(m_player, &Character::positionChanged, this, &GameWorld::onPlayerPositionChanged);
 
@@ -37,8 +38,13 @@ GameWorld::GameWorld(QObject *parent) :
     m_collisionDetector = new CollisionDetector(this);
 
     m_gameItems = new GameItems(this);
+    m_gameItems->setAutoParent(true);
+
     m_enemyItems = new GameItems(this);
+    m_enemyItems->setAutoParent(true);
+
     m_characterItems = new GameItems(this);
+    m_characterItems->setAutoParent(true);
 
     // Create map and loading watcher
     m_map = new Map(this);
@@ -136,9 +142,9 @@ ChestItem *GameWorld::currentChestItem() const
     return m_currentChestItem;
 }
 
-GameItemsProxy *GameWorld::currentPlunderItemsProxy() const
+GameItems *GameWorld::currentPlunderItems() const
 {
-    return m_currentPlunderItemsProxy;
+    return m_currentPlunderItems;
 }
 
 bool GameWorld::loaded() const
@@ -170,18 +176,15 @@ void GameWorld::giveUpUnlocking()
 {
     qCDebug(dcWorld()) << "Give up unlocking.";
     setCurrentChestItem(nullptr);
-    setCurrentPlunderItemsProxy(nullptr);
+    setCurrentPlunderItems(nullptr);
     setState(StateRunning);
 }
 
 void GameWorld::finishPlunder()
 {
     qCDebug(dcWorld()) << "Finish plundering";
-
-    if (m_currentChestItem)
-        setCurrentChestItem(nullptr);
-
-    setCurrentPlunderItemsProxy(nullptr);
+    setCurrentChestItem(nullptr);
+    setCurrentPlunderItems(nullptr);
     setState(StateRunning);
 }
 
@@ -196,6 +199,46 @@ void GameWorld::performShootImpact(Character *attacker, Character *victim, int d
 {
     qCDebug(dcWorld()) << attacker << "SHOT" << victim << damage;
     victim->setHealth(victim->health() - damage);
+}
+
+void GameWorld::takeItem(GameItems *gameItems, GameItem *item)
+{
+    qCDebug(dcWorld()) << "Move" << item << "to inventory";
+
+    // Get the list of all matching items
+    QList<GameItem *> targetItems;
+    foreach (GameItem * targetItem, gameItems->gameItems()) {
+        if (targetItem->itemId() == item->itemId()) {
+            targetItems.append(targetItem);
+        }
+    }
+
+    // If there is no left
+    if (targetItems.count() == 0)
+        return;
+
+    // If the item is the last one
+    if (targetItems.count() == 1) {
+        gameItems->removeGameItem(targetItems.first());
+        m_player->inventory()->addGameItem(targetItems.first());
+    }
+
+    // Take one which is not the current selected item
+    foreach (GameItem * targetItem, targetItems) {
+        if (targetItem->itemId() == item->itemId() && targetItem != item) {
+            gameItems->removeGameItem(targetItem);
+            m_player->inventory()->addGameItem(targetItem);
+            return;
+        }
+    }
+}
+
+void GameWorld::takeAllItems(GameItems *gameItems)
+{
+    foreach (GameItem *item, gameItems->gameItems()) {
+        gameItems->removeGameItem(item);
+        m_player->inventory()->addGameItem(item);
+    }
 }
 
 void GameWorld::setState(GameWorld::State state)
@@ -227,6 +270,9 @@ void GameWorld::setState(GameWorld::State state)
         Game::instance()->setRunning(false);
         break;
     case StateConversation:
+        m_player->setMovable(false);
+        break;
+    case StatePlunder:
         m_player->setMovable(false);
         break;
     default:
@@ -333,29 +379,28 @@ void GameWorld::setCurrentChestItem(ChestItem *chestItem)
     emit currentChestItemChanged(m_currentChestItem);
 
     if (m_currentChestItem) {
+        setCurrentPlunderItems(m_currentChestItem->items());
         if (m_currentChestItem->locked()) {
             qCDebug(dcWorld()) << "The chest is locked. Show unlock screen";
-            setCurrentPlunderItemsProxy(m_currentChestItem->itemsProxy());
             setState(StateUnlocking);
         } else {
             qCDebug(dcWorld()) << "The chest is not locked. Show plunder screen";
-            setCurrentPlunderItemsProxy(m_currentChestItem->itemsProxy());
             setState(StatePlunder);
         }
     } else {
         qCDebug(dcWorld()) << "Reset chest item.";
-        setCurrentPlunderItemsProxy(nullptr);
+        setCurrentPlunderItems(nullptr);
         m_player->setMovable(true);
     }
 }
 
-void GameWorld::setCurrentPlunderItemsProxy(GameItemsProxy *plunderItemsProxy)
+void GameWorld::setCurrentPlunderItems(GameItems *plunderItems)
 {
-    if (m_currentPlunderItemsProxy == plunderItemsProxy)
+    if (m_currentPlunderItems == plunderItems)
         return;
 
-    m_currentPlunderItemsProxy = plunderItemsProxy;
-    emit currentPlunderItemsProxyChanged(m_currentPlunderItemsProxy);
+    m_currentPlunderItems = plunderItems;
+    emit currentPlunderItemsChanged(m_currentPlunderItems);
 }
 
 void GameWorld::doPlayerMovement()

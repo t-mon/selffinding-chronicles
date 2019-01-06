@@ -11,33 +11,57 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "transparent"
+        color: "#55000000"
         border.color: "white"
         border.width: app.borderWidth
     }
 
-    GameLabel {
-        id: noSelectionLable
-        anchors.centerIn: parent
-        visible: !root.item
-        font.bold: true
-        font.family: app.fontFamily
-        font.pixelSize: app.mediumFont
-        font.weight: Font.ExtraBold
-        color: "white"
-        text: "No item selected."
-    }
-
-    Column {
-        id: playerPropertyLayout
+    ColumnLayout {
+        id: itemPropertyLayout
         spacing: app.margins / 2
         anchors.fill: parent
         anchors.margins: app.margins
         visible: root.item
 
-        GameLabel {
+        RowLayout {
+            Layout.fillWidth: true
+
+            Item {
+                Layout.preferredWidth: app.menuItemSize
+                Layout.preferredHeight: app.menuItemSize
+
+                Rectangle {
+                    id: itemRectangle
+                    anchors.fill: parent
+                    anchors.margins: app.margins / 2
+                    color: "gray"
+                    border.color: "white"
+                    border.width: app.borderWidth
+
+                    Image {
+                        id: itemImage
+                        anchors.fill: parent
+                        anchors.margins: parent.width / 8
+                        source: root.item ? dataDirectory + root.item.imageName : ""
+                    }
+                }
+            }
+
+            GameLabel {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                text: (root.item ? root.item.name : "")
+                font.pixelSize: largeFont
+                color: "white"
+            }
+        }
+
+
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: app.borderWidth / 2
             color: "white"
-            text: qsTr("Name") + ": " + (root.item ? root.item.name : "")
         }
 
         GameLabel {
@@ -45,5 +69,10 @@ Item {
             text: qsTr("Price") + ": " + (root.item ? root.item.price : "")
         }
 
+        Item {
+            id: spacingItem
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
     }
 }

@@ -36,3 +36,17 @@ void FirearmItem::setDamage(int damage)
     emit damageChanged(m_damage);
 }
 
+int FirearmItem::range() const
+{
+    return m_range;
+}
+
+void FirearmItem::setRange(int range)
+{
+    if (m_range == range)
+        return;
+
+    m_range = range;
+    emit rangeChanged(m_range);
+}
+

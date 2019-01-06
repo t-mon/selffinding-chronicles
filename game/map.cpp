@@ -11,8 +11,13 @@
 Map::Map(QObject *parent) : QObject(parent)
 {
     m_items = new GameItems(this);
+    m_items->setAutoParent(true);
+
     m_enemies = new GameItems(this);
+    m_enemies->setAutoParent(true);
+
     m_characters = new GameItems(this);
+    m_enemies->setAutoParent(true);
 }
 
 Map::~Map()
@@ -158,54 +163,56 @@ void Map::loadMap(const QString &fileName)
     }
 
     qCDebug(dcMap()) << "--> load items";
-    m_items->addGameItemList(DataLoader::loadGameItems(mapData.value("items").toList()));
+    QList<GameItem *> items = DataLoader::loadGameItems(mapData.value("items").toList());
+    foreach (GameItem *item, items)
+        item->moveToThread(QCoreApplication::instance()->thread());
+
+    m_items->addGameItemList(items);
+
 
     qCDebug(dcMap()) << "--> load chests";
     QList<GameItem *> chestItems = DataLoader::loadGameItems(mapData.value("chests").toList());
+    foreach (GameItem *chestItem, chestItems)
+        chestItem->moveToThread(QCoreApplication::instance()->thread());
+
     m_items->addGameItemList(chestItems);
-    foreach (GameItem *chestItem, chestItems) {
-        foreach (GameItem *item, qobject_cast<ChestItem *>(chestItem)->items()->gameItems()) {
-            item->moveToThread(QCoreApplication::instance()->thread());
-        }
-    }
+
 
     qCDebug(dcMap()) << "--> load characters";
-    m_characters->addGameItemList(DataLoader::loadGameItems(mapData.value("characters").toList()));
-    foreach (GameItem *character, m_characters->gameItems()) {
-        foreach (GameItem *item, qobject_cast<Character *>(character)->inventory()->gameItems()) {
-            item->moveToThread(QCoreApplication::instance()->thread());
-        }
-    }
+    QList<GameItem *> characterItems = DataLoader::loadGameItems(mapData.value("characters").toList());
+    foreach (GameItem *characterItem, characterItems)
+        characterItem->moveToThread(QCoreApplication::instance()->thread());
+
+    m_characters->addGameItemList(characterItems);
 
     qCDebug(dcMap()) << "--> load enemies";
-    m_enemies->addGameItemList(DataLoader::loadGameItems(mapData.value("enemies").toList()));
-    foreach (GameItem *enemyItem, m_enemies->gameItems()) {
-        foreach (GameItem *item, qobject_cast<Enemy *>(enemyItem)->inventory()->gameItems()) {
-            item->moveToThread(QCoreApplication::instance()->thread());
-        }
-    }
+
+    QList<GameItem *> enemyItems = DataLoader::loadGameItems(mapData.value("enemies").toList());
+    foreach (GameItem *enemyItem, enemyItems)
+            enemyItem->moveToThread(QCoreApplication::instance()->thread());
+
+    m_enemies->addGameItemList(enemyItems);
+
+    // Move all the object back to the main thread
+    foreach (Fields *fields, m_mapData)
+        fields->moveToThread(QCoreApplication::instance()->thread());
 
     foreach (GameItem *item, m_items->gameItems()) {
+        item->moveToThread(QCoreApplication::instance()->thread());
         placeItemOnMap(item);
         qCDebug(dcMap()) << "        " << item;
-        item->moveToThread(QCoreApplication::instance()->thread());
     }
 
     foreach (GameItem *item, m_characters->gameItems()) {
+        item->moveToThread(QCoreApplication::instance()->thread());
         placeItemOnMap(item);
         qCDebug(dcMap()) << "        " << item;
-        item->moveToThread(QCoreApplication::instance()->thread());
     }
 
     foreach (GameItem *item, m_enemies->gameItems()) {
+        item->moveToThread(QCoreApplication::instance()->thread());
         placeItemOnMap(item);
         qCDebug(dcMap()) << "        " << item;
-        item->moveToThread(QCoreApplication::instance()->thread());
-    }
-
-    // Move all the object back to the main thread
-    foreach (Fields *fields, m_mapData) {
-        fields->moveToThread(QCoreApplication::instance()->thread());
     }
 
     qCDebug(dcMap()) << "Map loading from" << fileName << "finished successfully:" << timer.elapsed() << "[ms]";
