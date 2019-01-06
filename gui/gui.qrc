@@ -38,5 +38,8 @@
         <file>components/ContentItemDescription.qml</file>
         <file>gamepages/GameOverlayPage.qml</file>
         <file>components/FlameItem.qml</file>
+        <file>shadereffects/wobble.frag</file>
+        <file>shadereffects/+hlsl/wobble.frag</file>
+        <file>components/DebugControls.qml</file>
     </qresource>
 </RCC>

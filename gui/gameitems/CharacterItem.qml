@@ -27,7 +27,6 @@ PhysicsItem {
 
     rotation: character.angle * 180 / Math.PI
 
-
     fixtures: [
         Circle {
             id: bodyCircle
@@ -176,6 +175,12 @@ PhysicsItem {
         id: frame
         anchors.fill: parent;
         rotation: -root.rotation
+
+        FlameItem {
+            anchors.fill: parent
+            enabled: false
+        }
+
 
         Rectangle {
             id: frameWire
