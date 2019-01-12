@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
+    s_loggingFilters.insert("MapEditor", true);
 
     s_loggingFilters.insert("qml", true);
 
@@ -121,8 +122,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<GameWorld>("Chronicles", 1, 0, "GameWorld", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the GameWorld object.");
-    qmlRegisterUncreatableType<GameSettings>("Chronicles", 1, 0, "GameSettings", "Can't create this in QML. Get it from the Game object.");
-    qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the world object.");
+    qmlRegisterUncreatableType<GameSettings>("Chronicles", 1, 0, "GameSettings", "Can't create this in QML. Get it from the Game instance.");
+    qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the GameWorld object.");
+    qmlRegisterUncreatableType<GameMapEditor>("Chronicles", 1, 0, "GameMapEditor", "Can't create this in QML. Get it from the Game instance.");
 
     // Items
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");

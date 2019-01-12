@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import Box2D 2.0
 
 Item {

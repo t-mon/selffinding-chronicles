@@ -10,10 +10,10 @@
     "physicsGeometry": {
         "body": "static",
         "shape": "circle",
-        "width": 1,
-        "height": 1,
-        "x": 2,
-        "y": 6,
+        "width": 2,
+        "height": 2,
+        "x": 3,
+        "y": 5,
         "category": 8,
         "collision": 32,
         "vertices": []

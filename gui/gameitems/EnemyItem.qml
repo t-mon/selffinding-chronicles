@@ -1,6 +1,6 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.12
 
 import Box2D 2.0
 import Chronicles 1.0
@@ -13,6 +13,7 @@ PhysicsItem {
 
     property Enemy enemy: Game.world.enemyItems.get(model.index)
     property int itemType: enemy ? enemy.itemType : GameItem.TypeNone
+    property bool burning: false
 
     antialiasing: app.antialiasing
     opacity: enemy ? (enemy.hidingPlayer ? 0.5 : 1) : 0
@@ -34,6 +35,16 @@ PhysicsItem {
         }
     ]
 
+    function inflame() {
+        if (flameFadeOutAnimation.running)
+            flameFadeOutAnimation.stop()
+
+        flameItem.opacity = 1
+        flameItem.visible = true
+        buringTimer.restart()
+        root.burning = true
+    }
+
     Item {
         id: frame
         anchors.fill: parent;
@@ -45,6 +56,31 @@ PhysicsItem {
             border.color: "red";
             border.width: 2;
             opacity: Game.debugging ? 0.5 : 0
+        }
+
+        FlameItem {
+            id: flameItem
+            anchors.fill: parent
+            enabled: root.burning
+
+            Timer {
+                id: buringTimer
+                interval: 5000
+                onTriggered: flameFadeOutAnimation.start()
+            }
+
+            PropertyAnimation {
+                id: flameFadeOutAnimation
+                duration: 2000
+                target: flameItem
+                property: "opacity"
+                loops: 1
+                to: 0
+                onFinished: {
+                    flameItem.visible = false
+                    root.burning = false
+                }
+            }
         }
 
         ItemDescription {
@@ -77,10 +113,11 @@ PhysicsItem {
                 color: "red"
                 Layout.fillHeight: true
                 Layout.preferredWidth: enemy ? parent.width * enemy.healthPercentage / 100 : 0
+
             }
 
             Rectangle {
-                color: "gray"
+                color: "black"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
@@ -120,6 +157,14 @@ PhysicsItem {
                 healthIndicatorTimer.stop()
             }
         }
+    }
+
+    Timer {
+        id: burnDamageTimer
+        interval: 1000
+        running: root.burning
+        repeat: true
+        onTriggered: Game.world.performBurnDamage(root.enemy, 2)
     }
 
     Timer {

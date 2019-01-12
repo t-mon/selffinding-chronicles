@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
@@ -91,22 +91,35 @@ GamePage {
                         moveCamera()
                     }
 
+                    function shootBulletObject(bulletObject) {
+                        var bulletStartPoint = Qt.point(playerItem.x + playerItem.getBulletXOffset(),  playerItem.y + playerItem.getBulletYOffset())
+                        bulletObject.damage = 10
+                        bulletObject.width = app.gridSize / 2
+                        bulletObject.height = bulletObject.width
+                        bulletObject.rotation = playerItem.getBulletAngle()
+                        bulletObject.x = bulletStartPoint.x
+                        bulletObject.y = bulletStartPoint.y
+                        bulletObject.z = Map.Layer2Normal
+                        bulletObject.startPositionX = bulletStartPoint.x
+                        bulletObject.startPositionY = bulletStartPoint.y
+                        bulletObject.shootRange = 20
+                        bulletObject.fireArrow = debugControls.flamesEnabled
+                        bulletObject.body.linearVelocity = Qt.point(app.gridSize * Math.cos(character.angle), app.gridSize * Math.sin(character.angle))
+                    }
+
                     function shoot() {
                         console.log(character.name + " SHOOOT!")
-                        var bulletObject = bulletComponent.createObject(worldItem,
-                                                                        {
-                                                                            shooter: playerItem.character,
-                                                                            damage: 10,
-                                                                            x: playerItem.getBulletX(),
-                                                                            y: playerItem.getBulletY(),
-                                                                            z: Map.Layer2Normal,
-                                                                            rotation: playerItem.getBulletAngle(),
-                                                                            startPositionX: playerItem.getBulletX(),
-                                                                            startPositionY: playerItem.getBulletY(),
-                                                                            shootRange: 20
-                                                                        } )
-                        var velocity = app.gridSize
-                        bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
+                        var component = Qt.createComponent("gameitems/BulletItem.qml");
+                        var bulletIncubator = component.incubateObject(worldItem, { shooter: playerItem.character } )
+                        if (bulletIncubator.status !== Component.Ready) {
+                            bulletIncubator.onStatusChanged = function(status) {
+                                if (status === Component.Ready) {
+                                    shootBulletObject(bulletIncubator.object)
+                                }
+                            }
+                        } else {
+                            shootBulletObject(bulletIncubator.object)
+                        }
                     }
 
                     // Player movement
@@ -179,13 +192,38 @@ GamePage {
                     y: app.gridSize * 4
                 }
             }
+
+            DebugDraw {
+                id: debugDraw
+                world: physicsWorld
+                opacity: 0.4
+                visible: Game.debugging
+            }
         }
 
-        DebugDraw {
-            id: debugDraw
-            world: physicsWorld
-            opacity: 0.4
-            visible: Game.debugging
+        MouseArea {
+            id: screenMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
+            onMouseXChanged: calculateAngle()
+            onMouseYChanged: calculateAngle()
+        }
+
+        DebugControls {
+            id: debugControls
+            anchors.right: parent.right
+            anchors.top: parent.top
+            width: app.gridSize * 6
+            onDruggedChanged: {
+                if (drugged) {
+                    druggedShader.visible = true
+                    startDruggedAnimation.start()
+                    shaderTimeAnimation.start()
+                } else {
+                    stopDruggedAnimation.start()
+                }
+            }
         }
 
         // Game overlays
@@ -291,42 +329,48 @@ GamePage {
         id: druggedShader
         width: parent.width
         height: parent.height
-        visible: debugControls.drugged
+        visible: false
         property var source: shaderEffectSource
-        property real amplitude: 0.008
-        property real frequency: 15
+        property real amplitude: 0.02
+        property real frequency: 8
         property real time: 0
         NumberAnimation on time {
+            id: shaderTimeAnimation
             loops: Animation.Infinite
             from: 0
             to: Math.PI * 2
-            duration: 1500
-            running: debugControls.drugged
-            onRunningChanged: {
-                if (!running) druggedShader.time = 0
-            }
+            duration: 1800
+            running: false
         }
 
         fragmentShader: "qrc:shadereffects/wobble.frag"
     }
 
-
-    MouseArea {
-        id: screenMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
-        preventStealing: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse && Game.world.state === GameWorld.StateRunning
-        onMouseXChanged: calculateAngle()
-        onMouseYChanged: calculateAngle()
+    PropertyAnimation {
+        id: startDruggedAnimation
+        target: druggedShader
+        property: "amplitude"
+        loops: 1
+        duration: 5000
+        from: 0
+        to: 0.02
+        onRunningChanged: if (!running) console.log("start drugged animation finished")
     }
 
-    DebugControls {
-        id: debugControls
-        anchors.right: parent.right
-        anchors.top: parent.top
-
-        width: app.gridSize * 10
+    PropertyAnimation {
+        id: stopDruggedAnimation
+        target: druggedShader
+        property: "amplitude"
+        loops: 1
+        duration: 5000
+        to: 0
+        onRunningChanged: {
+            if (!running)  {
+                console.log("stop drugged animation finished")
+                shaderTimeAnimation.stop()
+                druggedShader.visible = false
+            }
+        }
     }
 
     function moveCamera() {
@@ -361,122 +405,5 @@ GamePage {
         var dx = (worldFlickable.contentX + screenMouseArea.mouseX) - playerItem.x - playerItem.width / 2
         var dy = (worldFlickable.contentY + screenMouseArea.mouseY) - playerItem.y - playerItem.height / 2
         Game.world.player.angle = Math.atan2(dy , dx)
-    }
-
-    Component {
-        id: bulletComponent
-
-        PhysicsItem {
-            id: bulletItem
-            smooth: true
-            width: app.gridSize / 2
-            height: width
-            bullet: true
-            fixedRotation: false
-            bodyType: Body.Dynamic
-
-            property Character shooter
-            property int damage
-            property int shootRange
-
-            property real startPositionX
-            property real startPositionY
-
-            property real maxDistance: shootRange * app.gridSize
-
-            onXChanged: evaluateDistance()
-            onYChanged: evaluateDistance()
-
-            function evaluateDistance() {
-                if (body.linearVelocity == Qt.point(0, 0) || dissapearAnimation.running)
-                    return
-
-                var distance = Math.sqrt(Math.pow(bulletItem.x - bulletItem.startPositionX, 2) + Math.pow(bulletItem.y - bulletItem.startPositionY, 2))
-                //console.log("Bullet distance traveld", distance, "/", bulletItem.maxDistance)
-                if (distance >= maxDistance) {
-                    console.log("Bullet reached max distance", distance, ">=", bulletItem.maxDistance)
-                    bulletItem.body.linearVelocity = Qt.point(0, 0)
-                    dissapearAnimation.start()
-                }
-            }
-
-            fixtures: Circle {
-                id: circleBody
-                categories: GameObject.PhysicsBullet
-                collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy | GameObject.PhysicsStaticItem | GameObject.PhysicsBullet
-
-                radius: bulletItem.width / 2
-                density: 1
-                friction: 0
-                restitution: 0
-
-                onBeginContact: {
-                    var target = other.getBody().target
-                    var victim = null
-                    if (target.gameItem) {
-                        // If we have a collision with an item
-                        switch (target.itemType) {
-                        case GameItem.TypeChest:
-                            console.log("Bullet collision with chest")
-                            bulletItem.body.linearVelocity = Qt.point(0, 0)
-                            dissapearAnimation.start()
-                            break;
-                        case GameItem.TypeTree:
-                            console.log("Bullet collision with tree")
-                            bulletItem.body.linearVelocity = Qt.point(0, 0)
-                            dissapearAnimation.start()
-                            break;
-                        default:
-                            break
-                        }
-                        return
-                    } else {
-                        bulletItem.body.linearVelocity = Qt.point(0, 0)
-                        dissapearAnimation.start()
-                    }
-
-                    if (target.enemy)
-                        victim = target.enemy
-                    else if (target.character)
-                        victim = target.character
-                    else
-                        return
-
-                    console.log("Bullet collision " + bulletItem.shooter + " --> " + victim )
-                    Game.world.performShootImpact(bulletItem.shooter, victim, damage)
-                    bulletItem.destroy()
-                }
-            }
-
-            FlameItem {
-                id: flameItem
-                anchors.fill: parent
-                rotation: -90
-                enabled: debugControls.flamesEnabled
-            }
-
-            Image {
-                id: arrowImage
-                anchors.fill: parent
-                source: dataDirectory + "/images/items/firearms/arrow.png"
-            }
-
-            PropertyAnimation {
-                id: dissapearAnimation
-                target: bulletItem
-                property: "opacity"
-                to: 0
-                duration: 1000
-                loops: 1
-
-                onRunningChanged: {
-                    if (running) {
-                        flameItem.turbulence = true
-                    } else {
-                        bulletItem.destroy()
-                    }
-                }
-            }
-        }
     }
 }

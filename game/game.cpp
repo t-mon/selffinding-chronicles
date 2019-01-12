@@ -28,6 +28,11 @@ GameSettings *Game::settings() const
     return m_settings;
 }
 
+GameMapEditor *Game::mapEditor() const
+{
+    return m_mapEditor;
+}
+
 bool Game::running() const
 {
     return m_running;
@@ -88,6 +93,7 @@ Game::Game(QObject *parent) :
     QObject(parent),
     m_world(new GameWorld(this)),
     m_settings(new GameSettings(this)),
+    m_mapEditor(new GameMapEditor(this)),
     m_running(false)
 {
 

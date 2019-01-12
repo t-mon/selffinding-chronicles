@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -28,7 +28,7 @@ GamePage {
         GameButton {
             id: playButton
             Layout.fillWidth: true
-            text: "Play"
+            text: qsTr("Play")
             font.pixelSize: app.largeFont
             onClicked: {
                 console.log("Play pressed")
@@ -45,16 +45,25 @@ GamePage {
         GameButton {
             id: settingsButton
             Layout.fillWidth: true
-            text: "Settings"
+            text: qsTr("Settings")
             onClicked: {
                 pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
             }
         }
 
         GameButton {
+            id: mapEditorButton
+            Layout.fillWidth: true
+            text: qsTr("Map editor")
+            onClicked: {
+                pageStack.push(Qt.resolvedUrl("MapEditor.qml"))
+            }
+        }
+
+        GameButton {
             id: conversationCreatorButton
             Layout.fillWidth: true
-            text: "Conversation creator"
+            text: qsTr("Conversation creator")
             onClicked: {
                 pageStack.push(Qt.resolvedUrl("ConversationCreatorPage.qml"))
             }
@@ -63,7 +72,7 @@ GamePage {
         GameButton {
             id: aboutButton
             Layout.fillWidth: true
-            text: "About"
+            text: qsTr("About")
             onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
         }
     }

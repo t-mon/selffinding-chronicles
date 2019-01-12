@@ -201,6 +201,12 @@ void GameWorld::performShootImpact(Character *attacker, Character *victim, int d
     victim->setHealth(victim->health() - damage);
 }
 
+void GameWorld::performBurnDamage(Character *victim, int damage)
+{
+    qCDebug(dcWorld()) << "Burn damage" << victim << damage;
+    victim->setHealth(victim->health() - damage);
+}
+
 void GameWorld::takeItem(GameItems *gameItems, GameItem *item)
 {
     qCDebug(dcWorld()) << "Move" << item << "to inventory";

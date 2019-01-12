@@ -88,12 +88,6 @@ public:
 
     Interaction interaction() const;
 
-    QList<QPoint> unaccessableMap();
-    void setUnaccessableMap(const QList<QPoint> unaccessableMap);
-
-    QList<QPoint> visibilityMap();
-    void setVisiblilityMap(const QList<QPoint> visiblilityMap);
-
     virtual void performInteraction() = 0;
 
     static QString interactionToString(const Interaction &interaction);
@@ -106,9 +100,6 @@ private:
     bool m_playerVisible = false;
     bool m_hidingPlayer = false;
     bool m_playerOnItem = false;
-
-    QList<QPoint> m_unaccessableMap;
-    QList<QPoint> m_visibilityMap;
 
 protected:
     Interaction m_interaction = InteractionNone;

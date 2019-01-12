@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import QtQuick.Particles 2.7
 
 import Chronicles 1.0
@@ -8,6 +8,10 @@ Item {
 
     property bool turbulence: false
     property bool enabled: true
+
+    property real angle: 270
+    property real angleVariation: 22
+    property real magnitude: 20
 
     ParticleSystem {
         anchors.fill: parent
@@ -54,9 +58,9 @@ Item {
             sizeVariation: 10
             acceleration: PointDirection { y: -40 }
             velocity: AngleDirection {
-                angle: 270
-                magnitude: 20
-                angleVariation: 22
+                angle: root.angle
+                magnitude: root.magnitude
+                angleVariation: root.angleVariation
                 magnitudeVariation: 5
             }
         }
@@ -76,9 +80,9 @@ Item {
             sizeVariation: 8
             acceleration: PointDirection { y: -40 }
             velocity: AngleDirection {
-                angle: 270
-                magnitude: 40
-                angleVariation: 22
+                angle: root.angle
+                magnitude: root.magnitude * 2
+                angleVariation: root.angleVariation
                 magnitudeVariation: 5
             }
         }
@@ -97,9 +101,9 @@ Item {
             sizeVariation: 12
             acceleration: PointDirection { y: -40 }
             velocity: AngleDirection {
-                angle: 270
-                magnitude: 40
-                angleVariation: 22
+                angle: root.angle
+                magnitude: root.magnitude * 2
+                angleVariation: root.angleVariation
                 magnitudeVariation: 5
             }
         }

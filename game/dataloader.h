@@ -18,7 +18,8 @@ public:
     explicit DataLoader() = default;
 
     static QList<GameItem *> loadGameItems(const QVariantList &itemsList, QObject *parent = nullptr);
-
+    static GameItem *loadGameItem(const QString &itemId, const QPoint &position, const QVariantMap &itemMap, QObject *parent = nullptr);
+    static GameItem *loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent = nullptr);
     // Create
     static PlantItem *createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static TreeItem *createTreeItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
@@ -30,7 +31,7 @@ public:
 
     // Load
     static QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
-    static QVariantMap loadJsonData(const QString &mapDataFileName);
+    static QVariantMap loadJsonData(const QString &dataFileName);
 
     // Convert
     static GameObject::Shape convertShapeString(const QString &shapeString);

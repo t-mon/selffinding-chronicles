@@ -1,7 +1,7 @@
 {
     "name": "Test character",
     "type": "character",
-    "imageName": "/images/characters/player.svg",
+    "imageName": "/images/characters/player-male.png",
     "geometry": {
         "width": 2,
         "height": 2,

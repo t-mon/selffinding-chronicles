@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.12
@@ -18,6 +18,18 @@ PhysicsItem {
     property real auraRadius: (character.auraRange + character.size.width / 2) * app.gridSize
     property real hitAttackRadius: root.width / 2 + 2 * app.gridSize // TODO: use range of current weapon
     property real hitAttackRadiusBase: root.width / 3
+
+    property bool burning: false
+
+    function inflame() {
+        if (flameFadeOutAnimation.running)
+            flameFadeOutAnimation.stop()
+
+        flameItem.opacity = 1
+        flameItem.visible = true
+        buringTimer.restart()
+        root.burning = true
+    }
 
     antialiasing: app.antialiasing
     bodyType: character.movable ? character.bodyType : GameObject.BodyTypeStatic
@@ -156,13 +168,13 @@ PhysicsItem {
         }
     ]
 
-    function getBulletX() {
-        var centerX = root.x + root.width / 2
+    function getBulletXOffset() {
+        var centerX = root.width / 2
         return (centerX + (root.width / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.cos(character.angle)) - app.gridSize / 4
     }
 
-    function getBulletY() {
-        var centerY = root.y + root.height / 2
+    function getBulletYOffset() {
+        var centerY = root.height / 2
         return (centerY + (root.height / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.sin(character.angle)) - app.gridSize / 4
     }
 
@@ -177,10 +189,29 @@ PhysicsItem {
         rotation: -root.rotation
 
         FlameItem {
+            id: flameItem
             anchors.fill: parent
-            enabled: false
-        }
+            enabled: root.burning
 
+            Timer {
+                id: buringTimer
+                interval: 5000
+                onTriggered: flameFadeOutAnimation.start()
+            }
+
+            PropertyAnimation {
+                id: flameFadeOutAnimation
+                duration: 2000
+                target: flameItem
+                property: "opacity"
+                loops: 1
+                to: 0
+                onFinished: {
+                    flameItem.visible = false
+                    root.burning = false
+                }
+            }
+        }
 
         Rectangle {
             id: frameWire
@@ -217,7 +248,7 @@ PhysicsItem {
             }
 
             Rectangle {
-                color: "gray"
+                color: "black"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
@@ -235,6 +266,14 @@ PhysicsItem {
         id: hitAttackTimer
         interval: 300 // TODO: depend on selected weapon
         repeat: false
+    }
+
+    Timer {
+        id: burnDamageTimer
+        interval: 1000
+        running: root.burning
+        repeat: true
+        onTriggered: Game.world.performBurnDamage(root.character, 2)
     }
 
     Connections {
@@ -361,7 +400,7 @@ PhysicsItem {
         radius: parent.width / 2
         color: "transparent"
         border.color: "red"
-        border.width: parent.width / 6
+        border.width: parent.width / 8
         opacity: 0
     }
 }

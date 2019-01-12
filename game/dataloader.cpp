@@ -13,37 +13,44 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList, QObje
 
     foreach (const QVariant &itemVariant, itemsList) {
         QVariantMap itemMap = itemVariant.toMap();
-        QVariantMap mapData = loadJsonData(itemMap.value("data").toString());
-
-        if (mapData.isEmpty()) {
-            qCWarning(dcMap()) << "The map data file" << itemMap.value("data").toString() << "does not contains any valid data.";
-            continue;
-        }
-
-        QString itemId = QString(QCryptographicHash::hash(itemMap.value("data").toString().toUtf8(), QCryptographicHash::Md5).toHex());
-        QPoint position = QPoint(itemMap.value("x", -1).toInt(), itemMap.value("y", -1).toInt());
-
-        QString itemTypeString = mapData.value("type").toString();
-        if (itemTypeString == "plant") {
-            gameItems.append(createPlantItem(itemId, mapData, position, parent));
-        } else if (itemTypeString == "weapon") {
-            gameItems.append(createWeaponItem(itemId, mapData, position, parent));
-        } else if (itemTypeString == "firearm") {
-            gameItems.append(createFirearmItem(itemId, mapData, position, parent));
-        } else if (itemTypeString == "tree") {
-            gameItems.append(createTreeItem(itemId, mapData, position, parent));
-        } else if (itemTypeString == "character") {
-            gameItems.append(createCharacterObject(itemId, mapData, position, parent));
-        } else if (itemTypeString == "enemy") {
-            gameItems.append(createEnemyObject(itemId, mapData, position, parent));
-        } else if (itemTypeString == "chest") {
-            gameItems.append(createChestItem(itemId, mapData, position, parent));
-        } else {
-            qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
-        }
+        GameItem *gameItem = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
+        gameItem->setPosition(QPoint(itemMap.value("x").toInt(), itemMap.value("y").toInt()));
+        gameItems.append(gameItem);
     }
 
     return gameItems;
+}
+
+GameItem *DataLoader::loadGameItem(const QString &itemId, const QPoint &position, const QVariantMap &itemMap, QObject *parent)
+{
+    QString itemTypeString = itemMap.value("type").toString().toLower();
+
+    if (itemTypeString == "plant") {
+        return createPlantItem(itemId, itemMap, position, parent);
+    } else if (itemTypeString == "weapon") {
+        return createWeaponItem(itemId, itemMap, position, parent);
+    } else if (itemTypeString == "firearm") {
+        return createFirearmItem(itemId, itemMap, position, parent);
+    } else if (itemTypeString == "tree") {
+        return createTreeItem(itemId, itemMap, position, parent);
+    } else if (itemTypeString == "character") {
+        return createCharacterObject(itemId, itemMap, position, parent);
+    } else if (itemTypeString == "enemy") {
+        return createEnemyObject(itemId, itemMap, position, parent);
+    } else if (itemTypeString == "chest") {
+        return createChestItem(itemId, itemMap, position, parent);
+    } else {
+        qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
+    }
+
+    return nullptr;
+}
+
+GameItem *DataLoader::loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent)
+{
+    QVariantMap itemMap = loadJsonData(resourcePath);
+    QString itemId = QString(QCryptographicHash::hash(resourcePath.toUtf8(), QCryptographicHash::Md5).toHex());
+    return loadGameItem(itemId, QPoint(-1, -1), itemMap, parent);
 }
 
 PlantItem *DataLoader::createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
@@ -187,6 +194,7 @@ Character *DataLoader::createCharacterObject(const QString &itemId, const QVaria
     Character *character = new Character(parent);
     character->setItemId(itemId);
     character->setName(description.value("name").toString());
+    character->setImageName(description.value("imageName").toString());
     character->setPosition(position);
     character->setSize(itemSize);
 
@@ -312,11 +320,11 @@ QList<QPoint> DataLoader::loadFieldMap(const QVariantList &fieldMap)
     return pointList;
 }
 
-QVariantMap DataLoader::loadJsonData(const QString &mapDataFileName)
+QVariantMap DataLoader::loadJsonData(const QString &dataFileName)
 {
-    QFile mapDataFile(mapDataFileName);
+    QFile mapDataFile(dataFileName);
     if (!mapDataFile.open(QFile::ReadOnly)) {
-        qCWarning(dcMap()) << "Could not open map data file" << mapDataFileName << "for reading.";
+        qCWarning(dcMap()) << "Could not open map data file" << dataFileName << "for reading.";
         return QVariantMap();
     }
 

@@ -41,5 +41,7 @@
         <file>shadereffects/wobble.frag</file>
         <file>shadereffects/+hlsl/wobble.frag</file>
         <file>components/DebugControls.qml</file>
+        <file>gameitems/BulletItem.qml</file>
+        <file>MapEditor.qml</file>
     </qresource>
 </RCC>

@@ -10,12 +10,14 @@
 
 #include "gameworld.h"
 #include "gamesettings.h"
+#include "gamemapeditor.h"
 
 class Game : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(GameWorld *world READ world CONSTANT)
     Q_PROPERTY(GameSettings *settings READ settings CONSTANT)
+    Q_PROPERTY(GameMapEditor *mapEditor READ mapEditor CONSTANT)
     Q_PROPERTY(bool running READ running WRITE setRunning NOTIFY runningChanged)
     Q_PROPERTY(bool debugging READ debugging WRITE setDebugging NOTIFY debuggingChanged)
 
@@ -25,6 +27,7 @@ public:
 
     GameWorld *world() const;
     GameSettings *settings() const;
+    GameMapEditor *mapEditor() const;
 
     bool running() const;
     void setRunning(const bool &running);
@@ -41,6 +44,8 @@ private:
 
     GameWorld *m_world = nullptr;
     GameSettings *m_settings = nullptr;
+    GameMapEditor *m_mapEditor = nullptr;
+
     quint32 m_currentTimer = 0;
 
     bool m_running = false;
