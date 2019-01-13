@@ -32,9 +32,11 @@
 #include "conversation/conversationitem.h"
 #include "conversation/conversationitems.h"
 
+#ifndef ANDROID
 static const char *const normal = "\033[0m";
 static const char *const warning = "\e[33m";
 static const char *const error = "\e[31m";
+#endif
 
 static QHash<QString, bool> s_loggingFilters;
 
@@ -111,7 +113,7 @@ int main(int argc, char *argv[])
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("World", true);
-    s_loggingFilters.insert("Character", true);
+    s_loggingFilters.insert("Character", false);
     s_loggingFilters.insert("Settings", true);
     s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("Map", false);
@@ -173,7 +175,6 @@ int main(int argc, char *argv[])
         qWarning() << dataDirectory.path() << "does not exist.";
         exit(-1);
     }
-
 
     engine.rootContext()->setContextProperty("dataDirectory", "file://" + dataDirectory.absolutePath());
 #endif

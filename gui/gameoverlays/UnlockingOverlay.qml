@@ -17,69 +17,96 @@ GameOverlayItem {
         opacity: 0.4
     }
 
-    ColumnLayout {
+    Item {
         anchors.fill: parent
-        anchors.margins: app.margins
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        anchors.margins: app.gridSize * 3
 
-            ColumnLayout {
-                anchors.fill: parent
-
-                GameLabel {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    text: qsTr("Unlocking chest")
-                    font.pixelSize: app.largeFont
-                    color: "white"
-                }
+        Rectangle {
+            anchors.fill: parent
+            color: "#55000000"
+            radius: app.gridSize
+        }
 
 
-                GameLabel {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    text: chestItem ? chestItem.unlockProgress : ""
-                    color: "white"
-                }
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: app.margins
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: app.gridSize * 3
-                    radius: app.gridSize
-                    color: "black"
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                    ProgressBar {
-                        anchors.centerIn: parent
-                        from: 0
-                        to: 100
-                        value: chestItem ? chestItem.unlockProgress : 0
+                ColumnLayout {
+                    anchors.fill: parent
+
+                    GameLabel {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        text: qsTr("Unlocking chest")
+                        font.pixelSize: app.largeFont
+                        color: "white"
+                    }
+
+                    GameLabel {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        text: chestItem ? chestItem.unlockProgress : ""
+                        color: "white"
+                    }
+
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: app.gridSize * 3
+
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: app.margins
+
+                            GameButton {
+                                Layout.fillHeight: true
+                                Layout.preferredWidth: height
+                                visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen
+                                text: qsTr("L")
+                                onClicked: Game.world.unlockLeftClicked()
+                            }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                radius: app.gridSize
+                                color: "black"
+
+                                ProgressBar {
+                                    anchors.centerIn: parent
+                                    from: 0
+                                    to: 100
+                                    value: chestItem ? chestItem.unlockProgress : 0
+                                }
+                            }
+
+                            GameButton {
+                                Layout.fillHeight: true
+                                Layout.preferredWidth: height
+                                visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen
+                                text: qsTr("R")
+                                onClicked: Game.world.unlockRightClicked()
+                            }
+
+                        }
                     }
                 }
             }
-        }
 
-        Item {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: root.width * 2 / 3
-            Layout.preferredHeight: app.gridSize * 3
-
-            RowLayout {
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                GameButton {
-                    Layout.fillWidth: true
-                    text: qsTr("Give up")
-                    onClicked: { Game.world.giveUpUnlocking() }
-                }
+            GameButton {
+                Layout.fillWidth: true
+                //Layout.preferredHeight: app.gridSize * 2
+                text: qsTr("Give up")
+                onClicked: { Game.world.giveUpUnlocking() }
             }
 
-            //Rectangle {anchors.fill: parent; color: "blue" }
         }
     }
-
-
 }

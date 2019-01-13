@@ -172,6 +172,22 @@ void GameWorld::inventoryClicked()
     onInventoryClicked();
 }
 
+void GameWorld::unlockLeftClicked()
+{
+    if (!m_currentChestItem)
+        return;
+
+    onLeftClicked();
+}
+
+void GameWorld::unlockRightClicked()
+{
+    if (!m_currentChestItem)
+        return;
+
+    onRightClicked();
+}
+
 void GameWorld::loadMap(const QString &fileName)
 {
     setState(StateLoading);

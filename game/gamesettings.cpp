@@ -115,21 +115,27 @@ void GameSettings::loadSettings()
 
     m_settings->beginGroup("Game");
 
+#ifdef ANDROID
+    m_controlMode = static_cast<PlayerController::ControlMode>(m_settings->value("controlMode", PlayerController::ControlModeTouchscreen).toInt());
+#else
     m_controlMode = static_cast<PlayerController::ControlMode>(m_settings->value("controlMode", PlayerController::ControlModeKeyBoard).toInt());
+#endif
     emit controlModeChanged(m_controlMode);
 
     m_settings->beginGroup("window");
-
-
-
-    m_visibility = static_cast<QQuickWindow::Visibility>(m_settings->value("visibility", QQuickWindow::Windowed).toInt());
-    emit visibilityChanged(m_visibility);
 
     m_windowSize = m_settings->value("size", QSize(800, 600)).toSize();
     emit windowSizeChanged(m_windowSize);
 
     m_windowPosition = m_settings->value("position", QPoint(0, 0)).toPoint();
     emit windowPositionChanged(m_windowPosition);
+
+#ifdef ANDROID
+    m_visibility = static_cast<QQuickWindow::Visibility>(m_settings->value("visibility", QQuickWindow::FullScreen).toInt());
+#else
+    m_visibility = static_cast<QQuickWindow::Visibility>(m_settings->value("visibility", QQuickWindow::Windowed).toInt());
+#endif
+    emit visibilityChanged(m_visibility);
 
     m_settings->endGroup(); // window
     m_settings->endGroup(); // Game

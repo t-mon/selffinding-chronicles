@@ -91,6 +91,8 @@ public:
     Q_INVOKABLE void pauseGame();
     Q_INVOKABLE void resumeGame();
     Q_INVOKABLE void inventoryClicked();
+    Q_INVOKABLE void unlockLeftClicked();
+    Q_INVOKABLE void unlockRightClicked();
 
     Q_INVOKABLE void loadMap(const QString &fileName);
 
