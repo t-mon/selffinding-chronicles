@@ -195,6 +195,16 @@ GamePage {
                 }
             }
 
+            WeatherController {
+                id: weatherController
+                anchors.left: parent.left
+                anchors.right: parent.right
+                width: Game.world.size.width  * app.gridSize
+                height: Game.world.size.height  * app.gridSize
+                raining: debugControls.rainingEnabled
+                snowing: debugControls.snowingEnabled
+            }
+
             DebugDraw {
                 id: debugDraw
                 world: physicsWorld
@@ -211,6 +221,21 @@ GamePage {
             enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
             onMouseXChanged: calculateAngle()
             onMouseYChanged: calculateAngle()
+        }
+
+        // Game overlays
+        DefaultGameOverlay{
+            id: defaultGameOverlay
+            anchors.fill: parent
+            visible: (Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse ||
+                      Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoard) && sceneItem.gameOverlayVisible
+
+        }
+
+        TouchscreenGameOverlay {
+            id: touchScreenGameOverlay
+            anchors.fill: parent
+            visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen && sceneItem.gameOverlayVisible
         }
 
         DebugControls {
@@ -230,21 +255,6 @@ GamePage {
                     stopDruggedAnimation.start()
                 }
             }
-        }
-
-        // Game overlays
-        DefaultGameOverlay{
-            id: defaultGameOverlay
-            anchors.fill: parent
-            visible: (Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse ||
-                      Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoard) && sceneItem.gameOverlayVisible
-
-        }
-
-        TouchscreenGameOverlay {
-            id: touchScreenGameOverlay
-            anchors.fill: parent
-            visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen && sceneItem.gameOverlayVisible
         }
 
         // Game menu overlays

@@ -9,6 +9,8 @@ Item {
 
     property bool drugged: false
     property bool flamesEnabled: false
+    property bool rainingEnabled: false
+    property bool snowingEnabled: false
 
     ColumnLayout {
         anchors.fill: parent
@@ -26,6 +28,19 @@ Item {
             text: root.flamesEnabled ? "Flames OFF" : "Flames ON"
             onClicked: root.flamesEnabled = !root.flamesEnabled
         }
-    }
 
+        GameButton {
+            id: rainingEnabledButton
+            Layout.fillWidth: true
+            text: root.rainingEnabled ? "Raining OFF" : "Raining ON"
+            onClicked: root.rainingEnabled = !root.rainingEnabled
+        }
+
+        GameButton {
+            id: snowingEnabledButton
+            Layout.fillWidth: true
+            text: root.snowingEnabled ? "Snowing OFF" : "Snowing ON"
+            onClicked: root.snowingEnabled = !root.snowingEnabled
+        }
+    }
 }
