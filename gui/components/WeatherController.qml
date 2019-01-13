@@ -10,6 +10,7 @@ Item {
 
     property bool snowing: false
     property bool raining: false
+    property bool turbulence: false
 
     onRainingChanged: {
         if (raining) {
@@ -61,6 +62,26 @@ Item {
             to: 0
             onRunningChanged: if (!running) rainParticleSystem.running = false
         }
+
+        Turbulence {
+            id: turb
+            anchors.fill: parent
+            enabled: root.turbulence
+            height: app.gridSize * 20
+            width: app.gridSize * 20
+            x: 0
+            y: 0
+            strength: 200
+
+            NumberAnimation on strength{
+                loops: NumberAnimation.Infinite
+                duration: 3000
+                from: 100
+                to: 300
+                easing.type: Easing.InOutBounce
+            }
+        }
+
 
         ImageParticle {
             id: raindropParticle
@@ -118,6 +139,15 @@ Item {
             onRunningChanged: if (!running) snowParticleSystem.running = false
         }
 
+        Wander {
+            id: wanderer
+            system: snowParticleSystem
+            affectedParameter: Wander.Position
+            anchors.fill: parent
+            xVariance: parent.width
+            pace: 10
+        }
+
         ImageParticle {
             id: snowflakeParticle
             system: snowParticleSystem
@@ -132,10 +162,12 @@ Item {
             emitRate: 1000
             lifeSpan: 3000
             size: 8
-            sizeVariation: 2
+            sizeVariation: 6
             velocity: PointDirection {
                 y: 10
                 yVariation: 8
+//                x: 5
+//                xVariation: 2
             }
             acceleration: PointDirection { y: 3 }
         }

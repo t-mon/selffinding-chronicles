@@ -99,6 +99,37 @@ GameItemsProxy *Character::inventoryProxy() const
     return m_inventoryProxy;
 }
 
+WeaponItem *Character::weapon() const
+{
+    return m_weapon;
+}
+
+void Character::setWeapon(WeaponItem *weapon)
+{
+    if (m_weapon == weapon)
+        return;
+
+    qCDebug(dcCharacter()) << name() << "weapon changed" << weapon;
+    m_weapon = weapon;
+    emit weaponChanged(m_weapon);
+}
+
+FirearmItem *Character::firearm() const
+{
+    return m_firearm;
+}
+
+void Character::setFirearm(FirearmItem *firearm)
+{
+    if (m_firearm == firearm)
+        return;
+
+    qCDebug(dcCharacter()) << name() << "firearm changed" << firearm;
+
+    m_firearm = firearm;
+    emit firearmChanged(m_firearm);
+}
+
 Character::Heading Character::heading() const
 {
     return m_heading;
@@ -114,7 +145,7 @@ void Character::setAngle(const qreal &angle)
     if (m_angle == angle)
         return;
 
-    qCDebug(dcCharacter()) << name() << "angle changed" << angle;
+    //qCDebug(dcCharacter()) << name() << "angle changed" << angle;
     m_angle = angle;
     emit angleChanged(m_angle);
 

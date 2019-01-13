@@ -53,6 +53,26 @@ GameOverlayItem {
             id: spacingItem
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            Row {
+                id: equipmentRow
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: app.margins
+                ContentItem {
+                    id: weaponItem
+                    item: Game.world.player.weapon
+                    width: app.menuItemSize
+                    height: width
+                }
+
+                ContentItem {
+                    id: firearmItem
+                    item: Game.world.player.firearm
+                    width: app.menuItemSize
+                    height: width
+                }
+            }
         }
 
         Item {
@@ -87,13 +107,39 @@ GameOverlayItem {
 
                     GameButton {
                         Layout.fillWidth: true
-                        text: "Use"
-                        onClicked: console.log("Use clicked")
+                        enabled: inventoryContentItem.selectedItem
+                        text: {
+                            if (!inventoryContentItem.selectedItem)
+                                return qsTr("Use");
+
+                            switch (inventoryContentItem.selectedItem.itemType) {
+                            case GameItem.TypeWeapon:
+                            case GameItem.TypeFirearm:
+                                return qsTr("Arm");
+                            default:
+                                return qsTr("Use");
+                            }
+                        }
+                        onClicked: {
+                            console.log("Use clicked for", inventoryContentItem.selectedItem, inventoryContentItem.selectedItem.itemTypeName)
+                            switch (inventoryContentItem.selectedItem.itemType) {
+                            case GameItem.TypeWeapon:
+                                Game.world.player.weapon = inventoryContentItem.selectedItem
+                                break;
+                            case GameItem.TypeFirearm:
+                                Game.world.player.firearm = inventoryContentItem.selectedItem
+                                break;
+                            default:
+                                console.log("Not implemented yet for item", inventoryContentItem.selectedItem.itemTypeName)
+                                break;
+                            }
+                        }
                     }
 
                     GameButton {
                         Layout.fillWidth: true
                         text: "Drop"
+                        enabled: false
                         onClicked: console.log("Drop clicked")
                     }
 

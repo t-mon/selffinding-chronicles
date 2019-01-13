@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
-import QtGraphicalEffects 1.0
 
 import Chronicles 1.0
 
@@ -14,6 +13,9 @@ Item {
     property bool selected: false
     property int itemCount: 0
 
+    property bool equipped: (Game.world.player.weapon && item ? item.itemId === Game.world.player.weapon.itemId : false) ||
+                            (Game.world.player.firearm && item ? item.itemId === Game.world.player.firearm.itemId : false)
+
     //onItemCountChanged: console.log("Item count changed for", (item ? item.name : ""), itemCount)
 
     signal clicked()
@@ -22,10 +24,10 @@ Item {
         id: itemRectangle
         anchors.fill: parent
         anchors.margins: app.margins / 2
-        border.color: root.selected ? "white" : "gray"
-        border.width: app.borderWidth
-        color: root.selected ? "green" : "gray"
-        opacity: 0.7
+        border.color: root.equipped ? "red" : "black"
+        border.width: root.equipped ? app.borderWidth * 2 : app.borderWidth
+        color: root.selected ? "steelblue" : "white"
+        opacity: 0.5
     }
 
     Image {

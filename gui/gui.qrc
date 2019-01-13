@@ -49,5 +49,6 @@
         <file>components/GameOverlayButton.qml</file>
         <file>components/JoystickControllerItem.qml</file>
         <file>components/WeatherController.qml</file>
+        <file>components/EquipmentContentItem.qml</file>
     </qresource>
 </RCC>

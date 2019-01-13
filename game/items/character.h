@@ -4,6 +4,8 @@
 #include <QObject>
 
 #include "../gameobject.h"
+#include "weaponitem.h"
+#include "firearmitem.h"
 #include "gameitemsproxy.h"
 
 // I know...a person is not an item, but...yeah :)
@@ -13,6 +15,9 @@ class Character : public GameItem
     Q_OBJECT
     Q_PROPERTY(GameItems *inventory READ inventory CONSTANT)
     Q_PROPERTY(GameItemsProxy *inventoryProxy READ inventoryProxy CONSTANT)
+    Q_PROPERTY(WeaponItem *weapon READ weapon WRITE setWeapon NOTIFY weaponChanged)
+    Q_PROPERTY(FirearmItem *firearm READ firearm WRITE setFirearm NOTIFY firearmChanged)
+
     Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
     Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
@@ -71,6 +76,12 @@ public:
 
     GameItems *inventory() const;
     GameItemsProxy *inventoryProxy() const;
+
+    WeaponItem *weapon() const;
+    void setWeapon(WeaponItem *weapon);
+
+    FirearmItem *firearm() const;
+    void setFirearm(FirearmItem *firearm);
 
     Heading heading() const;
 
@@ -134,6 +145,9 @@ private:
     GameItems *m_inventory = nullptr;
     GameItemsProxy *m_inventoryProxy = nullptr;
 
+    WeaponItem *m_weapon = nullptr;
+    FirearmItem *m_firearm = nullptr;
+
     Heading m_heading = HeadingRight;
     int m_auraRange = 3;
     qreal m_angle = 0;
@@ -163,6 +177,9 @@ private:
     void setHeading(Character::Heading heading);
 
 signals:
+    void weaponChanged(WeaponItem *weapon);
+    void firearmChanged(FirearmItem *firearm);
+
     void headingChanged(Heading heading);
     void angleChanged(const qreal &angle);
     void auraRangeChanged(const int &auraRange);

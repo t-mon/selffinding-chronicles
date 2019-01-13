@@ -17,23 +17,25 @@ Item {
     signal clicked()
 
     Rectangle {
+        id: backgroundRectanlge
         anchors.fill: parent
         anchors.margins: app.margins / 2
-        border.color: root.selected ? "white" : "gray"
+        border.color: root.selected ? "white" : "black"
         border.width: app.borderWidth
-        color: root.selected ? "green" : "gray"
+        color: root.selected ? "steelblue" : "white"
+        opacity: 0.4
+    }
 
-        Item {
-            anchors.centerIn: parent
-            height: parent.height
-            width: height
+    Item {
+        anchors.centerIn: backgroundRectanlge
+        height: backgroundRectanlge.height
+        width: height
 
-            Image {
-                id: tabImage
-                anchors.fill: parent
-                anchors.margins: app.margins / 2
-                source: dataDirectory + root.imageName
-            }
+        Image {
+            id: tabImage
+            anchors.fill: parent
+            anchors.margins: app.margins / 2
+            source: dataDirectory + root.imageName
         }
     }
 

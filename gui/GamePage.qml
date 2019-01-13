@@ -95,7 +95,7 @@ GamePage {
 
                     function shootBulletObject(bulletObject) {
                         var bulletStartPoint = Qt.point(playerItem.x + playerItem.getBulletXOffset(),  playerItem.y + playerItem.getBulletYOffset())
-                        bulletObject.damage = 10
+                        bulletObject.damage = playerItem.character.firearm.damage
                         bulletObject.width = app.gridSize / 2
                         bulletObject.height = bulletObject.width
                         bulletObject.rotation = playerItem.getBulletAngle()
@@ -104,12 +104,17 @@ GamePage {
                         bulletObject.z = Map.Layer2Normal
                         bulletObject.startPositionX = bulletStartPoint.x
                         bulletObject.startPositionY = bulletStartPoint.y
-                        bulletObject.shootRange = 20
+                        bulletObject.shootRange = playerItem.character.firearm.range
                         bulletObject.fireArrow = debugControls.flamesEnabled
                         bulletObject.body.linearVelocity = Qt.point(app.gridSize * Math.cos(character.angle), app.gridSize * Math.sin(character.angle))
                     }
 
                     function shoot() {
+                        if (!playerItem.character.firearm) {
+                            console.log(character.name + "can not shoot. No firearm selected.")
+                            return;
+                        }
+
                         console.log(character.name + " SHOOOT!")
                         var component = Qt.createComponent("gameitems/BulletItem.qml");
                         var bulletIncubator = component.incubateObject(worldItem, { shooter: playerItem.character } )
@@ -203,13 +208,14 @@ GamePage {
                 height: Game.world.size.height  * app.gridSize
                 raining: debugControls.rainingEnabled
                 snowing: debugControls.snowingEnabled
+                turbulence: debugControls.turbulenceEnabled
             }
 
             DebugDraw {
                 id: debugDraw
                 world: physicsWorld
                 opacity: 0.4
-                visible: Game.debugging
+                visible: debugControls.physicsDebug
             }
         }
 
@@ -240,12 +246,12 @@ GamePage {
 
         DebugControls {
             id: debugControls
-            anchors.right: parent.right
-            anchors.rightMargin: app.margins
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: app.margins
+
             visible: Game.debugging
-            width: app.gridSize * 5
+            width: app.gridSize * 8
             onDruggedChanged: {
                 if (drugged) {
                     druggedShader.visible = true
