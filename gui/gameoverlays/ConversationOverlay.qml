@@ -6,7 +6,7 @@ import Chronicles 1.0
 
 import "../components"
 
-GameOverlayPage {
+GameOverlayItem {
     id: root
 
     property Conversation conversation: Game.world.currentConversation
@@ -24,6 +24,7 @@ GameOverlayPage {
             PropertyChanges { target: textItemPlayer; visible: true }
             PropertyChanges { target: textItemCharacter; visible: false }
             PropertyChanges { target: choiseItem; visible: false }
+            PropertyChanges { target: touchscreenMousArea; visible: true }
         },
         State {
             name: "characterTalking"
@@ -31,6 +32,7 @@ GameOverlayPage {
             PropertyChanges { target: textItemPlayer; visible: false }
             PropertyChanges { target: textItemCharacter; visible: true }
             PropertyChanges { target: choiseItem; visible: false }
+            PropertyChanges { target: touchscreenMousArea; visible: true }
         },
         State {
             name: "choise"
@@ -38,8 +40,8 @@ GameOverlayPage {
             PropertyChanges { target: textItemPlayer; visible: false }
             PropertyChanges { target: textItemCharacter; visible: false }
             PropertyChanges { target: choiseItem; visible: true }
+            PropertyChanges { target: touchscreenMousArea; visible: false }
         }
-
     ]
 
     Item {
@@ -52,8 +54,7 @@ GameOverlayPage {
 
         Rectangle {
             anchors.fill: parent
-            opacity: 0.6
-            color: "steelblue"
+            color: "#55000000"
             radius: app.gridSize
         }
 
@@ -86,7 +87,7 @@ GameOverlayPage {
                 text: conversation ? conversation.conversationItem.visibleText : ""
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.PlainText
-                font.family: "Monospace"
+                font.family: app.fontMonoFamily
                 color: "white"
             }
         }
@@ -102,8 +103,7 @@ GameOverlayPage {
 
         Rectangle {
             anchors.fill: parent
-            opacity: 0.6
-            color: "yellow"
+            color: "#55000000"
             radius: app.gridSize
         }
 
@@ -136,11 +136,17 @@ GameOverlayPage {
                 text: conversation ? conversation.conversationItem.visibleText : ""
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.PlainText
-                font.family: "Monospace"
+                font.family: app.fontMonoFamily
                 color: "white"
             }
         }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: conversation.confirmPressed()
+        }
     }
+
 
     Item {
         id: choiseItem
@@ -152,8 +158,7 @@ GameOverlayPage {
 
         Rectangle {
             anchors.fill: parent
-            opacity: 0.6
-            color: "gray"
+            color: "#55000000"
             radius: app.gridSize
         }
 
@@ -188,8 +193,8 @@ GameOverlayPage {
                     anchors.leftMargin: app.margins
                     anchors.verticalCenter: parent.verticalCenter
                     textFormat: Text.PlainText
-                    font.family: "Monospace"
-                    color: choiseDelegate.ListView.isCurrentItem ? "black" : "#333333"
+                    font.family: app.fontMonoFamily
+                    color: choiseDelegate.ListView.isCurrentItem ? "black" : "white"
                 }
             }
         }
@@ -200,8 +205,15 @@ GameOverlayPage {
             anchors.margins: app.gridSize
             model: conversation ? conversation.conversationItem.choises : 0
             delegate: choiseComponent
-
             currentIndex: conversation ? conversation.conversationItem.currentChoiseIndex : 0
         }
+    }
+
+
+    MouseArea {
+        id: touchscreenMousArea
+        anchors.fill: parent
+        visible: false
+        onClicked: conversation.confirmPressed()
     }
 }

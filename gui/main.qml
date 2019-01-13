@@ -35,6 +35,7 @@ ApplicationWindow {
     property real delegateHeight: 60
 
     property string fontFamily: gameFont.name
+    property string fontMonoFamily: gameMonoFont.name
     property bool antialiasing: false
 
     property color backgroundColor: "#333333"
@@ -54,6 +55,11 @@ ApplicationWindow {
         id: gameFont
         //source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
         source: "/fonts/blackchancery/blkchcry.ttf"
+    }
+
+    FontLoader {
+        id: gameMonoFont
+        source: "/fonts/mono/DejaVuSansMono.ttf"
     }
 
     StackView {

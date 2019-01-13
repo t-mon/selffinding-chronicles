@@ -15,7 +15,7 @@
         "x": 1,
         "y": 2,
         "category": 16,
-        "collision": 32,
+        "collision": 160,
         "vertices": []
     }
 }

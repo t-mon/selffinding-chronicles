@@ -22,16 +22,17 @@ Item {
         id: itemRectangle
         anchors.fill: parent
         anchors.margins: app.margins / 2
-        border.color: "white"
+        border.color: root.selected ? "white" : "gray"
         border.width: app.borderWidth
-        color: root.selected ? "brown" : "gray"
+        color: root.selected ? "green" : "gray"
+        opacity: 0.7
+    }
 
-        Image {
-            id: itemImage
-            anchors.fill: parent
-            anchors.margins: parent.width / 8
-            source: root.item ? dataDirectory + root.item.imageName : ""
-        }
+    Image {
+        id: itemImage
+        anchors.fill: parent
+        anchors.margins: app.margins
+        source: root.item ? dataDirectory + root.item.imageName : ""
     }
 
     GameLabel {

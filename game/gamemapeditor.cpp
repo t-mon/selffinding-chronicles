@@ -22,7 +22,7 @@ void GameMapEditor::loadAvailableGameItems()
         QDir typeDirectory(gameDataPath + gameDataEntry);
         foreach (const QString &entry, typeDirectory.entryList()) {
             qCDebug(dcMapEditor()) << "          --> entry" << typeDirectory.path() + "/" + entry;
-            m_availableItems->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry));
+            m_availableItems->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry, this));
         }
     }
 }

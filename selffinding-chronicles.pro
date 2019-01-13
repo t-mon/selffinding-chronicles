@@ -1,14 +1,15 @@
-QT += qml quick
+QT += qml quick quickcontrols2 svg
 
 CONFIG += c++11
 
 RESOURCES += gui/gui.qrc \
-             data/data.qrc
+             gamedata/gamedata.qrc
 
 include(qml-box2d/box2d-static.pri)
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH = gui/*.qml
+QML_IMPORT_PATH =
+QML_FILES = $$PWD/gui/*.qml
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -71,3 +72,28 @@ SOURCES += game/main.cpp \
     game/items/enemy.cpp \
     game/items/firearmitem.cpp \
     game/gamemapeditor.cpp
+
+android {
+    message("Building android version")
+
+    QT += androidextras
+    DEFINES += QT_DEPRECATED_WARNINGS ANDROID
+
+    COMMON_DATA.path = /assets
+    COMMON_DATA.files = $$files($$PWD/data/*)
+    INSTALLS += COMMON_DATA
+
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/packaging/android
+
+    DISTFILES += \
+        $$ANDROID_PACKAGE_SOURCE_DIR/AndroidManifest.xml \
+        $$ANDROID_PACKAGE_SOURCE_DIR/gradle/wrapper/gradle-wrapper.jar \
+        $$ANDROID_PACKAGE_SOURCE_DIR/gradlew \
+        $$ANDROID_PACKAGE_SOURCE_DIR/res/values/libs.xml \
+        $$ANDROID_PACKAGE_SOURCE_DIR/build.gradle \
+        $$ANDROID_PACKAGE_SOURCE_DIR/gradle/wrapper/gradle-wrapper.properties \
+        $$ANDROID_PACKAGE_SOURCE_DIR/gradlew.bat
+
+}
+
+

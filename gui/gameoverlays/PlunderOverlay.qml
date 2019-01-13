@@ -6,7 +6,7 @@ import Chronicles 1.0
 
 import "../components"
 
-GameOverlayPage {
+GameOverlayItem {
     id: root
 
     Rectangle {
@@ -102,7 +102,7 @@ GameOverlayPage {
             Item {
                 id: playerInventoryItem
                 Layout.fillHeight: true
-                Layout.preferredWidth: app.gridSize * 15
+                Layout.preferredWidth: app.menuItemSize * 5 + app.margins
 
                 InventoryContentItem {
                     id: playerInventory

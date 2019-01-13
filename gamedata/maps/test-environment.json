@@ -1,9 +1,9 @@
 {
     "name": "Test world",
-    "width": 500,
-    "height": 500,
-    "playerStartX": 0,
-    "playerStartY": 0,
+    "width": 80,
+    "height": 50,
+    "playerStartX": 4,
+    "playerStartY": 4,
     "defaultField": {
         "accessable": true,
         "imageName": "/images/world/base/accessable.png"

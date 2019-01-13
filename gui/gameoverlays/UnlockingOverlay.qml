@@ -6,7 +6,7 @@ import Chronicles 1.0
 
 import "../components"
 
-GameOverlayPage {
+GameOverlayItem {
     id: root
 
     property ChestItem chestItem: Game.world.currentChestItem

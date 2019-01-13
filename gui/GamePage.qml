@@ -8,7 +8,7 @@ import Chronicles 1.0
 
 import "components"
 import "gameitems"
-import "gamepages"
+import "gameoverlays"
 import "physics"
 
 GamePage {
@@ -33,6 +33,8 @@ GamePage {
     Item {
         id: sceneItem
         anchors.fill: parent
+
+        property bool gameOverlayVisible: true
 
         // World flickble
         Flickable {
@@ -205,6 +207,7 @@ GamePage {
             id: screenMouseArea
             anchors.fill: parent
             hoverEnabled: true
+            visible: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
             enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
             onMouseXChanged: calculateAngle()
             onMouseYChanged: calculateAngle()
@@ -213,8 +216,11 @@ GamePage {
         DebugControls {
             id: debugControls
             anchors.right: parent.right
+            anchors.rightMargin: app.margins
             anchors.top: parent.top
-            width: app.gridSize * 6
+            anchors.topMargin: app.margins
+            visible: Game.debugging
+            width: app.gridSize * 5
             onDruggedChanged: {
                 if (drugged) {
                     druggedShader.visible = true
@@ -227,26 +233,47 @@ GamePage {
         }
 
         // Game overlays
-        InventoryPage {
+        DefaultGameOverlay{
+            id: defaultGameOverlay
+            anchors.fill: parent
+            visible: (Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse ||
+                      Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoard) && sceneItem.gameOverlayVisible
+
+        }
+
+        TouchscreenGameOverlay {
+            id: touchScreenGameOverlay
+            anchors.fill: parent
+            visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen && sceneItem.gameOverlayVisible
+        }
+
+        // Game menu overlays
+        InventoryOverlay {
             id: inventoryItem
             anchors.fill: parent
             opacity: 0
         }
 
-        ConversationPage {
+        ConversationOverlay {
             id: conversationItem
             anchors.fill: parent
             opacity: 0
         }
 
-        UnlockingPage {
+        UnlockingOverlay {
             id: unlockingItem
             anchors.fill: parent
             opacity: 0
         }
 
-        PlunderPage {
+        PlunderOverlay {
             id: plunderItem
+            anchors.fill: parent
+            opacity: 0
+        }
+
+        PauseMenuOverlay {
+            id: pauseMenuItem
             anchors.fill: parent
             opacity: 0
         }
@@ -256,66 +283,90 @@ GamePage {
             State {
                 name: "loadingState"
                 when: Game.world.state === GameWorld.StateLoading
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
                 name: "runningState"
                 when: Game.world.state === GameWorld.StateRunning
+                PropertyChanges { target: sceneItem; gameOverlayVisible: true }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
+
+                StateChangeScript {
+                    name: "runningState"
+                    script: {
+                        console.log("Reset joystick")
+                        touchScreenGameOverlay.reset()
+                    }
+                }
             },
             State {
                 name: "pausedState"
                 when: Game.world.state === GameWorld.StatePaused
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 1 }
             },
             State {
                 name: "conversationState"
                 when: Game.world.state === GameWorld.StateConversation
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 1 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
                 name: "inventoryState"
                 when: Game.world.state === GameWorld.StateInventory
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 1 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
                 name: "unlockingState"
                 when: Game.world.state === GameWorld.StateUnlocking
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 1 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
                 name: "tradeState"
                 when: Game.world.state === GameWorld.StateTrade
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
                 name: "plunderState"
                 when: Game.world.state === GameWorld.StatePlunder
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 1 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
             }
         ]
     }
@@ -334,6 +385,7 @@ GamePage {
         property real amplitude: 0.02
         property real frequency: 8
         property real time: 0
+
         NumberAnimation on time {
             id: shaderTimeAnimation
             loops: Animation.Infinite
@@ -354,7 +406,7 @@ GamePage {
         duration: 5000
         from: 0
         to: 0.02
-        onRunningChanged: if (!running) console.log("start drugged animation finished")
+        onRunningChanged: if (!running) console.log("Start drugged animation finished. Fully drugged ;)")
     }
 
     PropertyAnimation {
@@ -366,7 +418,7 @@ GamePage {
         to: 0
         onRunningChanged: {
             if (!running)  {
-                console.log("stop drugged animation finished")
+                console.log("Stop drugged animation finished. Clean again :)")
                 shaderTimeAnimation.stop()
                 druggedShader.visible = false
             }
@@ -377,16 +429,33 @@ GamePage {
         var worldWidth = Game.world.size.width * app.gridSize
         var worldHeight = Game.world.size.height * app.gridSize
 
-        // Check if we have to move the camera in x directon
-        if (Game.world.player.position.x * app.gridSize >= worldFlickable.width / 2) {
-            worldFlickable.contentX = Game.world.player.position.x * app.gridSize - worldFlickable.width / 2
+        var playerX = Game.world.player.position.x * app.gridSize
+        var playerY = Game.world.player.position.y * app.gridSize
+
+        // FIXME: do right border and bottom border
+        //        // Check if we have to move the camera in x directon
+        //        if (playerX >= worldFlickable.width / 2 && playerX <= worldWidth - worldFlickable.width / 2) {
+        //            // In the middle, move the camera
+        //            worldFlickable.contentX = playerX - worldFlickable.width / 2
+        //        } else if (playerX > worldWidth - worldFlickable.width / 2) {
+        //            // Right end
+        //            worldFlickable.contentX = worldWidth - worldFlickable.width
+        //        } else {
+        //            // Left end
+        //            worldFlickable.contentX = 0
+        //        }
+
+        // Check if we have to move the camera in y directon
+        if (playerX >= worldFlickable.width / 2) {
+            worldFlickable.contentX = playerX - worldFlickable.width / 2
         } else {
             worldFlickable.contentX = 0
         }
 
+
         // Check if we have to move the camera in y directon
-        if (Game.world.player.position.y * app.gridSize >= worldFlickable.height / 2) {
-            worldFlickable.contentY = Game.world.player.position.y * app.gridSize - worldFlickable.height / 2
+        if (playerY >= worldFlickable.height / 2) {
+            worldFlickable.contentY = playerY - worldFlickable.height / 2
         } else {
             worldFlickable.contentY = 0
         }

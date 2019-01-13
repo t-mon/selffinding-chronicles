@@ -37,6 +37,9 @@ public:
 
     Q_INVOKABLE QPointF velocityVector();
 
+    Q_INVOKABLE void clickPrimaryAction();
+    Q_INVOKABLE void clickSecondaryAction();
+
     QPointF delta();
 
 private:
@@ -54,6 +57,10 @@ private:
     bool m_secondaryActionPressed = false;
     bool m_inventoryPressed = false;
     bool m_shootPressed = false;
+
+    QPointF m_joystickVector;
+    qreal m_joystickVelocity = 0;
+    qreal m_joystickAngle = 0;
 
     void setForwardPressed(bool pressed);
     void setBackwardPressed(bool pressed);
@@ -87,6 +94,9 @@ signals:
     void secondaryActionClicked();
     void inventoryPressed();
     void shoot();
+
+public slots:
+    Q_INVOKABLE void onJoystickChanged(const QPointF &joystickVector, qreal velocity, qreal angle);
 
 };
 

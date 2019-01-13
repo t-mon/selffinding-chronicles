@@ -120,6 +120,8 @@ void GameSettings::loadSettings()
 
     m_settings->beginGroup("window");
 
+
+
     m_visibility = static_cast<QQuickWindow::Visibility>(m_settings->value("visibility", QQuickWindow::Windowed).toInt());
     emit visibilityChanged(m_visibility);
 

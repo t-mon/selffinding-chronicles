@@ -19,7 +19,9 @@ Item {
     Rectangle {
         anchors.fill: parent
         anchors.margins: app.margins / 2
-        color: root.selected ? "brown" : "gray"
+        border.color: root.selected ? "white" : "gray"
+        border.width: app.borderWidth
+        color: root.selected ? "green" : "gray"
 
         Item {
             anchors.centerIn: parent

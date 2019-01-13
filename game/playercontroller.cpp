@@ -128,6 +128,17 @@ QPointF PlayerController::velocityVector()
     return delta();
 }
 
+void PlayerController::clickPrimaryAction()
+{
+    emit primaryActionPressed();
+    emit primaryActionPressedChanged(true);
+}
+
+void PlayerController::clickSecondaryAction()
+{
+    emit shoot();
+}
+
 QPointF PlayerController::delta()
 {
     QPointF deltaOffset;
@@ -328,13 +339,31 @@ QPointF PlayerController::moveKeyBoardMouse()
         return QPointF();
     }
 
-    double deltaX = qRound(m_player->speed() * qCos(angle) * 10000.0) / 10000.0;
-    double deltaY = qRound(m_player->speed() * qSin(angle) * 10000.0) / 10000.0;
+    double deltaX = qRound((m_player->speed() / 5) * qCos(angle) * 10000.0) / 10000.0;
+    double deltaY = qRound((m_player->speed() / 5) * qSin(angle) * 10000.0) / 10000.0;
 
     return QPointF(deltaX, deltaY);
 }
 
 QPointF PlayerController::moveTouchscreen()
 {
-    return QPointF();
+    if (m_joystickVelocity == 0.0)
+        return QPoint(0, 0);
+
+
+    m_player->setAngle(m_joystickAngle);
+    if (m_joystickVelocity < 0.5)
+        return QPointF(0, 0);
+
+    double deltaX = qRound((m_player->speed() / 5) * qCos(m_joystickAngle) * 10000.0) / 10000.0;
+    double deltaY = qRound((m_player->speed() / 5) * qSin(m_joystickAngle) * 10000.0) / 10000.0;
+
+    return QPointF(deltaX, deltaY);
+}
+
+void PlayerController::onJoystickChanged(const QPointF &joystickVector, qreal velocity, qreal angle)
+{
+    m_joystickVector = joystickVector;
+    m_joystickVelocity = velocity;
+    m_joystickAngle = angle;
 }

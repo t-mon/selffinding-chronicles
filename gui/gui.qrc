@@ -12,16 +12,16 @@
         <file>components/GameLabel.qml</file>
         <file>components/InventoryTabButton.qml</file>
         <file>components/ContentItem.qml</file>
-        <file>gamepages/InventoryPage.qml</file>
+        <file>gameoverlays/InventoryOverlay.qml</file>
         <file>gameitems/CharacterItem.qml</file>
         <file>ConversationCreatorPage.qml</file>
-        <file>gamepages/ConversationPage.qml</file>
+        <file>gameoverlays/ConversationOverlay.qml</file>
         <file>components/GameButton.qml</file>
         <file>components/ItemDescription.qml</file>
         <file>components/GameTextField.qml</file>
         <file>components/GamePage.qml</file>
-        <file>gamepages/UnlockingPage.qml</file>
-        <file>gamepages/PlunderPage.qml</file>
+        <file>gameoverlays/UnlockingOverlay.qml</file>
+        <file>gameoverlays/PlunderOverlay.qml</file>
         <file>physics/PhysicsItem.qml</file>
         <file>physics/RectangleBoxBody.qml</file>
         <file>physics/BoxBody.qml</file>
@@ -36,12 +36,17 @@
         <file>components/GameBusyIndicator.qml</file>
         <file>components/CharacterDescription.qml</file>
         <file>components/ContentItemDescription.qml</file>
-        <file>gamepages/GameOverlayPage.qml</file>
+        <file>gameoverlays/GameOverlayItem.qml</file>
         <file>components/FlameItem.qml</file>
         <file>shadereffects/wobble.frag</file>
         <file>shadereffects/+hlsl/wobble.frag</file>
         <file>components/DebugControls.qml</file>
         <file>gameitems/BulletItem.qml</file>
         <file>MapEditor.qml</file>
+        <file>gameoverlays/PauseMenuOverlay.qml</file>
+        <file>gameoverlays/DefaultGameOverlay.qml</file>
+        <file>gameoverlays/TouchscreenGameOverlay.qml</file>
+        <file>components/GameOverlayButton.qml</file>
+        <file>components/JoystickControllerItem.qml</file>
     </qresource>
 </RCC>

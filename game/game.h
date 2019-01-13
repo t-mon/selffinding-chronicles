@@ -22,6 +22,12 @@ class Game : public QObject
     Q_PROPERTY(bool debugging READ debugging WRITE setDebugging NOTIFY debuggingChanged)
 
 public:
+    enum GamePlatform {
+        GamePlatformDesktop,
+        GamePlatformMobile
+    };
+    Q_ENUM(GamePlatform)
+
     static Game* instance();
     static QObject *qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
 

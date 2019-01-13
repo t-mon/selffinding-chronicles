@@ -16,6 +16,14 @@ Item {
         border.width: app.borderWidth
     }
 
+    GameLabel {
+        anchors.centerIn: parent
+        visible: !root.item
+        color: "white"
+        font.pixelSize: app.largeFont
+        text: qsTr("No item selected.")
+    }
+
     ColumnLayout {
         id: itemPropertyLayout
         spacing: app.margins / 2

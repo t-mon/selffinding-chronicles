@@ -88,7 +88,12 @@ public:
     bool loaded() const;
     bool loading() const;
 
+    Q_INVOKABLE void pauseGame();
+    Q_INVOKABLE void resumeGame();
+    Q_INVOKABLE void inventoryClicked();
+
     Q_INVOKABLE void loadMap(const QString &fileName);
+
     Q_INVOKABLE void giveUpUnlocking();
     Q_INVOKABLE void finishPlunder();
 

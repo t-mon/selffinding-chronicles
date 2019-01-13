@@ -157,6 +157,21 @@ bool GameWorld::loading() const
     return m_loading;
 }
 
+void GameWorld::pauseGame()
+{
+    setState(StatePaused);
+}
+
+void GameWorld::resumeGame()
+{
+    setState(StateRunning);
+}
+
+void GameWorld::inventoryClicked()
+{
+    onInventoryClicked();
+}
+
 void GameWorld::loadMap(const QString &fileName)
 {
     setState(StateLoading);
@@ -507,48 +522,54 @@ void GameWorld::onLoadingFinished()
 {
     qCDebug(dcWorld()) << "Loading map finished";
 
-    clearModel();
+    if (!m_loaded) {
 
-    qCDebug(dcWorld()) << "--> Initialize fields";
-    for (int x = m_currentViewOffset.x(); x < m_currentViewOffset.x() + m_size.width(); x++) {
-        for (int y = m_currentViewOffset.y(); y < m_currentViewOffset.y() + m_size.height(); y++) {
-            Field *field = m_map->getField(x, y);
-            field->setParent(this);
-            addField(field);
-        }
-    }
+        qCDebug(dcWorld()) << "Initialize visible items";
 
-    qCDebug(dcWorld()) << "--> Initialize items";
-    foreach (Field *field, fields()) {
-        foreach (GameItem *item, field->gameItems()->gameItems()) {
-            connect(item, &GameItem::playerVisibleChanged, this, &GameWorld::onItemPlayerVisibleChanged);
-            connect(item, &GameItem::playerOnItemChanged, this, &GameWorld::onItemPlayerOnItemChanged);
-            item->setParent(this);
+        clearModel();
 
-            if (item->itemType() == GameItem::TypeCharacter) {
-                m_characterItems->addGameItem(item);
-            } else if (item->itemType() == GameItem::TypeEnemy) {
-                m_enemyItems->addGameItem(item);
-                Enemy *enemy = qobject_cast<Enemy *>(item);
-                connect(enemy, &Enemy::killed, this, &GameWorld::onEnemyKilled);
-            } else {
-                m_gameItems->addGameItem(item);
+        qCDebug(dcWorld()) << "--> Initialize fields";
+        for (int x = m_currentViewOffset.x(); x < m_currentViewOffset.x() + m_size.width(); x++) {
+            for (int y = m_currentViewOffset.y(); y < m_currentViewOffset.y() + m_size.height(); y++) {
+                Field *field = m_map->getField(x, y);
+                field->setParent(this);
+                addField(field);
             }
         }
+
+        qCDebug(dcWorld()) << "--> Initialize items";
+        foreach (Field *field, fields()) {
+            foreach (GameItem *item, field->gameItems()->gameItems()) {
+                connect(item, &GameItem::playerVisibleChanged, this, &GameWorld::onItemPlayerVisibleChanged);
+                connect(item, &GameItem::playerOnItemChanged, this, &GameWorld::onItemPlayerOnItemChanged);
+                item->setParent(this);
+
+                if (item->itemType() == GameItem::TypeCharacter) {
+                    m_characterItems->addGameItem(item);
+                } else if (item->itemType() == GameItem::TypeEnemy) {
+                    m_enemyItems->addGameItem(item);
+                    Enemy *enemy = qobject_cast<Enemy *>(item);
+                    connect(enemy, &Enemy::killed, this, &GameWorld::onEnemyKilled);
+                } else {
+                    m_gameItems->addGameItem(item);
+                }
+            }
+        }
+
+        // Init stuff
+        setBoundingSize(QSize(15, 15));
+        m_currentViewOffset = QPoint(0, 0);
+
+        m_player->setPosition(m_map->playerStartPosition());
+        m_player->setName(Game::instance()->settings()->playerName());
+        m_playerController->setControlMode(Game::instance()->settings()->controlMode());
     }
 
-    // Init stuff
-    setBoundingSize(QSize(15, 15));
-    m_currentViewOffset = QPoint(0, 0);
-
-    m_player->setPosition(m_map->playerStartPosition());
-    m_player->setName(Game::instance()->settings()->playerName());
-    m_playerController->setControlMode(Game::instance()->settings()->controlMode());
+    setLoading(false);
+    setLoaded(true);
 
     doPlayerMovement();
     evaluatePlayerFocus();
-    setLoading(false);
-    setLoaded(true);
     setState(StateRunning);
 }
 

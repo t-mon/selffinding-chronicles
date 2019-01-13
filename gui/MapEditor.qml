@@ -8,7 +8,7 @@ import Chronicles 1.0
 
 import "components"
 import "gameitems"
-import "gamepages"
+import "gameoverlays"
 import "physics"
 
 GamePage {

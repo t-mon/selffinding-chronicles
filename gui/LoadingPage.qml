@@ -9,12 +9,19 @@ import "components"
 GamePage {
     id: root
 
+    Component.onCompleted: {
+        if (Game.world.loaded) {
+            console.log("Loading already finished")
+            pageStack.replace(root, Qt.resolvedUrl("GamePage.qml"))
+        }
+    }
+
     Connections {
         target: Game.world
         onLoadingChanged: {
             if (!loading) {
-                console.log("loading finished")
-                pageStack.push(Qt.resolvedUrl("GamePage.qml"), { replace: true })
+                console.log("Loading finished")
+                pageStack.replace(root, Qt.resolvedUrl("GamePage.qml"))
             }
         }
     }

@@ -18,7 +18,6 @@ GamePage {
         anchors.topMargin: app.margins
         text: "v " + gameVersion
         color: "white"
-
     }
 
     ColumnLayout {

@@ -6,7 +6,7 @@ import Chronicles 1.0
 
 import "../components"
 
-GameOverlayPage {
+GameOverlayItem {
     id: root
 
     Rectangle {
@@ -46,8 +46,6 @@ GameOverlayPage {
                     Layout.fillHeight: true
                     item: null
                 }
-
-
             }
         }
 
@@ -97,6 +95,13 @@ GameOverlayPage {
                         Layout.fillWidth: true
                         text: "Drop"
                         onClicked: console.log("Drop clicked")
+                    }
+
+                    GameButton {
+                        Layout.fillWidth: true
+                        visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen
+                        text: "Close"
+                        onClicked: Game.world.inventoryClicked()
                     }
                 }
             }
