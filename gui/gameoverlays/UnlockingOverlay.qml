@@ -11,12 +11,6 @@ GameOverlayItem {
 
     property ChestItem chestItem: Game.world.currentChestItem
 
-    Rectangle {
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.4
-    }
-
     Item {
         anchors.fill: parent
         anchors.margins: app.gridSize * 3

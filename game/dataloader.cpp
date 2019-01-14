@@ -14,7 +14,7 @@ QList<GameItem *> DataLoader::loadGameItems(const QVariantList &itemsList, QObje
     foreach (const QVariant &itemVariant, itemsList) {
         QVariantMap itemMap = itemVariant.toMap();
         GameItem *gameItem = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
-        gameItem->setPosition(QPoint(itemMap.value("x").toInt(), itemMap.value("y").toInt()));
+        gameItem->setPosition(QPointF(itemMap.value("x").toDouble(), itemMap.value("y").toDouble()));
         gameItems.append(gameItem);
     }
 
@@ -60,7 +60,7 @@ PlantItem *DataLoader::createPlantItem(const QString &itemId, const QVariantMap 
 
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
-    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble());
     GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
@@ -93,7 +93,7 @@ TreeItem *DataLoader::createTreeItem(const QString &itemId, const QVariantMap &d
 
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
-    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble());
     GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
@@ -122,7 +122,7 @@ WeaponItem *DataLoader::createWeaponItem(const QString &itemId, const QVariantMa
 
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
-    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble());
     GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
@@ -154,7 +154,7 @@ FirearmItem *DataLoader::createFirearmItem(const QString &itemId, const QVariant
 
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
-    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble());
     GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
@@ -187,7 +187,7 @@ Character *DataLoader::createCharacterObject(const QString &itemId, const QVaria
 
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
-    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble());
     GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
@@ -229,7 +229,7 @@ Enemy *DataLoader::createEnemyObject(const QString &itemId, const QVariantMap &d
 
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
-    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble());
     GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 
@@ -276,7 +276,7 @@ ChestItem *DataLoader::createChestItem(const QString &itemId, const QVariantMap 
 
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     QSize physicsSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt());
-    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toInt(), physicsGeometryMap.value("y", 0).toInt());
+    QPointF physicsPosition(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble());
     GameObject::PhysicsFlags categoryFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt());
     GameObject::PhysicsFlags collisionFlag = static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt());
 

@@ -20,6 +20,8 @@ PhysicsItem {
     onPlayerAuraRangeChanged: gameItem.playerVisible = playerAuraRange
     onPlayerOnItemChanged: gameItem.playerOnItem = playerOnItem
 
+    property real angle: 0
+
     linearDamping: 2
     fixedRotation: true
 
@@ -33,11 +35,23 @@ PhysicsItem {
             root.body.addFixture(circleFixtureComponent.createObject(root, { parentItem: root, gameItem: root.gameItem }))
             root.body.addFixture(circleSensorFixtureComponent.createObject(root, { parentItem: root, gameItem: root.gameItem }))
             break;
+        case GameItem.ShapeRectangle:
+            root.body.addFixture(rectangleFixtureComponent.createObject(root, { parentItem: root, gameItem: root.gameItem }))
+            root.body.addFixture(rectangleSensorFixtureComponent.createObject(root, { parentItem: root, gameItem: root.gameItem }))
+            break;
         default:
             break;
         }
     }
 
+    transform: Rotation {
+        origin {
+            x: gameItem ? gameItem.physicsPosition.x * app.gridSize + gameItem.physicsSize.width * app.gridSize / 2 : 0
+            y: gameItem ? gameItem.physicsPosition.y * app.gridSize + gameItem.physicsSize.height * app.gridSize / 2 : 0
+        }
+        angle: root.angle
+        axis { x: 0; y: 0; z: 1 }
+    }
 
     Component {
         id: circleFixtureComponent
@@ -76,6 +90,46 @@ PhysicsItem {
         }
     }
 
+    Component {
+        id: rectangleFixtureComponent
+        Box {
+            id: rectangleFixture
+
+            property PhysicsItem parentItem
+            property GameItem gameItem
+
+            width: gameItem.physicsSize.width * app.gridSize
+            height: gameItem.physicsSize.height * app.gridSize
+            x: gameItem.physicsPosition.x * app.gridSize
+            y: gameItem.physicsPosition.y * app.gridSize
+            density: 1
+            friction: 0
+            restitution: 0.0
+            categories: gameItem.categoryFlag
+            collidesWith: gameItem.collisionFlag
+        }
+    }
+
+    Component {
+        id: rectangleSensorFixtureComponent
+        Box {
+            id: rectangleSensorFixture
+
+            property PhysicsItem parentItem
+            property GameItem gameItem
+
+            sensor:  true
+            width: gameItem.physicsSize.width * app.gridSize
+            height: gameItem.physicsSize.height * app.gridSize
+            x: gameItem.physicsPosition.x * app.gridSize
+            y: gameItem.physicsPosition.y * app.gridSize
+            density: 0
+            friction: 0
+            restitution: 0
+            categories: GameItem.PhysicsSensor
+        }
+    }
+
     Connections {
         target: root.gameItem
         onPlayerOnItemChanged: {
@@ -93,14 +147,14 @@ PhysicsItem {
 
         RotationAnimation {
             target: root
-            property: "rotation"
-            to: 3
+            property: "angle"
+            to: 2
             duration: 80
         }
 
         RotationAnimation {
             target: root
-            property: "rotation"
+            property: "angle"
             to: 0
             duration: 80
         }
@@ -108,7 +162,7 @@ PhysicsItem {
         RotationAnimation {
             target: root
             property: "rotation"
-            to: -3
+            to: -2
             duration: 80
         }
 
@@ -133,6 +187,15 @@ PhysicsItem {
         anchors.horizontalCenter: root.horizontalCenter
         text: gameItem ? gameItem.name : ""
         opacity: gameItem ? (Game.debugging ? 0.5 : (gameItem.playerFocus ? 1 : 0)) : 0
+    }
+
+    Rectangle {
+        id: wireFrame
+        anchors.fill: parent
+        color: "gray";
+        border.color: "white";
+        border.width: app.borderWidth / 2
+        opacity: Game.debugging ? 0.2 : 0
     }
 
     //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)

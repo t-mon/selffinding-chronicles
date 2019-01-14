@@ -10,14 +10,6 @@ GameOverlayItem {
     id: root
 
     Rectangle {
-        id: backgroundRectangle
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.7
-    }
-
-
-    Rectangle {
         id: menuBackgroundRectangle
         anchors.fill: parent
         anchors.margins: app.gridSize * 3

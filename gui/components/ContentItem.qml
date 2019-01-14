@@ -24,10 +24,11 @@ Item {
         id: itemRectangle
         anchors.fill: parent
         anchors.margins: app.margins / 2
-        border.color: root.equipped ? "red" : "black"
-        border.width: root.equipped ? app.borderWidth * 2 : app.borderWidth
-        color: root.selected ? "steelblue" : "white"
-        opacity: 0.5
+        color: root.selected ? "steelblue" : "gray"
+        border.color: root.equipped ? "red" : "white"
+        border.width: app.borderWidth
+        radius: app.margins / 2
+        opacity: 0.4
     }
 
     Image {
@@ -52,7 +53,9 @@ Item {
         anchors.fill: parent
         preventStealing: true
         onClicked: {
-            console.log("Clicked on " + item.name)
+            if (item)
+                console.log("Clicked on " + item.name)
+
             root.clicked()
         }
     }

@@ -94,6 +94,14 @@ Item {
         visible: false
     }
 
+    GameLabel {
+        anchors.horizontalCenter: primaryActionButton.horizontalCenter
+        anchors.bottom: primaryActionButton.top
+        anchors.bottomMargin: app.margins
+        font.pixelSize: smallFont
+        text: Game.world.playerFocusItem ? Game.world.playerFocusItem.interactionString : ""
+    }
+
     GameOverlayButton {
         id: primaryActionButton
         anchors.right: parent.right
@@ -134,6 +142,13 @@ Item {
             text: "B"
             color: "white"
         }
+    }
+
+    EquipmentContentItem {
+        id: equipmentRow
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: app.margins
     }
 
 }

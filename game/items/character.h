@@ -29,10 +29,11 @@ class Character : public GameItem
     Q_PROPERTY(Role role READ role NOTIFY roleChanged)
     Q_PROPERTY(int experience READ experience NOTIFY experienceChanged)
     Q_PROPERTY(int health READ health NOTIFY healthChanged)
-    Q_PROPERTY(double healthPercentage READ healthPercentage NOTIFY healthChanged)
     Q_PROPERTY(int healthMax READ healthMax NOTIFY healthMaxChanged)
+    Q_PROPERTY(double healthPercentage READ healthPercentage NOTIFY healthChanged)
     Q_PROPERTY(int mana READ mana NOTIFY manaChanged)
     Q_PROPERTY(int manaMax READ manaMax NOTIFY manaMaxChanged)
+    Q_PROPERTY(double manaPercentage READ manaPercentage NOTIFY manaChanged)
     Q_PROPERTY(int wisdom READ wisdom NOTIFY wisdomChanged)
     Q_PROPERTY(int strength READ strength NOTIFY strengthChanged)
     Q_PROPERTY(int stealth READ stealth NOTIFY stealthChanged)
@@ -121,6 +122,7 @@ public:
     void setHealthMax(int healthMax);
 
     int mana() const;
+    double manaPercentage() const;
     void setMana(int mana);
 
     int manaMax() const;

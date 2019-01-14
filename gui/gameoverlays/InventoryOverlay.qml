@@ -9,13 +9,6 @@ import "../components"
 GameOverlayItem {
     id: root
 
-    Rectangle {
-        id: backgroundRectangle
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.7
-    }
-
     RowLayout {
         id: inventoryLoyout
         anchors.fill: parent
@@ -54,24 +47,11 @@ GameOverlayItem {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            Row {
+            EquipmentContentItem {
                 id: equipmentRow
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: app.margins
-                ContentItem {
-                    id: weaponItem
-                    item: Game.world.player.weapon
-                    width: app.menuItemSize
-                    height: width
-                }
-
-                ContentItem {
-                    id: firearmItem
-                    item: Game.world.player.firearm
-                    width: app.menuItemSize
-                    height: width
-                }
+                //anchors.bottomMargin: app.margins
             }
         }
 

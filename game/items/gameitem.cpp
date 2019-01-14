@@ -111,6 +111,11 @@ GameItem::Interaction GameItem::interaction() const
     return m_interaction;
 }
 
+QString GameItem::interactionString() const
+{
+    return interactionToString(m_interaction);
+}
+
 QString GameItem::interactionToString(const GameItem::Interaction &interaction)
 {
     QString interactionString;

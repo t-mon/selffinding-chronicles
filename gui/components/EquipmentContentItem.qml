@@ -8,23 +8,19 @@ import Chronicles 1.0
 import "../components"
 
 Row {
-    id: equipmentRow
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: app.margins
-    spacing: app.margins
+    id: root
 
-    ContentItem {
+    ContentItemImage {
         id: weaponItem
-        item: Game.world.player.weapon
         width: app.menuItemSize
         height: width
+        imageSource: Game.world.player.weapon ? dataDirectory + Game.world.player.weapon.imageName : ""
     }
 
-    ContentItem {
+    ContentItemImage {
         id: firearmItem
-        item: Game.world.player.firearm
         width: app.menuItemSize
         height: width
+        imageSource: Game.world.player.firearm ? dataDirectory + Game.world.player.firearm.imageName : ""
     }
 }

@@ -9,6 +9,13 @@ import "../components"
 Item {
     id: root
 
+    Rectangle {
+        id: backgroundRectangle
+        anchors.fill: parent
+        color: "black"
+        opacity: 0.2
+    }
+
     onOpacityChanged: {
         if (opacity === 0) {
             root.visible = false

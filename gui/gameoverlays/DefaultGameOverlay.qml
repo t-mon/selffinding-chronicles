@@ -21,4 +21,23 @@ Item {
         onClicked: Game.world.pauseGame()
     }
 
+    EquipmentContentItem {
+        id: equipmentRow
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: app.margins
+    }
+
+
+    PlayerStatusItem {
+        id: playerStatus
+        anchors.right: parent.right
+        anchors.rightMargin: app.margins
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: app.margins
+
+        height: app.gridSize * 1.5
+        width: app.gridSize * 6
+    }
+
 }

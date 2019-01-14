@@ -9,11 +9,11 @@
     },
     "physicsGeometry": {
         "body": "static",
-        "shape": "circle",
-        "width": 2,
-        "height": 2,
-        "x": 0,
-        "y": 0,
+        "shape": "rectangle",
+        "width": 1,
+        "height": 1,
+        "x": 0.5,
+        "y": 0.5,
         "category": 8,
         "collision": 171,
         "vertices": []

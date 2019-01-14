@@ -289,6 +289,11 @@ int Character::mana() const
     return m_mana;
 }
 
+double Character::manaPercentage() const
+{
+    return 100.0 * m_mana / m_manaMax;
+}
+
 void Character::setMana(int mana)
 {
     if (m_mana == mana)

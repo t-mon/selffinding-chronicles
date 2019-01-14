@@ -9,12 +9,6 @@ import "../components"
 GameOverlayItem {
     id: root
 
-    Rectangle {
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.4
-    }
-
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: app.margins

@@ -38,6 +38,9 @@ ApplicationWindow {
     property bool antialiasing: false
 
     property color backgroundColor: "#333333"
+    property color healthColor: "#9c2f25"
+    property color manaColor: "#24b3ff"
+
 
     onWidthChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
     onHeightChanged: Game.settings.windowSize = Qt.size(app.width, app.height)

@@ -34,25 +34,11 @@ Item {
         RowLayout {
             Layout.fillWidth: true
 
-            Item {
+            ContentItemImage {
+                id: weaponItem
                 Layout.preferredWidth: app.menuItemSize
                 Layout.preferredHeight: app.menuItemSize
-
-                Rectangle {
-                    id: itemRectangle
-                    anchors.fill: parent
-                    anchors.margins: app.margins / 2
-                    color: "gray"
-                    border.color: "white"
-                    border.width: app.borderWidth
-
-                    Image {
-                        id: itemImage
-                        anchors.fill: parent
-                        anchors.margins: parent.width / 8
-                        source: root.item ? dataDirectory + root.item.imageName : ""
-                    }
-                }
+                imageSource: root.item ? dataDirectory + root.item.imageName : ""
             }
 
             GameLabel {

@@ -50,5 +50,8 @@
         <file>components/JoystickControllerItem.qml</file>
         <file>components/WeatherController.qml</file>
         <file>components/EquipmentContentItem.qml</file>
+        <file>components/ContentItemImage.qml</file>
+        <file>components/PlayerStatusItem.qml</file>
+        <file>components/PercentageIndicator.qml</file>
     </qresource>
 </RCC>

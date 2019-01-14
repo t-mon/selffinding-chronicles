@@ -20,9 +20,10 @@ Item {
         id: backgroundRectanlge
         anchors.fill: parent
         anchors.margins: app.margins / 2
-        border.color: root.selected ? "white" : "black"
+        color: root.selected ? "steelblue" : "gray"
+        border.color: "white"
         border.width: app.borderWidth
-        color: root.selected ? "steelblue" : "white"
+        radius: app.margins / 2
         opacity: 0.4
     }
 

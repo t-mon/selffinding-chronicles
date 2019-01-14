@@ -27,6 +27,7 @@ class GameWorld : public Fields
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
 
     Q_PROPERTY(Character *player READ player CONSTANT)
+    Q_PROPERTY(GameItem *playerFocusItem READ playerFocusItem NOTIFY playerFocusItemChanged)
     Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
     Q_PROPERTY(GameItems *enemyItems READ enemyItems CONSTANT)
     Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
@@ -81,6 +82,7 @@ public:
     GameItems *enemyItems() const;
     PlayerController *playerController() const;
 
+    GameItem *playerFocusItem() const;
     Conversation *currentConversation() const;
     ChestItem *currentChestItem() const;
     GameItems *currentPlunderItems() const;
@@ -168,6 +170,7 @@ signals:
     void currentPlayerFieldChanged(Field *currentPlayerField);
     void currentPlayerPositionChanged(const QPoint &currentPlayerPosition);
     void currentViewOffsetChanged(const QPoint &currentViewOffset);
+    void playerFocusItemChanged(GameItem *playerFocusItem);
     void currentConversationChanged(Conversation *conversation);
     void currentChestItemChanged(ChestItem *chestItem);
     void currentPlunderItemsChanged(GameItems *plunderItems);

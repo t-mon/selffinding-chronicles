@@ -188,6 +188,15 @@ PhysicsItem {
         anchors.fill: parent;
         rotation: -root.rotation
 
+        Rectangle {
+            id: wireFrame
+            anchors.fill: parent
+            color: "gray";
+            border.color: "white";
+            border.width: app.borderWidth / 2
+            opacity: Game.debugging ? 0.2 : 0
+        }
+
         FlameItem {
             id: flameItem
             anchors.fill: parent
@@ -213,14 +222,6 @@ PhysicsItem {
             }
         }
 
-        Rectangle {
-            id: frameWire
-            color: "transparent";
-            border.color: "red";
-            border.width: 2;
-            opacity: Game.debugging ? 0.5 : 0
-        }
-
         ItemDescription {
             id: nameLabel
             anchors.bottom: parent.top
@@ -230,29 +231,37 @@ PhysicsItem {
             opacity: character ? (Game.debugging ? 0.5 : (root.character.playerFocus && !root.isPlayer ? 1 : 0)) : 0
         }
 
-        RowLayout {
+        PercentageIndicator {
             id: healthIndicator
             height: app.gridSize / 6
             width: app.gridSize * 2
             anchors.bottom: nameLabel.top
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 0
             opacity: 0
 
-            Behavior on opacity { NumberAnimation { duration: 200 } }
-
-            Rectangle {
-                color: "red"
-                Layout.fillHeight: true
-                Layout.preferredWidth: parent.width * character.healthPercentage / 100
-            }
-
-            Rectangle {
-                color: "black"
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
+            color: app.healthColor
+            percentage: character.healthPercentage
         }
+
+//        RowLayout {
+//            spacing: 0
+
+//            Behavior on opacity { NumberAnimation { duration: 200 } }
+
+//            Rectangle {
+//                color: app.healthColor
+//                Layout.fillHeight: true
+//                Layout.preferredWidth: parent.width * character.healthPercentage / 100
+//                Behavior on width { NumberAnimation { duration: 300 } }
+//            }
+
+//            Rectangle {
+//                color: "black"
+//                Layout.fillHeight: true
+//                Layout.fillWidth: true
+//                Behavior on width { NumberAnimation { duration: 300 } }
+//            }
+//        }
 
         Image {
             id: playerImage
@@ -399,7 +408,7 @@ PhysicsItem {
         height: parent.height
         radius: parent.width / 2
         color: "transparent"
-        border.color: "red"
+        border.color: app.healthColor
         border.width: parent.width / 8
         opacity: 0
     }

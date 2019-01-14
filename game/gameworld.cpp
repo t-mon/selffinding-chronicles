@@ -132,6 +132,11 @@ PlayerController *GameWorld::playerController() const
     return m_playerController;
 }
 
+GameItem *GameWorld::playerFocusItem() const
+{
+    return m_playerFocusItem;
+}
+
 Conversation *GameWorld::currentConversation() const
 {
     return m_currentConversation;
@@ -368,6 +373,7 @@ void GameWorld::setPlayerFocusItem(GameItem *focusItem)
     }
 
     m_playerFocusItem = focusItem;
+    emit playerFocusItemChanged(m_playerFocusItem);
 }
 
 void GameWorld::setLoaded(bool loaded)

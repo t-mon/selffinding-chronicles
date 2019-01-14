@@ -10,6 +10,7 @@ class GameItem : public GameObject
 {
     Q_OBJECT
     Q_PROPERTY(Interaction interaction READ interaction NOTIFY interactionChanged)
+    Q_PROPERTY(QString interactionString READ interactionString NOTIFY interactionChanged)
     Q_PROPERTY(QString imageName READ imageName NOTIFY imageNameChanged)
     Q_PROPERTY(Type itemType READ itemType CONSTANT)
     Q_PROPERTY(QString itemTypeName READ itemTypeName CONSTANT)
@@ -87,6 +88,7 @@ public:
     void setPlayerOnItem(bool playerOnItem);
 
     Interaction interaction() const;
+    QString interactionString() const;
 
     virtual void performInteraction() = 0;
 

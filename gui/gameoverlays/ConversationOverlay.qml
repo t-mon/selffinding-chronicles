@@ -11,12 +11,6 @@ GameOverlayItem {
 
     property Conversation conversation: Game.world.currentConversation
 
-    Rectangle {
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.1
-    }
-
     states: [
         State {
             name: "playerTalking"
