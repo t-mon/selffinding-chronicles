@@ -1,15 +1,22 @@
 {
     "name": "Test world",
-    "width": 80,
-    "height": 50,
-    "playerStartX": 4,
-    "playerStartY": 4,
-    "defaultField": {
-        "accessable": true,
-        "imageName": "/images/world/base/accessable.png"
-    },
+    "width": 400,
+    "height": 400,
+    "playerStartX": 5,
+    "playerStartY": 5,
+    "backgroundColor": "#307a78",
     "items": [
         {
+            "x": 9,
+            "y": 5,
+            "data": ":/gamedata/plants/mana-herb.json"
+        },
+        {
+            "x": 9,
+            "y": 6,
+            "data": ":/gamedata/plants/mana-herb.json"
+        },
+        {
             "x": 10,
             "y": 5,
             "data": ":/gamedata/plants/healing-herb.json"
@@ -48,6 +55,16 @@
             "x": 13,
             "y": 6,
             "data": ":/gamedata/firearms/crossbow.json"
+        },
+        {
+            "x": 14,
+            "y": 5,
+            "data": ":/gamedata/weapons/sword-2.json"
+        },
+        {
+            "x": 14,
+            "y": 6,
+            "data": ":/gamedata/weapons/sword-2.json"
         },
         {
             "x": 10,
@@ -107,26 +124,79 @@
     ],
     "characters": [
         {
-            "x": 20,
-            "y": 0,
-            "data": ":/gamedata/characters/test-character.json"
-        },
-        {
             "x": 25,
             "y": 10,
-            "data": ":/gamedata/characters/test-character.json"
+            "data": ":/gamedata/characters/test-character.json",
+            "character": {
+                "gender": "male",
+                "role": "Friend",
+                "experience": 20,
+                "health": 80,
+                "healthMax": 80,
+                "mana": 5,
+                "manaMax": 5,
+                "wisdom": 1,
+                "strength": 5,
+                "stealth": 0,
+                "weapon": "",
+                "firearm": "",
+                "inventory": [
+                    {
+                        "data": ":/gamedata/plants/healing-herb.json",
+                        "count": 2
+                    }
+                ]
+            }
         },
         {
             "x": 25,
             "y": 20,
-            "data": ":/gamedata/characters/test-character.json"
+            "data": ":/gamedata/characters/test-character.json",
+            "character": {
+                "gender": "male",
+                "role": "Friend",
+                "experience": 20,
+                "health": 80,
+                "healthMax": 80,
+                "mana": 5,
+                "manaMax": 5,
+                "wisdom": 1,
+                "strength": 5,
+                "stealth": 0,
+                "weapon": "",
+                "firearm": "",
+                "inventory": [
+                    {
+                        "data": ":/gamedata/plants/healing-herb.json",
+                        "count": 2
+                    }
+                ]
+            }
         }
     ],
     "chests": [
         {
             "x": 6,
             "y": 10,
-            "data": ":/gamedata/chests/chest-1.json"
+            "data": ":/gamedata/chests/chest-1.json",
+            "chest": {
+                "locked": true,
+                "lockCombination": [ 0, 1, 0, 1 ],
+                "inventory": [
+                    {
+                        "data": ":/gamedata/plants/healing-herb.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/sword.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/firearms/hunting-bow.json",
+                        "count": 4
+                    }
+                ]
+            }
         }
     ],
     "enemies": [
@@ -138,17 +208,7 @@
         {
             "x": 2,
             "y": 10,
-            "data": ":/gamedata/enemies/fire.json"
-        },
-        {
-            "x": 3,
-            "y": 10,
-            "data": ":/gamedata/enemies/fire.json"
-        },
-        {
-            "x": 4,
-            "y": 10,
-            "data": ":/gamedata/enemies/fire.json"
+            "data": ":/gamedata/enemies/test-enemy.json"
         }
     ]
 }

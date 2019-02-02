@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
@@ -14,13 +14,13 @@ Row {
         id: weaponItem
         width: app.menuItemSize
         height: width
-        imageSource: Game.world.player.weapon ? dataDirectory + Game.world.player.weapon.imageName : ""
+        imageSource: Game.engine.player ? (Game.engine.player.weapon ? dataDirectory + Game.engine.player.weapon.imageName : "") : ""
     }
 
     ContentItemImage {
         id: firearmItem
         width: app.menuItemSize
         height: width
-        imageSource: Game.world.player.firearm ? dataDirectory + Game.world.player.firearm.imageName : ""
+        imageSource: Game.engine.player ? (Game.engine.player.firearm ? dataDirectory + Game.engine.player.firearm.imageName : "") : ""
     }
 }

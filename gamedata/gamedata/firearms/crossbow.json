@@ -18,7 +18,10 @@
         "collision": 32,
         "vertices": []
     },
-    "price": 100,
-    "damage": 32,
-    "range": 20
+
+    "firearm": {
+        "price": 100,
+        "damage": 32,
+        "range": 20
+    }
 }

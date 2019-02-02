@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -13,8 +13,8 @@ Item {
     property bool selected: false
     property int itemCount: 0
 
-    property bool equipped: (Game.world.player.weapon && item ? item.itemId === Game.world.player.weapon.itemId : false) ||
-                            (Game.world.player.firearm && item ? item.itemId === Game.world.player.firearm.itemId : false)
+    property bool equipped: (Game.engine.player.weapon && item ? item.itemId === Game.engine.player.weapon.itemId : false) ||
+                            (Game.engine.player.firearm && item ? item.itemId === Game.engine.player.firearm.itemId : false)
 
     //onItemCountChanged: console.log("Item count changed for", (item ? item.name : ""), itemCount)
 

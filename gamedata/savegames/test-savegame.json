@@ -1,0 +1,313 @@
+{
+    "name": "Test save game",
+    "player": {
+        "data": ":/gamedata/characters/player.json",
+        "x": 1.5,
+        "y": 1.5,
+        "character": {
+            "gender": "male",
+            "role": "Player",
+            "experience": 100,
+            "health": 100,
+            "healthMax": 100,
+            "mana": 10,
+            "manaMax": 10,
+            "wisdom": 10,
+            "strength": 10,
+            "stealth": 0,
+            "weapon": ":/gamedata/weapons/sword.json",
+            "firearm": ":/gamedata/firearms/crossbow.json",
+            "inventory": [
+                {
+                    "data": ":/gamedata/plants/mana-herb.json",
+                    "count": 5
+                },
+                {
+                    "data": ":/gamedata/weapons/sword.json",
+                    "count": 2
+                },
+                {
+                    "data": ":/gamedata/firearms/hunting-bow.json",
+                    "count": 3
+                },
+                {
+                    "data": ":/gamedata/firearms/crossbow.json",
+                    "count": 2
+                },
+                {
+                    "data": ":/gamedata/plants/mana-herb.json",
+                    "count": 2
+                }
+            ]
+        }
+    },
+    "currentMap": "test-environment",
+    "statistics": {
+
+    },
+
+    "maps": {
+        "test-environment": {
+            "name": "Test world",
+            "width": 400,
+            "height": 400,
+            "playerStartX": 2,
+            "playerStartY": 2,
+            "backgroundColor": "#307a78",
+            "items": [
+                {
+                    "x": 9,
+                    "y": 5,
+                    "data": ":/gamedata/plants/mana-herb.json"
+                },
+                {
+                    "x": 9,
+                    "y": 6,
+                    "data": ":/gamedata/plants/mana-herb.json"
+                },
+                {
+                    "x": 10,
+                    "y": 5,
+                    "data": ":/gamedata/plants/healing-herb.json"
+                },
+                {
+                    "x": 10,
+                    "y": 6,
+                    "data": ":/gamedata/plants/healing-herb.json"
+                },
+                {
+                    "x": 11,
+                    "y": 5,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 11,
+                    "y": 6,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 12,
+                    "y": 5,
+                    "data": ":/gamedata/firearms/hunting-bow.json"
+                },
+                {
+                    "x": 12,
+                    "y": 6,
+                    "data": ":/gamedata/firearms/hunting-bow.json"
+                },
+                {
+                    "x": 13,
+                    "y": 5,
+                    "data": ":/gamedata/firearms/crossbow.json"
+                },
+                {
+                    "x": 13,
+                    "y": 6,
+                    "data": ":/gamedata/firearms/crossbow.json"
+                },
+                {
+                    "x": 14,
+                    "y": 5,
+                    "data": ":/gamedata/weapons/sword-2.json"
+                },
+                {
+                    "x": 14,
+                    "y": 6,
+                    "data": ":/gamedata/weapons/sword-2.json"
+                },
+                {
+                    "x": 10,
+                    "y": 10,
+                    "data": ":/gamedata/plants/healing-herb.json"
+                },
+                {
+                    "x": 10,
+                    "y": 15,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 10,
+                    "y": 16,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 10,
+                    "y": 17,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 11,
+                    "y": 17,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 12,
+                    "y": 17,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 13,
+                    "y": 17,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 10,
+                    "y": 20,
+                    "data": ":/gamedata/weapons/sword.json"
+                },
+                {
+                    "x": 15,
+                    "y": 5,
+                    "data": ":/gamedata/bushes/bush-1.json"
+                },
+                {
+                    "x": 15,
+                    "y": 10,
+                    "data": ":/gamedata/bushes/bush-1.json"
+                },
+                {
+                    "x": 15,
+                    "y": 20,
+                    "data": ":/gamedata/trees/tree-1.json"
+                }
+            ],
+            "characters": [
+                {
+                    "x": 25,
+                    "y": 10,
+                    "data": ":/gamedata/characters/test-character.json",
+                    "character": {
+                        "gender": "male",
+                        "role": "Friend",
+                        "experience": 20,
+                        "health": 80,
+                        "healthMax": 80,
+                        "mana": 5,
+                        "manaMax": 5,
+                        "wisdom": 1,
+                        "strength": 5,
+                        "stealth": 0,
+                        "weapon": "",
+                        "firearm": "",
+                        "inventory": [
+                            {
+                                "data": ":/gamedata/plants/healing-herb.json",
+                                "count": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "x": 25,
+                    "y": 20,
+                    "data": ":/gamedata/characters/test-character.json",
+                    "character": {
+                        "gender": "male",
+                        "role": "Friend",
+                        "experience": 20,
+                        "health": 80,
+                        "healthMax": 80,
+                        "mana": 5,
+                        "manaMax": 5,
+                        "wisdom": 1,
+                        "strength": 5,
+                        "stealth": 0,
+                        "weapon": "",
+                        "firearm": "",
+                        "inventory": [
+                            {
+                                "data": ":/gamedata/plants/healing-herb.json",
+                                "count": 2
+                            }
+                        ]
+                    }
+                }
+            ],
+            "chests": [
+                {
+                    "x": 6,
+                    "y": 10,
+                    "data": ":/gamedata/chests/chest-1.json",
+                    "chest": {
+                        "locked": true,
+                        "lockCombination": [ 0, 1, 0, 1 ],
+                        "inventory": [
+                            {
+                                "data": ":/gamedata/plants/healing-herb.json",
+                                "count": 2
+                            },
+                            {
+                                "data": ":/gamedata/weapons/sword.json",
+                                "count": 2
+                            },
+                            {
+                                "data": ":/gamedata/firearms/hunting-bow.json",
+                                "count": 4
+                            }
+                        ]
+                    }
+                }
+            ],
+            "enemies": [
+                {
+                    "x": 5,
+                    "y": 15,
+                    "data": ":/gamedata/enemies/test-enemy.json",
+                    "character": {
+                        "gender": "male",
+                        "role": "Enemy",
+                        "experience": 100,
+                        "health": 100,
+                        "healthMax": 100,
+                        "mana": 10,
+                        "manaMax": 10,
+                        "wisdom": 10,
+                        "strength": 10,
+                        "stealth": 0,
+                        "weapon": "",
+                        "firearm": "",
+                        "inventory": [
+                            {
+                                "data": ":/gamedata/plants/healing-herb.json",
+                                "count": 2
+                            },
+                            {
+                                "data": ":/gamedata/weapons/sword.json",
+                                "count": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "x": 2,
+                    "y": 10,
+                    "data": ":/gamedata/enemies/test-enemy.json",
+                    "character": {
+                        "gender": "male",
+                        "role": "Enemy",
+                        "experience": 100,
+                        "health": 200,
+                        "healthMax": 200,
+                        "mana": 10,
+                        "manaMax": 10,
+                        "wisdom": 10,
+                        "strength": 10,
+                        "stealth": 0,
+                        "weapon": "",
+                        "firearm": "",
+                        "inventory": [
+                            {
+                                "data": ":/gamedata/plants/healing-herb.json",
+                                "count": 2
+                            },
+                            {
+                                "data": ":/gamedata/weapons/sword.json",
+                                "count": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

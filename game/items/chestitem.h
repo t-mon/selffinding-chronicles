@@ -9,7 +9,6 @@ class ChestItem : public GameItem
 {
     Q_OBJECT
     Q_PROPERTY(GameItems *items READ items CONSTANT)
-    Q_PROPERTY(GameItemsProxy *itemsProxy READ itemsProxy CONSTANT)
     Q_PROPERTY(bool locked READ locked NOTIFY lockedChanged)
     Q_PROPERTY(QStringList lockCombination READ lockCombination NOTIFY lockCombinationChanged)
     Q_PROPERTY(int unlockProgress READ unlockProgress NOTIFY unlockProgressChanged)
@@ -24,7 +23,6 @@ public:
     Q_INVOKABLE void performInteraction() override;
 
     GameItems *items() const;
-    GameItemsProxy *itemsProxy() const;
 
     bool locked() const;
     void setLocked(bool locked);
@@ -39,7 +37,6 @@ public:
 
 private:
     GameItems *m_items = nullptr;
-    GameItemsProxy *m_itemsProxy = nullptr;
     bool m_locked = false;
     QStringList m_lockCombination;
 
@@ -57,5 +54,7 @@ signals:
     void successfullUnlockMove();
     void unlockReset();
 };
+
+QDebug operator<<(QDebug debug, ChestItem *chestItem);
 
 #endif // CHESTITEM_H

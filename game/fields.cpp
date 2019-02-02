@@ -35,8 +35,6 @@ QVariant Fields::data(const QModelIndex &index, int role) const
 
     if (role == PositionRole) {
         return field->position();
-    } else if (role == ImageNameRole) {
-        return field->imageName();
     } else if (role == PlayerOnFieldRole) {
         return field->playerOnField();
     }
@@ -50,7 +48,6 @@ void Fields::addField(Field *field)
     m_fields.append(field);
     endInsertRows();
 
-    connect(field, &Field::imageNameChanged, this, &Fields::onFieldImageNameChanged);
     connect(field, &Field::playerOnFieldChanged, this, &Fields::onPlayerOnFieldChanged);
 }
 
@@ -59,7 +56,6 @@ void Fields::removeField(Field *field)
     if (!m_fields.contains(field))
         return;
 
-    disconnect(field, &Field::imageNameChanged, this, &Fields::onFieldImageNameChanged);
     disconnect(field, &Field::playerOnFieldChanged, this, &Fields::onPlayerOnFieldChanged);
 
     int index = m_fields.indexOf(field);
@@ -79,19 +75,8 @@ QHash<int, QByteArray> Fields::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[PositionRole] = "position";
-    roles[ImageNameRole] = "imageName";
     roles[PlayerOnFieldRole] = "playerOnField";
     return roles;
-}
-
-void Fields::onFieldImageNameChanged(const QString &imageName)
-{
-    Q_UNUSED(imageName)
-
-    Field *field = static_cast<Field *>(sender());
-    int idx = m_fields.indexOf(field);
-    if (idx < 0) return;
-    emit dataChanged(index(idx), index(idx), {ImageNameRole});
 }
 
 void Fields::onPlayerOnFieldChanged(bool playerOnField)

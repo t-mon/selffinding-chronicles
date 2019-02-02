@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -33,7 +33,7 @@ GameOverlayItem {
                         id: plunderInventory
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        gameItems: Game.world.currentPlunderItems
+                        gameItems: Game.engine.currentPlunderItems
                         onSelectedGameItemChanged: {
                             if (!selectedGameItem) {
                                 itemDescription.item = null
@@ -62,8 +62,8 @@ GameOverlayItem {
                             Layout.fillWidth: true
                             text: qsTr("Take all")
                             onClicked: {
-                                Game.world.takeAllItems(Game.world.currentPlunderItems)
-                                Game.world.finishPlunder()
+                                Game.engine.takeAllItems(Game.engine.currentPlunderItems)
+                                Game.engine.finishPlunder()
                             }
                         }
 
@@ -73,7 +73,7 @@ GameOverlayItem {
                             onClicked: {
                                 if (plunderInventory.selectedGameItem) {
                                     console.log("Take item", plunderInventory.selectedGameItem.name)
-                                    Game.world.takeItem(Game.world.currentPlunderItems, plunderInventory.selectedGameItem)
+                                    Game.engine.takeItem(Game.engine.currentPlunderItems, plunderInventory.selectedGameItem)
                                 }
                             }
                         }
@@ -81,7 +81,7 @@ GameOverlayItem {
                         GameButton {
                             Layout.fillWidth: true
                             text: qsTr("Close")
-                            onClicked: Game.world.finishPlunder()
+                            onClicked: Game.engine.finishPlunder()
                         }
                     }
                 }

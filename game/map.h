@@ -20,6 +20,7 @@ class Map : public QObject
     Q_PROPERTY(QPointF playerStartPosition READ playerStartPosition NOTIFY playerStartPositionChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString fileName READ fileName NOTIFY fileNameChanged)
+    Q_PROPERTY(QColor backgroundColor READ backgroundColor NOTIFY backgroundColorChanged)
 
 public:
     enum Layer {
@@ -27,8 +28,7 @@ public:
         Layer1Lower = 1,
         Layer2Normal = 2,
         Layer3Higher = 3,
-        Layer4Highest = 4,
-
+        Layer4Highest = 4
     };
     Q_ENUM(Layer)
 
@@ -46,11 +46,15 @@ public:
 
     QString fileName() const;
 
+    QColor backgroundColor() const;
+    void setBackgroundColor(const QColor &backgroundColor);
+
     GameItems *items();
     GameItems *enemies();
     GameItems *characters();
 
     void loadMap(const QString &fileName);
+    void loadMapVariant(const QVariantMap &mapData);
 
     Q_INVOKABLE Field *getField(int x, int y) const;
     Q_INVOKABLE Field *getField(const QPointF position) const;
@@ -60,6 +64,7 @@ private:
     QPointF m_playerStartPosition;
     QString m_name;
     QString m_fileName;
+    QColor m_backgroundColor;
 
     GameItems *m_items = nullptr;
     GameItems *m_enemies = nullptr;
@@ -73,11 +78,13 @@ signals:
     void playerStartPositionChanged(const QPointF &playerStartPosition);
     void nameChanged(const QString &name);
     void fileNameChanged(const QString &fileName);
+    void backgroundColorChanged(const QColor &backgroundColor);
 
 public slots:
     void clear();
 
-
 };
+
+QDebug operator<<(QDebug debug, Map *map);
 
 #endif // MAP_H

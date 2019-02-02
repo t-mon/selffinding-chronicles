@@ -14,16 +14,17 @@ class Character : public GameItem
 {
     Q_OBJECT
     Q_PROPERTY(GameItems *inventory READ inventory CONSTANT)
-    Q_PROPERTY(GameItemsProxy *inventoryProxy READ inventoryProxy CONSTANT)
     Q_PROPERTY(WeaponItem *weapon READ weapon WRITE setWeapon NOTIFY weaponChanged)
     Q_PROPERTY(FirearmItem *firearm READ firearm WRITE setFirearm NOTIFY firearmChanged)
 
+    Q_PROPERTY(bool isPlayer READ isPlayer NOTIFY isPlayerChanged)
+    Q_PROPERTY(Heading heading READ heading NOTIFY headingChanged)
+    Q_PROPERTY(QPointF movementVector READ movementVector WRITE setMovementVector NOTIFY movementVectorChanged)
     Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
     Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
-    Q_PROPERTY(Heading heading READ heading NOTIFY headingChanged)
 
     Q_PROPERTY(Gender gender READ gender NOTIFY genderChanged)
     Q_PROPERTY(Role role READ role NOTIFY roleChanged)
@@ -76,13 +77,18 @@ public:
     Q_INVOKABLE void performInteraction() override;
 
     GameItems *inventory() const;
-    GameItemsProxy *inventoryProxy() const;
 
     WeaponItem *weapon() const;
     void setWeapon(WeaponItem *weapon);
 
     FirearmItem *firearm() const;
     void setFirearm(FirearmItem *firearm);
+
+    QPointF movementVector() const;
+    void setMovementVector(const QPointF &movementVector);
+
+    bool isPlayer() const;
+    void setIsPlayer(bool isPlayer);
 
     Heading heading() const;
 
@@ -145,16 +151,18 @@ public:
 
 private:
     GameItems *m_inventory = nullptr;
-    GameItemsProxy *m_inventoryProxy = nullptr;
 
     WeaponItem *m_weapon = nullptr;
     FirearmItem *m_firearm = nullptr;
 
+    // Moving properties
+    QPointF m_movementVector = QPointF(0, 0);
+    bool m_isPlayer = false;
     Heading m_heading = HeadingRight;
     int m_auraRange = 3;
     qreal m_angle = 0;
     qreal m_speed = 1;
-    bool m_movable = false;
+    bool m_movable = true;
     bool m_moving = false;
     bool m_running = false;
 
@@ -182,6 +190,8 @@ signals:
     void weaponChanged(WeaponItem *weapon);
     void firearmChanged(FirearmItem *firearm);
 
+    void movementVectorChanged(const QPointF &movementVector);
+    void isPlayerChanged(bool isPlayer);
     void headingChanged(Heading heading);
     void angleChanged(const qreal &angle);
     void auraRangeChanged(const int &auraRange);
@@ -214,5 +224,8 @@ signals:
     void shoot();
 
 };
+
+QDebug operator<<(QDebug debug, Character *character);
+
 
 #endif // CHARACTER_H

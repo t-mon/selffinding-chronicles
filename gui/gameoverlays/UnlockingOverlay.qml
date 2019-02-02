@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -9,7 +9,7 @@ import "../components"
 GameOverlayItem {
     id: root
 
-    property ChestItem chestItem: Game.world.currentChestItem
+    property ChestItem chestItem: Game.engine.currentChestItem
 
     Item {
         anchors.fill: parent
@@ -62,9 +62,9 @@ GameOverlayItem {
                             GameButton {
                                 Layout.fillHeight: true
                                 Layout.preferredWidth: height
-                                visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen
+                                visible: Game.engine.playerController.controlMode === PlayerController.ControlModeTouchscreen
                                 text: qsTr("L")
-                                onClicked: Game.world.unlockLeftClicked()
+                                onClicked: Game.engine.unlockLeftClicked()
                             }
 
                             Rectangle {
@@ -84,9 +84,9 @@ GameOverlayItem {
                             GameButton {
                                 Layout.fillHeight: true
                                 Layout.preferredWidth: height
-                                visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen
+                                visible: Game.engine.playerController.controlMode === PlayerController.ControlModeTouchscreen
                                 text: qsTr("R")
-                                onClicked: Game.world.unlockRightClicked()
+                                onClicked: Game.engine.unlockRightClicked()
                             }
 
                         }
@@ -96,9 +96,8 @@ GameOverlayItem {
 
             GameButton {
                 Layout.fillWidth: true
-                //Layout.preferredHeight: app.gridSize * 2
                 text: qsTr("Give up")
-                onClicked: { Game.world.giveUpUnlocking() }
+                onClicked: { Game.engine.giveUpUnlocking() }
             }
 
         }

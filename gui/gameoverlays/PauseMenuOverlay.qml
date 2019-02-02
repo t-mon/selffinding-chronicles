@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -35,7 +35,7 @@ GameOverlayItem {
             Layout.fillWidth: true
             text: qsTr("Resume game")
             font.pixelSize: app.largeFont
-            onClicked: Game.world.resumeGame()
+            onClicked: Game.engine.resumeGame()
         }
 
         GameButton {
@@ -68,6 +68,7 @@ GameOverlayItem {
             font.pixelSize: app.largeFont
             onClicked: {
                 pageStack.pop()
+                Game.engine.resetEngine()
             }
         }
     }

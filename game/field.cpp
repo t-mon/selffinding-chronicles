@@ -16,20 +16,6 @@ QPoint Field::position() const
     return m_position;
 }
 
-QString Field::imageName() const
-{
-    return m_imageName;
-}
-
-void Field::setImageName(const QString &imageName)
-{
-    if (m_imageName == imageName)
-        return;
-
-    m_imageName = imageName;
-    emit imageNameChanged(m_imageName);
-}
-
 bool Field::playerOnField() const
 {
     return m_playerOnField;

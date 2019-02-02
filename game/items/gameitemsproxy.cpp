@@ -6,6 +6,7 @@ GameItemsProxy::GameItemsProxy(QObject *parent) :
 {
     connect(this, &GameItemsProxy::rowsInserted, this, &GameItemsProxy::onRowsInseted);
     connect(this, &GameItemsProxy::rowsRemoved, this, &GameItemsProxy::onRowsRemoved);
+    connect(this, &GameItemsProxy::rowsAboutToBeRemoved, this, &GameItemsProxy::onRowsAboutToBeRemoved);
 }
 
 GameItems *GameItemsProxy::gameItems() const
@@ -19,14 +20,15 @@ void GameItemsProxy::setGameItems(GameItems *gameItems)
         return;
 
     // Disconnect old model
-    if (m_gameItems) {
+    if (m_gameItems)
         disconnect(m_gameItems, &GameItems::countChanged, this, &GameItemsProxy::onSourceModelCountChanged);
-    }
 
+    beginResetModel();
     m_gameItems = gameItems;
     emit gameItemsChanged(gameItems);
-
     setSourceModel(m_gameItems);
+    setSortRole(GameItems::PriceRole);
+    endResetModel();
 
     if (m_gameItems) {
         connect(m_gameItems, &GameItems::countChanged, this, &GameItemsProxy::onSourceModelCountChanged);
@@ -35,14 +37,29 @@ void GameItemsProxy::setGameItems(GameItems *gameItems)
         sort(0);
     }
 
-
-
     emit countChanged();
 }
 
 int GameItemsProxy::count() const
 {
     return rowCount(QModelIndex());
+}
+
+QRectF GameItemsProxy::viewFilter() const
+{
+    return m_viewFilter;
+}
+
+void GameItemsProxy::setViewFilter(const QRectF &viewFilter)
+{
+    if (m_viewFilter == viewFilter)
+        return;
+
+    m_viewFilter = viewFilter;
+    emit viewFilterChanged(m_viewFilter);
+
+    invalidateFilter();
+    emit countChanged();
 }
 
 GameItem::Type GameItemsProxy::itemTypeFilter() const
@@ -121,35 +138,36 @@ bool GameItemsProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourcePa
 {
     Q_UNUSED(sourceParent)
 
+    // Get the current game item
     if (!m_gameItems)
         return true;
 
     GameItem *gameItem = m_gameItems->get(sourceRow);
+    if (!gameItem)
+        return true;
 
     // If no filter, return always true
-    if (m_itemTypeFilter == GameItem::TypeNone && !m_filterDuplicates && m_itemIdFilter.isEmpty())
+    if (m_itemTypeFilter == GameItem::TypeNone && !m_filterDuplicates && m_itemIdFilter.isEmpty() && m_viewFilter.isNull())
         return true;
 
     // Filter out items not matching the given id filter
-    if (!m_itemIdFilter.isEmpty() && gameItem->itemId() != m_itemIdFilter) {
-        //qCDebug(dcGame()) << gameItem->name() << gameItem->itemId() << "filtered out because of the id filter" << m_itemIdFilter;
+    if (!m_itemIdFilter.isEmpty() && gameItem->itemId() != m_itemIdFilter)
         return false;
-    }
 
-    // Filter out items not matching the filter
-    if (m_itemTypeFilter != GameItem::TypeNone && gameItem->itemType() != m_itemTypeFilter) {
-        //qCDebug(dcGame()) << gameItem->name() << gameItem->itemId() << "filtered out because of the type filter" << m_itemTypeFilter;
+    // Filter out items not in the view filter
+    if (!m_viewFilter.isNull() && !m_viewFilter.intersects(QRectF(gameItem->position(), gameItem->size())))
         return false;
-    }
+
+    // Filter out items not matching the item type filter
+    if (m_itemTypeFilter != GameItem::TypeNone && gameItem->itemType() != m_itemTypeFilter)
+        return false;
 
     // Filter out duplicates
     if (m_filterDuplicates) {
         if (m_shownItemIds.contains(gameItem->itemId())) {
-            //qCDebug(dcGame()) << gameItem->name() << gameItem->itemId() << "already in the list";
             return false;
         } else {
             const_cast<GameItemsProxy *>(this)->m_shownItemIds.append(gameItem->itemId());
-            //qCDebug(dcGame()) << gameItem->name() << gameItem->itemId() << "appended for duplicates filter";
         }
     }
 
@@ -175,8 +193,13 @@ void GameItemsProxy::onSourceModelCountChanged()
 void GameItemsProxy::onRowsInseted(const QModelIndex &parent, int first, int last)
 {
     Q_UNUSED(parent)
-    Q_UNUSED(first)
-    Q_UNUSED(last)
+
+    for (int i = first; i <= last; i++) {
+        GameItem *item = get(i);
+        if (item) {
+            emit gameItemActiveChanged(item, true);
+        }
+    }
 
     emit countChanged();
 }
@@ -186,6 +209,20 @@ void GameItemsProxy::onRowsRemoved(const QModelIndex &parent, int first, int las
     Q_UNUSED(parent)
     Q_UNUSED(first)
     Q_UNUSED(last)
+
+    emit countChanged();
+}
+
+void GameItemsProxy::onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent)
+
+    for (int i = first; i <= last; i++) {
+        GameItem *item = get(i);
+        if (item) {
+            emit gameItemActiveChanged(item, false);
+        }
+    }
 
     emit countChanged();
 }

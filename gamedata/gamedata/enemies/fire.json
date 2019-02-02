@@ -18,11 +18,24 @@
         "collision": 491,
         "vertices": []
     },
-    "role": "Enemy",
-    "experience": 10,
-    "health": 10,
-    "healthMax": 10,
-    "touchDamage": 5,
-    "hitDamage": 0,
-    "shootDamage": 0
+
+    "character": {
+        "gender": "male",
+        "role": "Enemy",
+        "experience": 0,
+        "health": 10,
+        "healthMax": 10,
+        "mana": 0,
+        "manaMax": 0,
+        "wisdom": 0,
+        "strength": 0,
+        "stealth": 0,
+        "inventory": [ ]
+    },
+
+    "enemy": {
+        "touchDamage": 5,
+        "hitDamage": 0,
+        "shootDamage": 0
+    }
 }

@@ -112,15 +112,16 @@ int main(int argc, char *argv[])
 
     // Enable debug categories
     s_loggingFilters.insert("Game", true);
-    s_loggingFilters.insert("World", true);
-    s_loggingFilters.insert("Character", true);
+    s_loggingFilters.insert("Engine", true);
+    s_loggingFilters.insert("Character", false);
     s_loggingFilters.insert("Settings", true);
     s_loggingFilters.insert("PlayerController", true);
-    s_loggingFilters.insert("Map", false);
+    s_loggingFilters.insert("Map", true);
+    s_loggingFilters.insert("DataManager", true);
     s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
-    s_loggingFilters.insert("MapEditor", true);
+    s_loggingFilters.insert("MapEditor", false);
 
     s_loggingFilters.insert("qml", true);
 
@@ -131,11 +132,12 @@ int main(int argc, char *argv[])
     // Game
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
 
-    qmlRegisterUncreatableType<GameWorld>("Chronicles", 1, 0, "GameWorld", "Can't create this in QML. Get it from the Game instance.");
+    qmlRegisterUncreatableType<Engine>("Chronicles", 1, 0, "Engine", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
-    qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the GameWorld object.");
-    qmlRegisterUncreatableType<GameSettings>("Chronicles", 1, 0, "GameSettings", "Can't create this in QML. Get it from the Game instance.");
-    qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the GameWorld object.");
+    qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the Engine object.");
+    qmlRegisterUncreatableType<Engine>("Chronicles", 1, 0, "Engine", "Can't create this in QML. Get it from the Game instance.");
+    qmlRegisterUncreatableType<DataManager>("Chronicles", 1, 0, "DataManager", "Can't create this in QML. Get it from the Engine object.");
+    qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the Engine object.");
     qmlRegisterUncreatableType<GameMapEditor>("Chronicles", 1, 0, "GameMapEditor", "Can't create this in QML. Get it from the Game instance.");
 
     // Items
@@ -160,8 +162,8 @@ int main(int argc, char *argv[])
     Box2DPlugin plugin;
     plugin.registerTypes("Box2D");
 
+    // Create qml engine
     QQmlApplicationEngine engine;
-
 #ifdef ANDROID
     engine.rootContext()->setContextProperty("dataDirectory", "assets:");
 #else

@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -42,7 +42,7 @@ GamePage {
 
                     onEditingFinished: {
                         Game.settings.playerName = text
-                        Game.world.player.name = text
+                        Game.engine.player.name = text
                     }
                 }
             }
@@ -59,6 +59,7 @@ GamePage {
                 ComboBox {
                     Layout.fillWidth: true
                     model: [qsTr("Keyboard"), qsTr("Keyboard + Mouse"), qsTr("Touchscreen")]
+                    font.family: app.fontFamily
                     currentIndex: {
                         switch (Game.settings.controlMode) {
                         case PlayerController.ControlModeKeyBoard:
@@ -73,13 +74,13 @@ GamePage {
                     onCurrentIndexChanged: {
                         if (currentIndex == 0) {
                             Game.settings.controlMode = PlayerController.ControlModeKeyBoard
-                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoard
+                            Game.engine.playerController.controlMode = PlayerController.ControlModeKeyBoard
                         } else if (currentIndex == 1) {
                             Game.settings.controlMode = PlayerController.ControlModeKeyBoardMouse
-                            Game.world.playerController.controlMode = PlayerController.ControlModeKeyBoardMouse
+                            Game.engine.playerController.controlMode = PlayerController.ControlModeKeyBoardMouse
                         } else if (currentIndex == 2) {
                             Game.settings.controlMode = PlayerController.ControlModeTouchscreen
-                            Game.world.playerController.controlMode = PlayerController.ControlModeTouchscreen
+                            Game.engine.playerController.controlMode = PlayerController.ControlModeTouchscreen
                         }
                     }
                 }
@@ -97,6 +98,7 @@ GamePage {
                 ComboBox {
                     Layout.fillWidth: true
                     model: [qsTr("Windowed"), qsTr("Maximized"), qsTr("Fullscreen")]
+                    font.family: app.fontFamily
                     currentIndex: {
                         switch (Game.settings.visibility) {
                         case ApplicationWindow.Windowed:

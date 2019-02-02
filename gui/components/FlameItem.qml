@@ -1,5 +1,5 @@
-import QtQuick 2.12
-import QtQuick.Particles 2.7
+import QtQuick 2.9
+import QtQuick.Particles 2.0
 
 import Chronicles 1.0
 

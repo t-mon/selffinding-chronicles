@@ -4,10 +4,7 @@
 ChestItem::ChestItem(QObject *parent) :
     GameItem(parent)
 {
-    m_items = new GameItems();
-    m_itemsProxy = new GameItemsProxy(this);
-    m_itemsProxy->setGameItems(m_items);
-
+    m_items = new GameItems(this);
     setInteraction(InteractionOpen);
 }
 
@@ -29,11 +26,6 @@ void ChestItem::performInteraction()
 GameItems *ChestItem::items() const
 {
     return m_items;
-}
-
-GameItemsProxy *ChestItem::itemsProxy() const
-{
-    return m_itemsProxy;
 }
 
 bool ChestItem::locked() const
@@ -124,4 +116,22 @@ void ChestItem::setUnlockProgress(int unlockProgress)
     qCDebug(dcItem()) << itemTypeName() << name() << "unlock progress changed to" << unlockProgress << "%";
     m_unlockProgress = unlockProgress;
     emit unlockProgressChanged(m_unlockProgress);
+}
+
+QDebug operator<<(QDebug debug, ChestItem *chestItem)
+{
+    debug.nospace() << "ChestItem(" << chestItem->itemTypeName();
+    debug.nospace() << ", " << chestItem->name();
+    debug.nospace() << ", " << chestItem->itemId();
+    debug.nospace() << ", " << chestItem->position();
+    debug.nospace() << ", " << chestItem->size();
+    debug.nospace() << ", " << (chestItem->locked() ? "locked" : "unlocked");
+    debug.nospace() << ", " << chestItem->lockCombination();
+    debug.nospace() << ")" << endl;
+
+    foreach (GameItem *item, chestItem->items()->gameItems()) {
+        debug.nospace() << "    --> " << item->thread() << ", " << item << endl;
+    }
+
+    return debug.space();
 }

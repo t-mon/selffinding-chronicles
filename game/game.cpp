@@ -18,9 +18,9 @@ QObject *Game::qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
     return Game::instance();
 }
 
-GameWorld *Game::world() const
+Engine *Game::engine() const
 {
-    return m_world;
+    return m_engine;
 }
 
 GameSettings *Game::settings() const
@@ -69,7 +69,7 @@ void Game::keyPressed(const Qt::Key &key, bool autoRepeat)
         return;
 
     qCDebug(dcGame()) << "Key pressed" << key;
-    m_world->playerController()->keyPressed(key);
+    m_engine->playerController()->keyPressed(key);
 
     switch (key) {
     case Qt::Key_NumberSign:
@@ -86,12 +86,27 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
         return;
 
     qCDebug(dcGame()) << "Key released" << key;
-    m_world->playerController()->keyReleased(key);
+    m_engine->playerController()->keyReleased(key);
+}
+
+WeaponItem *Game::castWeaponItem(GameItem *item)
+{
+    return qobject_cast<WeaponItem *>(item);
+}
+
+FirearmItem *Game::castFirearmItem(GameItem *item)
+{
+    return qobject_cast<FirearmItem *>(item);
+}
+
+PlantItem *Game::castPlantItem(GameItem *item)
+{
+    return qobject_cast<PlantItem *>(item);
 }
 
 Game::Game(QObject *parent) :
     QObject(parent),
-    m_world(new GameWorld(this)),
+    m_engine(new Engine(this)),
     m_settings(new GameSettings(this)),
     m_mapEditor(new GameMapEditor(this)),
     m_running(false)
@@ -101,5 +116,5 @@ Game::Game(QObject *parent) :
 
 void Game::onTick()
 {
-    m_world->tick();
+    m_engine->tick();
 }

@@ -7,6 +7,7 @@
         "height": 1,
         "layer": 1
     },
+
     "physicsGeometry": {
         "body": "dynamic",
         "shape": "circle",
@@ -18,8 +19,11 @@
         "collision": 32,
         "vertices": []
     },
-    "price": 25,
-    "mana": 0,
-    "health": 25,
-    "speed": 0
+
+    "plant": {
+        "price": 10,
+        "mana": 0,
+        "healing": 25,
+        "speed": 0
+    }
 }

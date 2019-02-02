@@ -10,27 +10,27 @@
 
 #include "map.h"
 #include "fields.h"
+#include "datamanager.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
 #include "conversation/conversation.h"
 
 class CollisionDetector;
 
-class GameWorld : public Fields
+class Engine : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)
-    Q_PROPERTY(QSize boundingSize READ boundingSize WRITE setBoundingSize NOTIFY boundingSizeChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(QRectF viewWindow READ viewWindow WRITE setViewWindow NOTIFY viewWindowChanged)
 
-    Q_PROPERTY(Map *map READ map CONSTANT)
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
-
-    Q_PROPERTY(Character *player READ player CONSTANT)
+    Q_PROPERTY(Character *player READ player NOTIFY playerChanged)
     Q_PROPERTY(GameItem *playerFocusItem READ playerFocusItem NOTIFY playerFocusItemChanged)
-    Q_PROPERTY(GameItems *gameItems READ gameItems CONSTANT)
-    Q_PROPERTY(GameItems *enemyItems READ enemyItems CONSTANT)
-    Q_PROPERTY(GameItems *characterItems READ characterItems CONSTANT)
+
+    Q_PROPERTY(DataManager *dataManager READ dataManager CONSTANT)
+    Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
+    Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
+    Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
 
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
@@ -41,10 +41,8 @@ class GameWorld : public Fields
 
     Q_PROPERTY(Field* currentPlayerField READ currentPlayerField NOTIFY currentPlayerFieldChanged)
     Q_PROPERTY(QPoint currentPlayerPosition READ currentPlayerPosition NOTIFY currentPlayerPositionChanged)
-    Q_PROPERTY(QPoint currentViewOffset READ currentViewOffset WRITE setCurrentViewOffset NOTIFY currentViewOffsetChanged)
 
 public:
-
     enum State {
         StateUnitialized,
         StateLoading,
@@ -58,28 +56,23 @@ public:
     };
     Q_ENUM(State)
 
-    explicit GameWorld(QObject *parent = nullptr);
-    ~GameWorld() override = default;
+    explicit Engine(QObject *parent = nullptr);
+    ~Engine() override = default;
 
     State state() const;
 
-    QSize size() const;
-    void setSize(const QSize &size);
-
-    QSize boundingSize() const;
-    void setBoundingSize(const QSize &boundingSize);
-
-    QPoint currentViewOffset() const;
-    void setCurrentViewOffset(const QPoint &currentViewOffset);
+    QRectF viewWindow() const;
+    void setViewWindow(const QRectF &viewWindow);
 
     QPoint currentPlayerPosition() const;
     Field *currentPlayerField() const;
 
-    Map *map() const;
+    DataManager *dataManager() const;
     Character *player() const;
-    GameItems *gameItems() const;
-    GameItems *characterItems() const;
-    GameItems *enemyItems() const;
+    GameItemsProxy *activeItems() const;
+    GameItemsProxy *activeCharacters() const;
+    GameItemsProxy *activeEnemies() const;
+
     PlayerController *playerController() const;
 
     GameItem *playerFocusItem() const;
@@ -96,8 +89,6 @@ public:
     Q_INVOKABLE void unlockLeftClicked();
     Q_INVOKABLE void unlockRightClicked();
 
-    Q_INVOKABLE void loadMap(const QString &fileName);
-
     Q_INVOKABLE void giveUpUnlocking();
     Q_INVOKABLE void finishPlunder();
 
@@ -110,32 +101,29 @@ public:
 
 private:
     State m_state = StateUnitialized;
-    QSize m_size;
-    QSize m_boundingSize;
+    QRectF m_viewWindow;
 
-    Map *m_map = nullptr;
+    DataManager *m_dataManager = nullptr;
+
     Character *m_player = nullptr;
-    GameItems *m_gameItems = nullptr;
-    GameItems *m_enemyItems = nullptr;
-    GameItems *m_characterItems = nullptr;
     PlayerController *m_playerController = nullptr;
-    CollisionDetector *m_collisionDetector = nullptr;
+
+    GameItemsProxy *m_activeItems = nullptr;
+    GameItemsProxy *m_activeEnemies = nullptr;
+    GameItemsProxy *m_activeCharacters = nullptr;
+
     Conversation *m_currentConversation = nullptr;
     ChestItem *m_currentChestItem = nullptr;
     GameItems *m_currentPlunderItems = nullptr;
 
     // View properties
     QPoint m_currentPlayerPosition;
-    QPoint m_currentViewOffset;
-
     Field *m_currentPlayerField = nullptr;
-    QList<Field *> m_fieldsInRange;
+
     QList<GameItem *> m_playerVisibleItems;
     GameItem *m_playerFocusItem = nullptr;
-    GameItem *m_playerCurrentlyOnItem = nullptr;
 
     // Map loading
-    QFutureWatcher<void> *m_loadingWatcher = nullptr;
     bool m_loaded = false;
     bool m_loading = false;
 
@@ -146,6 +134,8 @@ private:
     void setPlayerFocusItem(GameItem *focusItem);
     void setLoaded(bool loaded);
     void setLoading(bool loading);
+    void setPlayer(Character *player);
+
     void setCurrentConversation(Conversation *conversation);
     void setCurrentChestItem(ChestItem *chestItem);
     void setCurrentPlunderItems(GameItems *plunderItems);
@@ -154,19 +144,18 @@ private:
     void doPlayerMovement();
 
     // Helper methods
-    Field *getFieldFromPosition(const QPointF position) const;
     void evaluatePlayerFocus();
-
     void pickItem(GameItem *item);
 
 signals:
-    void worldPostTick();
+    void enginePostTick();
+
     void stateChanged(State state);
-    void sizeChanged(const QSize &size);
-    void boundingSizeChanged(const QSize &boundingSize);
+    void viewWindowChanged(const QRectF &viewWindow);
     void loadingChanged(bool loading);
     void loadedChanged(bool loaded);
 
+    void playerChanged(Character *player);
     void currentPlayerFieldChanged(Field *currentPlayerField);
     void currentPlayerPositionChanged(const QPoint &currentPlayerPosition);
     void currentViewOffsetChanged(const QPoint &currentViewOffset);
@@ -177,12 +166,15 @@ signals:
 
 private slots:
     void onPlayerPositionChanged();
-    void onLoadingFinished();
+    void onDataManagerStateChanged(DataManager::State state);
+
+    void onGameItemActiveChanged(GameItem *item, bool active);
 
     void onItemPlayerVisibleChanged(bool playerVisible);
     void onItemPlayerOnItemChanged(bool playerOnItem);
     void onEnemyKilled();
 
+    // Playercontroller
     void onPrimaryActionPressedChanged(bool pressed);
     void onSecondaryActionPressedChanged(bool pressed);
     void onLeftClicked();
@@ -191,9 +183,13 @@ private slots:
     void onBackwardClicked();
     void onInventoryClicked();
     void onCurrentConversationFinished();
+    void onShoot();
+    void onEscape();
+    void onBeam();
 
 public slots:
     void tick();
+    void resetEngine();
 
 };
 

@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.12
@@ -76,7 +76,7 @@ PhysicsItem {
             }
 
             console.log("Bullet collision " + root.shooter + " --> " + victim )
-            Game.world.performShootImpact(root.shooter, victim, damage)
+            Game.engine.performShootImpact(root.shooter, victim, damage)
             root.destroy()
         }
     }

@@ -18,32 +18,11 @@
         "collision": 171,
         "vertices": []
     },
-    "items": [
-        {
-            "data": ":/gamedata/plants/healing-herb.json"
-        },
-        { 
-            "data": ":/gamedata/plants/healing-herb.json"
-        },
-        {
-            "data": ":/gamedata/weapons/sword.json"
-        },
-        {
-            "data": ":/gamedata/weapons/sword.json"
-        },
-        {
-            "data": ":/gamedata/firearms/hunting-bow.json"
-        },
-        {
-            "data": ":/gamedata/firearms/hunting-bow.json"
-        },
-        {
-            "data": ":/gamedata/firearms/hunting-bow.json"
-        },
-        {
-            "data": ":/gamedata/firearms/hunting-bow.json"
-        }
-    ],
-    "lockCombination": [ 0, 1, 0, 1 ]
+
+    "chest": {
+        "locked": false,
+        "lockCombination": [ ],
+        "inventory": [ ]
+    }
 }
  

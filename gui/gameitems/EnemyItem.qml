@@ -1,6 +1,6 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.12
+import QtQuick.Controls 2.0
 
 import Box2D 2.0
 import Chronicles 1.0
@@ -11,7 +11,7 @@ import "../physics"
 PhysicsItem {
     id: root
 
-    property Enemy enemy: Game.world.enemyItems.get(model.index)
+    property Enemy enemy
     property int itemType: enemy ? enemy.itemType : GameItem.TypeNone
     property bool burning: false
 
@@ -20,7 +20,7 @@ PhysicsItem {
     onPlayerAuraRangeChanged: enemy.playerVisible = playerAuraRange
     onPlayerOnItemChanged: enemy.playerOnItem = playerOnItem
     bodyType: enemy ? enemy.bodyType : GameObject.BodyTypeStatic
-    linearDamping: 5
+    linearDamping: 10
     fixedRotation: true
 
     fixtures: [
@@ -56,7 +56,7 @@ PhysicsItem {
             color: "gray";
             border.color: "white";
             border.width: app.borderWidth / 2
-            opacity: Game.debugging ? 0.2 : 0
+            opacity: root.itemDebugEnabled ? 0.2 : 0
         }
 
         FlameItem {
@@ -77,9 +77,11 @@ PhysicsItem {
                 property: "opacity"
                 loops: 1
                 to: 0
-                onFinished: {
-                    flameItem.visible = false
-                    root.burning = false
+                onRunningChanged: {
+                    if (!running) {
+                        flameItem.visible = false
+                        root.burning = false
+                    }
                 }
             }
         }
@@ -89,14 +91,14 @@ PhysicsItem {
             anchors.bottom: frame.top
             anchors.horizontalCenter: frame.horizontalCenter
             text: enemy ? enemy.name : ""
-            opacity: enemy ? (Game.debugging ? 0.5 : (enemy.playerFocus ? 1 : 0)) : 0
+            opacity: enemy ? (root.itemDebugEnabled ? 0.5 : (enemy.playerFocus ? 1 : 0)) : 0
         }
 
         Image {
             id: itemImage
             anchors.fill: frame
             source: enemy ? dataDirectory + enemy.imageName : ""
-            opacity: Game.debugging ? 0.5 : 1
+            opacity: root.itemDebugEnabled ? 0.5 : 1
         }
 
         PercentageIndicator {
@@ -107,7 +109,7 @@ PhysicsItem {
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: 0
             color: app.healthColor
-            percentage: enemy.healthPercentage
+            percentage: enemy ? enemy.healthPercentage : 0
         }
     }
 
@@ -151,7 +153,7 @@ PhysicsItem {
         interval: 1000
         running: root.burning
         repeat: true
-        onTriggered: Game.world.performBurnDamage(root.enemy, 2)
+        onTriggered: Game.engine.performBurnDamage(root.enemy, 2)
     }
 
     Timer {
@@ -202,4 +204,24 @@ PhysicsItem {
         opacity: 0
     }
 
+
+
+    // Enemy movement
+    Connections {
+        target: Game.engine
+        onEnginePostTick: {
+            var currentVelocity = body.linearVelocity
+            var dvx = root.enemy.movementVector.x * app.gridSize - currentVelocity.x
+            var dvy = root.enemy.movementVector.y * app.gridSize - currentVelocity.y
+            body.applyLinearImpulse(Qt.point(root.body.getMass() * dvx, body.getMass() * dvy), body.getWorldCenter())
+        }
+    }
+
+    onXChanged: {
+        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
+
+    onYChanged: {
+        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
 }

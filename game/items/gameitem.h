@@ -96,7 +96,7 @@ public:
 
 private:
     QString m_itemId;
-    QString m_imageName = "/images/world/base/placeholder.png";
+    QString m_imageName = "/images/game/placeholder.png";
     int m_price = 0;
     bool m_playerFocus = false;
     bool m_playerVisible = false;

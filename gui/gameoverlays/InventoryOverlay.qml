@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -29,7 +29,7 @@ GameOverlayItem {
                     id: characterDescription
                     Layout.fillWidth: true
                     Layout.preferredHeight: app.gridSize * 9
-                    character: Game.world.player
+                    character: Game.engine.player
                 }
 
                 ContentItemDescription {
@@ -104,10 +104,10 @@ GameOverlayItem {
                             console.log("Use clicked for", inventoryContentItem.selectedItem, inventoryContentItem.selectedItem.itemTypeName)
                             switch (inventoryContentItem.selectedItem.itemType) {
                             case GameItem.TypeWeapon:
-                                Game.world.player.weapon = inventoryContentItem.selectedItem
+                                Game.engine.player.weapon = inventoryContentItem.selectedItem
                                 break;
                             case GameItem.TypeFirearm:
-                                Game.world.player.firearm = inventoryContentItem.selectedItem
+                                Game.engine.player.firearm = inventoryContentItem.selectedItem
                                 break;
                             default:
                                 console.log("Not implemented yet for item", inventoryContentItem.selectedItem.itemTypeName)
@@ -125,9 +125,9 @@ GameOverlayItem {
 
                     GameButton {
                         Layout.fillWidth: true
-                        visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen
+                        visible: Game.engine.playerController.controlMode === PlayerController.ControlModeTouchscreen
                         text: "Close"
-                        onClicked: Game.world.inventoryClicked()
+                        onClicked: Game.engine.inventoryClicked()
                     }
                 }
             }

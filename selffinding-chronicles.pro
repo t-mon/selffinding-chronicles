@@ -1,4 +1,4 @@
-QT += qml quick quickcontrols2 svg
+QT += core qml quick quickcontrols2 svg
 
 CONFIG += c++11
 
@@ -40,10 +40,12 @@ HEADERS += \
     game/conversation/conversationitems.h \
     game/gamesettings.h \
     game/items/chestitem.h \
-    game/gameworld.h \
     game/items/enemy.h \
     game/items/firearmitem.h \
-    game/gamemapeditor.h
+    game/gamemapeditor.h \
+    game/engine.h \
+    game/datamanager.h
+
 
 SOURCES += game/main.cpp \
     game/game.cpp \
@@ -68,10 +70,16 @@ SOURCES += game/main.cpp \
     game/conversation/conversationitems.cpp \
     game/gamesettings.cpp \
     game/items/chestitem.cpp \
-    game/gameworld.cpp \
     game/items/enemy.cpp \
     game/items/firearmitem.cpp \
-    game/gamemapeditor.cpp
+    game/gamemapeditor.cpp \
+    game/engine.cpp \
+    game/datamanager.cpp
+
+
+unix:!android {
+    message("Building linux version")
+}
 
 android {
     message("Building android version")

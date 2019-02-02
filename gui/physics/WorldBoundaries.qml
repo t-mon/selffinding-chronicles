@@ -8,26 +8,26 @@ Body {
     property var worldObject
 
     Box {
-        y: root.worldObject.height
-        width: root.worldObject.width
+        y: worldObject.height
+        width: worldObject.width
         height: app.gridSize
     }
 
     Box {
         y: -app.gridSize
         height: app.gridSize
-        width: root.worldObject.width
+        width: worldObject.width
     }
 
     Box {
         x: -app.gridSize
         width: app.gridSize
-        height: root.worldObject.height
+        height: worldObject.height
     }
 
     Box {
-        x: root.worldObject.width
+        x: worldObject.width
         width: app.gridSize
-        height: root.worldObject.height
+        height: worldObject.height
     }
 }

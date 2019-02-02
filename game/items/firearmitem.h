@@ -35,4 +35,6 @@ signals:
     void rangeChanged(int range);
 };
 
+QDebug operator<<(QDebug debug, FirearmItem *firearmItem);
+
 #endif // FIREARMITEM_H

@@ -8,6 +8,9 @@
 class PlantItem : public GameItem
 {
     Q_OBJECT
+    Q_PROPERTY(int healing READ healing NOTIFY healingChanged)
+    Q_PROPERTY(int mana READ mana NOTIFY manaChanged)
+    Q_PROPERTY(int speed READ speed NOTIFY speedChanged)
 
 public:
     explicit PlantItem(QObject *parent = nullptr);

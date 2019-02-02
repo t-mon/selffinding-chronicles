@@ -11,18 +11,13 @@
 Map::Map(QObject *parent) : QObject(parent)
 {
     m_items = new GameItems(this);
-    m_items->setAutoParent(true);
-
     m_enemies = new GameItems(this);
-    m_enemies->setAutoParent(true);
-
     m_characters = new GameItems(this);
-    m_enemies->setAutoParent(true);
 }
 
 Map::~Map()
 {
-    clear();
+
 }
 
 QSize Map::size() const
@@ -72,9 +67,28 @@ QString Map::fileName() const
     return m_fileName;
 }
 
+QColor Map::backgroundColor() const
+{
+    return m_backgroundColor;
+}
+
+void Map::setBackgroundColor(const QColor &backgroundColor)
+{
+    if (m_backgroundColor == backgroundColor)
+        return;
+
+    m_backgroundColor = backgroundColor;
+    emit backgroundColorChanged(m_backgroundColor);
+}
+
 GameItems *Map::items()
 {
     return m_items;
+}
+
+GameItems *Map::enemies()
+{
+    return m_enemies;
 }
 
 GameItems *Map::characters()
@@ -84,9 +98,7 @@ GameItems *Map::characters()
 
 void Map::loadMap(const QString &fileName)
 {
-    QElapsedTimer timer;
     qCDebug(dcMap()) << "Start loading map from" << fileName;
-    timer.start();
 
     if (m_fileName == fileName) {
         qCDebug(dcMap()) << "The map" << fileName << "is already loaded.";
@@ -94,9 +106,7 @@ void Map::loadMap(const QString &fileName)
     }
 
     m_fileName = fileName;
-
-    qCDebug(dcMap()) << "--> clean up old map data";
-    clear();
+    emit fileNameChanged(m_fileName);
 
     // Load map information
     qCDebug(dcMap()) << "--> load json data from file";
@@ -106,30 +116,32 @@ void Map::loadMap(const QString &fileName)
         return;
     }
 
+    loadMapVariant(mapData);
+}
+
+void Map::loadMapVariant(const QVariantMap &mapData)
+{
+    qint64 startTime = QDateTime::currentMSecsSinceEpoch();
+
     setSize(QSize(mapData.value("width").toInt(), mapData.value("height").toInt()));
     setName(mapData.value("name").toString());
     setPlayerStartPosition(QPointF(mapData.value("playerStartX").toDouble(), mapData.value("playerStartY").toDouble()));
-
-    // Default field information
-    QVariantMap defaultFieldMap = mapData.value("defaultField").toMap();
-    QString defaultImageName = defaultFieldMap.value("imageName").toString();
+    setBackgroundColor(QColor(mapData.value("backgroundColor").toString()));
 
     // Initialize fields
-    qCDebug(dcMap()) << "--> initialize fields";
+    qCDebug(dcMap()) << "--> initialize fields" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     for (int y = 0; y < m_size.height(); y++) {
-        Fields *fields = new Fields();
+        Fields *fields = new Fields(this);
         for (int x = 0; x < m_size.width(); x++) {
             // Create field for x,y coordinate and init with default
             Field *field = new Field(QPoint(x, y), fields);
-            field->setImageName(defaultImageName);
-            //qCDebug(dcMap()) << "Map: create field" << field->position();
             fields->addField(field);
         }
         m_mapData.append(fields);
     }
 
     // Set field neighbours
-    qCDebug(dcMap()) << "--> initialize field neighbours";
+    qCDebug(dcMap()) << "--> initialize field neighbours" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     for (int y = 0; y < m_size.height(); y++) {
         for (int x = 0; x < m_size.width(); x++) {
             Field *currentField = getField(x, y);
@@ -144,78 +156,35 @@ void Map::loadMap(const QString &fileName)
         }
     }
 
-    // Set fields data
-    qCDebug(dcMap()) << "--> configure fields";
-    QVariantList fieldList = mapData.value("fields").toList();
-    foreach (const QVariant &fieldVariant, fieldList) {
-        QVariantMap fieldMap = fieldVariant.toMap();
-        int x = fieldMap.value("x").toInt();
-        int y = fieldMap.value("y").toInt();
-
-        Field *field = getField(x, y);
-        if (!field) {
-            qCWarning(dcMap()) << "Ignore field form map data" << fieldMap;
-            continue;
-        }
-
-        //field->setAccessible(fieldMap.value("accessable").toBool());
-        field->setImageName(fieldMap.value("imageName").toString());
-    }
-
-    qCDebug(dcMap()) << "--> load items";
-    QList<GameItem *> items = DataLoader::loadGameItems(mapData.value("items").toList());
-    foreach (GameItem *item, items)
-        item->moveToThread(QCoreApplication::instance()->thread());
-
+    // Load items
+    qCDebug(dcMap()) << "--> load items" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
+    QList<GameItem *> items = DataLoader::loadGameItems(mapData.value("items").toList(), this);
     m_items->addGameItemList(items);
+    foreach (GameItem *item, items)
+        qCDebug(dcMap()) << "        " << item;
 
-
-    qCDebug(dcMap()) << "--> load chests";
-    QList<GameItem *> chestItems = DataLoader::loadGameItems(mapData.value("chests").toList());
-    foreach (GameItem *chestItem, chestItems)
-        chestItem->moveToThread(QCoreApplication::instance()->thread());
-
+    // Load chests
+    qCDebug(dcMap()) << "--> load chests" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
+    QList<GameItem *> chestItems = DataLoader::loadChestItems(mapData.value("chests").toList(), this);
     m_items->addGameItemList(chestItems);
+    foreach (GameItem *item, chestItems)
+        qCDebug(dcMap()) << "        " << item;
 
-
-    qCDebug(dcMap()) << "--> load characters";
-    QList<GameItem *> characterItems = DataLoader::loadGameItems(mapData.value("characters").toList());
-    foreach (GameItem *characterItem, characterItems)
-        characterItem->moveToThread(QCoreApplication::instance()->thread());
-
+    // Load characters
+    qCDebug(dcMap()) << "--> load characters" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
+    QList<GameItem *> characterItems = DataLoader::loadCharacterItems(mapData.value("characters").toList(), this);
     m_characters->addGameItemList(characterItems);
+    foreach (GameItem *item, m_characters->gameItems())
+        qCDebug(dcMap()) << "        " << item;
 
-    qCDebug(dcMap()) << "--> load enemies";
-
-    QList<GameItem *> enemyItems = DataLoader::loadGameItems(mapData.value("enemies").toList());
-    foreach (GameItem *enemyItem, enemyItems)
-            enemyItem->moveToThread(QCoreApplication::instance()->thread());
-
+    // Load enemies
+    qCDebug(dcMap()) << "--> load enemies" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
+    QList<GameItem *> enemyItems = DataLoader::loadEnemyItems(mapData.value("enemies").toList(), this);
     m_enemies->addGameItemList(enemyItems);
-
-    // Move all the object back to the main thread
-    foreach (Fields *fields, m_mapData)
-        fields->moveToThread(QCoreApplication::instance()->thread());
-
-    foreach (GameItem *item, m_items->gameItems()) {
-        item->moveToThread(QCoreApplication::instance()->thread());
-        placeItemOnMap(item);
+    foreach (GameItem *item, m_enemies->gameItems())
         qCDebug(dcMap()) << "        " << item;
-    }
 
-    foreach (GameItem *item, m_characters->gameItems()) {
-        item->moveToThread(QCoreApplication::instance()->thread());
-        placeItemOnMap(item);
-        qCDebug(dcMap()) << "        " << item;
-    }
-
-    foreach (GameItem *item, m_enemies->gameItems()) {
-        item->moveToThread(QCoreApplication::instance()->thread());
-        placeItemOnMap(item);
-        qCDebug(dcMap()) << "        " << item;
-    }
-
-    qCDebug(dcMap()) << "Map loading from" << fileName << "finished successfully:" << timer.elapsed() << "[ms]";
+    qCDebug(dcMap()) << "Map loading finished successfully:" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
 }
 
 Field *Map::getField(int x, int y) const
@@ -245,7 +214,55 @@ void Map::placeItemOnMap(GameItem *item)
 
 void Map::clear()
 {
+    m_size = QSize();
+    m_playerStartPosition = QPointF();
+    m_name = QString();
+    m_fileName = QString();
+    m_backgroundColor = QColor();
+
+    // Delete all objects of the map
+    m_items->clearModel();
+    m_characters->clearModel();
+    m_enemies->clearModel();
+
     // Delete all fields
     qDeleteAll(m_mapData);
     m_mapData.clear();
+
+}
+
+QDebug operator<<(QDebug debug, Map *map)
+{
+    debug.nospace() << "Map("<< map->name();
+    debug.nospace() << ", " << map->size();
+    debug.nospace() << ", " << map->fileName();
+    debug.nospace() << ", " << map->playerStartPosition();
+    debug.nospace() << ", color: " << map->backgroundColor().name();
+    debug.nospace() << ")" << endl;
+
+    debug.nospace() << "--> Items:" << endl;
+    foreach (GameItem *item, map->items()->gameItems()) {
+
+        switch (item->itemType()) {
+        case GameItem::TypeChest:
+            debug.nospace() << "    " << item->thread() << ", " << qobject_cast<ChestItem *>(item) << endl;
+            break;
+        default:
+            debug.nospace() << "    " << item->thread() << ", " << item << endl;
+            break;
+        }
+
+    }
+
+    debug.nospace() << "--> Characters:" << endl;
+    foreach (GameItem *item, map->characters()->gameItems()) {
+        debug.nospace() << "    " << item->thread() << ", " << qobject_cast<Character *>(item) << endl;
+    }
+
+    debug.nospace() << "--> Enemies:" << endl;
+    foreach (GameItem *item, map->enemies()->gameItems()) {
+        debug.nospace() << "    " << item->thread() << ", " << item << endl;
+    }
+
+    return debug.space();
 }

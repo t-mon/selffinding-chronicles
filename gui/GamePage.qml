@@ -1,10 +1,10 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
 
-import Box2D 2.0
 import Chronicles 1.0
+import Box2D 2.0
 
 import "components"
 import "gameitems"
@@ -17,6 +17,7 @@ GamePage {
     Component.onCompleted: {
         console.log("Game scene size:", gamePage.width, "/", gamePage.height, "grid size:", app.gridSize)
         forceActiveFocus()
+        moveCamera()
     }
 
     Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
@@ -46,12 +47,13 @@ GamePage {
 
             Item {
                 id: worldItem
-                width: Game.world.map.size.width * app.gridSize
-                height: Game.world.map.size.height * app.gridSize
+                width: Game.engine.dataManager.worldSize.width * app.gridSize
+                height: Game.engine.dataManager.worldSize.height * app.gridSize
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "black"
+                    // FIXME: use map color
+                    color: "#307a78"
                 }
 
                 WorldBoundaries {
@@ -60,114 +62,28 @@ GamePage {
                 }
 
                 Repeater {
-                    id: fieldRepeater
-                    model: Game.world
-                    delegate: FieldItem {
-                        width: app.gridSize
-                        height: app.gridSize
-                        field: Game.world.get(model.index)
-                        x: field.position.x * app.gridSize
-                        y: field.position.y * app.gridSize
-                    }
-                }
-
-                CharacterItem {
-                    id: playerItem
-                    isPlayer: true
-                    character: Game.world.player
-
-                    width: Game.world.player.size.width * app.gridSize
-                    height: Game.world.player.size.height * app.gridSize
-
-                    x: Game.world.map.playerStartPosition.x * app.gridSize
-                    y: Game.world.map.playerStartPosition.y * app.gridSize
-                    z: Map.Layer2Normal
-
-                    onXChanged: {
-                        Game.world.player.position = Qt.point(playerItem.x / app.gridSize, playerItem.y / app.gridSize)
-                        moveCamera()
-                    }
-
-                    onYChanged: {
-                        Game.world.player.position = Qt.point(playerItem.x / app.gridSize, playerItem.y / app.gridSize)
-                        moveCamera()
-                    }
-
-                    function shootBulletObject(bulletObject) {
-                        var bulletStartPoint = Qt.point(playerItem.x + playerItem.getBulletXOffset(),  playerItem.y + playerItem.getBulletYOffset())
-                        bulletObject.damage = playerItem.character.firearm.damage
-                        bulletObject.width = app.gridSize / 2
-                        bulletObject.height = bulletObject.width
-                        bulletObject.rotation = playerItem.getBulletAngle()
-                        bulletObject.x = bulletStartPoint.x
-                        bulletObject.y = bulletStartPoint.y
-                        bulletObject.z = Map.Layer2Normal
-                        bulletObject.startPositionX = bulletStartPoint.x
-                        bulletObject.startPositionY = bulletStartPoint.y
-                        bulletObject.shootRange = playerItem.character.firearm.range
-                        bulletObject.fireArrow = debugControls.flamesEnabled
-                        bulletObject.body.linearVelocity = Qt.point(app.gridSize * Math.cos(character.angle), app.gridSize * Math.sin(character.angle))
-                    }
-
-                    function shoot() {
-                        if (!playerItem.character.firearm) {
-                            console.log(character.name + "can not shoot. No firearm selected.")
-                            return;
-                        }
-
-                        console.log(character.name + " SHOOOT!")
-                        var component = Qt.createComponent("gameitems/BulletItem.qml");
-                        var bulletIncubator = component.incubateObject(worldItem, { shooter: playerItem.character } )
-                        if (bulletIncubator.status !== Component.Ready) {
-                            bulletIncubator.onStatusChanged = function(status) {
-                                if (status === Component.Ready) {
-                                    shootBulletObject(bulletIncubator.object)
-                                }
-                            }
-                        } else {
-                            shootBulletObject(bulletIncubator.object)
-                        }
-                    }
-
-                    // Player movement
-                    Connections {
-                        target: Game.world
-                        onWorldPostTick: {
-                            var currentVelocity = playerItem.body.linearVelocity
-                            var dvx = Game.world.playerController.velocityVector().x * app.gridSize - currentVelocity.x
-                            var dvy = Game.world.playerController.velocityVector().y * app.gridSize - currentVelocity.y
-                            playerItem.body.applyLinearImpulse(Qt.point(playerItem.body.getMass() * dvx, playerItem.body.getMass() * dvy), playerItem.body.getWorldCenter())
-                        }
-                    }
-
-                    Connections {
-                        target: Game.world.playerController
-                        onShoot: {
-                            // TODO: check weapon, and damage
-                            playerItem.shoot()
-                        }
-                    }
-
-                    Component.onCompleted: moveCamera()
-                }
-
-                Repeater {
-                    id: itemsRepeater
-                    model: Game.world.gameItems
-                    delegate: GameItem {
+                    id: characersRepeater
+                    model: Game.engine.activeCharacters
+                    delegate: CharacterItem {
+                        character: Game.engine.activeCharacters.get(model.index)
+                        itemDebugEnabled: debugControls.itemDebugEnabled
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
                         z: model.layer
+                        onXChanged: if (character && character.isPlayer) moveCamera()
+                        onYChanged: if (character && character.isPlayer) moveCamera()
+                        Component.onCompleted: if (character && character.isPlayer) moveCamera()
                     }
                 }
 
                 Repeater {
-                    id: characersRepeater
-                    model: Game.world.characterItems
-                    delegate: CharacterItem {
-                        character: Game.world.characterItems.get(model.index)
+                    id: itemsRepeater
+                    model: Game.engine.activeItems
+                    delegate: GameItem {
+                        gameItem: Game.engine.activeItems.get(model.index)
+                        itemDebugEnabled: debugControls.itemDebugEnabled
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
@@ -178,9 +94,10 @@ GamePage {
 
                 Repeater {
                     id: enemiesRepeater
-                    model: Game.world.enemyItems
+                    model: Game.engine.activeEnemies
                     delegate: EnemyItem {
-                        enemy: Game.world.enemyItems.get(model.index)
+                        itemDebugEnabled: debugControls.itemDebugEnabled
+                        enemy: Game.engine.activeEnemies.get(model.index)
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
@@ -189,23 +106,33 @@ GamePage {
                     }
                 }
 
-                FlameItem {
-                    id: fireItem
-                    turbulence: Game.debugging
-                    enabled: true
-                    width: app.gridSize * 3
-                    height: app.gridSize * 3
-                    x: app.gridSize * 4
-                    y: app.gridSize * 4
+                Rectangle {
+                    id: viewWindowRectangle
+                    x: Game.engine.viewWindow.x * app.gridSize
+                    y: Game.engine.viewWindow.y * app.gridSize
+                    width: Game.engine.viewWindow.width * app.gridSize
+                    height: Game.engine.viewWindow.height * app.gridSize
+                    opacity: 0.2
+                    color: "white"
                 }
+
+//                FlameItem {
+//                    id: fireItem
+//                    enabled: true
+//                    turbulence: debugControls.turbulenceEnabled
+//                    width: app.gridSize * 3
+//                    height: app.gridSize * 3
+//                    x: app.gridSize * 4
+//                    y: app.gridSize * 4
+//                }
             }
 
             WeatherController {
                 id: weatherController
                 anchors.left: parent.left
                 anchors.right: parent.right
-                width: Game.world.size.width  * app.gridSize
-                height: Game.world.size.height  * app.gridSize
+                width: Game.engine.dataManager.worldSize.width  * app.gridSize
+                height: Game.engine.dataManager.worldSize.height  * app.gridSize
                 raining: debugControls.rainingEnabled
                 snowing: debugControls.snowingEnabled
                 turbulence: debugControls.turbulenceEnabled
@@ -215,7 +142,7 @@ GamePage {
                 id: debugDraw
                 world: physicsWorld
                 opacity: 0.4
-                visible: debugControls.physicsDebug
+                visible: debugControls.physicsDebugEnabled
             }
         }
 
@@ -223,8 +150,8 @@ GamePage {
             id: screenMouseArea
             anchors.fill: parent
             hoverEnabled: true
-            visible: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
-            enabled: Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
+            visible: Game.engine.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
+            enabled: Game.engine.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse
             onMouseXChanged: calculateAngle()
             onMouseYChanged: calculateAngle()
         }
@@ -233,15 +160,15 @@ GamePage {
         DefaultGameOverlay{
             id: defaultGameOverlay
             anchors.fill: parent
-            visible: (Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse ||
-                      Game.world.playerController.controlMode === PlayerController.ControlModeKeyBoard) && sceneItem.gameOverlayVisible
+            visible: (Game.engine.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse ||
+                      Game.engine.playerController.controlMode === PlayerController.ControlModeKeyBoard) && sceneItem.gameOverlayVisible
 
         }
 
         TouchscreenGameOverlay {
             id: touchScreenGameOverlay
             anchors.fill: parent
-            visible: Game.world.playerController.controlMode === PlayerController.ControlModeTouchscreen && sceneItem.gameOverlayVisible
+            visible: Game.engine.playerController.controlMode === PlayerController.ControlModeTouchscreen && sceneItem.gameOverlayVisible
         }
 
         DebugControls {
@@ -252,13 +179,13 @@ GamePage {
 
             visible: Game.debugging
             width: app.gridSize * 8
-            onDruggedChanged: {
-                if (drugged) {
-                    druggedShader.visible = true
-                    startDruggedAnimation.start()
-                    shaderTimeAnimation.start()
+            onStonedEnabledChanged: {
+                if (stonedEnabled) {
+                    stonedShader.visible = true
+                    stonedStartAnimation.start()
+                    stonedShaderTimeAnimation.start()
                 } else {
-                    stopDruggedAnimation.start()
+                    stonedStopAnimation.start()
                 }
             }
         }
@@ -298,7 +225,7 @@ GamePage {
         states: [
             State {
                 name: "loadingState"
-                when: Game.world.state === GameWorld.StateLoading
+                when: Game.engine.state === Engine.StateLoading
                 PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
@@ -308,7 +235,7 @@ GamePage {
             },
             State {
                 name: "runningState"
-                when: Game.world.state === GameWorld.StateRunning
+                when: Game.engine.state === Engine.StateRunning
                 PropertyChanges { target: sceneItem; gameOverlayVisible: true }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
@@ -317,16 +244,15 @@ GamePage {
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
 
                 StateChangeScript {
-                    name: "runningState"
+                    name: "resetJoystickScrip"
                     script: {
-                        console.log("Reset joystick")
                         touchScreenGameOverlay.reset()
                     }
                 }
             },
             State {
                 name: "pausedState"
-                when: Game.world.state === GameWorld.StatePaused
+                when: Game.engine.state === Engine.StatePaused
                 PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
@@ -336,7 +262,7 @@ GamePage {
             },
             State {
                 name: "conversationState"
-                when: Game.world.state === GameWorld.StateConversation
+                when: Game.engine.state === Engine.StateConversation
                 PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 1 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
@@ -346,7 +272,7 @@ GamePage {
             },
             State {
                 name: "inventoryState"
-                when: Game.world.state === GameWorld.StateInventory
+                when: Game.engine.state === Engine.StateInventory
                 PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 1 }
@@ -356,7 +282,7 @@ GamePage {
             },
             State {
                 name: "unlockingState"
-                when: Game.world.state === GameWorld.StateUnlocking
+                when: Game.engine.state === Engine.StateUnlocking
                 PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
@@ -366,7 +292,7 @@ GamePage {
             },
             State {
                 name: "tradeState"
-                when: Game.world.state === GameWorld.StateTrade
+                when: Game.engine.state === Engine.StateTrade
                 PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
@@ -376,7 +302,7 @@ GamePage {
             },
             State {
                 name: "plunderState"
-                when: Game.world.state === GameWorld.StatePlunder
+                when: Game.engine.state === Engine.StatePlunder
                 PropertyChanges { target: sceneItem; gameOverlayVisible: false }
                 PropertyChanges { target: conversationItem; opacity: 0 }
                 PropertyChanges { target: inventoryItem; opacity: 0 }
@@ -393,17 +319,18 @@ GamePage {
     }
 
     ShaderEffect {
-        id: druggedShader
+        id: stonedShader
         width: parent.width
         height: parent.height
         visible: false
+
         property var source: shaderEffectSource
         property real amplitude: 0.02
         property real frequency: 8
         property real time: 0
 
         NumberAnimation on time {
-            id: shaderTimeAnimation
+            id: stonedShaderTimeAnimation
             loops: Animation.Infinite
             from: 0
             to: Math.PI * 2
@@ -415,38 +342,38 @@ GamePage {
     }
 
     PropertyAnimation {
-        id: startDruggedAnimation
-        target: druggedShader
+        id: stonedStartAnimation
+        target: stonedShader
         property: "amplitude"
         loops: 1
         duration: 5000
         from: 0
         to: 0.02
-        onRunningChanged: if (!running) console.log("Start drugged animation finished. Fully drugged ;)")
+        onRunningChanged: if (!running) console.log("Start stoned animation finished. Fully stoned ;)")
     }
 
     PropertyAnimation {
-        id: stopDruggedAnimation
-        target: druggedShader
+        id: stonedStopAnimation
+        target: stonedShader
         property: "amplitude"
         loops: 1
         duration: 5000
         to: 0
         onRunningChanged: {
             if (!running)  {
-                console.log("Stop drugged animation finished. Clean again :)")
-                shaderTimeAnimation.stop()
-                druggedShader.visible = false
+                console.log("Stop stoned animation finished. Clean again :)")
+                stonedShaderTimeAnimation.stop()
+                stonedShader.visible = false
             }
         }
     }
 
     function moveCamera() {
-        var worldWidth = Game.world.size.width * app.gridSize
-        var worldHeight = Game.world.size.height * app.gridSize
+        var worldWidth = Game.engine.dataManager.worldSize.width * app.gridSize
+        var worldHeight = Game.engine.dataManager.worldSize.height * app.gridSize
 
-        var playerX = Game.world.player.position.x * app.gridSize
-        var playerY = Game.world.player.position.y * app.gridSize
+        var playerX = Game.engine.player.position.x * app.gridSize
+        var playerY = Game.engine.player.position.y * app.gridSize
 
         // FIXME: do right border and bottom border
         //        // Check if we have to move the camera in x directon
@@ -481,14 +408,14 @@ GamePage {
         if (!Game.running)
             return;
 
-        if (Game.world.playerController.controlMode !== PlayerController.ControlModeKeyBoardMouse)
+        if (Game.engine.playerController.controlMode !== PlayerController.ControlModeKeyBoardMouse)
             return;
 
-        if (!Game.world.player.movable)
+        if (!Game.engine.player.movable)
             return;
 
-        var dx = (worldFlickable.contentX + screenMouseArea.mouseX) - playerItem.x - playerItem.width / 2
-        var dy = (worldFlickable.contentY + screenMouseArea.mouseY) - playerItem.y - playerItem.height / 2
-        Game.world.player.angle = Math.atan2(dy , dx)
+        var dx = (worldFlickable.contentX + screenMouseArea.mouseX) - (Game.engine.player.position.x * app.gridSize + Game.engine.player.size.width * app.gridSize / 2)
+        var dy = (worldFlickable.contentY + screenMouseArea.mouseY) - (Game.engine.player.position.y * app.gridSize + Game.engine.player.size.height * app.gridSize / 2)
+        Game.engine.player.angle = Math.atan2(dy , dx)
     }
 }

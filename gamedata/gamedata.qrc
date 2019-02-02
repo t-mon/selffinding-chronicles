@@ -22,7 +22,13 @@
         <file>gamedata/enemies/fire.json</file>
         <file>gamedata/firearms/hunting-bow.json</file>
         <file>gamedata/firearms/crossbow.json</file>
-        <file>fonts/mono/DejaVuSans.ttf</file>
-        <file>fonts/mono/DejaVuSansMono.ttf</file>
+        <file>fonts/DejaVu/DejaVuSans.ttf</file>
+        <file>fonts/DejaVu/DejaVuSansMono.ttf</file>
+        <file>gamedata/weapons/sword-2.json</file>
+        <file>gamedata/plants/mana-herb.json</file>
+        <file>savegames/test-savegame.json</file>
+        <file>copyright/copyrights.json</file>
+        <file>copyright/logos/qt.svg</file>
+        <file>copyright/logos/box2d.png</file>
     </qresource>
 </RCC>

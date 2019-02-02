@@ -12,7 +12,6 @@ class Fields : public QAbstractListModel
 public:
     enum FieldRole {
         PositionRole,
-        ImageNameRole,
         PlayerOnFieldRole
     };
     Q_ENUM(FieldRole)
@@ -38,7 +37,6 @@ private:
     QList<Field *> m_fields;
 
 private slots:
-    void onFieldImageNameChanged(const QString &imageName);
     void onPlayerOnFieldChanged(bool playerOnField);
 
 };

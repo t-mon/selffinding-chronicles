@@ -1,0 +1,98 @@
+#ifndef DATAMANAGER_H
+#define DATAMANAGER_H
+
+#include <QSize>
+#include <QThread>
+#include <QObject>
+#include <QPointF>
+#include <QMutexLocker>
+
+#include "map.h"
+
+class DataManager : public QThread
+{
+    Q_OBJECT
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(QSize worldSize READ worldSize NOTIFY worldSizeChanged)
+    Q_PROPERTY(QString saveGameFileName READ saveGameFileName NOTIFY saveGameFileNameChanged)
+
+    Q_PROPERTY(Character *player READ player NOTIFY playerChanged)
+    Q_PROPERTY(GameItems *items READ items CONSTANT)
+    Q_PROPERTY(GameItems *enemies READ enemies CONSTANT)
+    Q_PROPERTY(GameItems *characters READ characters CONSTANT)
+
+public:
+    enum State {
+        StateIdle,
+        StateStarting,
+        StateLoading,
+        StateSaving
+    };
+    Q_ENUM(State)
+
+    explicit DataManager(QObject *parent = nullptr);
+    ~DataManager() override;
+
+    State state() const;
+    QString saveGameFileName() const;
+
+    QSize worldSize() const;
+
+    Character *player() const;
+    GameItems *items() const;
+    GameItems *enemies() const;
+    GameItems *characters() const;
+
+private:
+    State m_state = StateIdle;
+    QMutex m_stateMutex;
+
+    QString m_saveGameFileName;
+    QMutex m_saveGameFileNameMutex;
+
+    QSize m_worldSize;
+
+    Map *m_map = nullptr;
+    QMutex m_mapMutex;
+
+    Character *m_player = nullptr;
+    QMutex m_playerMutex;
+
+    GameItems *m_items = nullptr;
+    GameItems *m_enemies = nullptr;
+    GameItems *m_characters = nullptr;
+
+    // Set members
+    void setState(State state);
+    void setWorldSize(const QSize &worlSize);
+    void setSaveGameName(const QString &saveGameFileName);
+
+    // Worker methods
+    void loadSaveGame();
+    void saveSaveGame();
+
+protected:
+    void run() override;
+
+signals:
+    void stateChanged(State state);
+    void saveGameFileNameChanged(const QString &saveGameFileName);
+
+    void worldSizeChanged(const QSize &worldSize);
+    void viewSizeChanged(const QSize &viewSize);
+    void viewOffsetChanged(const QPointF &viewOffset);
+    void playerChanged(Character *player);
+
+private slots:
+    void onThreadFinished();
+
+public slots:
+    void resetData();
+
+    void startNewGame();
+    void saveGame(const QString &saveGameFileName);
+    void loadGame(const QString &saveGameFileName);
+
+};
+
+#endif // DATAMANAGER_H

@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -11,16 +11,15 @@ import "../physics"
 PhysicsItem {
     id: root
 
-    property GameItem gameItem: Game.world.gameItems.get(model.index)
+    property GameItem gameItem
     property int itemType: gameItem ? gameItem.itemType : GameItem.TypeNone
+    property real angle: 0
 
     antialiasing: app.antialiasing
     opacity: gameItem ? (gameItem.hidingPlayer ? 0.5 : 1) : 0
 
     onPlayerAuraRangeChanged: gameItem.playerVisible = playerAuraRange
     onPlayerOnItemChanged: gameItem.playerOnItem = playerOnItem
-
-    property real angle: 0
 
     linearDamping: 2
     fixedRotation: true
@@ -178,7 +177,7 @@ PhysicsItem {
         id: itemImage
         anchors.fill: parent
         source: gameItem ? dataDirectory + gameItem.imageName : ""
-        opacity: Game.debugging ? 0.5 : 1
+        opacity: root.itemDebugEnabled ? 0.5 : 1
     }
 
     ItemDescription {
@@ -186,7 +185,7 @@ PhysicsItem {
         anchors.bottom: root.top
         anchors.horizontalCenter: root.horizontalCenter
         text: gameItem ? gameItem.name : ""
-        opacity: gameItem ? (Game.debugging ? 0.5 : (gameItem.playerFocus ? 1 : 0)) : 0
+        opacity: gameItem ? (root.itemDebugEnabled ? 0.5 : (gameItem.playerFocus ? 1 : 0)) : 0
     }
 
     Rectangle {
@@ -195,7 +194,7 @@ PhysicsItem {
         color: "gray";
         border.color: "white";
         border.width: app.borderWidth / 2
-        opacity: Game.debugging ? 0.2 : 0
+        opacity: root.itemDebugEnabled ? 0.2 : 0
     }
 
     //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)

@@ -1,6 +1,6 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.12
+import QtQuick.Controls 2.0
 
 import Chronicles 1.0
 
@@ -28,7 +28,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: app.healthColor
-            percentage: Game.world.player.healthPercentage
+            percentage: Game.engine.player ? Game.engine.player.healthPercentage : 0
         }
 
         PercentageIndicator {
@@ -36,7 +36,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: app.manaColor
-            percentage: Game.world.player.manaPercentage
+            percentage: Game.engine.player ? Game.engine.player.manaPercentage : 0
         }
     }
 }

@@ -4,9 +4,8 @@
 
 #include <QtMath>
 
-PlayerController::PlayerController(Character *player, QObject *parent) :
-    QObject(parent),
-    m_player(player)
+PlayerController::PlayerController(QObject *parent) :
+    QObject(parent)
 {
 
 }
@@ -23,6 +22,21 @@ void PlayerController::setControlMode(const PlayerController::ControlMode &contr
 
     m_controlMode = controlMode;
     emit controlModeChanged(m_controlMode);
+}
+
+Character *PlayerController::player() const
+{
+    return m_player;
+}
+
+void PlayerController::setPlayer(Character *player)
+{
+    if (m_player == player)
+        return;
+
+    qCDebug(dcPlayerController()) << "Player changed" << player;
+    m_player = player;
+    emit playerChanged(m_player);
 }
 
 bool PlayerController::forwardPressed() const
@@ -85,6 +99,14 @@ void PlayerController::keyPressed(const Qt::Key &key)
         qCDebug(dcPlayerController()) << "Shoot pressed";
         setShootPressed(true);
         break;
+    case Qt::Key_Escape:
+        qCDebug(dcPlayerController()) << "Escape";
+        emit escape();
+        break;
+    case Qt::Key_B:
+        qCDebug(dcPlayerController()) << "Beam clicked";
+        emit beam();
+        break;
     default:
         break;
     }
@@ -123,11 +145,6 @@ void PlayerController::keyReleased(const Qt::Key &key)
     }
 }
 
-QPointF PlayerController::velocityVector()
-{
-    return delta();
-}
-
 void PlayerController::clickPrimaryAction()
 {
     emit primaryActionPressed();
@@ -139,11 +156,11 @@ void PlayerController::clickSecondaryAction()
     emit shoot();
 }
 
-QPointF PlayerController::delta()
+QPointF PlayerController::movementVector()
 {
     QPointF deltaOffset;
 
-    if (!m_player->movable())
+    if (!m_player || !m_player->movable())
         return deltaOffset;
 
     switch (m_controlMode) {
@@ -254,6 +271,9 @@ QPointF PlayerController::moveKeyBoard()
 {
     qreal angle = 0;
 
+    if (!m_player)
+        return QPointF();
+
     // Forward
     if (m_forwaredPressed && !m_backwardPressed && !m_leftPressed && !m_rightPressed)
         angle = -M_PI_2;
@@ -300,6 +320,9 @@ QPointF PlayerController::moveKeyBoard()
 
 QPointF PlayerController::moveKeyBoardMouse()
 {
+    if (!m_player)
+        return QPointF();
+
     qreal angle = m_player->angle();
 
     // Forward
@@ -347,12 +370,11 @@ QPointF PlayerController::moveKeyBoardMouse()
 
 QPointF PlayerController::moveTouchscreen()
 {
-    if (m_joystickVelocity == 0.0)
+    if (m_joystickVelocity == 0.0 || !m_player)
         return QPoint(0, 0);
 
-
     m_player->setAngle(m_joystickAngle);
-    if (m_joystickVelocity < 0.5)
+    if (m_joystickVelocity < 0.7)
         return QPointF(0, 0);
 
     double deltaX = qRound((m_player->speed() / 5) * qCos(m_joystickAngle) * 10000.0) / 10000.0;

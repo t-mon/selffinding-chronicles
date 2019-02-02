@@ -122,7 +122,7 @@ QString GameItem::interactionToString(const GameItem::Interaction &interaction)
     switch (interaction) {
     case InteractionNone:
         //: This string describes an interaction for an item. In this case, no interaction
-        interactionString = tr("-");
+        interactionString = tr("No interaction");
         break;
     case InteractionPick:
         //: This string describes an interaction for an item.

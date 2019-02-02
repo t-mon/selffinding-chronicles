@@ -51,6 +51,8 @@ QVariant GameItems::data(const QModelIndex &index, int role) const
         return gameItem->layer();
     } else if (role == ItemIdRole) {
         return gameItem->itemId();
+    } else if (role == PriceRole) {
+        return gameItem->price();
     }
 
     return QVariant();
@@ -99,6 +101,9 @@ void GameItems::removeGameItem(GameItem *item)
 void GameItems::clearModel()
 {
     beginResetModel();
+    foreach (GameItem *item, m_gameItems) {
+        item->deleteLater();
+    }
     m_gameItems.clear();
     endResetModel();
 
@@ -117,5 +122,6 @@ QHash<int, QByteArray> GameItems::roleNames() const
     roles[ItemTypeRole] = "itemType";
     roles[ItemIdRole] = "itemId";
     roles[LayerRole] = "layer";
+    roles[PriceRole] = "price";
     return roles;
 }

@@ -1,11 +1,9 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
 
 import Chronicles 1.0
-
-import "../components"
 
 Item {
     id: root
@@ -95,7 +93,7 @@ Item {
 
                 model: GameItemsProxy {
                     id: inventoryItemModel
-                    gameItems: Game.world.player.inventory
+                    gameItems: Game.engine.player ? Game.engine.player.inventory : null
                     filterDuplicates: true
                 }
 
@@ -109,7 +107,7 @@ Item {
 
                     GameItemsProxy {
                         id: countModel
-                        gameItems: Game.world.player.inventory
+                        gameItems: Game.engine.player ? Game.engine.player.inventory : null
                         itemIdFilter: inventoryContetItem.item ? inventoryContetItem.item.itemId : ""
                     }
 

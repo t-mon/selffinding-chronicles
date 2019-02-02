@@ -7,6 +7,7 @@
         "height": 3,
         "layer": 2
     },
+
     "physicsGeometry": {
         "body": "dynamic",
         "shape": "circle",
@@ -18,28 +19,35 @@
         "collision": 491,
         "vertices": []
     },
-    "gender": "male",
-    "role": "Enemy",
-    "experience": 100,
-    "health": 100,
-    "healthMax": 100,
-    "mana": 10,
-    "manaMax": 10,
-    "wisdom": 10,
-    "strength": 10,
-    "stealth": 0,
-    "items": [
-        {
-            "data": ":/gamedata/plants/healing-herb.json"
-        },
-        {
-            "data": ":/gamedata/plants/healing-herb.json"
-        },
-        {
-            "data": ":/gamedata/weapons/sword.json"
-        }
-    ],
-    "touchDamage": 20,
-    "hitDamage": 5,
-    "shootDamage": 5
+
+    "character": {
+        "gender": "male",
+        "role": "Enemy",
+        "experience": 100,
+        "health": 100,
+        "healthMax": 100,
+        "mana": 10,
+        "manaMax": 10,
+        "wisdom": 10,
+        "strength": 10,
+        "stealth": 0,
+        "weapon": "",
+        "firearm": "",
+        "inventory": [
+            {
+                "data": ":/gamedata/plants/healing-herb.json",
+                "count": 2
+            },
+            {
+                "data": ":/gamedata/weapons/sword.json",
+                "count": 2
+            }
+        ]
+    },
+
+    "enemy": {
+        "touchDamage": 20,
+        "hitDamage": 5,
+        "shootDamage": 5
+    }
 }

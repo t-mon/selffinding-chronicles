@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -21,7 +21,6 @@ Item {
         id: touchscreenMouseArea
         anchors.fill: parent
         maximumTouchPoints: 1
-
         touchPoints: [
             TouchPoint {
                 id: touchPoint
@@ -72,7 +71,7 @@ Item {
         width: app.gridSize * 2
         height: width
         iconSource: dataDirectory + "/icons/settings.svg"
-        onClicked: Game.world.pauseGame()
+        onClicked: Game.engine.pauseGame()
     }
 
     GameOverlayButton {
@@ -84,12 +83,21 @@ Item {
         width: app.gridSize * 2
         height: width
         iconSource: dataDirectory + "/icons/info.svg"
-        onClicked: Game.world.inventoryClicked()
+        onClicked: Game.engine.inventoryClicked()
+    }
+
+    PlayerStatusItem {
+        id: playerStatus
+        anchors.left: inventoryButton.right
+        anchors.leftMargin: app.margins
+        anchors.verticalCenter: inventoryButton.verticalCenter
+        height: app.gridSize * 1.5
+        width: app.gridSize * 6
     }
 
     JoystickControllerItem {
         id: joystickController
-        width: app.gridSize * 4
+        width: app.gridSize * 5
         height: width
         visible: false
     }
@@ -99,7 +107,7 @@ Item {
         anchors.bottom: primaryActionButton.top
         anchors.bottomMargin: app.margins
         font.pixelSize: smallFont
-        text: Game.world.playerFocusItem ? Game.world.playerFocusItem.interactionString : ""
+        text: Game.engine.playerFocusItem ? Game.engine.playerFocusItem.interactionString : ""
     }
 
     GameOverlayButton {
@@ -113,7 +121,7 @@ Item {
 
         onClicked: {
             console.log("A clicked")
-            Game.world.playerController.clickPrimaryAction()
+            Game.engine.playerController.clickPrimaryAction()
         }
 
         GameLabel {
@@ -134,7 +142,7 @@ Item {
 
         onClicked: {
             console.log("B clicked")
-            Game.world.playerController.clickSecondaryAction()
+            Game.engine.playerController.clickSecondaryAction()
         }
 
         GameLabel {

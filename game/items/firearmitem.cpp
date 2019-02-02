@@ -50,3 +50,14 @@ void FirearmItem::setRange(int range)
     emit rangeChanged(m_range);
 }
 
+
+QDebug operator<<(QDebug debug, FirearmItem *firearmItem)
+{
+    debug.nospace() << "Firearm("<< firearmItem->name();
+    debug.nospace() << ", " << firearmItem->itemId();
+    debug.nospace() << ", price: " << firearmItem->price();
+    debug.nospace() << ", damage: " << firearmItem->damage();
+    debug.nospace() << ", range: " << firearmItem->range();
+    debug.nospace() << ")";
+    return debug.space();
+}

@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -10,21 +10,38 @@ GamePage {
     id: root
 
     Component.onCompleted: {
-        if (Game.world.loaded) {
+        if (Game.engine.loaded) {
             console.log("Loading already finished")
             pageStack.replace(root, Qt.resolvedUrl("GamePage.qml"))
         }
     }
 
     Connections {
-        target: Game.world
+        target: Game.engine
         onLoadingChanged: {
             if (!loading) {
-                console.log("Loading finished")
+                console.log("Engine loading finished. Load game page...")
                 pageStack.replace(root, Qt.resolvedUrl("GamePage.qml"))
+
+                //gamePageLoader.setSource(Qt.resolvedUrl("GamePage.qml"))
             }
         }
     }
+
+//    Loader {
+//        id: gamePageLoader
+//        anchors.fill: parent
+//        asynchronous: true
+//        onLoaded: {
+//            console.log("Game page loading finished.")
+//            pageStack.replace(root, gamePageLoader.source)
+//        }
+//    }
+
+//    MouseArea {
+//        anchors.fill: parent
+//        onClicked: pageLoader.source = "Page1.qml"
+//    }
 
     Rectangle {
         id: loadingScreen

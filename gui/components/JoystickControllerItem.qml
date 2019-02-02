@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 
 import Chronicles 1.0
 
@@ -33,7 +33,7 @@ Item {
     }
 
     function processMousePosition(dx, dy) {
-        var radius = root.width / 2 - joystrickButton .width / 3
+        var radius = root.width / 2 - joystrickButton.width / 2
         var normalizedX = dx / radius
         var normalizedY = dy / radius
         var normalizedLength = Math.sqrt(Math.pow(normalizedX, 2) + Math.pow(normalizedY, 2))
@@ -51,7 +51,7 @@ Item {
         root.length = normalizedLength
         root.angle = angle
 
-        Game.world.playerController.onJoystickChanged(Qt.point(root.dx, root.dy), root.length, root.angle)
+        Game.engine.playerController.onJoystickChanged(Qt.point(root.dx, root.dy), root.length, root.angle)
 
         joystrickButton.x = root.width / 2 - joystrickButton.width / 2 + normalizedX * radius
         joystrickButton.y = root.height / 2 - joystrickButton.height / 2 + normalizedY * radius

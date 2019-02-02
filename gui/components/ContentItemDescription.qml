@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -50,8 +50,6 @@ Item {
             }
         }
 
-
-
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: app.borderWidth / 2
@@ -61,6 +59,99 @@ Item {
         GameLabel {
             color: "white"
             text: qsTr("Price") + ": " + (root.item ? root.item.price : "")
+        }
+
+        GameLabel {
+            id: damageLabel
+            color: "white"
+            visible: {
+                if (!root.item)
+                    return false
+
+                if (root.item.itemType !== GameItem.TypeWeapon && root.item.itemType !== GameItem.TypeFirearm)
+                    return false
+
+                return true
+            }
+
+            text: {
+                if (!root.item || !visible)
+                    return ""
+
+                if (root.item.itemType === GameItem.TypeWeapon) {
+                    var weaponItem = Game.castWeaponItem(root.item)
+                    return qsTr("Damage") + ": " + weaponItem.damage
+                } else if (root.item.itemType === GameItem.TypeFirearm) {
+                    var firearmItem = Game.castFirearmItem(root.item)
+                    return qsTr("Damage") + ": " + firearmItem.damage
+                } else {
+                    return ""
+                }
+            }
+        }
+
+        GameLabel {
+            id: rangeLabel
+            color: "white"
+            visible: {
+                if (!root.item || root.item.itemType !== GameItem.TypeFirearm)
+                    return false
+
+                return true
+            }
+
+            text: {
+                if (!root.item || !visible)
+                    return ""
+
+                var firearmItem = Game.castFirearmItem(root.item)
+                return qsTr("Range") + ": " + firearmItem.range
+            }
+        }
+
+        GameLabel {
+            id: healingLabel
+            color: "white"
+            visible: {
+                if (!root.item || root.item.itemType !== GameItem.TypePlant)
+                    return false
+
+                var plantItem = Game.castPlantItem(root.item)
+                if (plantItem.healing === 0)
+                    return false
+
+                return true
+            }
+            text: {
+                if (!root.item || !visible)
+                    return ""
+
+                var plantItem = Game.castPlantItem(root.item)
+                return qsTr("Healing") + ": " + plantItem.healing
+            }
+        }
+
+        GameLabel {
+            id: manaLabel
+            color: "white"
+            visible: {
+                if (!root.item || root.item.itemType !== GameItem.TypePlant)
+                    return false
+
+                var plantItem = Game.castPlantItem(root.item)
+                if (plantItem.mana === 0)
+                    return false
+
+                return true
+            }
+
+            text: {
+                if (!root.item || root.item.itemType !== GameItem.TypePlant)
+                    return ""
+
+                var plantItem = Game.castPlantItem(root.item)
+                return qsTr("Mana") + ": " + plantItem.mana
+            }
         }
 
         Item {

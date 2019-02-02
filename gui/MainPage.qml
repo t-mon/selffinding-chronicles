@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -7,9 +7,9 @@ import Chronicles 1.0
 import "components"
 
 GamePage {
-    id: root
+    id: mainPage
 
-    Component.onCompleted: console.log("Window size " + root.width + "x" + root.height)
+    Component.onCompleted: console.log("Window size " + mainPage.width + "x" + mainPage.height)
 
     GameLabel {
         anchors.left: parent.left
@@ -30,9 +30,8 @@ GamePage {
             text: qsTr("Play")
             font.pixelSize: app.largeFont
             onClicked: {
-                console.log("Play pressed")
-                Game.world.loadMap(":/maps/test-environment.json")
-                pageStack.push(Qt.resolvedUrl("LoadingPage.qml"))
+                //Game.engine.loadMap(":/maps/test-environment.json")
+                pageStack.push(Qt.resolvedUrl("StartGamePage.qml"))
             }
         }
 

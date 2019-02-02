@@ -7,6 +7,7 @@
         "height": 2,
         "layer": 3
     },
+
     "physicsGeometry": {
         "body": "dynamic",
         "shape": "circle",
@@ -18,22 +19,20 @@
         "collision": 491,
         "vertices": []
     },
-    "gender": "female",
-    "role": "Friend",
-    "experience": 100,
-    "health": 100,
-    "healthMax": 100,
-    "mana": 10,
-    "manaMax": 10,
-    "wisdom": 10,
-    "strength": 10,
-    "stealth": 0,
-    "items": [
-        {
-            "data": ":/gamedata/plants/healing-herb.json"
-        },
-        {
-            "data": ":/gamedata/plants/healing-herb.json"
-        }
-    ]
+
+    "character": {
+        "gender": "male",
+        "role": "Friend",
+        "experience": 20,
+        "health": 80,
+        "healthMax": 80,
+        "mana": 5,
+        "manaMax": 5,
+        "wisdom": 1,
+        "strength": 5,
+        "stealth": 0,
+        "weapon": "",
+        "firearm": "",
+        "inventory": [ ]
+    }
 }

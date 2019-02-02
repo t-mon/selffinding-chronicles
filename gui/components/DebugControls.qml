@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -7,8 +7,9 @@ import Chronicles 1.0
 Item {
     id: root
 
-    property bool physicsDebug: false
-    property bool drugged: false
+    property bool itemDebugEnabled: false
+    property bool physicsDebugEnabled: false
+    property bool stonedEnabled: false
     property bool flamesEnabled: false
     property bool rainingEnabled: false
     property bool snowingEnabled: false
@@ -49,19 +50,27 @@ Item {
                 }
 
                 GameButton {
-                    id: physicsDebugButton
+                    id: itemDebugButton
                     width: parent.width
-                    text: root.physicsDebug ? "Physics debug OFF" : "Physics debug ON"
-                    color: root.physicsDebug ? "green" : "white"
-                    onClicked: root.physicsDebug = !root.physicsDebug
+                    text: root.itemDebugEnabled ? "Item debug OFF" : "Item debug ON"
+                    color: root.itemDebugEnabled ? "green" : "white"
+                    onClicked: root.itemDebugEnabled = !root.itemDebugEnabled
                 }
 
                 GameButton {
-                    id: druggedButton
+                    id: physicsDebugEnabledButton
                     width: parent.width
-                    text: root.drugged ? "Drugged OFF" : "Drugged ON"
-                    color: root.drugged ? "green" : "white"
-                    onClicked: root.drugged = !root.drugged
+                    text: root.physicsDebugEnabled ? "Physics debug OFF" : "Physics debug ON"
+                    color: root.physicsDebugEnabled ? "green" : "white"
+                    onClicked: root.physicsDebugEnabled = !root.physicsDebugEnabled
+                }
+
+                GameButton {
+                    id: stonedEnabledButton
+                    width: parent.width
+                    text: root.stonedEnabled ? "Stoned OFF" : "Stoned ON"
+                    color: root.stonedEnabled ? "green" : "white"
+                    onClicked: root.stonedEnabled = !root.stonedEnabled
                 }
 
                 GameButton {

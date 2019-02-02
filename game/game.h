@@ -8,16 +8,17 @@
 #include <QQmlEngine>
 #include <QElapsedTimer>
 
-#include "gameworld.h"
+#include "engine.h"
 #include "gamesettings.h"
 #include "gamemapeditor.h"
 
 class Game : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(GameWorld *world READ world CONSTANT)
+    Q_PROPERTY(Engine *engine READ engine CONSTANT)
     Q_PROPERTY(GameSettings *settings READ settings CONSTANT)
     Q_PROPERTY(GameMapEditor *mapEditor READ mapEditor CONSTANT)
+
     Q_PROPERTY(bool running READ running WRITE setRunning NOTIFY runningChanged)
     Q_PROPERTY(bool debugging READ debugging WRITE setDebugging NOTIFY debuggingChanged)
 
@@ -31,7 +32,7 @@ public:
     static Game* instance();
     static QObject *qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
 
-    GameWorld *world() const;
+    Engine *engine() const;
     GameSettings *settings() const;
     GameMapEditor *mapEditor() const;
 
@@ -44,11 +45,16 @@ public:
     Q_INVOKABLE void keyPressed(const Qt::Key &key, bool autoRepeat);
     Q_INVOKABLE void keyReleased(const Qt::Key &key, bool autoRepeat);
 
+    // Cast methods
+    Q_INVOKABLE WeaponItem *castWeaponItem(GameItem *item);
+    Q_INVOKABLE FirearmItem *castFirearmItem(GameItem *item);
+    Q_INVOKABLE PlantItem *castPlantItem(GameItem *item);
+
 private:
     explicit Game(QObject *parent = nullptr);
     static Game *s_instance;
 
-    GameWorld *m_world = nullptr;
+    Engine *m_engine = nullptr;
     GameSettings *m_settings = nullptr;
     GameMapEditor *m_mapEditor = nullptr;
 

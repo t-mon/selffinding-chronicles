@@ -6,9 +6,6 @@ Character::Character(QObject *parent):
     GameItem(parent)
 {
     m_inventory = new GameItems(this);
-    m_inventoryProxy = new GameItemsProxy(this);
-    m_inventoryProxy->setGameItems(m_inventory);
-    m_inventoryProxy->setItemTypeFilter(GameItem::TypeWeapon);
 }
 
 QString Character::itemTypeName() const
@@ -94,11 +91,6 @@ GameItems *Character::inventory() const
     return m_inventory;
 }
 
-GameItemsProxy *Character::inventoryProxy() const
-{
-    return m_inventoryProxy;
-}
-
 WeaponItem *Character::weapon() const
 {
     return m_weapon;
@@ -128,6 +120,34 @@ void Character::setFirearm(FirearmItem *firearm)
 
     m_firearm = firearm;
     emit firearmChanged(m_firearm);
+}
+
+QPointF Character::movementVector() const
+{
+    return m_movementVector;
+}
+
+void Character::setMovementVector(const QPointF &movementVector)
+{
+    if (m_movementVector == movementVector)
+        return;
+
+    m_movementVector = movementVector;
+    emit movementVectorChanged(m_movementVector);
+}
+
+bool Character::isPlayer() const
+{
+    return m_isPlayer;
+}
+
+void Character::setIsPlayer(bool isPlayer)
+{
+    if (m_isPlayer == isPlayer)
+        return;
+
+    m_isPlayer = isPlayer;
+    emit isPlayerChanged(m_isPlayer);
 }
 
 Character::Heading Character::heading() const
@@ -403,3 +423,19 @@ void Character::setHeading(Character::Heading heading)
     emit headingChanged(m_heading);
 }
 
+
+QDebug operator<<(QDebug debug, Character *character)
+{
+    debug.nospace() << "Character(" << character->itemTypeName();
+    debug.nospace() << ", " << character->name();
+    debug.nospace() << ", " << character->itemId();
+    debug.nospace() << ", " << character->position();
+    debug.nospace() << ", " << character->size();
+    debug.nospace() << ")" << endl;
+
+    foreach (GameItem *item, character->inventory()->gameItems()) {
+        debug.nospace() << "    --> " << item->thread() << ", " << item << endl;
+    }
+
+    return debug.space();
+}

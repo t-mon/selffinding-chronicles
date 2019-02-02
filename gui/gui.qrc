@@ -53,5 +53,6 @@
         <file>components/ContentItemImage.qml</file>
         <file>components/PlayerStatusItem.qml</file>
         <file>components/PercentageIndicator.qml</file>
+        <file>StartGamePage.qml</file>
     </qresource>
 </RCC>

@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -18,7 +18,7 @@ Item {
         width: app.gridSize * 2
         height: width
         iconSource: dataDirectory + "/icons/settings.svg"
-        onClicked: Game.world.pauseGame()
+        onClicked: Game.engine.pauseGame()
     }
 
     EquipmentContentItem {
@@ -27,7 +27,6 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: app.margins
     }
-
 
     PlayerStatusItem {
         id: playerStatus

@@ -1,0 +1,77 @@
+﻿{
+    "libraries": [
+        {
+            "name": "Qt",
+            "creator": ["Qt Group"],
+            "version": "5.12.0",
+            "icon": ":/copyright/logo/qt.svg",
+            "source": "https://www.qt.io/",
+            "license": "LGPL-3.0",
+            "licenseLink": "https://www.gnu.org/licenses/lgpl-3.0.en.html"
+        },
+        {
+            "name": "Box2D",
+            "version": "2.3.2",
+            "creator": [ "Erin Catto" ],
+            "icon": ":/copyright/logo/box2d.png",
+            "source": "https://github.com/erincatto/Box2D",
+            "license": "Zlib",
+            "licenseLink": "https://en.wikipedia.org/wiki/Zlib_License"
+        },
+        {
+            "name": "QML-Box2D",
+            "version": "2.0.0",
+            "creator": [
+                "Thorbjørn Lindeijer",
+                "Ruslan Mukhlynin",
+                "Erin Catto",
+                "Thomas Vogelpohl",
+                "Tan Miaoqing",
+                "Antonio Aloisio",
+                "Alessandro Portale",
+                "Adriano Rezende",
+                "Tan Miaoqing",
+                "Joonas Erkinheimo",
+                "Markus Kivioja",
+                "Ville Ranki",
+                "Daker Fernandes Pinheiro"
+            ],
+            "icon": ":/copyright/logo/box2d.png",
+            "source": "https://github.com/qml-box2d/qml-box2d",
+            "license": "Zlib",
+            "licenseLink": "https://en.wikipedia.org/wiki/Zlib_License"
+        }
+    ],
+    "fonts": [
+        {
+            "name": "Black Chancery font",
+            "creators": [
+                "Earl Allen",
+                "Doug Miles"
+            ],
+            "source": "https://www.1001fonts.com/blackchancery-font.html",
+            "license": "CC-0",
+            "licenseLink": "https://creativecommons.org/share-your-work/public-domain/cc0/"
+        },
+        {
+            "name": "DejaVu Sans Mono",
+            "creators": [ "Bitstream Inc" ],
+            "source": "https://dejavu-fonts.github.io/",
+            "license": "CC-0",
+            "licenseLink": "https://creativecommons.org/share-your-work/public-domain/cc0/"
+        }
+    ],
+    "images": [
+        {
+            "name": "Suru Icons",
+            "creators": [
+                "Matthieu James",
+                "Sam Hewitt"
+            ],
+            "source": "https://snwh.org/suru",
+            "license": "CC BY-SA 4.0",
+            "licenseLink": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+    ],
+    "sounds": [ ]
+}

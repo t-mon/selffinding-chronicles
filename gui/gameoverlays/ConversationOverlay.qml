@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -9,7 +9,7 @@ import "../components"
 GameOverlayItem {
     id: root
 
-    property Conversation conversation: Game.world.currentConversation
+    property Conversation conversation: Game.engine.currentConversation
 
     states: [
         State {
@@ -119,7 +119,7 @@ GameOverlayItem {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 horizontalAlignment: Text.AlignHCenter
-                text: Game.world.player.name + ": "
+                text: Game.engine.player ? Game.engine.player.name + ": " : ""
                 font.pixelSize: app.largeFont
                 color: "white"
             }

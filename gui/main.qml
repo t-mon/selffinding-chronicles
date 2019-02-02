@@ -1,5 +1,5 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.9
+import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 
 import Chronicles 1.0
@@ -39,8 +39,7 @@ ApplicationWindow {
 
     property color backgroundColor: "#333333"
     property color healthColor: "#9c2f25"
-    property color manaColor: "#24b3ff"
-
+    property color manaColor: "#0765d4"
 
     onWidthChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
     onHeightChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
@@ -55,13 +54,12 @@ ApplicationWindow {
 
     FontLoader {
         id: gameFont
-        //source: "/fonts/EBGaramond/EBGaramond12-Regular.ttf"
         source: "/fonts/blackchancery/blkchcry.ttf"
     }
 
     FontLoader {
         id: gameMonoFont
-        source: "/fonts/mono/DejaVuSansMono.ttf"
+        source: "/fonts/DejaVu/DejaVuSansMono.ttf"
     }
 
     StackView {

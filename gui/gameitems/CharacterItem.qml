@@ -1,10 +1,11 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
-import QtGraphicalEffects 1.12
+import QtGraphicalEffects 1.0
 
-import Box2D 2.0
 import Chronicles 1.0
+import Box2D 2.0
+
 import "../components"
 import "../physics"
 
@@ -12,10 +13,9 @@ PhysicsItem {
     id: root
 
     property Character character
-    property bool isPlayer: false
-    property int itemType: character.itemType
+    property int itemType: character ? character.itemType : GameItem.TypeNone
 
-    property real auraRadius: (character.auraRange + character.size.width / 2) * app.gridSize
+    property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
     property real hitAttackRadius: root.width / 2 + 2 * app.gridSize // TODO: use range of current weapon
     property real hitAttackRadiusBase: root.width / 3
 
@@ -32,12 +32,29 @@ PhysicsItem {
     }
 
     antialiasing: app.antialiasing
-    bodyType: character.movable ? character.bodyType : GameObject.BodyTypeStatic
-    onPlayerAuraRangeChanged: character.playerVisible = playerAuraRange
-    linearDamping: 1
+    bodyType: character ? (character.movable ? character.bodyType : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
+    onPlayerAuraRangeChanged: if (character) character.playerVisible = playerAuraRange
+    linearDamping: 10
     fixedRotation: true
+    rotation: character ? character.angle * 180 / Math.PI : 0
 
-    rotation: character.angle * 180 / Math.PI
+    // Character connections
+    Connections {
+        id: characterConnections
+        target: character
+        onShoot: shoot()
+    }
+
+    // Character movement
+    Connections {
+        target: Game.engine
+        onEnginePostTick: {
+            var currentVelocity = body.linearVelocity
+            var dvx = character.movementVector.x * app.gridSize - currentVelocity.x
+            var dvy = character.movementVector.y * app.gridSize - currentVelocity.y
+            body.applyLinearImpulse(Qt.point(body.getMass() * dvx, body.getMass() * dvy), body.getWorldCenter())
+        }
+    }
 
     fixtures: [
         Circle {
@@ -46,11 +63,11 @@ PhysicsItem {
             density: 1
             friction: 0.0
             restitution: 0.0
-            categories: character.categoryFlag
-            collidesWith: character.collisionFlag
+            categories: character ? character.categoryFlag : 0
+            collidesWith: character ? character.collisionFlag : 0
 
             onBeginContact: {
-                if (!isPlayer)
+                if (!character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -60,7 +77,7 @@ PhysicsItem {
             }
 
             onEndContact: {
-                if (!isPlayer)
+                if (!character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -80,7 +97,7 @@ PhysicsItem {
             collidesWith: GameItem.PhysicsAll
 
             onBeginContact: {
-                if (!isPlayer)
+                if (!character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -90,7 +107,7 @@ PhysicsItem {
             }
 
             onEndContact: {
-                if (!isPlayer)
+                if (!character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -102,6 +119,7 @@ PhysicsItem {
         Polygon {
             id: auraSensor
             sensor: true
+
             density: 0.0
             friction: 0.0
             restitution: 0.0
@@ -118,7 +136,7 @@ PhysicsItem {
             ]
 
             onBeginContact: {
-                if (!isPlayer)
+                if (!character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -128,7 +146,7 @@ PhysicsItem {
             }
 
             onEndContact: {
-                if (!isPlayer)
+                if (!character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -162,7 +180,7 @@ PhysicsItem {
                 var target = other.getBody().target
                 if (target.itemType && target.enemy) {
                     //hitAttackTimer.restart()
-                    Game.world.performHitAttack(root.character, target.enemy, 10)
+                    Game.engine.performHitAttack(root.character, target.enemy, 10)
                 }
             }
         }
@@ -194,7 +212,7 @@ PhysicsItem {
             color: "gray";
             border.color: "white";
             border.width: app.borderWidth / 2
-            opacity: Game.debugging ? 0.2 : 0
+            opacity: root.itemDebugEnabled? 0.2 : 0
         }
 
         FlameItem {
@@ -215,9 +233,11 @@ PhysicsItem {
                 property: "opacity"
                 loops: 1
                 to: 0
-                onFinished: {
-                    flameItem.visible = false
-                    root.burning = false
+                onRunningChanged: {
+                    if (!running) {
+                        flameItem.visible = false
+                        root.burning = false
+                    }
                 }
             }
         }
@@ -226,9 +246,8 @@ PhysicsItem {
             id: nameLabel
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            //text: character ? character.name : ""
-            text: character.name
-            opacity: character ? (Game.debugging ? 0.5 : (root.character.playerFocus && !root.isPlayer ? 1 : 0)) : 0
+            text: character ? character.name : ""
+            opacity: character ? (root.itemDebugEnabled ? 0.5 : (root.character.playerFocus && !character.isPlayer ? 1 : 0)) : 0
         }
 
         PercentageIndicator {
@@ -240,34 +259,14 @@ PhysicsItem {
             opacity: 0
 
             color: app.healthColor
-            percentage: character.healthPercentage
+            percentage: character ? character.healthPercentage : 0
         }
-
-//        RowLayout {
-//            spacing: 0
-
-//            Behavior on opacity { NumberAnimation { duration: 200 } }
-
-//            Rectangle {
-//                color: app.healthColor
-//                Layout.fillHeight: true
-//                Layout.preferredWidth: parent.width * character.healthPercentage / 100
-//                Behavior on width { NumberAnimation { duration: 300 } }
-//            }
-
-//            Rectangle {
-//                color: "black"
-//                Layout.fillHeight: true
-//                Layout.fillWidth: true
-//                Behavior on width { NumberAnimation { duration: 300 } }
-//            }
-//        }
 
         Image {
             id: playerImage
             anchors.fill: frame
-            source: character.heading === Character.HeadingRight ? dataDirectory + "/images/characters/player-male.png" : dataDirectory + "/images/characters/player-male-mirror.png"
-            opacity: Game.debugging ? 0.5 : 1
+            source: character ? (character.heading === Character.HeadingRight ? dataDirectory + "/images/characters/player-male.png" : dataDirectory + "/images/characters/player-male-mirror.png") : ""
+            opacity: root.itemDebugEnabled ? 0.5 : 1
         }
     }
 
@@ -282,7 +281,7 @@ PhysicsItem {
         interval: 1000
         running: root.burning
         repeat: true
-        onTriggered: Game.world.performBurnDamage(root.character, 2)
+        onTriggered: Game.engine.performBurnDamage(root.character, 2)
     }
 
     Connections {
@@ -374,8 +373,8 @@ PhysicsItem {
 
     Item {
         id: directionIndicator
-        visible: root.isPlayer
-        width: parent.width / 2 + character.auraRange * app.gridSize
+        visible: character ? character.isPlayer : false
+        width: root.auraRadius
         height: app.gridSize
         x: parent.width / 2
         y: parent.height / 2 - height / 2
@@ -385,7 +384,7 @@ PhysicsItem {
             anchors.right: parent.right
             anchors.top: parent.top
             opacity: 0.4
-            width: character.auraRange * app.gridSize
+            width: root.auraRadius
             height: parent.height
             source: dataDirectory + "/images/game/direction-indicator.svg"
         }
@@ -411,5 +410,57 @@ PhysicsItem {
         border.color: app.healthColor
         border.width: parent.width / 8
         opacity: 0
+    }
+
+    // Move and shoot
+    onXChanged: {
+        if (!character)
+            return
+
+        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
+
+    onYChanged: {
+        if (!character)
+            return
+
+        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
+
+    function shootBulletObject(bulletObject) {
+        var bulletStartPoint = Qt.point(root.x + getBulletXOffset(),  root.y + getBulletYOffset())
+        bulletObject.damage = root.character.firearm.damage
+        bulletObject.width = app.gridSize / 2
+        bulletObject.height = bulletObject.width
+        bulletObject.rotation = getBulletAngle()
+        bulletObject.x = bulletStartPoint.x
+        bulletObject.y = bulletStartPoint.y
+        bulletObject.z = Map.Layer2Normal
+        bulletObject.startPositionX = bulletStartPoint.x
+        bulletObject.startPositionY = bulletStartPoint.y
+        bulletObject.shootRange = root.character.firearm.range
+        bulletObject.fireArrow = debugControls.flamesEnabled
+        var velocity = app.gridSize * 1.2
+        bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
+    }
+
+    function shoot() {
+        if (!character.firearm) {
+            console.log(character.name, "can not shoot. No firearm selected.")
+            return;
+        }
+
+        console.log(character.name + " SHOOOT! using", character.firearm)
+        var component = Qt.createComponent("BulletItem.qml");
+        var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character } )
+        if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
+            bulletIncubator.onStatusChanged = function(status) {
+                if (status === Component.Ready) {
+                    shootBulletObject(bulletIncubator.object)
+                }
+            }
+        } else {
+            shootBulletObject(bulletIncubator.object)
+        }
     }
 }

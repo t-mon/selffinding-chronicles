@@ -19,7 +19,8 @@ public:
         InteractionRole,
         ImageNameRole,
         ItemTypeRole,
-        ItemIdRole
+        ItemIdRole,
+        PriceRole
     };
     Q_ENUM(ItemRole)
 
@@ -44,7 +45,7 @@ protected:
 
 private:
     QList<GameItem *> m_gameItems;
-    bool m_autoParent = false;
+    bool m_autoParent = true;
 
 signals:
     void countChanged(int count);

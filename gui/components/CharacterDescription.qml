@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 
@@ -47,7 +47,7 @@ Item {
 
             GameLabel {
                 color: "white"
-                text: character.experience
+                text: character ? character.experience : ""
             }
         }
 
@@ -63,7 +63,7 @@ Item {
 
             GameLabel {
                 color: "white"
-                text: character.health  + "/" + character.healthMax
+                text: character ? character.health  + "/" + character.healthMax : ""
             }
         }
 
@@ -78,7 +78,7 @@ Item {
 
             GameLabel {
                 color: "white"
-                text: character.mana  + "/" + character.manaMax
+                text: character ? character.mana  + "/" + character.manaMax : ""
             }
         }
 
@@ -93,7 +93,7 @@ Item {
 
             GameLabel {
                 color: "white"
-                text: character.wisdom
+                text: character ? character.wisdom : ""
             }
         }
 
@@ -108,7 +108,7 @@ Item {
 
             GameLabel {
                 color: "white"
-                text: character.strength
+                text: character ? character.strength : ""
             }
         }
 
@@ -123,7 +123,7 @@ Item {
 
             GameLabel {
                 color: "white"
-                text: character.stealth
+                text: character ? character.stealth : ""
             }
         }
     }

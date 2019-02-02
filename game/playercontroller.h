@@ -9,7 +9,9 @@ class Character;
 class PlayerController : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(Character *player READ player NOTIFY playerChanged)
     Q_PROPERTY(ControlMode controlMode READ controlMode WRITE setControlMode NOTIFY controlModeChanged)
+    Q_PROPERTY(QPointF movementVector READ movementVector)
 
 public:
     enum ControlMode {
@@ -19,10 +21,13 @@ public:
     };
     Q_ENUM(ControlMode)
 
-    explicit PlayerController(Character *player, QObject *parent = nullptr);
+    explicit PlayerController(QObject *parent = nullptr);
 
     ControlMode controlMode() const;
     void setControlMode(const ControlMode &controlMode);
+
+    Character *player() const;
+    void setPlayer(Character *player);
 
     bool forwardPressed() const;
     bool backwardPressed() const;
@@ -35,12 +40,10 @@ public:
     void keyPressed(const Qt::Key &key);
     void keyReleased(const Qt::Key &key);
 
-    Q_INVOKABLE QPointF velocityVector();
-
     Q_INVOKABLE void clickPrimaryAction();
     Q_INVOKABLE void clickSecondaryAction();
 
-    QPointF delta();
+    QPointF movementVector();
 
 private:
     Character *m_player = nullptr;
@@ -77,6 +80,7 @@ private:
     QPointF moveTouchscreen();
 
 signals:
+    void playerChanged(Character *player);
     void controlModeChanged(ControlMode controlMode);
 
     void forwaredPressedChanged(bool pressed);
@@ -94,6 +98,8 @@ signals:
     void secondaryActionClicked();
     void inventoryPressed();
     void shoot();
+    void escape();
+    void beam();
 
 public slots:
     Q_INVOKABLE void onJoystickChanged(const QPointF &joystickVector, qreal velocity, qreal angle);

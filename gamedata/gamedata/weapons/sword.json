@@ -1,5 +1,5 @@
 {
-    "name": "Sword",
+    "name": "Bastard sword",
     "type": "weapon",
     "imageName": "/images/items/weapons/sword.png",
     "geometry": {
@@ -7,6 +7,7 @@
         "height": 1,
         "layer": 1
     },
+
     "physicsGeometry": {
         "body": "dynamic",
         "shape": "circle",
@@ -18,6 +19,9 @@
         "collision": 32,
         "vertices": []
     },
-    "price": 100,
-    "damage": 30
+
+    "weapon": {
+        "price": 100,
+        "damage": 30
+    }
 }
