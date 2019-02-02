@@ -120,6 +120,81 @@
             "x": 15,
             "y": 20,
             "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 15,
+            "y": 30,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 15,
+            "y": 40,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 15,
+            "y": 50,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 15,
+            "y": 60,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 15,
+            "y": 70,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 25,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 35,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 45,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 55,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 65,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 75,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 85,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 95,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 105,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 130,
+            "y": 20,
+            "data": ":/gamedata/trees/tree-1.json"
         }
     ],
     "characters": [

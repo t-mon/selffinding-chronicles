@@ -39,6 +39,11 @@ QSize DataManager::worldSize() const
     return m_worldSize;
 }
 
+QColor DataManager::worldBackgroundColor() const
+{
+    return m_worldBackgroundColor;
+}
+
 void DataManager::setWorldSize(const QSize &worldSize)
 {
     if (m_worldSize == worldSize)
@@ -46,6 +51,15 @@ void DataManager::setWorldSize(const QSize &worldSize)
 
     m_worldSize = worldSize;
     emit worldSizeChanged(m_worldSize);
+}
+
+void DataManager::setWorldBackgroundColor(const QColor &color)
+{
+    if (m_worldBackgroundColor == color)
+        return;
+
+    m_worldBackgroundColor = color;
+    emit worldBackgroundColorChanged(m_worldBackgroundColor);
 }
 
 Character *DataManager::player() const
@@ -188,7 +202,9 @@ void DataManager::run()
         // Add player to characters and move to application thread
         m_map->characters()->addGameItem(m_player);
 
+        // Set world properties
         setWorldSize(m_map->size());
+        setWorldBackgroundColor(m_map->backgroundColor());
 
         // Push the map back to the main thread
         qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();

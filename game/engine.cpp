@@ -288,12 +288,9 @@ void Engine::setCurrentPlayerPosition(const QPoint &currentPosition)
     if (m_currentPlayerPosition == currentPosition)
         return;
 
-    qCDebug(dcEngine()) << "Current player position changed" << currentPosition;
+    qCDebug(dcEngineData()) << "Current player position changed" << currentPosition;
     m_currentPlayerPosition = currentPosition;
     emit currentPlayerPositionChanged(m_currentPlayerPosition);
-
-    setViewWindow(QRectF(currentPosition.x() - 5 , currentPosition.y() - 5, 10, 10));
-
 }
 
 void Engine::setCurrentPlayerField(Field *field)
@@ -320,9 +317,9 @@ void Engine::setPlayerFocusItem(GameItem *focusItem)
         return;
 
     if (focusItem) {
-        qCDebug(dcEngine()) << "Player focus item" << focusItem;
+        qCDebug(dcEngineData()) << "Player focus item" << focusItem;
     } else {
-        qCDebug(dcEngine()) << "Player has no item in focus";
+        qCDebug(dcEngineData()) << "Player has no item in focus";
     }
 
     m_playerFocusItem = focusItem;
@@ -389,6 +386,7 @@ void Engine::setCurrentConversation(Conversation *conversation)
     if (m_currentConversation == conversation)
         return;
 
+    qCDebug(dcEngineData()) << "Set current conversation" << conversation;
     m_currentConversation = conversation;
     emit currentConversationChanged(m_currentConversation);
 
@@ -410,7 +408,7 @@ void Engine::setCurrentChestItem(ChestItem *chestItem)
     emit currentChestItemChanged(m_currentChestItem);
 
     if (m_currentChestItem) {
-        qCDebug(dcEngine()) << "Set current chest item" << m_currentChestItem << "containing" << m_currentChestItem->items()->gameItems().count() << "items";
+        qCDebug(dcEngineData()) << "Set current chest item" << m_currentChestItem << "containing" << m_currentChestItem->items()->gameItems().count() << "items";
         setCurrentPlunderItems(m_currentChestItem->items());
         if (m_currentChestItem->locked()) {
             qCDebug(dcEngine()) << "The chest is locked. Show unlock screen";
@@ -512,7 +510,7 @@ void Engine::pickItem(GameItem *item)
     item->setPlayerVisible(false);
 
     m_dataManager->items()->removeGameItem(item);
-    qCDebug(dcEngine()) << "Picked item and add it to the inventory" << item;
+    qCDebug(dcEngineData()) << "Picked item and add it to the inventory" << item;
     m_player->inventory()->addGameItem(item);
 }
 
@@ -561,11 +559,11 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
 void Engine::onGameItemActiveChanged(GameItem *item, bool active)
 {
     if (active) {
-        //qCDebug(dcEngine()) << "Item changed to active" << item;
+        qCDebug(dcEngineData()) << "[+] Item changed to active" << item;
         connect(item, &GameItem::playerVisibleChanged, this, &Engine::onItemPlayerVisibleChanged);
         connect(item, &GameItem::playerOnItemChanged, this, &Engine::onItemPlayerOnItemChanged);
     } else {
-        //qCDebug(dcEngine()) << "Item changed to inactive" << item;
+        qCDebug(dcEngineData()) << "[-] Item changed to inactive" << item;
         disconnect(item, &GameItem::playerVisibleChanged, this, &Engine::onItemPlayerVisibleChanged);
         disconnect(item, &GameItem::playerOnItemChanged, this, &Engine::onItemPlayerOnItemChanged);
     }
@@ -593,7 +591,7 @@ void Engine::onItemPlayerOnItemChanged(bool playerOnItem)
         case GameItem::TypeEnemy: {
             Enemy *enemy = qobject_cast<Enemy *>(item);
             if (enemy->touchDamage()) {
-                qCDebug(dcEngine()) << "!!!!!!!! Player touch damage" << enemy->touchDamage() << "from" << enemy;
+                qCDebug(dcEngine()) << "Player touch damage" << enemy->touchDamage() << "from" << enemy;
                 m_player->setHealth(m_player->health() - enemy->touchDamage());
             }
             break;

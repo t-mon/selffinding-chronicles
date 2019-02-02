@@ -12,16 +12,21 @@ import "gameoverlays"
 import "physics"
 
 GamePage {
-    id: gamePage
+    id: root
 
     Component.onCompleted: {
-        console.log("Game scene size:", gamePage.width, "/", gamePage.height, "grid size:", app.gridSize)
+        console.log("Game scene size:", root.width, "/", root.height, "grid size:", app.gridSize)
         forceActiveFocus()
         moveCamera()
+        evaluateViewWindow()
     }
 
     Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
     Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
+
+    onWidthChanged: evaluateViewWindow()
+    onHeightChanged: evaluateViewWindow()
+
 
     // Pysical world
     World {
@@ -52,8 +57,7 @@ GamePage {
 
                 Rectangle {
                     anchors.fill: parent
-                    // FIXME: use map color
-                    color: "#307a78"
+                    color: Game.engine.dataManager.worldBackgroundColor
                 }
 
                 WorldBoundaries {
@@ -402,6 +406,22 @@ GamePage {
         } else {
             worldFlickable.contentY = 0
         }
+    }
+
+    Connections {
+        target: Game.engine
+        onCurrentPlayerPositionChanged: {
+            evaluateViewWindow()
+        }
+    }
+
+    function evaluateViewWindow() {
+        var viewWindowX = Math.round(root.width / app.gridSize)
+        var viewWindowY = Math.round(root.height / app.gridSize)
+        var viewOffsetX = Math.round(worldFlickable.contentX / app.gridSize)
+        var viewOffsetY = Math.round(worldFlickable.contentY / app.gridSize)
+
+        Game.engine.viewWindow = Qt.rect(viewOffsetX - 2, viewOffsetY - 2, viewWindowX + 4, viewWindowY + 4)
     }
 
     function calculateAngle() {
