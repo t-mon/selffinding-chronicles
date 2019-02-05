@@ -16,7 +16,7 @@ PhysicsItem {
     property int itemType: character ? character.itemType : GameItem.TypeNone
 
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
-    property real hitAttackRadius: root.width / 2 + 2 * app.gridSize // TODO: use range of current weapon
+    property real hitAttackRadius: character ? (character.physicsSize.width * app.gridSize / 2 + app.gridSize) : root.width / 2
     property real hitAttackRadiusBase: root.width / 3
 
     property bool burning: false
@@ -38,13 +38,6 @@ PhysicsItem {
     fixedRotation: true
     rotation: character ? character.angle * 180 / Math.PI : 0
 
-    // Character connections
-    Connections {
-        id: characterConnections
-        target: character
-        onShoot: shoot()
-    }
-
     // Character movement
     Connections {
         target: Game.engine
@@ -59,12 +52,14 @@ PhysicsItem {
     fixtures: [
         Circle {
             id: bodyCircle
-            radius: root.width / 2
+            radius: character ? character.physicsSize.width / 2 * app.gridSize : 0
+            x: character ? character.physicsPosition.x * app.gridSize : 0
+            y: character ? character.physicsPosition.y * app.gridSize : 0
+            categories: character ? character.categoryFlag : 0
+            collidesWith: character ? character.collisionFlag : 0
             density: 1
             friction: 0.0
             restitution: 0.0
-            categories: character ? character.categoryFlag : 0
-            collidesWith: character ? character.collisionFlag : 0
 
             onBeginContact: {
                 if (!character.isPlayer)
@@ -88,13 +83,15 @@ PhysicsItem {
         },
         Circle {
             id: bodySensorCircle
-            radius: root.width / 2
+            radius: character ? character.physicsSize.width / 2 * app.gridSize : 0
+            x: character ? character.physicsPosition.x * app.gridSize : 0
+            y: character ? character.physicsPosition.y * app.gridSize : 0
+            categories: GameItem.PhysicsSensor
+            collidesWith: GameItem.PhysicsAll
             density: 0.0
             friction: 0.0
             restitution: 0.0
             sensor: true
-            categories: GameItem.PhysicsSensor
-            collidesWith: GameItem.PhysicsAll
 
             onBeginContact: {
                 if (!character.isPlayer)
@@ -128,11 +125,11 @@ PhysicsItem {
 
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 4), root.height / 2 + auraRadius * Math.sin(Math.PI / 4)),
+                //Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 4), root.height / 2 + auraRadius * Math.sin(Math.PI / 4)),
                 Qt.point(root.width / 2 + auraRadius * Math.cos(Math.PI / 8), root.height / 2 + auraRadius * Math.sin(Math.PI / 8)),
                 Qt.point(root.width / 2 + auraRadius * Math.cos(0), root.height / 2 + auraRadius * Math.sin(0)),
                 Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 8), root.height / 2 + auraRadius * Math.sin(-Math.PI / 8)),
-                Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 4), root.height / 2 + auraRadius * Math.sin(-Math.PI / 4))
+                //Qt.point(root.width / 2 + auraRadius * Math.cos(-Math.PI / 4), root.height / 2 + auraRadius * Math.sin(-Math.PI / 4))
             ]
 
             onBeginContact: {
@@ -168,9 +165,11 @@ PhysicsItem {
 
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
+                Qt.point(root.width / 2 + currentRadius * Math.cos(Math.PI / 4), root.height / 2 + currentRadius * Math.sin(Math.PI / 4)),
                 Qt.point(root.width / 2 + currentRadius * Math.cos(Math.PI / 8), root.height / 2 + currentRadius * Math.sin(Math.PI / 8)),
                 Qt.point(root.width / 2 + currentRadius * Math.cos(0), root.height / 2 + currentRadius * Math.sin(0)),
                 Qt.point(root.width / 2 + currentRadius * Math.cos(-Math.PI / 8), root.height / 2 + currentRadius * Math.sin(-Math.PI / 8)),
+                Qt.point(root.width / 2 + currentRadius * Math.cos(-Math.PI / 4), root.height / 2 + currentRadius * Math.sin(-Math.PI / 4)),
             ]
 
             onBeginContact: {
@@ -178,10 +177,20 @@ PhysicsItem {
                     return
 
                 var target = other.getBody().target
+                console.log("Hit sensor touched", target)
                 if (target.itemType && target.enemy) {
-                    //hitAttackTimer.restart()
-                    Game.engine.performHitAttack(root.character, target.enemy, 10)
-                }
+                    if (character && character.weapon) {
+                        console.log("Hit enemy", target.enemy.name)
+                        Game.engine.performHitAttack(root.character, Game.castEnemyToCharacter(target.enemy), character.weapon.damage)
+                        return
+                    }
+                }/* else if (target.itemType && target.character) {
+                    if (character && character.weapon) {
+                        console.log("Hit character", target.character.name)
+                        Game.engine.performHitAttack(root.character, target.character, character.weapon.damage)
+                        return
+                    }
+                }*/
             }
         }
     ]
@@ -265,15 +274,17 @@ PhysicsItem {
         Image {
             id: playerImage
             anchors.fill: frame
-            source: character ? (character.heading === Character.HeadingRight ? dataDirectory + "/images/characters/player-male.png" : dataDirectory + "/images/characters/player-male-mirror.png") : ""
+            mirror: character ? character.heading === Character.HeadingLeft : false
+            source: dataDirectory + "/images/characters/player-male.png"
             opacity: root.itemDebugEnabled ? 0.5 : 1
         }
     }
 
     Timer {
         id: hitAttackTimer
-        interval: 300 // TODO: depend on selected weapon
+        interval: 300
         repeat: false
+        onRunningChanged: console.log("Hit timer", running ? "running" : "stopped")
     }
 
     Timer {
@@ -287,11 +298,39 @@ PhysicsItem {
     Connections {
         id: attackConnections
         target: root.character
+
+        onShoot: {
+            if (!character.firearm) {
+                console.log(character.name, "can not shoot. No firearm selected.")
+                return
+            }
+
+            if (character.armed !== Character.ArmedFirearm)
+                return
+
+            console.log(character.name + " SHOOOT! using", character.firearm)
+            var component = Qt.createComponent("BulletItem.qml");
+            var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character } )
+            if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
+                bulletIncubator.onStatusChanged = function(status) {
+                    if (status === Component.Ready) {
+                        shootBulletObject(bulletIncubator.object)
+                    }
+                }
+            } else {
+                shootBulletObject(bulletIncubator.object)
+            }
+        }
+
         onHit: {
             if (hitAttackTimer.running)
                 return
 
+            if (character.armed !== Character.ArmedWeapon)
+                return
+
             console.log("Hit !!!!!")
+            weaponHitAnimation.start()
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
             hitAttackTimer.restart()
@@ -376,28 +415,112 @@ PhysicsItem {
         visible: character ? character.isPlayer : false
         width: root.auraRadius
         height: app.gridSize
-        x: parent.width / 2
+        x: parent.width / 2 + height
         y: parent.height / 2 - height / 2
 
         Image {
             id: directionIndicatorImage
             anchors.right: parent.right
             anchors.top: parent.top
-            opacity: 0.4
+            opacity: 0.3
             width: root.auraRadius
             height: parent.height
             source: dataDirectory + "/images/game/direction-indicator.svg"
         }
+    }
+
+    Item {
+        id: weaponItem
+        visible: character ? character.armed === Character.ArmedWeapon : false
+        width: root.width / 2
+        height: width
+        x: parent.width / 2
+        y: parent.height / 2 - height / 2
+
+        rotation: 0
+
+        transform: Rotation {
+            origin.x: -weaponItem.width / 2
+            origin.y: weaponItem.height / 2
+            angle: weaponItem.rotation
+            axis { x: 0; y: 0; z: 1 }
+        }
+
+        PropertyAnimation {
+            id: weaponHitAnimation
+            target: weaponItem
+            property: "rotation"
+            from: character ? (character.heading === Character.HeadingLeft ? 45 : -45) : 0
+            to: character ? (character.heading === Character.HeadingLeft ? -45 : 45) : 0
+            duration: 200
+            onRunningChanged: if (!running) weaponItem.rotation = 0
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            visible: root.itemDebugEnabled
+            color: "transparent"
+            border.width: 1
+            border.color: "white"
+        }
 
         Image {
             id: weaponImage
-            anchors.left: directionIndicatorImage.left
-            anchors.verticalCenter: directionIndicatorImage.verticalCenter
-            rotation: 45
-            width: app.gridSize * 1.5
-            height: width
-            visible: hitAttackTimer.running
-            source: dataDirectory + "/images/items/weapons/sword.png"
+            anchors.fill: parent
+            rotation: 90
+            mirror: character ? character.heading === Character.HeadingLeft : false
+            source: {
+                if (!character)
+                    return ""
+
+                if (!character.weapon)
+                    return ""
+
+                return dataDirectory + Game.engine.player.weapon.imageName
+            }
+        }
+    }
+
+
+    Item {
+        id: firearmItem
+        visible: character ? character.armed === Character.ArmedFirearm : false
+        width: root.width / 2
+        height: width
+        x: parent.width / 2
+        y: parent.height / 2 - height / 2
+
+        rotation: 0
+
+        transform: Rotation {
+            origin.x: -firearmItem.width / 2
+            origin.y: firearmItem.height / 2
+            angle: firearmItem.rotation
+            axis { x: 0; y: 0; z: 1 }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            visible: root.itemDebugEnabled
+            color: "transparent"
+            border.width: 1
+            border.color: "white"
+        }
+
+        Image {
+            id: firearmImage
+            anchors.fill: parent
+            rotation: 90
+            mirror: character ? character.heading === Character.HeadingLeft : false
+            source: {
+                if (!character)
+                    return ""
+
+                if (!character.firearm)
+                    return ""
+
+                return dataDirectory + Game.engine.player.firearm.imageName
+            }
         }
     }
 
@@ -442,25 +565,5 @@ PhysicsItem {
         bulletObject.fireArrow = debugControls.flamesEnabled
         var velocity = app.gridSize * 1.2
         bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
-    }
-
-    function shoot() {
-        if (!character.firearm) {
-            console.log(character.name, "can not shoot. No firearm selected.")
-            return;
-        }
-
-        console.log(character.name + " SHOOOT! using", character.firearm)
-        var component = Qt.createComponent("BulletItem.qml");
-        var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character } )
-        if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
-            bulletIncubator.onStatusChanged = function(status) {
-                if (status === Component.Ready) {
-                    shootBulletObject(bulletIncubator.object)
-                }
-            }
-        } else {
-            shootBulletObject(bulletIncubator.object)
-        }
     }
 }

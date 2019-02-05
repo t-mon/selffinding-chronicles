@@ -26,12 +26,14 @@ PhysicsItem {
     fixtures: [
         Circle {
             id: itemBody
-            radius: root.width / 2
+            radius: enemy ? enemy.physicsSize.width / 2 * app.gridSize : 0
+            x: enemy ? enemy.physicsPosition.x * app.gridSize : 0
+            y: enemy ? enemy.physicsPosition.y * app.gridSize : 0
+            categories: enemy ? enemy.categoryFlag : GameObject.PhysicsNone
+            collidesWith: enemy ? enemy.collisionFlag : GameObject.PhysicsNone
             density: 1
             friction: 1
             restitution: 0.0
-            categories: enemy ? enemy.categoryFlag : GameObject.PhysicsNone
-            collidesWith: enemy ? enemy.collisionFlag : GameObject.PhysicsNone
         }
     ]
 

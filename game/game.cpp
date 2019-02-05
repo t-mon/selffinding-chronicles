@@ -104,6 +104,11 @@ PlantItem *Game::castPlantItem(GameItem *item)
     return qobject_cast<PlantItem *>(item);
 }
 
+Character *Game::castEnemyToCharacter(Enemy *enemy)
+{
+    return qobject_cast<Character *>(enemy);
+}
+
 Game::Game(QObject *parent) :
     QObject(parent),
     m_engine(new Engine(this)),

@@ -91,6 +91,7 @@ public:
 
     Q_INVOKABLE void giveUpUnlocking();
     Q_INVOKABLE void finishPlunder();
+    Q_INVOKABLE void useInventoryItem(const QString &itemId);
 
     Q_INVOKABLE void performHitAttack(Character *attacker, Character *victim, int damage);
     Q_INVOKABLE void performShootImpact(Character *attacker, Character *victim, int damage);

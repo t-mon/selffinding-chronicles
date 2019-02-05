@@ -14,6 +14,8 @@ class Character : public GameItem
 {
     Q_OBJECT
     Q_PROPERTY(GameItems *inventory READ inventory CONSTANT)
+
+    Q_PROPERTY(Armed armed READ armed WRITE setArmed NOTIFY armedChanged)
     Q_PROPERTY(WeaponItem *weapon READ weapon WRITE setWeapon NOTIFY weaponChanged)
     Q_PROPERTY(FirearmItem *firearm READ firearm WRITE setFirearm NOTIFY firearmChanged)
 
@@ -68,6 +70,13 @@ public:
     };
     Q_ENUM(Heading)
 
+    enum Armed {
+        ArmedNone,
+        ArmedWeapon,
+        ArmedFirearm
+    };
+    Q_ENUM(Armed)
+
     Character(QObject *parent = nullptr);
     ~Character() override = default;
 
@@ -77,6 +86,9 @@ public:
     Q_INVOKABLE void performInteraction() override;
 
     GameItems *inventory() const;
+
+    Armed armed() const;
+    void setArmed(Armed armed);
 
     WeaponItem *weapon() const;
     void setWeapon(WeaponItem *weapon);
@@ -120,6 +132,8 @@ public:
     int experience() const;
     void setExperience(int experience);
 
+    bool alive() const;
+
     int health() const;
     double healthPercentage() const;
     void setHealth(int health);
@@ -152,6 +166,7 @@ public:
 private:
     GameItems *m_inventory = nullptr;
 
+    Armed m_armed = ArmedNone;
     WeaponItem *m_weapon = nullptr;
     FirearmItem *m_firearm = nullptr;
 
@@ -187,6 +202,7 @@ private:
     void setHeading(Character::Heading heading);
 
 signals:
+    void armedChanged(Armed armed);
     void weaponChanged(WeaponItem *weapon);
     void firearmChanged(FirearmItem *firearm);
 

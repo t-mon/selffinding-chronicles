@@ -13,8 +13,8 @@ Item {
     property bool selected: false
     property int itemCount: 0
 
-    property bool equipped: (Game.engine.player.weapon && item ? item.itemId === Game.engine.player.weapon.itemId : false) ||
-                            (Game.engine.player.firearm && item ? item.itemId === Game.engine.player.firearm.itemId : false)
+    property bool equipped: (Game.engine.player && Game.engine.player.weapon && item ? item.itemId === Game.engine.player.weapon.itemId : false) ||
+                            (Game.engine.player &&Game.engine.player.firearm && item ? item.itemId === Game.engine.player.firearm.itemId : false)
 
     //onItemCountChanged: console.log("Item count changed for", (item ? item.name : ""), itemCount)
 

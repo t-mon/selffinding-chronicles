@@ -3,8 +3,8 @@
     "type": "character",
     "imageName": "/images/characters/player-male.png",
     "geometry": {
-        "width": 2,
-        "height": 2,
+        "width": 3,
+        "height": 3,
         "layer": 3
     },
 
@@ -13,8 +13,8 @@
         "shape": "circle",
         "width": 2,
         "height": 2,
-        "x": 0,
-        "y": 0,
+        "x": 0.5,
+        "y": 0.5,
         "category": 1,
         "collision": 491,
         "vertices": []
@@ -31,8 +31,29 @@
         "wisdom": 10,
         "strength": 10,
         "stealth": 0,
-        "weapon": "",
-        "firearm": "",
-        "inventory": [ ]
+        "weapon": ":/gamedata/weapons/wood-stick.json",
+        "firearm": ":/gamedata/firearms/crossbow.json",
+        "inventory": [
+            {
+                "data": ":/gamedata/plants/healing-herb.json",
+                "count": 2
+            },
+            {
+                "data": ":/gamedata/weapons/wood-stick.json",
+                "count": 1
+            },
+            {
+                "data": ":/gamedata/weapons/sword.json",
+                "count": 1
+            },
+            {
+                "data": ":/gamedata/weapons/wood-stick.json",
+                "count": 1
+            },
+            {
+                "data": ":/gamedata/firearms/crossbow.json",
+                "count": 1
+            }
+        ]
     }
 }

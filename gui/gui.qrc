@@ -54,5 +54,6 @@
         <file>components/PlayerStatusItem.qml</file>
         <file>components/PercentageIndicator.qml</file>
         <file>StartGamePage.qml</file>
+        <file>physics/CircleFixture.qml</file>
     </qresource>
 </RCC>

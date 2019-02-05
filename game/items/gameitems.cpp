@@ -18,6 +18,31 @@ GameItem *GameItems::get(int index)
     return m_gameItems.at(index);
 }
 
+GameItem *GameItems::getFirstGameItem(const QString &itemId)
+{
+    foreach (GameItem *gameItem, m_gameItems) {
+        if (gameItem->itemId() == itemId) {
+            return gameItem;
+        }
+    }
+
+    return nullptr;
+}
+
+GameItem *GameItems::getLastGameItem(const QString &itemId)
+{
+    QListIterator<GameItem *> iterator(m_gameItems);
+    iterator.toBack();
+    while (iterator.hasPrevious()) {
+        GameItem *item = iterator.previous();
+        if (item->itemId() == itemId) {
+            return item;
+        }
+    }
+
+    return nullptr;
+}
+
 int GameItems::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
@@ -92,7 +117,7 @@ void GameItems::removeGameItem(GameItem *item)
 
     int index = m_gameItems.indexOf(item);
     beginRemoveRows(QModelIndex(), index, index);
-    m_gameItems.removeAll(item);
+    m_gameItems.removeAt(index);
     endRemoveRows();
 
     emit countChanged(m_gameItems.count());

@@ -91,6 +91,21 @@ GameItems *Character::inventory() const
     return m_inventory;
 }
 
+Character::Armed Character::armed() const
+{
+    return m_armed;
+}
+
+void Character::setArmed(Character::Armed armed)
+{
+    if (m_armed == armed)
+        return;
+
+    qCDebug(dcCharacter()) << name() << "armed changed" << armed;
+    m_armed = armed;
+    emit armedChanged(m_armed);
+}
+
 WeaponItem *Character::weapon() const
 {
     return m_weapon;
@@ -251,6 +266,11 @@ void Character::setExperience(int experience)
     emit experienceChanged(m_experience);
 }
 
+bool Character::alive() const
+{
+    return m_health > 0;
+}
+
 int Character::health() const
 {
     return m_health;
@@ -264,9 +284,6 @@ double Character::healthPercentage() const
 void Character::setHealth(int health)
 {
     if (m_health == health)
-        return;
-
-    if (m_health <= 0)
         return;
 
     qCDebug(dcCharacter()) << name() << "health changed" << health;
@@ -394,6 +411,7 @@ void Character::setHitNumber(int hitNumber)
     if (m_hitNumber == hitNumber)
         return;
 
+    qCDebug(dcCharacter()) << name() << "hit number changed" << hitNumber;
     m_hitNumber = hitNumber;
     emit hitNumberChanged(m_hitNumber);
     emit hit();
@@ -409,8 +427,10 @@ void Character::setShootNumber(int shootNumber)
     if (m_shootNumber == shootNumber)
         return;
 
+    qCDebug(dcCharacter()) << name() << "shoot number changed" << shootNumber;
     m_shootNumber = shootNumber;
     emit shootNumberChanged(m_shootNumber);
+    emit shoot();
 }
 
 void Character::setHeading(Character::Heading heading)

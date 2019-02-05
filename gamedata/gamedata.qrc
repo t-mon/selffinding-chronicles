@@ -30,5 +30,6 @@
         <file>copyright/copyrights.json</file>
         <file>copyright/logos/qt.svg</file>
         <file>copyright/logos/box2d.png</file>
+        <file>gamedata/weapons/wood-stick.json</file>
     </qresource>
 </RCC>

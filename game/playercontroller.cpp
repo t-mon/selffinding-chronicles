@@ -88,14 +88,14 @@ void PlayerController::keyPressed(const Qt::Key &key)
     case Qt::Key_E:
         setPrimaryActionPressed(true);
         break;
-    case Qt::Key_Space:
+    case Qt::Key_F:
         setSecondaryActionPressed(true);
         break;
     case Qt::Key_Q:
         qCDebug(dcPlayerController()) << "Inventory pressed";
         setInventoryPressed(true);
         break;
-    case Qt::Key_F:
+    case Qt::Key_R:
         qCDebug(dcPlayerController()) << "Shoot pressed";
         setShootPressed(true);
         break;
@@ -131,13 +131,13 @@ void PlayerController::keyReleased(const Qt::Key &key)
     case Qt::Key_E:
         setPrimaryActionPressed(false);
         break;
-    case Qt::Key_Space:
+    case Qt::Key_F:
         setSecondaryActionPressed(false);
         break;
     case Qt::Key_Q:
         setInventoryPressed(false);
         break;
-    case Qt::Key_F:
+    case Qt::Key_R:
         setShootPressed(false);
         break;
     default:

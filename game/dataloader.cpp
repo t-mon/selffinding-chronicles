@@ -245,8 +245,7 @@ GameItem *DataLoader::loadGameItem(const QString &itemId, const QPoint &position
 GameItem *DataLoader::loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent)
 {
     QVariantMap itemMap = loadJsonData(resourcePath);
-    QString itemId = QString(QCryptographicHash::hash(resourcePath.toUtf8(), QCryptographicHash::Md5).toHex());
-    return loadGameItem(itemId, QPoint(-1, -1), itemMap, parent);
+    return loadGameItem(getItemIdFromResourcePath(resourcePath), QPoint(-1, -1), itemMap, parent);
 }
 
 void DataLoader::fillGameItemData(GameItem *item, const QVariantMap &description)
@@ -283,7 +282,27 @@ void DataLoader::fillCharacterItemData(Character *character, const QVariantMap &
     // Inventory
     character->inventory()->addGameItemList(loadInventoryItems(characterMap.value("inventory").toList(), character));
 
-    // TODO: set weapon and firearm
+    // Arm the character
+    QString weaponResourcePath = characterMap.value("weapon").toString();
+    if (!weaponResourcePath.isEmpty()) {
+        GameItem *weapon = character->inventory()->getFirstGameItem(getItemIdFromResourcePath(weaponResourcePath));
+        if (!weapon) {
+            qCWarning(dcDataManager()) << "Character" << character << "configured a weapon which is not in the inventory";
+        } else {
+            character->setWeapon(qobject_cast<WeaponItem *>(weapon));
+        }
+    }
+
+    QString firearmResourcePath = characterMap.value("firearm").toString();
+    if (!firearmResourcePath.isEmpty()) {
+        GameItem *firearm = character->inventory()->getFirstGameItem(getItemIdFromResourcePath(firearmResourcePath));
+        if (!firearm) {
+            qCWarning(dcDataManager()) << "Character" << character << "configured a firearm which is not in the inventory";
+        } else {
+            character->setFirearm(qobject_cast<FirearmItem *>(firearm));
+        }
+    }
+
 }
 
 void DataLoader::fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap)
@@ -355,4 +374,9 @@ Character::Role DataLoader::convertRoleString(const QString &roleString)
         qCWarning(dcMap()) << "Invalid role" << roleString;
     }
     return role;
+}
+
+QString DataLoader::getItemIdFromResourcePath(const QString &resourcePath)
+{
+    return QString(QCryptographicHash::hash(resourcePath.toUtf8(), QCryptographicHash::Md5).toHex());
 }

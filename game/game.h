@@ -49,6 +49,7 @@ public:
     Q_INVOKABLE WeaponItem *castWeaponItem(GameItem *item);
     Q_INVOKABLE FirearmItem *castFirearmItem(GameItem *item);
     Q_INVOKABLE PlantItem *castPlantItem(GameItem *item);
+    Q_INVOKABLE Character *castEnemyToCharacter(Enemy *enemy);
 
 private:
     explicit Game(QObject *parent = nullptr);

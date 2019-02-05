@@ -67,6 +67,16 @@
             "data": ":/gamedata/weapons/sword-2.json"
         },
         {
+            "x": 15,
+            "y": 5,
+            "data": ":/gamedata/weapons/wood-stick.json"
+        },
+        {
+            "x": 15,
+            "y": 6,
+            "data": ":/gamedata/weapons/wood-stick.json"
+        },
+        {
             "x": 10,
             "y": 10,
             "data": ":/gamedata/plants/healing-herb.json"

@@ -38,9 +38,10 @@ Engine::Engine(QObject *parent) :
     connect(m_playerController, &PlayerController::forwardClicked, this, &Engine::onForwardClicked);
     connect(m_playerController, &PlayerController::backwardClicked, this, &Engine::onBackwardClicked);
     connect(m_playerController, &PlayerController::inventoryPressed, this, &Engine::onInventoryClicked);
+
     connect(m_playerController, &PlayerController::escape, this, &Engine::onEscape);
     connect(m_playerController, &PlayerController::beam, this, &Engine::onBeam);
-    connect(m_playerController, &PlayerController::shoot, this, &Engine::onShoot);
+    //connect(m_playerController, &PlayerController::shoot, this, &Engine::onShoot);
 
     qCDebug(dcEngine()) << "Created engine" << thread();
 }
@@ -170,16 +171,39 @@ void Engine::finishPlunder()
     setState(StateRunning);
 }
 
+void Engine::useInventoryItem(const QString &itemId)
+{
+    GameItem *item = m_player->inventory()->getLastGameItem(itemId);
+    m_player->inventory()->removeGameItem(item);
+    item->deleteLater();
+    if (!item) {
+        qCWarning(dcEngine()) << "There is no item with the given id in the inventory.";
+        return;
+    }
+
+    qCDebug(dcEngine()) << "Use inventory item" << item;
+
+    switch (item->itemType()) {
+    case GameItem::TypePlant: {
+        PlantItem *plant = qobject_cast<PlantItem *>(item);
+        m_player->setMana(m_player->mana() + plant->mana());
+        m_player->setHealth(m_player->health() + plant->healing());
+        break;
+    }
+    default:
+        qCWarning(dcEngine()) << "Unhandled use for game item" << item;
+    }
+}
+
 void Engine::performHitAttack(Character *attacker, Character *victim, int damage)
 {
-    // TODO: get sword damage
-    qCDebug(dcEngine()) << attacker << "HITTING" << victim;
+    qCDebug(dcEngine()) << "Hit attack" << damage << attacker->name() << "-->" << victim->name();
     victim->setHealth(victim->health() - damage);
 }
 
 void Engine::performShootImpact(Character *attacker, Character *victim, int damage)
 {
-    qCDebug(dcEngine()) << attacker << "SHOT" << victim << damage;
+    qCDebug(dcEngine()) << "Shoot attack" << damage << attacker->name() << "-->" << victim->name();
     victim->setHealth(victim->health() - damage);
 }
 
@@ -591,7 +615,7 @@ void Engine::onItemPlayerOnItemChanged(bool playerOnItem)
         case GameItem::TypeEnemy: {
             Enemy *enemy = qobject_cast<Enemy *>(item);
             if (enemy->touchDamage()) {
-                qCDebug(dcEngine()) << "Player touch damage" << enemy->touchDamage() << "from" << enemy;
+                qCDebug(dcEngine()) << "Player touch damage" << enemy->touchDamage() << "from" << enemy->name();
                 m_player->setHealth(m_player->health() - enemy->touchDamage());
             }
             break;
@@ -615,7 +639,7 @@ void Engine::onEnemyKilled()
 
     // FIXME
     //m_enemyItems->removeGameItem(item);
-    item->deleteLater();
+    //item->deleteLater();
 
     evaluatePlayerFocus();
 }
@@ -673,14 +697,8 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
             }
             break;
         case GameItem::TypeEnemy:
-            qCDebug(dcEngine()) << "Perform interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
-            if (m_playerFocusItem->interaction() == GameItem::InteractionAttack) {
-                m_playerFocusItem->performInteraction();
+            qCDebug(dcEngine()) << "Perform enemy interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
 
-                // Fixme: check sword and range
-                qCDebug(dcEngine()) << "Player hitting";
-                m_player->setHitNumber(m_player->hitNumber() + 1);
-            }
             break;
         default:
             qCWarning(dcEngine()) << "Unhandled action on item" << m_playerFocusItem;
@@ -694,6 +712,22 @@ void Engine::onSecondaryActionPressedChanged(bool pressed)
     switch (m_state) {
     case StateConversation:
         if (m_currentConversation && pressed) m_currentConversation->confirmPressed();
+        break;
+    case StateRunning:
+        if (!pressed || !m_player)
+            return;
+
+        qCDebug(dcEngine) << "Secondary action pressed";
+        switch (m_player->armed()) {
+        case Character::ArmedNone:
+            break;
+        case Character::ArmedWeapon:
+            m_player->setHitNumber(m_player->hitNumber() + 1);
+            break;
+        case Character::ArmedFirearm:
+            m_player->setShootNumber(m_player->shootNumber() + 1);
+            break;
+        }
         break;
     default:
         qCDebug(dcEngine()) << "Secondary action" << (pressed ? "pressed" : "released");

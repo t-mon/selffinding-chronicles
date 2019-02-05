@@ -15,6 +15,26 @@ Row {
         width: app.menuItemSize
         height: width
         imageSource: Game.engine.player ? (Game.engine.player.weapon ? dataDirectory + Game.engine.player.weapon.imageName : "") : ""
+        selected: {
+            if (!Game.engine.player)
+                return false
+
+            if (!Game.engine.player.weapon)
+                return false
+
+            return Game.engine.player.armed === Character.ArmedWeapon
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                if (Game.engine.player.armed === Character.ArmedWeapon) {
+                    Game.engine.player.armed = Character.ArmedNone
+                } else {
+                    Game.engine.player.armed = Character.ArmedWeapon
+                }
+            }
+        }
     }
 
     ContentItemImage {
@@ -22,5 +42,33 @@ Row {
         width: app.menuItemSize
         height: width
         imageSource: Game.engine.player ? (Game.engine.player.firearm ? dataDirectory + Game.engine.player.firearm.imageName : "") : ""
+
+        selected: {
+            if (!Game.engine.player)
+                return false
+
+            if (!Game.engine.player.firearm)
+                return false
+
+            return Game.engine.player.armed === Character.ArmedFirearm
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                if (!Game.engine.player)
+                    return false
+
+                if (!Game.engine.player.firearm)
+                    return false
+
+                if (Game.engine.player.armed === Character.ArmedFirearm) {
+                    Game.engine.player.armed = Character.ArmedNone
+                } else {
+                    Game.engine.player.armed = Character.ArmedFirearm
+                }
+            }
+        }
+
     }
 }

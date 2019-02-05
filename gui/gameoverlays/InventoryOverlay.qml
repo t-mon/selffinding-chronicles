@@ -109,6 +109,9 @@ GameOverlayItem {
                             case GameItem.TypeFirearm:
                                 Game.engine.player.firearm = inventoryContentItem.selectedItem
                                 break;
+                            case GameItem.TypePlant:
+                                Game.engine.useInventoryItem(inventoryContentItem.selectedItem.itemId)
+                                break;
                             default:
                                 console.log("Not implemented yet for item", inventoryContentItem.selectedItem.itemTypeName)
                                 break;

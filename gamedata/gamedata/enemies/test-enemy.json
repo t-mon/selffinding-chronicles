@@ -11,10 +11,10 @@
     "physicsGeometry": {
         "body": "dynamic",
         "shape": "circle",
-        "width": 3,
-        "height": 3,
-        "x": 0,
-        "y": 0,
+        "width": 2,
+        "height": 2,
+        "x": 0.5,
+        "y": 0.5,
         "category": 2,
         "collision": 491,
         "vertices": []
