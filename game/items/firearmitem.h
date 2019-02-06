@@ -10,8 +10,15 @@ class FirearmItem : public GameItem
     Q_OBJECT
     Q_PROPERTY(int damage READ damage NOTIFY damageChanged)
     Q_PROPERTY(int range READ range NOTIFY rangeChanged)
+    Q_PROPERTY(FirearmType firearmType READ firearmType NOTIFY firearmTypeChanged)
 
 public:
+    enum FirearmType {
+        FirearmTypeBow,
+        FirearmTypeCrossbow
+    };
+    Q_ENUM(FirearmType)
+
     explicit FirearmItem(QObject *parent = nullptr);
     ~FirearmItem() override = default;
 
@@ -20,6 +27,9 @@ public:
 
     Q_INVOKABLE void performInteraction() override;
 
+    FirearmType firearmType() const;
+    void setFirearmType(FirearmType firearmType);
+
     int damage() const;
     void setDamage(int damage);
 
@@ -27,10 +37,12 @@ public:
     void setRange(int range);
 
 private:
+    FirearmType m_firearmType = FirearmTypeBow;
     int m_damage = 0;
     int m_range = 0;
 
 signals:
+    void firearmTypeChanged(FirearmType firearmType);
     void damageChanged(int damage);
     void rangeChanged(int range);
 };

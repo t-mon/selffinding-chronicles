@@ -50,6 +50,7 @@ public:
     static GameObject::BodyType convertBodyTypeString(const QString &bodyTypeString);
     static Character::Gender convertGenderString(const QString &genderString);
     static Character::Role convertRoleString(const QString &roleString);
+    static FirearmItem::FirearmType convertFirearmTypeString(const QString &firearmTypeString);
     static QString getItemIdFromResourcePath(const QString &resourcePath);
 };
 

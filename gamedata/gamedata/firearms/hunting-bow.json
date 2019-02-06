@@ -20,6 +20,7 @@
     },
 
     "firearm": {
+        "type": "bow",
         "price": 80,
         "damage": 15,
         "range": 15

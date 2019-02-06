@@ -31,6 +31,7 @@ public:
 
     GameItem *getFirstGameItem(const QString &itemId);
     GameItem *getLastGameItem(const QString &itemId);
+    GameItem *takeLastGameItem(const QString &itemId);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;

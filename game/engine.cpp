@@ -173,15 +173,14 @@ void Engine::finishPlunder()
 
 void Engine::useInventoryItem(const QString &itemId)
 {
-    GameItem *item = m_player->inventory()->getLastGameItem(itemId);
-    m_player->inventory()->removeGameItem(item);
-    item->deleteLater();
+    GameItem *item = m_player->inventory()->takeLastGameItem(itemId);
     if (!item) {
         qCWarning(dcEngine()) << "There is no item with the given id in the inventory.";
         return;
     }
 
     qCDebug(dcEngine()) << "Use inventory item" << item;
+    item->deleteLater();
 
     switch (item->itemType()) {
     case GameItem::TypePlant: {

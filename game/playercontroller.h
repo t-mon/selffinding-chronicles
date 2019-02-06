@@ -94,8 +94,12 @@ signals:
     void backwardClicked();
     void leftClicked();
     void rightClicked();
+
     void primaryActionClicked();
     void secondaryActionClicked();
+
+    void weaponPressed();
+    void firearmPressed();
     void inventoryPressed();
     void shoot();
     void escape();

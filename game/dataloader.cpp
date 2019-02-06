@@ -55,6 +55,7 @@ FirearmItem *DataLoader::createFirearmItem(const QString &itemId, const QVariant
     fillGameItemData(qobject_cast<GameItem *>(firearmItem), description);
 
     QVariantMap firearmMap = description.value("firearm").toMap();
+    firearmItem->setFirearmType(convertFirearmTypeString(firearmMap.value("type").toString()));
     firearmItem->setDamage(firearmMap.value("damage").toInt());
     firearmItem->setRange(firearmMap.value("range").toInt());
     firearmItem->setPrice(firearmMap.value("price").toInt());
@@ -374,6 +375,17 @@ Character::Role DataLoader::convertRoleString(const QString &roleString)
         qCWarning(dcMap()) << "Invalid role" << roleString;
     }
     return role;
+}
+
+FirearmItem::FirearmType DataLoader::convertFirearmTypeString(const QString &firearmTypeString)
+{
+    FirearmItem::FirearmType type;
+    if (firearmTypeString.toLower() == "bow") {
+        type = FirearmItem::FirearmTypeBow;
+    } else if (firearmTypeString.toLower() == "crossbow") {
+        type = FirearmItem::FirearmTypeCrossbow;
+    }
+    return type;
 }
 
 QString DataLoader::getItemIdFromResourcePath(const QString &resourcePath)

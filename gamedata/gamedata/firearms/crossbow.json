@@ -20,6 +20,7 @@
     },
 
     "firearm": {
+        "type": "crossbow",
         "price": 100,
         "damage": 32,
         "range": 20

@@ -271,6 +271,109 @@ PhysicsItem {
             percentage: character ? character.healthPercentage : 0
         }
 
+        Item {
+            id: packedWeaponItem
+            visible: false
+            width: root.width / 2
+            height: width
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? width / 5 : -width / 5) : 0
+            rotation: {
+                if (!character || !character.weapon)
+                    return 0
+
+                var rotationAngle = 0
+                if (character.heading === Character.HeadingLeft) {
+                    rotationAngle = -130
+                } else {
+                    rotationAngle = 130
+                }
+
+                return rotationAngle
+            }
+
+
+            Rectangle {
+                anchors.fill: parent
+                visible: root.itemDebugEnabled
+                color: "transparent"
+                opacity: 0.5
+                border.width: 1
+                border.color: "white"
+            }
+
+            Image {
+                id: packedWeaponImage
+                anchors.fill: parent
+                mirror: character ? character.heading === Character.HeadingLeft : false
+                source: {
+                    if (!character)
+                        return ""
+
+                    if (!character.weapon)
+                        return ""
+
+                    return dataDirectory + Game.engine.player.weapon.imageName
+                }
+            }
+        }
+
+        Item {
+            id: packedFirearmItem
+            visible: false
+            width: root.width / 2
+            height: width
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? width / 4 : -width / 4) : 0
+            rotation: {
+                if (!character || !character.firearm)
+                    return 0
+
+                var rotationAngle = 0
+                if (character.heading === Character.HeadingLeft) {
+                    rotationAngle = 30
+                } else {
+                    rotationAngle = -30
+                }
+
+                if (character.firearm.firearmType === FirearmItem.FirearmTypeBow) {
+                    if (character.heading === Character.HeadingLeft) {
+                        rotationAngle += 75
+                    } else {
+                        rotationAngle -= 75
+                    }
+                }
+                return rotationAngle
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                visible: root.itemDebugEnabled
+                color: "transparent"
+                opacity: 0.5
+                border.width: 1
+                border.color: "white"
+            }
+
+            Image {
+                id: packedFirearmImage
+                anchors.fill: parent
+                mirror: character ? character.heading === Character.HeadingLeft : false
+                source: {
+                    if (!character)
+                        return ""
+
+                    if (!character.firearm)
+                        return ""
+
+                    return dataDirectory + Game.engine.player.firearm.imageName
+                }
+            }
+        }
+
         Image {
             id: playerImage
             anchors.fill: frame
@@ -452,7 +555,8 @@ PhysicsItem {
             property: "rotation"
             from: character ? (character.heading === Character.HeadingLeft ? 45 : -45) : 0
             to: character ? (character.heading === Character.HeadingLeft ? -45 : 45) : 0
-            duration: 200
+            duration: 300
+            easing.type: Easing.InOutQuart
             onRunningChanged: if (!running) weaponItem.rotation = 0
         }
 
@@ -460,6 +564,7 @@ PhysicsItem {
             anchors.fill: parent
             visible: root.itemDebugEnabled
             color: "transparent"
+            opacity: 0.5
             border.width: 1
             border.color: "white"
         }
@@ -479,12 +584,47 @@ PhysicsItem {
                 return dataDirectory + Game.engine.player.weapon.imageName
             }
         }
-    }
 
+        states: [
+            State {
+                name: "noWeapon"
+                when: !character.weapon
+                PropertyChanges { target: weaponItem; visible: false }
+                PropertyChanges { target: packedWeaponItem; visible: false }
+                StateChangeScript {
+                    script: {
+                        console.log("Character no weapon")
+                    }
+                }
+            },
+            State {
+                name: "holdingWeapon"
+                when: character.armed === Character.ArmedWeapon
+                PropertyChanges { target: weaponItem; visible: true }
+                PropertyChanges { target: packedWeaponItem; visible: false }
+                StateChangeScript {
+                    script: {
+                        console.log("Character holding weapon")
+                    }
+                }
+            },
+            State {
+                name: "packedWeapon"
+                when: character.weapon && character.armed !== Character.ArmedWeapon
+                PropertyChanges { target: weaponItem; visible: false }
+                PropertyChanges { target: packedWeaponItem; visible: true }
+                StateChangeScript {
+                    script: {
+                        console.log("Character packed weapon")
+                    }
+                }
+            }
+        ]
+    }
 
     Item {
         id: firearmItem
-        visible: character ? character.armed === Character.ArmedFirearm : false
+        visible: false
         width: root.width / 2
         height: width
         x: parent.width / 2
@@ -522,7 +662,46 @@ PhysicsItem {
                 return dataDirectory + Game.engine.player.firearm.imageName
             }
         }
+
+        states: [
+            State {
+                name: "noFirearm"
+                when: !character.firearm
+                PropertyChanges { target: firearmItem; visible: false }
+                PropertyChanges { target: packedFirearmItem; visible: false }
+                StateChangeScript {
+                    script: {
+                        console.log("Character no firearm")
+                    }
+                }
+            },
+            State {
+                name: "holdingFirearm"
+                when: character.armed === Character.ArmedFirearm
+                PropertyChanges { target: firearmItem; visible: true }
+                PropertyChanges { target: packedFirearmItem; visible: false }
+                StateChangeScript {
+                    script: {
+                        console.log("Character holding firearm")
+                    }
+                }
+            },
+            State {
+                name: "packedFirearm"
+                when: character.firearm && character.armed !== Character.ArmedFirearm
+                PropertyChanges { target: firearmItem; visible: false }
+                PropertyChanges { target: packedFirearmItem; visible: true }
+                StateChangeScript {
+                    script: {
+                        console.log("Character packed firearm")
+                    }
+                }
+            }
+        ]
     }
+
+
+
 
     Rectangle {
         id: damageIndicator

@@ -43,6 +43,13 @@ GameItem *GameItems::getLastGameItem(const QString &itemId)
     return nullptr;
 }
 
+GameItem *GameItems::takeLastGameItem(const QString &itemId)
+{
+    GameItem *item = getLastGameItem(itemId);
+    if (item) removeGameItem(item);
+    return item;
+}
+
 int GameItems::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)

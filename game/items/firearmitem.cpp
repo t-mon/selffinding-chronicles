@@ -22,6 +22,20 @@ void FirearmItem::performInteraction()
     qCDebug(dcItem()) << itemTypeName() << name() << "perform interaction" << m_interaction;
 }
 
+FirearmItem::FirearmType FirearmItem::firearmType() const
+{
+    return m_firearmType;
+}
+
+void FirearmItem::setFirearmType(FirearmItem::FirearmType firearmType)
+{
+    if (m_firearmType == firearmType)
+        return;
+
+    m_firearmType = firearmType;
+    emit firearmTypeChanged(m_firearmType);
+}
+
 int FirearmItem::damage() const
 {
     return m_damage;
@@ -55,6 +69,7 @@ QDebug operator<<(QDebug debug, FirearmItem *firearmItem)
 {
     debug.nospace() << "Firearm("<< firearmItem->name();
     debug.nospace() << ", " << firearmItem->itemId();
+    debug.nospace() << ", " << firearmItem->firearmType();
     debug.nospace() << ", price: " << firearmItem->price();
     debug.nospace() << ", damage: " << firearmItem->damage();
     debug.nospace() << ", range: " << firearmItem->range();

@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("GameInput", false);
     s_loggingFilters.insert("Engine", true);
-    s_loggingFilters.insert("EngineData", true);
+    s_loggingFilters.insert("EngineData", false);
     s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("Settings", false);
     s_loggingFilters.insert("PlayerController", false);
@@ -151,6 +151,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<TreeItem>("Chronicles", 1, 0, "TreeItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<WeaponItem>("Chronicles", 1, 0, "WeaponItem", "Can't create this in QML.");
+    qmlRegisterUncreatableType<FirearmItem>("Chronicles", 1, 0, "FirearmItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<ChestItem>("Chronicles", 1, 0, "ChestItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
     qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");

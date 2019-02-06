@@ -10,6 +10,42 @@ import "../components"
 Row {
     id: root
 
+    Connections {
+        id: playerControllerConnections
+        target: Game.engine.playerController
+        onWeaponPressed: weaponClicked()
+        onFirearmPressed: firearmClicked()
+    }
+
+    function weaponClicked() {
+        if (!Game.engine.player)
+            return
+
+        if (!Game.engine.player.weapon)
+            return
+
+        if (Game.engine.player.armed === Character.ArmedWeapon) {
+            Game.engine.player.armed = Character.ArmedNone
+        } else {
+            Game.engine.player.armed = Character.ArmedWeapon
+        }
+    }
+
+    function firearmClicked() {
+        if (!Game.engine.player)
+            return
+
+        if (!Game.engine.player.firearm)
+            return
+
+        if (Game.engine.player.armed === Character.ArmedFirearm) {
+            Game.engine.player.armed = Character.ArmedNone
+        } else {
+            Game.engine.player.armed = Character.ArmedFirearm
+        }
+
+    }
+
     ContentItemImage {
         id: weaponItem
         width: app.menuItemSize
@@ -27,13 +63,7 @@ Row {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: {
-                if (Game.engine.player.armed === Character.ArmedWeapon) {
-                    Game.engine.player.armed = Character.ArmedNone
-                } else {
-                    Game.engine.player.armed = Character.ArmedWeapon
-                }
-            }
+            onClicked: weaponClicked()
         }
     }
 
@@ -55,19 +85,7 @@ Row {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: {
-                if (!Game.engine.player)
-                    return false
-
-                if (!Game.engine.player.firearm)
-                    return false
-
-                if (Game.engine.player.armed === Character.ArmedFirearm) {
-                    Game.engine.player.armed = Character.ArmedNone
-                } else {
-                    Game.engine.player.armed = Character.ArmedFirearm
-                }
-            }
+            onClicked: firearmClicked()
         }
 
     }
