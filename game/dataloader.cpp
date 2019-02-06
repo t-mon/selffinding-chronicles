@@ -379,11 +379,13 @@ Character::Role DataLoader::convertRoleString(const QString &roleString)
 
 FirearmItem::FirearmType DataLoader::convertFirearmTypeString(const QString &firearmTypeString)
 {
-    FirearmItem::FirearmType type;
+    FirearmItem::FirearmType type = FirearmItem::FirearmTypeBow;
     if (firearmTypeString.toLower() == "bow") {
         type = FirearmItem::FirearmTypeBow;
     } else if (firearmTypeString.toLower() == "crossbow") {
         type = FirearmItem::FirearmTypeCrossbow;
+    } else {
+        qCWarning(dcMap()) << "Invalid firearm type" << firearmTypeString;
     }
     return type;
 }

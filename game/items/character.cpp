@@ -336,8 +336,15 @@ void Character::setMana(int mana)
     if (m_mana == mana)
         return;
 
-    qCDebug(dcCharacter()) << name() << "mana changed" << mana;
-    m_mana = mana;
+    if (mana > m_manaMax) {
+        m_mana = m_manaMax;
+    } else if (mana <= 0) {
+        m_mana = 0;
+    } else {
+        m_mana = mana;
+    }
+
+    qCDebug(dcCharacter()) << name() << "mana changed" << m_mana;
     emit manaChanged(m_mana);
 }
 

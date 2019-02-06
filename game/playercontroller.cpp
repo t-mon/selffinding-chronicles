@@ -161,7 +161,8 @@ void PlayerController::clickPrimaryAction()
 
 void PlayerController::clickSecondaryAction()
 {
-    emit shoot();
+    emit secondaryActionPressed();
+    emit secondaryActionPressedChanged(true);
 }
 
 QPointF PlayerController::movementVector()

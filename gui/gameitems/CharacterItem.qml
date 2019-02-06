@@ -14,22 +14,11 @@ PhysicsItem {
 
     property Character character
     property int itemType: character ? character.itemType : GameItem.TypeNone
-
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
-    property real hitAttackRadius: character ? (character.physicsSize.width * app.gridSize / 2 + app.gridSize) : root.width / 2
+    property bool attackRunning: false
+    property real hitAttackRadius: attackRunning && character ? (character.physicsSize.width * app.gridSize / 2 + app.gridSize) : hitAttackRadiusBase
     property real hitAttackRadiusBase: root.width / 3
-
     property bool burning: false
-
-    function inflame() {
-        if (flameFadeOutAnimation.running)
-            flameFadeOutAnimation.stop()
-
-        flameItem.opacity = 1
-        flameItem.visible = true
-        buringTimer.restart()
-        root.burning = true
-    }
 
     antialiasing: app.antialiasing
     bodyType: character ? (character.movable ? character.bodyType : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
@@ -37,6 +26,16 @@ PhysicsItem {
     linearDamping: 10
     fixedRotation: true
     rotation: character ? character.angle * 180 / Math.PI : 0
+
+    onXChanged: {
+        if (!character) return
+        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
+
+    onYChanged: {
+        if (!character) return
+        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
 
     // Character movement
     Connections {
@@ -161,7 +160,7 @@ PhysicsItem {
             categories: GameItem.PhysicsSensor
             collidesWith: GameItem.PhysicsAll
 
-            property real currentRadius: hitAttackTimer.running ? root.hitAttackRadius : root.hitAttackRadiusBase
+            property real currentRadius: weaponHitAnimation.running ? root.hitAttackRadius : root.hitAttackRadiusBase
 
             vertices: [
                 Qt.point(root.width / 2, root.height / 2),
@@ -194,21 +193,6 @@ PhysicsItem {
             }
         }
     ]
-
-    function getBulletXOffset() {
-        var centerX = root.width / 2
-        return (centerX + (root.width / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.cos(character.angle)) - app.gridSize / 4
-    }
-
-    function getBulletYOffset() {
-        var centerY = root.height / 2
-        return (centerY + (root.height / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.sin(character.angle)) - app.gridSize / 4
-    }
-
-    function getBulletAngle() {
-        var angle = root.character.angle * 180 / Math.PI;
-        return angle
-    }
 
     Item {
         id: frame
@@ -384,13 +368,6 @@ PhysicsItem {
     }
 
     Timer {
-        id: hitAttackTimer
-        interval: 300
-        repeat: false
-        onRunningChanged: console.log("Hit timer", running ? "running" : "stopped")
-    }
-
-    Timer {
         id: burnDamageTimer
         interval: 1000
         running: root.burning
@@ -426,7 +403,7 @@ PhysicsItem {
         }
 
         onHit: {
-            if (hitAttackTimer.running)
+            if (weaponHitAnimation.running)
                 return
 
             if (character.armed !== Character.ArmedWeapon)
@@ -436,7 +413,6 @@ PhysicsItem {
             weaponHitAnimation.start()
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
-            hitAttackTimer.restart()
         }
     }
 
@@ -549,15 +525,35 @@ PhysicsItem {
             axis { x: 0; y: 0; z: 1 }
         }
 
-        PropertyAnimation {
+        SequentialAnimation {
             id: weaponHitAnimation
-            target: weaponItem
-            property: "rotation"
-            from: character ? (character.heading === Character.HeadingLeft ? 45 : -45) : 0
-            to: character ? (character.heading === Character.HeadingLeft ? -45 : 45) : 0
-            duration: 300
-            easing.type: Easing.InOutQuart
-            onRunningChanged: if (!running) weaponItem.rotation = 0
+            onRunningChanged: console.log("Hit animation", running ? "running" : "stopped")
+            PropertyAnimation {
+                id: weaponHitSwing1Animation
+                target: weaponItem
+                property: "rotation"
+                to: character ? (character.heading === Character.HeadingLeft ? 45 : -45) : 0
+                duration: 175
+                easing.type: Easing.OutQuad
+            }
+            ScriptAction {script: { root.attackRunning = true } }
+            PropertyAnimation {
+                id: weaponHitSwing2Animation
+                target: weaponItem
+                property: "rotation"
+                to: character ? (character.heading === Character.HeadingLeft ? -45 : 45) : 0
+                duration: 150
+                easing.type: Easing.InOutQuart
+            }
+            ScriptAction {script: { root.attackRunning = false } }
+            PropertyAnimation {
+                id: weaponHitSwing3Animation
+                target: weaponItem
+                property: "rotation"
+                to: 0
+                duration: 175
+                easing.type: Easing.InQuad
+            }
         }
 
         Rectangle {
@@ -700,9 +696,6 @@ PhysicsItem {
         ]
     }
 
-
-
-
     Rectangle {
         id: damageIndicator
         width: parent.width
@@ -714,19 +707,29 @@ PhysicsItem {
         opacity: 0
     }
 
-    // Move and shoot
-    onXChanged: {
-        if (!character)
-            return
-
-        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    function getBulletXOffset() {
+        var centerX = root.width / 2
+        return (centerX + (root.width / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.cos(character.angle)) - app.gridSize / 4
     }
 
-    onYChanged: {
-        if (!character)
-            return
+    function getBulletYOffset() {
+        var centerY = root.height / 2
+        return (centerY + (root.height / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.sin(character.angle)) - app.gridSize / 4
+    }
 
-        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    function getBulletAngle() {
+        var angle = root.character.angle * 180 / Math.PI;
+        return angle
+    }
+
+    function inflame() {
+        if (flameFadeOutAnimation.running)
+            flameFadeOutAnimation.stop()
+
+        flameItem.opacity = 1
+        flameItem.visible = true
+        buringTimer.restart()
+        root.burning = true
     }
 
     function shootBulletObject(bulletObject) {
