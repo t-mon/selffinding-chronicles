@@ -10,7 +10,7 @@ Item {
     property bool itemDebugEnabled: false
     property bool physicsDebugEnabled: false
     property bool stonedEnabled: false
-    property bool flamesEnabled: false
+    property bool flamesEnabled: true
     property bool rainingEnabled: false
     property bool snowingEnabled: false
     property bool turbulenceEnabled: false

@@ -464,9 +464,23 @@ void Engine::doPlayerMovement()
     if (!m_player->movable())
         return;
 
-    // FIXME: If primary pressed, default enable running for now
-    //m_player->setRunning(m_playerController->secondaryActionPressed());
     m_player->setMovementVector(m_playerController->movementVector());
+}
+
+void Engine::doEnemiesMovement()
+{
+    for (int i = 0; i < m_activeEnemies->count(); i++) {
+        Enemy *enemy = qobject_cast<Enemy *>(m_activeEnemies->get(i));
+        if (!enemy->movable())
+            continue;
+
+        enemy->setMovementVector(QPointF(0.1, 0));
+    }
+}
+
+void Engine::doCharactersMovement()
+{
+
 }
 
 void Engine::evaluatePlayerFocus()
@@ -585,10 +599,32 @@ void Engine::onGameItemActiveChanged(GameItem *item, bool active)
         qCDebug(dcEngineData()) << "[+] Item changed to active" << item;
         connect(item, &GameItem::playerVisibleChanged, this, &Engine::onItemPlayerVisibleChanged);
         connect(item, &GameItem::playerOnItemChanged, this, &Engine::onItemPlayerOnItemChanged);
+
+        switch (item->itemType()) {
+        case GameItem::TypeCharacter:
+            connect(qobject_cast<Character *>(item), &Character::killed, this, &Engine::onCharacterKilled);
+            break;
+        case GameItem::TypeEnemy:
+            connect(qobject_cast<Enemy *>(item), &Enemy::killed, this, &Engine::onEnemyKilled);
+            break;
+        default:
+            break;
+        }
     } else {
         qCDebug(dcEngineData()) << "[-] Item changed to inactive" << item;
         disconnect(item, &GameItem::playerVisibleChanged, this, &Engine::onItemPlayerVisibleChanged);
         disconnect(item, &GameItem::playerOnItemChanged, this, &Engine::onItemPlayerOnItemChanged);
+
+        switch (item->itemType()) {
+        case GameItem::TypeCharacter:
+            disconnect(qobject_cast<Character *>(item), &Character::killed, this, &Engine::onCharacterKilled);
+            break;
+        case GameItem::TypeEnemy:
+            disconnect(qobject_cast<Enemy *>(item), &Enemy::killed, this, &Engine::onEnemyKilled);
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -613,7 +649,7 @@ void Engine::onItemPlayerOnItemChanged(bool playerOnItem)
         switch (item->itemType()) {
         case GameItem::TypeEnemy: {
             Enemy *enemy = qobject_cast<Enemy *>(item);
-            if (enemy->touchDamage()) {
+            if (enemy->touchDamage() && enemy->alive()) {
                 qCDebug(dcEngine()) << "Player touch damage" << enemy->touchDamage() << "from" << enemy->name();
                 m_player->setHealth(m_player->health() - enemy->touchDamage());
             }
@@ -627,20 +663,16 @@ void Engine::onItemPlayerOnItemChanged(bool playerOnItem)
 
 void Engine::onEnemyKilled()
 {
-    GameItem *item = qobject_cast<GameItem *>(sender());
-    if (m_playerFocusItem == item) {
-        setPlayerFocusItem(nullptr);
-    }
+    Enemy *enemy = qobject_cast<Enemy *>(sender());
+    enemy->setInteraction(GameItem::InteractionPlunder);
+    enemy->setMovable(false);
+}
 
-    if (m_playerVisibleItems.contains(item)) {
-        m_playerVisibleItems.removeAll(item);
-    }
-
-    // FIXME
-    //m_enemyItems->removeGameItem(item);
-    //item->deleteLater();
-
-    evaluatePlayerFocus();
+void Engine::onCharacterKilled()
+{
+    Character *character = qobject_cast<Character *>(sender());
+    character->setInteraction(GameItem::InteractionPlunder);
+    character->setMovable(false);
 }
 
 void Engine::onPrimaryActionPressedChanged(bool pressed)
@@ -693,10 +725,19 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
 
                 // Start conversation
                 setCurrentConversation(conversation);
+            } else if (m_playerFocusItem->interaction() == GameItem::InteractionPlunder) {
+                Character *character = qobject_cast<Character *>(m_playerFocusItem);
+                setCurrentPlunderItems(character->inventory());
+                setState(StatePlunder);
             }
             break;
         case GameItem::TypeEnemy:
             qCDebug(dcEngine()) << "Perform enemy interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
+            if (m_playerFocusItem->interaction() == GameItem::InteractionPlunder) {
+                Enemy *enemy = qobject_cast<Enemy *>(m_playerFocusItem);
+                setCurrentPlunderItems(enemy->inventory());
+                setState(StatePlunder);
+            }
 
             break;
         default:
@@ -862,14 +903,8 @@ void Engine::onBeam()
 void Engine::tick()
 {
     doPlayerMovement();
-
-    // Do character movements
-
-    // Do enemy movements
-    //    foreach (GameItem *enemyGameItem, m_enemyItems->gameItems()) {
-    //        Enemy *enemy = qobject_cast<Enemy *>(enemyGameItem);
-    //        enemy->setMovementVector(QPointF(5, 6));
-    //    }
+    doEnemiesMovement();
+    doCharactersMovement();
 
     // Do other evaluation stuff
 

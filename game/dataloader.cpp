@@ -104,6 +104,27 @@ ChestItem *DataLoader::createChestItem(const QString &itemId, const QVariantMap 
     return chestItem;
 }
 
+Path *DataLoader::createPathObject(const QVariantMap &description, QObject *parent)
+{
+    Path *path = new Path(parent);
+    path->setId(description.value("id").toString());
+
+    // Load segments
+    QList<PathSegment> pathSegments;
+    foreach (const QVariant &segmentVariant, description.value("segments").toList()) {
+        PathSegment segment; QVariantMap segmentDescription = segmentVariant.toMap();
+        segment.setType(convertPathSegmentTypeString(segmentDescription.value("type", "segment").toString()));
+        segment.setOffset(QPointF(segmentDescription.value("offsetX", 0).toDouble(), segmentDescription.value("offsetY", 0).toDouble()));
+        segment.setSpeed(segmentDescription.value("speed", 0).toDouble());
+        segment.setAngle(segmentDescription.value("angle", 0).toDouble());
+        segment.setDuration(segmentDescription.value("duration", 0).toInt());
+        pathSegments.append(segment);
+    }
+
+    path->setPathSegments(pathSegments);
+    return path;
+}
+
 QList<QPoint> DataLoader::loadFieldMap(const QVariantList &fieldMap)
 {
     QList<QPoint> pointList;
@@ -304,6 +325,13 @@ void DataLoader::fillCharacterItemData(Character *character, const QVariantMap &
         }
     }
 
+    // Load the paths
+    QList<Path *> paths;
+    foreach (const QVariant &pathVariant, characterMap.value("paths").toList()) {
+        paths.append(createPathObject(pathVariant.toMap(), character));
+        qCDebug(dcMap()) << paths.last();
+    }
+    character->setPaths(paths);
 }
 
 void DataLoader::fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap)
@@ -386,6 +414,21 @@ FirearmItem::FirearmType DataLoader::convertFirearmTypeString(const QString &fir
         type = FirearmItem::FirearmTypeCrossbow;
     } else {
         qCWarning(dcMap()) << "Invalid firearm type" << firearmTypeString;
+    }
+    return type;
+}
+
+PathSegment::Type DataLoader::convertPathSegmentTypeString(const QString &pathSegmentTypeString)
+{
+    PathSegment::Type type = PathSegment::TypeSegment;
+    if (pathSegmentTypeString.toLower() == "segment") {
+        type = PathSegment::TypeSegment;
+    } else if (pathSegmentTypeString.toLower() == "rotate") {
+        type = PathSegment::TypeRotate;
+    } else if (pathSegmentTypeString.toLower() == "pause") {
+        type = PathSegment::TypePause;
+    } else {
+        qCWarning(dcMap()) << "Invalid path segment type" << pathSegmentTypeString;
     }
     return type;
 }

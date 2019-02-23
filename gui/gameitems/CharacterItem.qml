@@ -1,10 +1,11 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import QtQuick.Particles 2.0
 import QtGraphicalEffects 1.0
 
-import Chronicles 1.0
 import Box2D 2.0
+import Chronicles 1.0
 
 import "../components"
 import "../physics"
@@ -13,12 +14,12 @@ PhysicsItem {
     id: root
 
     property Character character
+    property bool burning: false
+    property bool attackRunning: false
     property int itemType: character ? character.itemType : GameItem.TypeNone
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
-    property bool attackRunning: false
     property real hitAttackRadius: attackRunning && character ? (character.physicsSize.width * app.gridSize / 2 + app.gridSize) : hitAttackRadiusBase
     property real hitAttackRadiusBase: root.width / 3
-    property bool burning: false
 
     antialiasing: app.antialiasing
     bodyType: character ? (character.movable ? character.bodyType : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
@@ -208,33 +209,6 @@ PhysicsItem {
             opacity: root.itemDebugEnabled? 0.2 : 0
         }
 
-        FlameItem {
-            id: flameItem
-            anchors.fill: parent
-            enabled: root.burning
-
-            Timer {
-                id: buringTimer
-                interval: 5000
-                onTriggered: flameFadeOutAnimation.start()
-            }
-
-            PropertyAnimation {
-                id: flameFadeOutAnimation
-                duration: 2000
-                target: flameItem
-                property: "opacity"
-                loops: 1
-                to: 0
-                onRunningChanged: {
-                    if (!running) {
-                        flameItem.visible = false
-                        root.burning = false
-                    }
-                }
-            }
-        }
-
         ItemDescription {
             id: nameLabel
             anchors.bottom: parent.top
@@ -358,6 +332,41 @@ PhysicsItem {
             }
         }
 
+        FlameItem {
+            id: flameItem
+            width: parent.width
+            height: parent.height
+            anchors.left: parent.left
+            anchors.bottom: parent.top
+            anchors.bottomMargin: -height * 2 / 3
+            enabled: root.burning
+            angle: 270
+            angleVariation: 30
+            magnitude: 30
+
+            Timer {
+                id: buringTimer
+                interval: 5000
+                onTriggered: flameFadeOutAnimation.start()
+            }
+
+            PropertyAnimation {
+                id: flameFadeOutAnimation
+                duration: 2000
+                target: flameItem
+                property: "opacity"
+                loops: 1
+                to: 0
+                onRunningChanged: {
+                    if (!running) {
+                        flameItem.visible = false
+                        root.burning = false
+                    }
+                }
+            }
+        }
+
+
         Image {
             id: playerImage
             anchors.fill: frame
@@ -390,7 +399,7 @@ PhysicsItem {
 
             console.log(character.name + " SHOOOT! using", character.firearm)
             var component = Qt.createComponent("BulletItem.qml");
-            var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character } )
+            var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character, particleSystem: root.particleSystem } )
             if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
                 bulletIncubator.onStatusChanged = function(status) {
                     if (status === Component.Ready) {
@@ -705,6 +714,15 @@ PhysicsItem {
         border.color: app.healthColor
         border.width: parent.width / 8
         opacity: 0
+    }
+
+    Image {
+        id: deathIndicator
+        anchors.centerIn: parent
+        width: parent.width / 2
+        height: width
+        source: dataDirectory + "/images/game/death-placeholder.png"
+        visible: character ? !character.alive : false
     }
 
     function getBulletXOffset() {

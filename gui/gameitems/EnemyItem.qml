@@ -19,7 +19,7 @@ PhysicsItem {
     opacity: enemy ? (enemy.hidingPlayer ? 0.5 : 1) : 0
     onPlayerAuraRangeChanged: enemy.playerVisible = playerAuraRange
     onPlayerOnItemChanged: enemy.playerOnItem = playerOnItem
-    bodyType: enemy ? enemy.bodyType : GameObject.BodyTypeStatic
+    bodyType: enemy ? (enemy.movable ? enemy.bodyType : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
     linearDamping: 10
     fixedRotation: true
 
@@ -206,7 +206,14 @@ PhysicsItem {
         opacity: 0
     }
 
-
+    Image {
+        id: deathIndicator
+        anchors.centerIn: parent
+        width: parent.width / 2
+        height: width
+        source: dataDirectory + "/images/game/death-placeholder.png"
+        visible: enemy ? !enemy.alive : false
+    }
 
     // Enemy movement
     Connections {

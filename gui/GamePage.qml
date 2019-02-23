@@ -1,10 +1,11 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import QtQuick.Particles 2.0
 import QtGraphicalEffects 1.0
 
-import Chronicles 1.0
 import Box2D 2.0
+import Chronicles 1.0
 
 import "components"
 import "gameitems"
@@ -65,6 +66,12 @@ GamePage {
                     worldObject: worldItem
                 }
 
+//                ParticleSystem {
+//                    id: particles
+//                    anchors.fill: parent
+//                    running: true
+//                }
+
                 Repeater {
                     id: characersRepeater
                     model: Game.engine.activeCharacters
@@ -110,24 +117,28 @@ GamePage {
                     }
                 }
 
-                Rectangle {
-                    id: viewWindowRectangle
-                    x: Game.engine.viewWindow.x * app.gridSize
-                    y: Game.engine.viewWindow.y * app.gridSize
-                    width: Game.engine.viewWindow.width * app.gridSize
-                    height: Game.engine.viewWindow.height * app.gridSize
-                    opacity: 0.2
-                    color: "white"
-                }
+//                Rectangle {
+//                    id: viewWindowRectangle
+//                    x: Game.engine.viewWindow.x * app.gridSize
+//                    y: Game.engine.viewWindow.y * app.gridSize
+//                    width: Game.engine.viewWindow.width * app.gridSize
+//                    height: Game.engine.viewWindow.height * app.gridSize
+//                    opacity: 0.2
+//                    color: "white"
+//                }
 
 //                FlameItem {
 //                    id: fireItem
 //                    enabled: true
 //                    turbulence: debugControls.turbulenceEnabled
-//                    width: app.gridSize * 3
-//                    height: app.gridSize * 3
+//                    width: app.gridSize * 6
+//                    height: app.gridSize * 6
 //                    x: app.gridSize * 4
 //                    y: app.gridSize * 4
+//                    angle: 270
+//                    angleVariation: 30
+//                    magnitude: 30
+
 //                }
             }
 
@@ -247,12 +258,7 @@ GamePage {
                 PropertyChanges { target: plunderItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
 
-                StateChangeScript {
-                    name: "resetJoystickScrip"
-                    script: {
-                        touchScreenGameOverlay.reset()
-                    }
-                }
+                StateChangeScript { script: { touchScreenGameOverlay.reset() } }
             },
             State {
                 name: "pausedState"

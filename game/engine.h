@@ -143,6 +143,8 @@ private:
 
     // Move methods
     void doPlayerMovement();
+    void doEnemiesMovement();
+    void doCharactersMovement();
 
     // Helper methods
     void evaluatePlayerFocus();
@@ -173,6 +175,7 @@ private slots:
 
     void onItemPlayerVisibleChanged(bool playerVisible);
     void onItemPlayerOnItemChanged(bool playerOnItem);
+    void onCharacterKilled();
     void onEnemyKilled();
 
     // Playercontroller

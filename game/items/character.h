@@ -3,10 +3,11 @@
 
 #include <QObject>
 
-#include "../gameobject.h"
 #include "weaponitem.h"
 #include "firearmitem.h"
 #include "gameitemsproxy.h"
+#include "../gameobject.h"
+#include "../pathfollowingcontroller.h"
 
 // I know...a person is not an item, but...yeah :)
 
@@ -31,6 +32,7 @@ class Character : public GameItem
     Q_PROPERTY(Gender gender READ gender NOTIFY genderChanged)
     Q_PROPERTY(Role role READ role NOTIFY roleChanged)
     Q_PROPERTY(int experience READ experience NOTIFY experienceChanged)
+    Q_PROPERTY(bool alive READ alive NOTIFY healthChanged)
     Q_PROPERTY(int health READ health NOTIFY healthChanged)
     Q_PROPERTY(int healthMax READ healthMax NOTIFY healthMaxChanged)
     Q_PROPERTY(double healthPercentage READ healthPercentage NOTIFY healthChanged)
@@ -102,6 +104,7 @@ public:
     bool isPlayer() const;
     void setIsPlayer(bool isPlayer);
 
+    // Movement
     Heading heading() const;
 
     qreal angle() const;
@@ -121,6 +124,9 @@ public:
 
     bool running() const;
     void setRunning(bool running);
+
+    QList<Path *> paths() const;
+    void setPaths(const QList<Path *> &paths);
 
     // Properties
     Gender gender() const;
@@ -165,12 +171,11 @@ public:
 
 private:
     GameItems *m_inventory = nullptr;
-
     Armed m_armed = ArmedNone;
     WeaponItem *m_weapon = nullptr;
     FirearmItem *m_firearm = nullptr;
 
-    // Moving properties
+    // Movement
     QPointF m_movementVector = QPointF(0, 0);
     bool m_isPlayer = false;
     Heading m_heading = HeadingRight;
@@ -180,12 +185,14 @@ private:
     bool m_movable = true;
     bool m_moving = false;
     bool m_running = false;
+    QList<Path *> m_paths;
 
     // Properties
     Gender m_gender = Male;
     Role m_role = Player;
     int m_experience = 0;
 
+    bool m_alive = true;
     int m_health = 100;
     int m_healthMax = 100;
 
@@ -200,6 +207,7 @@ private:
     int m_shootNumber = 0;
 
     void setHeading(Character::Heading heading);
+    void setAlive(bool alive);
 
 signals:
     void armedChanged(Armed armed);
@@ -220,6 +228,7 @@ signals:
     void roleChanged(Role role);
     void experienceChanged(int experience);
 
+    void aliveChanged(bool alive);
     void healthChanged(int healt);
     void healthMaxChanged(int healtMax);
 

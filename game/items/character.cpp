@@ -86,6 +86,16 @@ void Character::setRunning(bool running)
     }
 }
 
+QList<Path *> Character::paths() const
+{
+    return m_paths;
+}
+
+void Character::setPaths(const QList<Path *> &paths)
+{
+    m_paths = paths;
+}
+
 GameItems *Character::inventory() const
 {
     return m_inventory;
@@ -268,7 +278,7 @@ void Character::setExperience(int experience)
 
 bool Character::alive() const
 {
-    return m_health > 0;
+    return m_alive;
 }
 
 int Character::health() const
@@ -289,17 +299,21 @@ void Character::setHealth(int health)
     qCDebug(dcCharacter()) << name() << "health changed" << health;
     if (health > m_healthMax) {
         m_health = m_healthMax;
+        setAlive(true);
     } else if (health <= 0) {
         qCDebug(dcCharacter()) << name() << "killed!";
         m_health = 0;
+        setAlive(false);
         emit killed();
     } else if (health > m_health) {
         qCDebug(dcCharacter()) << name() << "healed!";
         m_health = health;
+        setAlive(true);
         emit healed();
     } else {
         qCDebug(dcCharacter()) << name() << "damaged!";
         m_health = health;
+        setAlive(true);
         emit damaged();
     }
 
@@ -448,6 +462,16 @@ void Character::setHeading(Character::Heading heading)
     qCDebug(dcCharacter()) << name() << "heading changed" << heading;
     m_heading = heading;
     emit headingChanged(m_heading);
+}
+
+void Character::setAlive(bool alive)
+{
+    if (m_alive == alive)
+        return;
+
+    qCDebug(dcCharacter()) << name() << "alive changed" << alive;
+    m_alive = alive;
+    emit aliveChanged(m_alive);
 }
 
 

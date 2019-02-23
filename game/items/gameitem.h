@@ -51,6 +51,7 @@ public:
         InteractionEnter,
         InteractionExit,
         InteractionTalk,
+        InteractionPlunder,
         InteractionAttack,
         InteractionDrop,
         InteractionEat,
@@ -88,6 +89,8 @@ public:
     void setPlayerOnItem(bool playerOnItem);
 
     Interaction interaction() const;
+    void setInteraction(Interaction interaction);
+
     QString interactionString() const;
 
     virtual void performInteraction() = 0;
@@ -105,7 +108,6 @@ private:
 
 protected:
     Interaction m_interaction = InteractionNone;
-    void setInteraction(Interaction interaction);
 
 signals:
     void imageNameChanged(const QString &imageName);

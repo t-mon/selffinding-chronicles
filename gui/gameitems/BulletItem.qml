@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import QtQuick.Particles 2.0
 import QtGraphicalEffects 1.12
 
 import Box2D 2.0
@@ -87,12 +88,43 @@ PhysicsItem {
         source: dataDirectory + "/images/items/firearms/arrow.png"
     }
 
-    FlameItem {
+    Item {
         id: flameItem
         anchors.fill: parent
-        rotation: angle = -90
-        angleVariation: 10
-        enabled: root.fireArrow
+        rotation: -90
+
+        property int angle: -90
+        property int magnitude: 30
+        property int angleVariation: 20
+
+        ParticleSystem {
+            anchors.fill: parent
+            running: root.fireArrow
+
+            ImageParticle {
+                groups: ["flame"]
+                source: dataDirectory + "/images/game/glowdot.png"
+                color: "#11ff400f"
+                colorVariation: 0.2
+            }
+
+            Emitter {
+                anchors.centerIn: parent
+                group: "flame"
+                emitRate: 200
+                lifeSpan: 2000
+                size: app.gridSize / 2
+                endSize: app.gridSize / 2
+                sizeVariation: app.gridSize / 2
+                acceleration: PointDirection { y: -60 }
+                velocity: AngleDirection {
+                    angle: flameItem.angle
+                    magnitude: flameItem.magnitude
+                    angleVariation: flameItem.angleVariation
+                    magnitudeVariation: 8
+                }
+            }
+        }
     }
 
     PropertyAnimation {
@@ -105,8 +137,9 @@ PhysicsItem {
 
         onRunningChanged: {
             if (running) {
+                flameItem.angle = 180
                 flameItem.angleVariation = 360
-                flameItem.turbulence = true
+                flameItem.magnitude = 20
             } else {
                 root.destroy()
             }

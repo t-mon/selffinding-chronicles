@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVariantMap>
 
+#include "path.h"
 #include "items/treeitem.h"
 #include "items/gameitems.h"
 #include "items/plantitem.h"
@@ -28,15 +29,17 @@ public:
     static Character *createCharacterObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static Enemy *createEnemyObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static ChestItem *createChestItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static Path *createPathObject(const QVariantMap &description, QObject *parent);
 
     // Load
     static QList<QPoint> loadFieldMap(const QVariantList &fieldMap);
     static QVariantMap loadJsonData(const QString &dataFileName);
+
     static QList<GameItem *> loadGameItems(const QVariantList &itemsList, QObject *parent = nullptr);
     static QList<GameItem *> loadChestItems(const QVariantList &chestItemsList, QObject *parent = nullptr);
     static QList<GameItem *> loadCharacterItems(const QVariantList &characterItemsList, QObject *parent = nullptr);
     static QList<GameItem *> loadEnemyItems(const QVariantList &enemyItemsList, QObject *parent = nullptr);
-    static QList<GameItem *> loadInventoryItems(const QVariantList &itemsList, QObject *parent = nullptr);
+    static QList<GameItem *> loadInventoryItems(const QVariantList &itemsList, QObject *parent = nullptr);    
 
     static GameItem *loadGameItem(const QString &itemId, const QPoint &position, const QVariantMap &itemMap, QObject *parent = nullptr);
     static GameItem *loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent = nullptr);
@@ -51,6 +54,7 @@ public:
     static Character::Gender convertGenderString(const QString &genderString);
     static Character::Role convertRoleString(const QString &roleString);
     static FirearmItem::FirearmType convertFirearmTypeString(const QString &firearmTypeString);
+    static PathSegment::Type convertPathSegmentTypeString(const QString &pathSegmentTypeString);
     static QString getItemIdFromResourcePath(const QString &resourcePath);
 };
 

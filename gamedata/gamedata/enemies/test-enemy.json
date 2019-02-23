@@ -42,6 +42,37 @@
                 "data": ":/gamedata/weapons/sword.json",
                 "count": 2
             }
+        ],
+        "paths": [
+            {
+                "id": "2f6cad75-e8ec-4845-9f0e-618c4bec3634",
+                "segments": [
+                    {
+                        "type": "segment",
+                        "offsetX": 5,
+                        "offsetY": 0,
+                        "speed": 0.1,
+                        "angle": 0,
+                        "duration": 0
+                    },
+                    {
+                        "type": "pause",
+                        "offsetX": 0,
+                        "offsetY": 0,
+                        "speed": 0,
+                        "angle": 0,
+                        "duration": 2000
+                    },
+                    {
+                        "type": "segment",
+                        "offsetX": -5,
+                        "offsetY": 0,
+                        "speed": 0.1,
+                        "angle": 0,
+                        "duration": 0
+                    }
+                ]
+            }
         ]
     },
 

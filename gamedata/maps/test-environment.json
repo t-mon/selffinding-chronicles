@@ -132,6 +132,11 @@
             "data": ":/gamedata/trees/tree-1.json"
         },
         {
+            "x": 25,
+            "y": 3,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
             "x": 15,
             "y": 30,
             "data": ":/gamedata/trees/tree-1.json"
@@ -279,6 +284,45 @@
                     {
                         "data": ":/gamedata/firearms/hunting-bow.json",
                         "count": 4
+                    }
+                ]
+            }
+        },
+        {
+            "x": 1,
+            "y": 1,
+            "data": ":/gamedata/chests/chest-1.json",
+            "chest": {
+                "locked": true,
+                "lockCombination": [ 1, 1, 0, 0 ],
+                "inventory": [
+                    {
+                        "data": ":/gamedata/plants/healing-herb.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/sword.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/firearms/hunting-bow.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/firearms/crossbow.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/plants/mana-herb.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/wood-stick.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/sword-2.json",
+                        "count": 2
                     }
                 ]
             }

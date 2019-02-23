@@ -44,7 +44,10 @@ HEADERS += \
     game/items/firearmitem.h \
     game/gamemapeditor.h \
     game/engine.h \
-    game/datamanager.h
+    game/datamanager.h \
+    game/path.h \
+    game/pathsegment.h \
+    game/pathfollowingcontroller.h
 
 
 SOURCES += game/main.cpp \
@@ -74,7 +77,10 @@ SOURCES += game/main.cpp \
     game/items/firearmitem.cpp \
     game/gamemapeditor.cpp \
     game/engine.cpp \
-    game/datamanager.cpp
+    game/datamanager.cpp \
+    game/path.cpp \
+    game/pathsegment.cpp \
+    game/pathfollowingcontroller.cpp
 
 
 unix:!android {

@@ -111,6 +111,17 @@ GameItem::Interaction GameItem::interaction() const
     return m_interaction;
 }
 
+void GameItem::setInteraction(GameItem::Interaction interaction)
+{
+    if (m_interaction == interaction)
+        return;
+
+    qCDebug(dcItem()) << itemTypeName() << "interaction changed" << interaction;
+    m_interaction = interaction;
+    emit interactionChanged(m_interaction);
+}
+
+
 QString GameItem::interactionString() const
 {
     return interactionToString(m_interaction);
@@ -172,19 +183,13 @@ QString GameItem::interactionToString(const GameItem::Interaction &interaction)
         //: This string describes an interaction for an item.
         interactionString = tr("Read");
         break;
+    case InteractionPlunder:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Plunder");
+        break;
     }
 
     return interactionString;
-}
-
-void GameItem::setInteraction(GameItem::Interaction interaction)
-{
-    if (m_interaction == interaction)
-        return;
-
-    qCDebug(dcItem()) << itemTypeName() << "interaction changed" << interaction;
-    m_interaction = interaction;
-    emit interactionChanged(m_interaction);
 }
 
 QDebug operator<<(QDebug debug, GameItem *gameItem)

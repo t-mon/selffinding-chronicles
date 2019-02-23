@@ -132,7 +132,7 @@ PhysicsItem {
     Connections {
         target: root.gameItem
         onPlayerOnItemChanged: {
-            console.log("Player on item " + playerOnItem)
+            //console.log("Player on item " + playerOnItem)
             if (root.gameItem.itemType === GameItem.TypeTree && playerOnItem) {
                 console.log("Start animation")
                 playerOnItemAnimation.start()
