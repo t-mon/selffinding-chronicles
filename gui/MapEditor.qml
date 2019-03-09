@@ -14,6 +14,19 @@ import "physics"
 GamePage {
     id: gamePage
 
+    title: qsTr("Map editor")
+
+    header: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            HeaderButton {
+                imageSource: dataDirectory + "/icons/back.svg"
+                onClicked: pageStack.pop()
+            }
+        }
+    }
+
+
     Component.onCompleted: {
         console.log("Game scene size:", gamePage.width, "/", gamePage.height, "grid size:", app.gridSize)
         forceActiveFocus()

@@ -6,6 +6,7 @@ Character::Character(QObject *parent):
     GameItem(parent)
 {
     m_inventory = new GameItems(this);
+    m_pathFollowingController = new PathFollowingController(this);
 }
 
 QString Character::itemTypeName() const
@@ -94,6 +95,16 @@ QList<Path *> Character::paths() const
 void Character::setPaths(const QList<Path *> &paths)
 {
     m_paths = paths;
+}
+
+Path *Character::currentPath() const
+{
+    return m_currentPath;
+}
+
+PathFollowingController *Character::pathFollowingController() const
+{
+    return m_pathFollowingController;
 }
 
 GameItems *Character::inventory() const

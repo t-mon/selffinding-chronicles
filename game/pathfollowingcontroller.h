@@ -13,8 +13,13 @@ public:
     Path *path() const;
     void setPath(Path *path);
 
+    QPointF calculateMovementVector();
+    double calculateAngle();
+
 private:
     Path *m_path = nullptr;
+    QPointF m_startPoint;
+    QPointF m_targetPoint;
 
 signals:
     void pathChanged(Path *path);

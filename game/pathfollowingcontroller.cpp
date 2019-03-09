@@ -17,4 +17,19 @@ void PathFollowingController::setPath(Path *path)
 
     m_path = path;
     emit pathChanged(m_path);
+
+
+}
+
+QPointF PathFollowingController::calculateMovementVector()
+{
+
+
+
+    return QPointF();
+}
+
+double PathFollowingController::calculateAngle()
+{
+    return 0;
 }

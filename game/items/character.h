@@ -128,6 +128,9 @@ public:
     QList<Path *> paths() const;
     void setPaths(const QList<Path *> &paths);
 
+    Path *currentPath() const;
+    PathFollowingController *pathFollowingController() const;
+
     // Properties
     Gender gender() const;
     void setGender(Gender gender);
@@ -185,7 +188,10 @@ private:
     bool m_movable = true;
     bool m_moving = false;
     bool m_running = false;
+
+    PathFollowingController *m_pathFollowingController = nullptr;
     QList<Path *> m_paths;
+    Path *m_currentPath = nullptr;
 
     // Properties
     Gender m_gender = Male;

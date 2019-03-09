@@ -474,6 +474,7 @@ void Engine::doEnemiesMovement()
         if (!enemy->movable())
             continue;
 
+        // TODO: Set movement according to the current path following controller
         enemy->setMovementVector(QPointF(0.1, 0));
     }
 }
