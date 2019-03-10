@@ -14,7 +14,7 @@ class GameObject : public QObject
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QPointF centerPosition READ centerPosition NOTIFY positionChanged)
-    Q_PROPERTY(qreal layer READ layer NOTIFY layerChanged)
+    Q_PROPERTY(double layer READ layer NOTIFY layerChanged)
     Q_PROPERTY(QSize size READ size NOTIFY sizeChanged)
 
     Q_PROPERTY(Shape shape READ shape NOTIFY shapeChanged)
@@ -76,8 +76,8 @@ public:
     QPointF position() const;
     void setPosition(const QPointF &position);
 
-    qreal layer() const;
-    void setLayer(qreal layer);
+    double layer() const;
+    void setLayer(double layer);
 
     QPointF centerPosition() const;
 
@@ -109,7 +109,7 @@ public:
 private:
     QString m_name;
     QPointF m_position;
-    qreal m_layer = 0;
+    double m_layer = 0;
     QSize m_size = QSize(1, 1);
 
     Shape m_shape = ShapeNone;
@@ -123,7 +123,7 @@ private:
 signals:
     void nameChanged(const QString &name);
     void positionChanged(const QPointF &position);
-    void layerChanged(qreal layer);
+    void layerChanged(double layer);
     void sizeChanged(const QSize &size);
 
     void shapeChanged(Shape shape);

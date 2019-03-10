@@ -24,12 +24,12 @@ void Character::performInteraction()
     qCDebug(dcItem()) << itemTypeName() << name() << "perform interaction" << m_interaction;
 }
 
-qreal Character::speed() const
+double Character::speed() const
 {
     return m_speed;
 }
 
-void Character::setSpeed(const qreal speed)
+void Character::setSpeed(const double speed)
 {
     qCDebug(dcCharacter()) << name() << "speed changed" << speed;
     m_speed = speed;
@@ -191,12 +191,12 @@ Character::Heading Character::heading() const
     return m_heading;
 }
 
-qreal Character::angle() const
+double Character::angle() const
 {
     return m_angle;
 }
 
-void Character::setAngle(const qreal &angle)
+void Character::setAngle(const double &angle)
 {
     if (m_angle == angle)
         return;

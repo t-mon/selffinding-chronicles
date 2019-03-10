@@ -35,12 +35,12 @@ void GameObject::setPosition(const QPointF &position)
     emit positionChanged(m_position);
 }
 
-qreal GameObject::layer() const
+double GameObject::layer() const
 {
     return m_layer;
 }
 
-void GameObject::setLayer(qreal layer)
+void GameObject::setLayer(double layer)
 {
     m_layer = layer;
     emit layerChanged(m_layer);

@@ -278,7 +278,7 @@ void PlayerController::setShootPressed(bool pressed)
 
 QPointF PlayerController::moveKeyBoard()
 {
-    qreal angle = 0;
+    double angle = 0;
 
     if (!m_player)
         return QPointF();
@@ -320,8 +320,8 @@ QPointF PlayerController::moveKeyBoard()
         return QPointF();
     }
 
-    qreal deltaX = qRound(m_player->speed() * qCos(angle) * 10000.0) / 10000.0;
-    qreal deltaY = qRound(m_player->speed() * qSin(angle) * 10000.0) / 10000.0;
+    double deltaX = qRound(m_player->speed() * qCos(angle) * 10000.0) / 10000.0;
+    double deltaY = qRound(m_player->speed() * qSin(angle) * 10000.0) / 10000.0;
 
     m_player->setAngle(angle);
     return QPointF(deltaX, deltaY);
@@ -332,7 +332,7 @@ QPointF PlayerController::moveKeyBoardMouse()
     if (!m_player)
         return QPointF();
 
-    qreal angle = m_player->angle();
+    double angle = m_player->angle();
 
     // Forward
     if (m_forwaredPressed && !m_backwardPressed && !m_leftPressed && !m_rightPressed)
@@ -392,7 +392,7 @@ QPointF PlayerController::moveTouchscreen()
     return QPointF(deltaX, deltaY);
 }
 
-void PlayerController::onJoystickChanged(const QPointF &joystickVector, qreal velocity, qreal angle)
+void PlayerController::onJoystickChanged(const QPointF &joystickVector, double velocity, double angle)
 {
     m_joystickVector = joystickVector;
     m_joystickVelocity = velocity;

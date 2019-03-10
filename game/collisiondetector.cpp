@@ -33,10 +33,10 @@ bool CollisionDetector::checkCollision(GameObject *firstObject, GameObject *seco
     return false;
 }
 
-qreal CollisionDetector::calculateCenterDistance(GameObject *firstObject, GameObject *secondObject)
+double CollisionDetector::calculateCenterDistance(GameObject *firstObject, GameObject *secondObject)
 {
-    qreal dx = firstObject->centerPosition().x() - secondObject->centerPosition().x();
-    qreal dy = firstObject->centerPosition().y() - secondObject->centerPosition().y();
+    double dx = firstObject->centerPosition().x() - secondObject->centerPosition().x();
+    double dy = firstObject->centerPosition().y() - secondObject->centerPosition().y();
     return qSqrt(dx * dx + dy * dy);
 }
 
@@ -53,16 +53,16 @@ bool CollisionDetector::checkRectangleRectangleCollision(GameObject *rectangleOn
 
 bool CollisionDetector::checkCircleCircleCollision(GameObject *firstCirlce, GameObject *secondCircle)
 {
-    qreal centerDistance = calculateCenterDistance(firstCirlce, secondCircle);
-    qreal minimalDistance = (static_cast<qreal>(firstCirlce->size().width()) / 2.0 + static_cast<qreal>(secondCircle->size().width()) / 2.0);
+    double centerDistance = calculateCenterDistance(firstCirlce, secondCircle);
+    double minimalDistance = (static_cast<double>(firstCirlce->size().width()) / 2.0 + static_cast<double>(secondCircle->size().width()) / 2.0);
     return centerDistance <= minimalDistance;
 }
 
 bool CollisionDetector::checkRectangleCircleCollision(GameObject *rectangle, GameObject *circle)
 {
-    qreal radius = circle->size().width() / 2.0;
-    qreal dx = circle->centerPosition().x() - qMax(rectangle->position().x(), qMin(circle->centerPosition().x(), rectangle->position().x() + rectangle->size().width()));
-    qreal dy = circle->centerPosition().y() - qMax(rectangle->position().y(), qMin(circle->centerPosition().y(), rectangle->position().y() + rectangle->size().height()));
+    double radius = circle->size().width() / 2.0;
+    double dx = circle->centerPosition().x() - qMax(rectangle->position().x(), qMin(circle->centerPosition().x(), rectangle->position().x() + rectangle->size().width()));
+    double dy = circle->centerPosition().y() - qMax(rectangle->position().y(), qMin(circle->centerPosition().y(), rectangle->position().y() + rectangle->size().height()));
 
     return (dx * dx + dy * dy) < (radius * radius);
 }

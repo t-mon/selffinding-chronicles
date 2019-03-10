@@ -62,8 +62,8 @@ private:
     bool m_shootPressed = false;
 
     QPointF m_joystickVector;
-    qreal m_joystickVelocity = 0;
-    qreal m_joystickAngle = 0;
+    double m_joystickVelocity = 0;
+    double m_joystickAngle = 0;
 
     void setForwardPressed(bool pressed);
     void setBackwardPressed(bool pressed);
@@ -106,7 +106,7 @@ signals:
     void beam();
 
 public slots:
-    Q_INVOKABLE void onJoystickChanged(const QPointF &joystickVector, qreal velocity, qreal angle);
+    Q_INVOKABLE void onJoystickChanged(const QPointF &joystickVector, double velocity, double angle);
 
 };
 

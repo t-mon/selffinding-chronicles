@@ -14,7 +14,7 @@ public:
 
     bool checkCollision(GameObject *firstObject, GameObject *secondObject);
 
-    static qreal calculateCenterDistance(GameObject *firstObject, GameObject *secondObject);
+    static double calculateCenterDistance(GameObject *firstObject, GameObject *secondObject);
 
 private:
     bool checkRectangleRectangleCollision(GameObject *rectangleOne, GameObject *rectangleTwo);

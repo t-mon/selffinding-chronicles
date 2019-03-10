@@ -23,8 +23,8 @@ class Character : public GameItem
     Q_PROPERTY(bool isPlayer READ isPlayer NOTIFY isPlayerChanged)
     Q_PROPERTY(Heading heading READ heading NOTIFY headingChanged)
     Q_PROPERTY(QPointF movementVector READ movementVector WRITE setMovementVector NOTIFY movementVectorChanged)
-    Q_PROPERTY(qreal angle READ angle WRITE setAngle NOTIFY angleChanged)
-    Q_PROPERTY(qreal auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
+    Q_PROPERTY(double angle READ angle WRITE setAngle NOTIFY angleChanged)
+    Q_PROPERTY(double auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
     Q_PROPERTY(bool running READ running NOTIFY runningChanged)
@@ -107,11 +107,11 @@ public:
     // Movement
     Heading heading() const;
 
-    qreal angle() const;
-    void setAngle(const qreal &angle);
+    double angle() const;
+    void setAngle(const double &angle);
 
-    qreal speed() const;
-    void setSpeed(const qreal speed);
+    double speed() const;
+    void setSpeed(const double speed);
 
     int auraRange() const;
     void setAuraRange(const int auraRange);
@@ -183,8 +183,8 @@ private:
     bool m_isPlayer = false;
     Heading m_heading = HeadingRight;
     int m_auraRange = 3;
-    qreal m_angle = 0;
-    qreal m_speed = 1;
+    double m_angle = 0;
+    double m_speed = 1;
     bool m_movable = true;
     bool m_moving = false;
     bool m_running = false;
@@ -223,9 +223,9 @@ signals:
     void movementVectorChanged(const QPointF &movementVector);
     void isPlayerChanged(bool isPlayer);
     void headingChanged(Heading heading);
-    void angleChanged(const qreal &angle);
+    void angleChanged(const double &angle);
     void auraRangeChanged(const int &auraRange);
-    void speedChanged(const qreal &speed);
+    void speedChanged(const double &speed);
     void movableChanged(bool movable);
     void movingChanged(bool moving);
     void runningChanged(bool running);
