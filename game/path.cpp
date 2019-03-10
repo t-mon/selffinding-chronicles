@@ -1,8 +1,5 @@
 #include "path.h"
 
-
-
-
 Path::Path(QObject *parent) : QObject(parent)
 {
 
@@ -28,6 +25,11 @@ void Path::setPathSegments(const QList<PathSegment> &pathSegments)
     m_pathSegments = pathSegments;
 }
 
+PathSegment Path::currentPathSegment() const
+{
+    return m_pathSegments[m_currentIndex];
+}
+
 int Path::currentIndex() const
 {
     return m_currentIndex;
@@ -42,22 +44,32 @@ void Path::setCurrentIndex(int currentIndex)
     emit currentIndexChanged(m_currentIndex);
 }
 
+void Path::nextSegment()
+{
+    int nextIndex = m_currentIndex + 1;
+    if (nextIndex >= m_pathSegments.count()) {
+        setCurrentIndex(0);
+    } else {
+        setCurrentIndex(nextIndex);
+    }
+}
+
+void Path::previousSegment()
+{
+    int previousIndex = m_currentIndex--;
+    if (previousIndex <= 0) {
+        setCurrentIndex(m_pathSegments.count() - 1);
+    } else {
+        setCurrentIndex(previousIndex);
+    }
+}
+
 QDebug operator<<(QDebug debug, Path *path)
 {
     debug.nospace() << "Path(" << path->id() << ")" << endl;
     for (int i = 0; i < path->pathSegments().count(); i++) {
-        debug.nospace() << "    [" << i << "] ";
-        switch (path->pathSegments()[i].type()) {
-        case PathSegment::TypeSegment:
-            debug.nospace() << "segment: offset " << path->pathSegments()[i].offset() << ", speed:" << path->pathSegments()[i].speed()  << endl;
-            break;
-        case PathSegment::TypePause:
-            debug.nospace() << "pause: duration" << path->pathSegments()[i].duration() << endl;
-            break;
-        case PathSegment::TypeRotate:
-            debug.nospace() << "rotate: angle" << path->pathSegments()[i].angle() << endl;
-            break;
-        }
+        debug.nospace() << "    [" << i << "] " << path->pathSegments()[i];
+        if (i < path->pathSegments().count() -1) debug.nospace() << endl;
     }
     return debug.space();
 }

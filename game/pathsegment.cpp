@@ -1,5 +1,7 @@
 #include "pathsegment.h"
 
+#include <QDebug>
+
 PathSegment::PathSegment()
 {
 
@@ -35,7 +37,7 @@ void PathSegment::setAngle(double angle)
     m_angle = angle;
 }
 
-int PathSegment::duration()
+int PathSegment::duration() const
 {
     return m_duration;
 }
@@ -53,4 +55,22 @@ PathSegment::Type PathSegment::type() const
 void PathSegment::setType(PathSegment::Type type)
 {
     m_type = type;
+}
+
+QDebug operator<<(QDebug debug, const PathSegment &pathSegment)
+{
+    debug.nospace() << "PathSegment(";
+    switch (pathSegment.type()) {
+    case PathSegment::TypeSegment:
+        debug.nospace() << "Move: Offset: " << pathSegment.offset() << ", speed: " << pathSegment.speed();
+        break;
+    case PathSegment::TypeRotate:
+        debug.nospace() << "Rotat: " << pathSegment.angle();
+        break;
+    case PathSegment::TypePause:
+        debug.nospace() << "Pause: " << pathSegment.duration();
+        break;
+    }
+    debug.nospace() << ")";
+    return debug.space();
 }

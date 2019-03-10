@@ -7,7 +7,7 @@
 #include "firearmitem.h"
 #include "gameitemsproxy.h"
 #include "../gameobject.h"
-#include "../pathfollowingcontroller.h"
+#include "../pathcontroller.h"
 
 // I know...a person is not an item, but...yeah :)
 
@@ -129,7 +129,7 @@ public:
     void setPaths(const QList<Path *> &paths);
 
     Path *currentPath() const;
-    PathFollowingController *pathFollowingController() const;
+    PathController *pathController() const;
 
     // Properties
     Gender gender() const;
@@ -189,7 +189,7 @@ private:
     bool m_moving = false;
     bool m_running = false;
 
-    PathFollowingController *m_pathFollowingController = nullptr;
+    PathController *m_pathController = nullptr;
     QList<Path *> m_paths;
     Path *m_currentPath = nullptr;
 
@@ -253,6 +253,9 @@ signals:
     void killed();
     void hit();
     void shoot();
+
+public slots:
+    void onTick();
 
 };
 

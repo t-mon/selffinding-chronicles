@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("Settings", false);
     s_loggingFilters.insert("PlayerController", false);
+    s_loggingFilters.insert("PathController", true);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("DataManager", false);
     s_loggingFilters.insert("Item", false);

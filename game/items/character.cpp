@@ -6,7 +6,7 @@ Character::Character(QObject *parent):
     GameItem(parent)
 {
     m_inventory = new GameItems(this);
-    m_pathFollowingController = new PathFollowingController(this);
+    m_pathController = new PathController(this);
 }
 
 QString Character::itemTypeName() const
@@ -102,9 +102,9 @@ Path *Character::currentPath() const
     return m_currentPath;
 }
 
-PathFollowingController *Character::pathFollowingController() const
+PathController *Character::pathController() const
 {
-    return m_pathFollowingController;
+    return m_pathController;
 }
 
 GameItems *Character::inventory() const
@@ -483,6 +483,16 @@ void Character::setAlive(bool alive)
     qCDebug(dcCharacter()) << name() << "alive changed" << alive;
     m_alive = alive;
     emit aliveChanged(m_alive);
+}
+
+void Character::onTick()
+{
+    // Check if we are following a path
+    if (m_pathController->path()) {
+        m_pathController->evaluatePosition(position());
+        setMovementVector(m_pathController->movementVector());
+        setAngle(m_pathController->angle());
+    }
 }
 
 

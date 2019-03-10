@@ -174,15 +174,25 @@ void Map::loadMapVariant(const QVariantMap &mapData)
     qCDebug(dcMap()) << "--> load characters" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     QList<GameItem *> characterItems = DataLoader::loadCharacterItems(mapData.value("characters").toList(), this);
     m_characters->addGameItemList(characterItems);
-    foreach (GameItem *item, m_characters->gameItems())
+    foreach (GameItem *item, m_characters->gameItems()) {
+        Character *characterItem = qobject_cast<Character *>(item);
+        if (!characterItem->paths().isEmpty()) {
+            characterItem->pathController()->setPath(characterItem->paths().first(), characterItem->position());
+        }
         qCDebug(dcMap()) << "        " << item;
+    }
 
     // Load enemies
     qCDebug(dcMap()) << "--> load enemies" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     QList<GameItem *> enemyItems = DataLoader::loadEnemyItems(mapData.value("enemies").toList(), this);
     m_enemies->addGameItemList(enemyItems);
-    foreach (GameItem *item, m_enemies->gameItems())
+    foreach (GameItem *item, m_enemies->gameItems()) {
+        Character *characterItem = qobject_cast<Character *>(item);
+        if (!characterItem->paths().isEmpty()) {
+            characterItem->pathController()->setPath(characterItem->paths().first(), characterItem->position());
+        }
         qCDebug(dcMap()) << "        " << item;
+    }
 
     qCDebug(dcMap()) << "Map loading finished successfully:" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
 }

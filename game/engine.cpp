@@ -474,14 +474,19 @@ void Engine::doEnemiesMovement()
         if (!enemy->movable())
             continue;
 
-        // TODO: Set movement according to the current path following controller
-        enemy->setMovementVector(QPointF(0.1, 0));
+        enemy->onTick();
     }
 }
 
 void Engine::doCharactersMovement()
 {
+    for (int i = 0; i < m_activeCharacters->count(); i++) {
+        Character *character = qobject_cast<Character *>(m_activeCharacters->get(i));
+        if (!character->movable())
+            continue;
 
+        character->onTick();
+    }
 }
 
 void Engine::evaluatePlayerFocus()

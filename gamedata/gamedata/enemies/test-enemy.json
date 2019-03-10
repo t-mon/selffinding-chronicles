@@ -61,15 +61,47 @@
                         "offsetY": 0,
                         "speed": 0,
                         "angle": 0,
-                        "duration": 2000
+                        "duration": 1000
                     },
                     {
                         "type": "segment",
-                        "offsetX": -5,
+                        "offsetX": -2,
+                        "offsetY": -2,
+                        "speed": 0.05,
+                        "angle": 0,
+                        "duration": 0
+                    },
+                    {
+                        "type": "pause",
+                        "offsetX": 0,
                         "offsetY": 0,
+                        "speed": 0,
+                        "angle": 0,
+                        "duration": 750
+                    },
+                    {
+                        "type": "segment",
+                        "offsetX": -3,
+                        "offsetY": 2,
                         "speed": 0.1,
                         "angle": 0,
                         "duration": 0
+                    },
+                    {
+                        "type": "rotate",
+                        "offsetX": 0,
+                        "offsetY": 0,
+                        "speed": 0,
+                        "angle": 45,
+                        "duration": 500
+                    },
+                    {
+                        "type": "pause",
+                        "offsetX": 0,
+                        "offsetY": 0,
+                        "speed": 0,
+                        "angle": 0,
+                        "duration": 750
                     }
                 ]
             }
@@ -77,7 +109,7 @@
     },
 
     "enemy": {
-        "touchDamage": 20,
+        "touchDamage": 1,
         "hitDamage": 5,
         "shootDamage": 5
     }

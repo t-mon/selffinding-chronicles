@@ -18,6 +18,8 @@ public:
     QList<PathSegment> pathSegments() const;
     void setPathSegments(const QList<PathSegment> &pathSegments);
 
+    PathSegment currentPathSegment() const;
+
     int currentIndex() const;
     void setCurrentIndex(int currentIndex);
 
@@ -28,6 +30,11 @@ private:
 
 signals:
     void currentIndexChanged(int currentIndex);
+
+public slots:
+    void nextSegment();
+    void previousSegment();
+
 
 };
 
