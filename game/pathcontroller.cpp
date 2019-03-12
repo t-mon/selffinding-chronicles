@@ -76,7 +76,7 @@ void PathController::evaluatePosition(const QPointF &position)
     }
     case PathSegment::TypeRotate:
         m_movementVector = QPointF(0, 0);
-        m_angle += m_path->currentPathSegment().angle();
+        m_angle += m_path->currentPathSegment().angle() * M_PI / 180;
         qCDebug(dcPathController()) << "Segment finished." << m_path->currentPathSegment() << "Next segment!";
         m_path->nextSegment();
         break;

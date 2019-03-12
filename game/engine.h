@@ -114,6 +114,7 @@ private:
     GameItemsProxy *m_activeCharacters = nullptr;
 
     Conversation *m_currentConversation = nullptr;
+    Character *m_currentConversationCharacter = nullptr;
     ChestItem *m_currentChestItem = nullptr;
     GameItems *m_currentPlunderItems = nullptr;
 

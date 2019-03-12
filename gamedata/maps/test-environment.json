@@ -269,6 +269,22 @@
                                 "offsetX": 0,
                                 "offsetY": 0,
                                 "speed": 0,
+                                "angle": -90,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 500
+                            },
+                            {
+                                "type": "rotate",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
                                 "angle": 180,
                                 "duration": 0
                             },
@@ -278,7 +294,7 @@
                                 "offsetY": 0,
                                 "speed": 0,
                                 "angle": 0,
-                                "duration": 750
+                                "duration": 500
                             }
                         ]
                     }

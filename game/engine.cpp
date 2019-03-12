@@ -718,8 +718,9 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
             if (m_playerFocusItem->interaction() == GameItem::InteractionTalk) {
                 m_playerFocusItem->performInteraction();
                 Character *character = qobject_cast<Character *>(m_playerFocusItem);
+                character->setMovable(false);
 
-                // FIXME: load directly for now
+                // FIXME: set angle and load conversation
 
                 Conversation *conversation = new Conversation(character, DataLoader::loadJsonData(":/dialogs/test-dialog.json"));
                 connect(conversation, &Conversation::conversationFinished, this, &Engine::onCurrentConversationFinished);
@@ -851,6 +852,7 @@ void Engine::onInventoryClicked()
 void Engine::onCurrentConversationFinished()
 {
     qCDebug(dcEngine()) << "Conversation finished";
+    m_currentConversation->character()->setMovable(true);
     m_currentConversation->deleteLater();
     setCurrentConversation(nullptr);
     setState(StateRunning);
