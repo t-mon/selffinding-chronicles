@@ -89,6 +89,8 @@ public:
 
     GameItems *inventory() const;
 
+    void lookToPoint(const QPointF &targetPoint);
+
     Armed armed() const;
     void setArmed(Armed armed);
 

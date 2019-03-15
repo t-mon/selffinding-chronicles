@@ -21,11 +21,24 @@ Item {
         id: touchscreenMouseArea
         anchors.fill: parent
         maximumTouchPoints: 1
+
+        property real joystickCenterX: 0
+        property real joystickCenterY: 0
+
         touchPoints: [
             TouchPoint {
                 id: touchPoint
                 onXChanged: {
                     if (root.joyStickVisible) {
+                        if (joystickController.offset.x !== 0) {
+                            touchscreenMouseArea.joystickCenterX += joystickController.offset.x
+                            joystickController.x += joystickController.offset.x
+                            joystickController.offset.x = 0
+                            touchscreenMouseArea.joystickCenterY += joystickController.offset.y
+                            joystickController.y += joystickController.offset.y
+                            joystickController.offset.y = 0
+                        }
+
                         var dx = x - touchscreenMouseArea.joystickCenterX
                         var dy = y - touchscreenMouseArea.joystickCenterY
                         joystickController.processMousePosition(dx, dy)
@@ -34,6 +47,16 @@ Item {
 
                 onYChanged: {
                     if (root.joyStickVisible) {
+
+                        if (joystickController.offset.y !== 0) {
+                            touchscreenMouseArea.joystickCenterX += joystickController.offset.x
+                            joystickController.x += joystickController.offset.x
+                            joystickController.offset.x = 0
+                            touchscreenMouseArea.joystickCenterY += joystickController.offset.y
+                            joystickController.y += joystickController.offset.y
+                            joystickController.offset.y = 0
+                        }
+
                         var dx = x - touchscreenMouseArea.joystickCenterX
                         var dy = y - touchscreenMouseArea.joystickCenterY
                         joystickController.processMousePosition(dx, dy)
@@ -41,9 +64,6 @@ Item {
                 }
             }
         ]
-
-        property real joystickCenterX: 0
-        property real joystickCenterY: 0
 
         onPressed: {
             console.log("Pressed", touchPoint.x, touchPoint.y)

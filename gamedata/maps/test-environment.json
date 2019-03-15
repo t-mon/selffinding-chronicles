@@ -228,12 +228,16 @@
                 "wisdom": 1,
                 "strength": 5,
                 "stealth": 0,
-                "weapon": "",
+                "weapon": ":/gamedata/weapons/wood-stick.json",
                 "firearm": "",
                 "inventory": [
                     {
                         "data": ":/gamedata/plants/healing-herb.json",
                         "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/wood-stick.json",
+                        "count": 1
                     }
                 ],
                 "paths": [
@@ -316,12 +320,59 @@
                 "wisdom": 1,
                 "strength": 5,
                 "stealth": 0,
-                "weapon": "",
-                "firearm": "",
+                "weapon": ":/gamedata/weapons/wood-stick.json",
+                "firearm": ":/gamedata/firearms/hunting-bow.json",
                 "inventory": [
                     {
                         "data": ":/gamedata/plants/healing-herb.json",
                         "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/wood-stick.json",
+                        "count": 1
+                    },
+                    {
+                        "data": ":/gamedata/firearms/hunting-bow.json",
+                        "count": 2
+                    }
+                ],
+                "paths": [
+                    {
+                        "id": "2f6cad75-e8ec-4845-9f0e-618c4bec3634",
+                        "segments": [
+                            {
+                                "type": "segment",
+                                "offsetX": -1,
+                                "offsetY": -5,
+                                "speed": 0.08,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 1200
+                            },
+                            {
+                                "type": "segment",
+                                "offsetX": 1,
+                                "offsetY": 5,
+                                "speed": 0.07,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 800
+                            }
+                        ]
                     }
                 ]
             }

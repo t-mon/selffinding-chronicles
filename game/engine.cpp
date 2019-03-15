@@ -718,9 +718,9 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
             if (m_playerFocusItem->interaction() == GameItem::InteractionTalk) {
                 m_playerFocusItem->performInteraction();
                 Character *character = qobject_cast<Character *>(m_playerFocusItem);
+                character->lookToPoint(m_player->position());
                 character->setMovable(false);
-
-                // FIXME: set angle and load conversation
+                // FIXME: load conversation
 
                 Conversation *conversation = new Conversation(character, DataLoader::loadJsonData(":/dialogs/test-dialog.json"));
                 connect(conversation, &Conversation::conversationFinished, this, &Engine::onCurrentConversationFinished);

@@ -10,6 +10,8 @@ Item {
     property real length: 0
     property real angle: 0
 
+    property point offset: Qt.point(0, 0)
+
     Image {
         id: joystickBaseImage
         anchors.fill: parent
@@ -26,10 +28,10 @@ Item {
     onVisibleChanged: if (visible) reset()
 
     function reset() {
+        root.offset = Qt.point(0, 0)
         joystrickButton.x = root.width / 2 - joystrickButton.width / 2
         joystrickButton.y = root.height / 2 - joystrickButton.height / 2
         processMousePosition(0, 0)
-
     }
 
     function processMousePosition(dx, dy) {
@@ -41,9 +43,13 @@ Item {
 
         // Check if we are in range
         if (normalizedLength > 1) {
+            var overShot = normalizedLength - 1
             normalizedLength = 1
             normalizedX = Math.cos(angle)
             normalizedY = Math.sin(angle)
+
+            root.offset.x = overShot * radius * Math.cos(angle)
+            root.offset.y = overShot * radius * Math.sin(angle)
         }
 
         root.dx = normalizedX

@@ -2,6 +2,9 @@
 #include "character.h"
 #include "../debugcategories.h"
 
+#include <QtMath>
+#include <QVector2D>
+
 Character::Character(QObject *parent):
     GameItem(parent)
 {
@@ -112,6 +115,12 @@ GameItems *Character::inventory() const
     return m_inventory;
 }
 
+void Character::lookToPoint(const QPointF &targetPoint)
+{
+    double angle = qAtan2(-(position().y() - targetPoint.y()), -(position().x() - targetPoint.x()));
+    setAngle(angle);
+}
+
 Character::Armed Character::armed() const
 {
     return m_armed;
@@ -140,6 +149,7 @@ void Character::setWeapon(WeaponItem *weapon)
     qCDebug(dcCharacter()) << name() << "weapon changed" << weapon;
     m_weapon = weapon;
     emit weaponChanged(m_weapon);
+    if (weapon) setArmed(ArmedWeapon);
 }
 
 FirearmItem *Character::firearm() const
@@ -156,6 +166,7 @@ void Character::setFirearm(FirearmItem *firearm)
 
     m_firearm = firearm;
     emit firearmChanged(m_firearm);
+    if (firearm) setArmed(ArmedFirearm);
 }
 
 QPointF Character::movementVector() const
