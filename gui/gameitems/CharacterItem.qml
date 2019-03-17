@@ -43,7 +43,6 @@ PhysicsItem {
         target: Game.engine
         onEnginePostTick: {
             var currentVelocity = body.linearVelocity
-            //if (character.isPlayer) console.log("+++++++++++", currentVelocity)
             var dvx = character.movementVector.x * app.gridSize - currentVelocity.x
             var dvy = character.movementVector.y * app.gridSize - currentVelocity.y
             body.applyLinearImpulse(Qt.point(dvx, dvy), body.getWorldCenter())

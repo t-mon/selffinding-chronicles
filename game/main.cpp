@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
     parser.setApplicationDescription(QString("\nFantasy role play game.\n\n"
-                                             "Copyright %1 2018 Simon Stürz <stuerz.simon@gmail.com>\n"
+                                             "Copyright %1 2018 - 2019 Simon Stürz <stuerz.simon@gmail.com>\n"
                                              "Released under the GNU GPLv3.").arg(QChar(0xA9)));
 
     QCommandLineOption dataOption({"d", "data"}, "Specify the relative or absolut path to the game data folder. Default value relative to executable: ../selffinding-chronicles/data", "datapath", "../selffinding-chronicles/data");

@@ -32,7 +32,7 @@ double Character::speed() const
     return m_speed;
 }
 
-void Character::setSpeed(const double speed)
+void Character::setSpeed(double speed)
 {
     qCDebug(dcCharacter()) << name() << "speed changed" << speed;
     m_speed = speed;
@@ -44,7 +44,7 @@ bool Character::movable() const
     return m_movable;
 }
 
-void Character::setMovable(const bool &movable)
+void Character::setMovable(bool movable)
 {
     if (m_movable == movable)
         return;
@@ -207,7 +207,7 @@ double Character::angle() const
     return m_angle;
 }
 
-void Character::setAngle(const double &angle)
+void Character::setAngle(double angle)
 {
     if (m_angle == angle)
         return;
@@ -216,6 +216,7 @@ void Character::setAngle(const double &angle)
     m_angle = angle;
     emit angleChanged(m_angle);
 
+    // FIXME: keep angble between +-180
     if (angle <= -M_PI_2 || angle >= M_PI_2) {
         setHeading(HeadingLeft);
     } else {
@@ -228,7 +229,7 @@ int Character::auraRange() const
     return m_auraRange;
 }
 
-void Character::setAuraRange(const int auraRange)
+void Character::setAuraRange(int auraRange)
 {
     m_auraRange = auraRange;
     emit auraRangeChanged(m_auraRange);

@@ -23,6 +23,25 @@ PhysicsItem {
     linearDamping: 10
     fixedRotation: true
 
+    // Enemy movement
+    Connections {
+        target: Game.engine
+        onEnginePostTick: {
+            var currentVelocity = body.linearVelocity
+            var dvx = root.enemy.movementVector.x * app.gridSize - currentVelocity.x
+            var dvy = root.enemy.movementVector.y * app.gridSize - currentVelocity.y
+            body.applyLinearImpulse(Qt.point(dvx, dvy), body.getWorldCenter())
+        }
+    }
+
+    onXChanged: {
+        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
+
+    onYChanged: {
+        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
+    }
+
     fixtures: [
         Circle {
             id: itemBody
@@ -99,6 +118,7 @@ PhysicsItem {
         Image {
             id: itemImage
             anchors.fill: frame
+            mirror: enemy ? enemy.heading === Character.HeadingLeft : false
             source: enemy ? dataDirectory + enemy.imageName : ""
             opacity: root.itemDebugEnabled ? 0.5 : 1
         }
@@ -215,22 +235,4 @@ PhysicsItem {
         visible: enemy ? !enemy.alive : false
     }
 
-    // Enemy movement
-    Connections {
-        target: Game.engine
-        onEnginePostTick: {
-            var currentVelocity = body.linearVelocity
-            var dvx = root.enemy.movementVector.x * app.gridSize - currentVelocity.x
-            var dvy = root.enemy.movementVector.y * app.gridSize - currentVelocity.y
-            body.applyLinearImpulse(Qt.point(root.body.getMass() * dvx, body.getMass() * dvy), body.getWorldCenter())
-        }
-    }
-
-    onXChanged: {
-        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
-    }
-
-    onYChanged: {
-        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
-    }
 }

@@ -110,16 +110,16 @@ public:
     Heading heading() const;
 
     double angle() const;
-    void setAngle(const double &angle);
+    void setAngle(double angle);
 
     double speed() const;
-    void setSpeed(const double speed);
+    void setSpeed(double speed);
 
     int auraRange() const;
-    void setAuraRange(const int auraRange);
+    void setAuraRange(int auraRange);
 
     bool movable() const;
-    void setMovable(const bool &movable);
+    void setMovable(bool movable);
 
     bool moving() const;
     void setMoving(bool moving);
@@ -185,8 +185,8 @@ private:
     bool m_isPlayer = false;
     Heading m_heading = HeadingRight;
     int m_auraRange = 3;
-    double m_angle = 0;
-    double m_speed = 1;
+    double m_angle = 0.0;
+    double m_speed = 1.0;
     bool m_movable = true;
     bool m_moving = false;
     bool m_running = false;

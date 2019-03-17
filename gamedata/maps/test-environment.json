@@ -2,10 +2,25 @@
     "name": "Test world",
     "width": 400,
     "height": 400,
-    "playerStartX": 5,
-    "playerStartY": 5,
+    "playerStartX": 13,
+    "playerStartY": 8,
     "backgroundColor": "#307a78",
     "items": [
+        {
+            "x": 5,
+            "y": 3,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 2,
+            "y": 1,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 17,
+            "y": 3,
+            "data": ":/gamedata/trees/tree-1.json"
+        },
         {
             "x": 9,
             "y": 5,
@@ -117,12 +132,12 @@
             "data": ":/gamedata/weapons/sword.json"
         },
         {
-            "x": 15,
+            "x": 50,
             "y": 5,
             "data": ":/gamedata/bushes/bush-1.json"
         },
         {
-            "x": 15,
+            "x": 50,
             "y": 10,
             "data": ":/gamedata/bushes/bush-1.json"
         },
@@ -214,7 +229,7 @@
     ],
     "characters": [
         {
-            "x": 25,
+            "x": 10,
             "y": 10,
             "data": ":/gamedata/characters/test-character.json",
             "character": {
@@ -269,20 +284,12 @@
                                 "duration": 0
                             },
                             {
-                                "type": "rotate",
-                                "offsetX": 0,
-                                "offsetY": 0,
-                                "speed": 0,
-                                "angle": -90,
-                                "duration": 0
-                            },
-                            {
                                 "type": "pause",
                                 "offsetX": 0,
                                 "offsetY": 0,
                                 "speed": 0,
                                 "angle": 0,
-                                "duration": 500
+                                "duration": 800
                             },
                             {
                                 "type": "rotate",
@@ -298,7 +305,23 @@
                                 "offsetY": 0,
                                 "speed": 0,
                                 "angle": 0,
-                                "duration": 500
+                                "duration": 1500
+                            },
+                            {
+                                "type": "rotate",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 180,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 1000
                             }
                         ]
                     }
@@ -306,8 +329,8 @@
             }
         },
         {
-            "x": 25,
-            "y": 20,
+            "x": 20,
+            "y": 15,
             "data": ":/gamedata/characters/test-character.json",
             "character": {
                 "gender": "male",
@@ -446,7 +469,94 @@
         {
             "x": 5,
             "y": 15,
-            "data": ":/gamedata/enemies/test-enemy.json"
+            "data": ":/gamedata/enemies/test-enemy.json",
+            "character": {
+                "gender": "male",
+                "role": "Enemy",
+                "experience": 100,
+                "health": 100,
+                "healthMax": 100,
+                "mana": 10,
+                "manaMax": 10,
+                "wisdom": 10,
+                "strength": 10,
+                "stealth": 0,
+                "weapon": "",
+                "firearm": "",
+                "inventory": [
+                    {
+                        "data": ":/gamedata/plants/healing-herb.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/sword.json",
+                        "count": 2
+                    }
+                ],
+                "paths": [
+                    {
+                        "id": "2f6cad75-e8ec-4845-9f0e-618c4bec3634",
+                        "segments": [
+                            {
+                                "type": "segment",
+                                "offsetX": 5,
+                                "offsetY": 0,
+                                "speed": 0.1,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 1000
+                            },
+                            {
+                                "type": "segment",
+                                "offsetX": -2,
+                                "offsetY": -2,
+                                "speed": 0.05,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 750
+                            },
+                            {
+                                "type": "segment",
+                                "offsetX": -3,
+                                "offsetY": 2,
+                                "speed": 0.1,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "rotate",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 45,
+                                "duration": 500
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 750
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ]
 }

@@ -74,12 +74,19 @@ void PathController::evaluatePosition(const QPointF &position)
         //qCDebug(dcPathController()) << "--> Remaining distance vector" << distanceVector << distanceLength << m_angle << m_movementVector;
         break;
     }
-    case PathSegment::TypeRotate:
+    case PathSegment::TypeRotate: {
         m_movementVector = QPointF(0, 0);
-        m_angle += m_path->currentPathSegment().angle() * M_PI / 180;
+        double angle = m_path->currentPathSegment().angle() * M_PI / 180;
+        double angleAbsolut = angle;
+        if (angleAbsolut > M_PI * 2) {
+            angleAbsolut -= M_PI * 2;
+        }
+        qCDebug(dcPathController()) << "----> Rotate from angle" << m_angle << "by" << angle << angleAbsolut;
+        m_angle += angleAbsolut;
         qCDebug(dcPathController()) << "Segment finished." << m_path->currentPathSegment() << "Next segment!";
         m_path->nextSegment();
         break;
+    }
     case PathSegment::TypePause:
         m_movementVector = QPointF(0, 0);
         //qCDebug(dcPathController()) << QDateTime::currentMSecsSinceEpoch() - m_pauseStartTimeStamp;
