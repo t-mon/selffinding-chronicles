@@ -42,7 +42,7 @@
         <file>shadereffects/+hlsl/wobble.frag</file>
         <file>components/DebugControls.qml</file>
         <file>gameitems/BulletItem.qml</file>
-        <file>MapEditor.qml</file>
+        <file>mapeditor/MapEditor.qml</file>
         <file>gameoverlays/PauseMenuOverlay.qml</file>
         <file>gameoverlays/DefaultGameOverlay.qml</file>
         <file>gameoverlays/TouchscreenGameOverlay.qml</file>
@@ -55,5 +55,6 @@
         <file>components/PercentageIndicator.qml</file>
         <file>StartGamePage.qml</file>
         <file>physics/CircleFixture.qml</file>
+        <file>mapeditor/MapSettings.qml</file>
     </qresource>
 </RCC>

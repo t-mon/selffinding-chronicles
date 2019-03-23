@@ -9,9 +9,10 @@ Item {
 
     property string imageSource
     property bool selected: false
+    property real rotation: 0
 
     Rectangle {
-        id: weaponItem
+        id: backgroundRectangle
         anchors.fill: parent
         anchors.margins: app.margins / 2
         color: selected ? "steelblue" : "gray"
@@ -23,9 +24,9 @@ Item {
 
     Image {
         id: itemImage
-        anchors.fill: weaponItem
+        anchors.fill: backgroundRectangle
         anchors.margins: parent.width / 8
-        rotation: 45
+        rotation: root.rotation
         source: root.imageSource? root.imageSource : ""
     }
 

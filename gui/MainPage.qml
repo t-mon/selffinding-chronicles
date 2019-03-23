@@ -54,7 +54,7 @@ GamePage {
             Layout.fillWidth: true
             text: qsTr("Map editor")
             onClicked: {
-                pageStack.push(Qt.resolvedUrl("MapEditor.qml"))
+                pageStack.push(Qt.resolvedUrl("mapeditor/MapEditor.qml"))
             }
         }
 

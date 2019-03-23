@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
 import QtQuick.Layouts 1.3
 
 import Chronicles 1.0
@@ -13,6 +14,14 @@ ApplicationWindow {
     x: Game.settings.windowPosition.x
     y: Game.settings.windowPosition.y
     visibility: ApplicationWindow.Windowed
+
+    // Theme
+    Material.theme: Material.Dark
+
+    Material.accent: Material.BlueGrey
+    Material.primary: Material.BlueGrey
+    Material.foreground: Material.BlueGrey
+
 
     property int controlMode: PlayerController.ControlModeKeyBoard
     property string gameName: qsTr("Self finding chronicles")
