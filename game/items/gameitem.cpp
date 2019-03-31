@@ -18,6 +18,16 @@ void GameItem::setItemId(const QString &itemId)
     m_itemId = itemId;
 }
 
+QString GameItem::resourcePath() const
+{
+    return m_resourcePath;
+}
+
+void GameItem::setResourcePath(const QString &resourcePath)
+{
+    m_resourcePath = resourcePath;
+}
+
 QString GameItem::imageName() const
 {
     return m_imageName;

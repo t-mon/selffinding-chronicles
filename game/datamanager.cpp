@@ -82,6 +82,20 @@ GameItems *DataManager::characters() const
     return m_characters;
 }
 
+void DataManager::createItem(const QString &resourcePath, const QPointF &position)
+{
+    GameItem *item = DataLoader::loadGameItemFromResourcePath(resourcePath, this);
+    item->setPosition(position);
+
+    if (item->itemType() == GameItem::TypeCharacter) {
+        m_characters->addGameItem(item);
+    } else if (item->itemType() == GameItem::TypeEnemy) {
+        m_enemies->addGameItem(item);
+    } else {
+        m_items->addGameItem(item);
+    }
+}
+
 void DataManager::setState(DataManager::State state)
 {
     if (m_state == state)
@@ -96,31 +110,31 @@ void DataManager::setState(DataManager::State state)
     // Start the thread
     if (state != StateIdle) {
 
-//        qCDebug(dcDataManager()) << "Start loading new game";
+        //        qCDebug(dcDataManager()) << "Start loading new game";
 
-//        // Create map
-//        m_map = new Map(this);
-//        qCDebug(dcDataManager()) << "Create map" << m_map->thread();
-//        m_map->loadMap(":/maps/test-environment.json");
+        //        // Create map
+        //        m_map = new Map(this);
+        //        qCDebug(dcDataManager()) << "Create map" << m_map->thread();
+        //        m_map->loadMap(":/maps/test-environment.json");
 
-//        // Create player
-//        qCDebug(dcDataManager()) << "Create default player";
-//        GameItem *playerGameItem = DataLoader::loadGameItemFromResourcePath(":/gamedata/characters/player.json", m_map);
-//        m_player = qobject_cast<Character *>(playerGameItem);
-//        m_player->setPosition(m_map->playerStartPosition());
-//        m_player->setIsPlayer(true);
+        //        // Create player
+        //        qCDebug(dcDataManager()) << "Create default player";
+        //        GameItem *playerGameItem = DataLoader::loadGameItemFromResourcePath(":/gamedata/characters/player.json", m_map);
+        //        m_player = qobject_cast<Character *>(playerGameItem);
+        //        m_player->setPosition(m_map->playerStartPosition());
+        //        m_player->setIsPlayer(true);
 
-//        // Add player to characters and move to application thread
-//        m_map->characters()->addGameItem(m_player);
+        //        // Add player to characters and move to application thread
+        //        m_map->characters()->addGameItem(m_player);
 
-//        setWorldSize(m_map->size());
+        //        setWorldSize(m_map->size());
 
-//        // Push the map back to the main thread
-//        qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();
-//        //m_map->moveToThread(QCoreApplication::instance()->thread());
+        //        // Push the map back to the main thread
+        //        qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();
+        //        //m_map->moveToThread(QCoreApplication::instance()->thread());
 
-//        //qCDebug(dcDataManager()) << "Loading finished" << timer.elapsed() << "[ms]";
-//        onThreadFinished();
+        //        //qCDebug(dcDataManager()) << "Loading finished" << timer.elapsed() << "[ms]";
+        //        onThreadFinished();
 
         // FIXME
         start();

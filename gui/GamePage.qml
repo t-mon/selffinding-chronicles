@@ -34,7 +34,7 @@ GamePage {
         id: physicsWorld
         gravity: Qt.point(0, 0)
         onStepped: Game.onTick()
-        running: Game.running
+        running: true
     }
 
     Item {

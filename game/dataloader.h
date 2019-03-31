@@ -21,14 +21,14 @@ public:
 
 
     // Create
-    static PlantItem *createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
-    static TreeItem *createTreeItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
-    static WeaponItem *createWeaponItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
-    static FirearmItem *createFirearmItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static PlantItem *createPlantItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static TreeItem *createTreeItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static WeaponItem *createWeaponItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static FirearmItem *createFirearmItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
 
-    static Character *createCharacterObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
-    static Enemy *createEnemyObject(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
-    static ChestItem *createChestItem(const QString &itemId, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static Character *createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static Enemy *createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static ChestItem *createChestItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static Path *createPathObject(const QVariantMap &description, QObject *parent);
 
     // Load
@@ -41,7 +41,7 @@ public:
     static QList<GameItem *> loadEnemyItems(const QVariantList &enemyItemsList, QObject *parent = nullptr);
     static QList<GameItem *> loadInventoryItems(const QVariantList &itemsList, QObject *parent = nullptr);    
 
-    static GameItem *loadGameItem(const QString &itemId, const QPoint &position, const QVariantMap &itemMap, QObject *parent = nullptr);
+    static GameItem *loadGameItem(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent = nullptr);
     static GameItem *loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent = nullptr);
 
     static void fillGameItemData(GameItem *item, const QVariantMap &description);

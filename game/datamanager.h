@@ -46,6 +46,8 @@ public:
     GameItems *enemies() const;
     GameItems *characters() const;
 
+    void createItem(const QString &resourcePath, const QPointF &position);
+
 private:
     State m_state = StateIdle;
     QMutex m_stateMutex;
@@ -54,7 +56,7 @@ private:
     QMutex m_saveGameFileNameMutex;
 
     QSize m_worldSize;
-    QColor m_worldBackgroundColor;
+    QColor m_worldBackgroundColor = QColor("#307a78");
 
     Map *m_map = nullptr;
     QMutex m_mapMutex;

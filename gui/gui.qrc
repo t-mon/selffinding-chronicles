@@ -56,5 +56,7 @@
         <file>StartGamePage.qml</file>
         <file>physics/CircleFixture.qml</file>
         <file>mapeditor/MapSettings.qml</file>
+        <file>mapeditor/MapEditorMenuPage.qml</file>
+        <file>mapeditor/CreateNewMapPage.qml</file>
     </qresource>
 </RCC>

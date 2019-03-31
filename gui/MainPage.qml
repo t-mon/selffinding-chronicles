@@ -20,6 +20,7 @@ GamePage {
         color: "white"
     }
 
+
     ColumnLayout {
         anchors.centerIn: parent
         width: parent.width / 3
@@ -54,7 +55,7 @@ GamePage {
             Layout.fillWidth: true
             text: qsTr("Map editor")
             onClicked: {
-                pageStack.push(Qt.resolvedUrl("mapeditor/MapEditor.qml"))
+                pageStack.push(Qt.resolvedUrl("mapeditor/MapEditorMenuPage.qml"))
             }
         }
 

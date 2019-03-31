@@ -7,10 +7,11 @@
 #include <QJsonParseError>
 #include <QCryptographicHash>
 
-PlantItem *DataLoader::createPlantItem(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
+PlantItem *DataLoader::createPlantItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     PlantItem *plantItem = new PlantItem(parent);
-    plantItem->setItemId(itemId);
+    plantItem->setResourcePath(resourcePath);
+    plantItem->setItemId(getItemIdFromResourcePath(resourcePath));
     plantItem->setPosition(position);
     fillGameItemData(qobject_cast<GameItem *>(plantItem), description);
 
@@ -23,20 +24,22 @@ PlantItem *DataLoader::createPlantItem(const QString &itemId, const QVariantMap 
     return plantItem;
 }
 
-TreeItem *DataLoader::createTreeItem(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
+TreeItem *DataLoader::createTreeItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     TreeItem *treeItem = new TreeItem(parent);
-    treeItem->setItemId(itemId);
+    treeItem->setResourcePath(resourcePath);
+    treeItem->setItemId(getItemIdFromResourcePath(resourcePath));
     treeItem->setPosition(position);
     fillGameItemData(qobject_cast<GameItem *>(treeItem), description);
 
     return treeItem;
 }
 
-WeaponItem *DataLoader::createWeaponItem(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
+WeaponItem *DataLoader::createWeaponItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     WeaponItem *weaponItem = new WeaponItem(parent);
-    weaponItem->setItemId(itemId);
+    weaponItem->setResourcePath(resourcePath);
+    weaponItem->setItemId(getItemIdFromResourcePath(resourcePath));
     weaponItem->setPosition(position);
     fillGameItemData(qobject_cast<GameItem *>(weaponItem), description);
 
@@ -47,10 +50,11 @@ WeaponItem *DataLoader::createWeaponItem(const QString &itemId, const QVariantMa
     return weaponItem;
 }
 
-FirearmItem *DataLoader::createFirearmItem(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
+FirearmItem *DataLoader::createFirearmItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     FirearmItem *firearmItem = new FirearmItem(parent);
-    firearmItem->setItemId(itemId);
+    firearmItem->setResourcePath(resourcePath);
+    firearmItem->setItemId(getItemIdFromResourcePath(resourcePath));
     firearmItem->setPosition(position);
     fillGameItemData(qobject_cast<GameItem *>(firearmItem), description);
 
@@ -63,10 +67,11 @@ FirearmItem *DataLoader::createFirearmItem(const QString &itemId, const QVariant
     return firearmItem;
 }
 
-Character *DataLoader::createCharacterObject(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
+Character *DataLoader::createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     Character *character = new Character(parent);
-    character->setItemId(itemId);
+    character->setResourcePath(resourcePath);
+    character->setItemId(getItemIdFromResourcePath(resourcePath));
     character->setPosition(position);
     fillGameItemData(qobject_cast<GameItem *>(character), description);
     fillCharacterItemData(character, description.value("character").toMap());
@@ -74,10 +79,11 @@ Character *DataLoader::createCharacterObject(const QString &itemId, const QVaria
     return character;
 }
 
-Enemy *DataLoader::createEnemyObject(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
+Enemy *DataLoader::createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     Enemy *enemy = new Enemy(parent);
-    enemy->setItemId(itemId);
+    enemy->setResourcePath(resourcePath);
+    enemy->setItemId(getItemIdFromResourcePath(resourcePath));
     enemy->setPosition(position);
     fillGameItemData(qobject_cast<GameItem *>(enemy), description);
     fillCharacterItemData(qobject_cast<Character *>(enemy), description.value("character").toMap());
@@ -90,10 +96,11 @@ Enemy *DataLoader::createEnemyObject(const QString &itemId, const QVariantMap &d
     return enemy;
 }
 
-ChestItem *DataLoader::createChestItem(const QString &itemId, const QVariantMap &description, const QPoint &position, QObject *parent)
+ChestItem *DataLoader::createChestItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     ChestItem *chestItem = new ChestItem(parent);
-    chestItem->setItemId(itemId);
+    chestItem->setResourcePath(resourcePath);
+    chestItem->setItemId(getItemIdFromResourcePath(resourcePath));
     chestItem->setPosition(position);
     fillGameItemData(qobject_cast<GameItem *>(chestItem), description);
 
@@ -239,24 +246,24 @@ QList<GameItem *> DataLoader::loadInventoryItems(const QVariantList &itemsList, 
     return gameItems;
 }
 
-GameItem *DataLoader::loadGameItem(const QString &itemId, const QPoint &position, const QVariantMap &itemMap, QObject *parent)
+GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent)
 {
     QString itemTypeString = itemMap.value("type").toString().toLower();
 
     if (itemTypeString == "plant") {
-        return createPlantItem(itemId, itemMap, position, parent);
+        return createPlantItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "weapon") {
-        return createWeaponItem(itemId, itemMap, position, parent);
+        return createWeaponItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "firearm") {
-        return createFirearmItem(itemId, itemMap, position, parent);
+        return createFirearmItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "tree") {
-        return createTreeItem(itemId, itemMap, position, parent);
+        return createTreeItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "character") {
-        return createCharacterObject(itemId, itemMap, position, parent);
+        return createCharacterObject(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "enemy") {
-        return createEnemyObject(itemId, itemMap, position, parent);
+        return createEnemyObject(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "chest") {
-        return createChestItem(itemId, itemMap, position, parent);
+        return createChestItem(resourcePath, itemMap, position, parent);
     } else {
         qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
     }
@@ -267,7 +274,7 @@ GameItem *DataLoader::loadGameItem(const QString &itemId, const QPoint &position
 GameItem *DataLoader::loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent)
 {
     QVariantMap itemMap = loadJsonData(resourcePath);
-    return loadGameItem(getItemIdFromResourcePath(resourcePath), QPoint(-1, -1), itemMap, parent);
+    return loadGameItem(resourcePath, QPoint(-1, -1), itemMap, parent);
 }
 
 void DataLoader::fillGameItemData(GameItem *item, const QVariantMap &description)

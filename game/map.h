@@ -16,11 +16,11 @@
 class Map : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QSize size READ size NOTIFY sizeChanged)
-    Q_PROPERTY(QPointF playerStartPosition READ playerStartPosition NOTIFY playerStartPositionChanged)
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)
+    Q_PROPERTY(QPointF playerStartPosition READ playerStartPosition WRITE setPlayerStartPosition NOTIFY playerStartPositionChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString fileName READ fileName NOTIFY fileNameChanged)
-    Q_PROPERTY(QColor backgroundColor READ backgroundColor NOTIFY backgroundColorChanged)
+    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
 
 public:
     enum Layer {
