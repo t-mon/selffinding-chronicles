@@ -37,7 +37,6 @@ public:
 
     Map *map() const;
     Q_INVOKABLE void createNewMap();
-
     Q_INVOKABLE void placeItemOnMap(const QString &resourcePath, const QPointF &position);
 
 private:
@@ -48,6 +47,8 @@ private:
     GameItemsProxy *m_activeEnemies = nullptr;
     GameItemsProxy *m_activeCharacters = nullptr;
 
+    QPointF m_editorViewOffset;
+    QSize m_editorViewSize;
 
     Map *m_map = nullptr;
     GameItem *m_selectedGameItem = nullptr;
@@ -61,7 +62,8 @@ private slots:
     void onDataManagerStateChanged(DataManager::State state);
 
 public slots:
-
+    void onEditorViewOffsetChanged(const QPointF &offset);
+    void onEditorViewSizeChanged(const QSize &size);
 
 };
 

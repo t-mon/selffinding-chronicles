@@ -47,7 +47,8 @@ HEADERS += \
     game/datamanager.h \
     game/path.h \
     game/pathsegment.h \
-    game/pathcontroller.h
+    game/pathcontroller.h \
+    game/items/staticitem.h
 
 
 SOURCES += game/main.cpp \
@@ -80,7 +81,8 @@ SOURCES += game/main.cpp \
     game/datamanager.cpp \
     game/path.cpp \
     game/pathsegment.cpp \
-    game/pathcontroller.cpp
+    game/pathcontroller.cpp \
+    game/items/staticitem.cpp
 
 
 unix:!android {

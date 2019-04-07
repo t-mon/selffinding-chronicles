@@ -31,5 +31,6 @@
         <file>copyright/logos/qt.svg</file>
         <file>copyright/logos/box2d.png</file>
         <file>gamedata/weapons/wood-stick.json</file>
+        <file>gamedata/houses/house-1.json</file>
     </qresource>
 </RCC>

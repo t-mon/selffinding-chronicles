@@ -28,6 +28,7 @@ Item {
         }
     }
 
+    // Rain
     ParticleSystem {
         id: rainParticleSystem
         anchors.fill: parent
@@ -93,18 +94,19 @@ Item {
         Emitter {
             anchors.fill: parent
             system: rainParticleSystem
-            emitRate: 1000
-            lifeSpan: 2000
-            size: 20
-            sizeVariation: 10
+            emitRate: 500
+            lifeSpan: 1000
+            size: app.gridSize / 2
+            sizeVariation: size / 3
             velocity: PointDirection {
-                y: 60
-                yVariation: 10
+                y: app.gridSize * 2
+                yVariation: app.gridSize
             }
-            acceleration: PointDirection { y: 40 }
+            acceleration: PointDirection { y: app.gridSize }
         }
     }
 
+    // Snow
     ParticleSystem {
         id: snowParticleSystem
         anchors.fill: parent
@@ -145,7 +147,7 @@ Item {
             affectedParameter: Wander.Position
             anchors.fill: parent
             xVariance: parent.width
-            pace: 10
+            pace: app.gridSize / 2
         }
 
         ImageParticle {
@@ -159,17 +161,15 @@ Item {
         Emitter {
             anchors.fill: parent
             system: snowParticleSystem
-            emitRate: 1000
-            lifeSpan: 3000
-            size: 8
-            sizeVariation: 6
+            emitRate: 100
+            lifeSpan: 2000
+            size: app.gridSize / 3
+            sizeVariation: size / 3
             velocity: PointDirection {
-                y: 10
-                yVariation: 8
-//                x: 5
-//                xVariation: 2
+                y: app.gridSize
+                yVariation: y / 2
             }
-            acceleration: PointDirection { y: 3 }
+            acceleration: PointDirection { y: app.gridSize / 10 }
         }
     }
 

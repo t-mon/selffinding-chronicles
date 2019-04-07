@@ -38,7 +38,6 @@ public:
     QString playerName() const;
     void setPlayerName(const QString &playerName);
 
-
 private:
     QSettings *m_settings = nullptr;
 

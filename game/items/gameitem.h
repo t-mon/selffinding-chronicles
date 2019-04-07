@@ -27,6 +27,7 @@ class GameItem : public GameObject
 public:
     enum Type {
         TypeNone,
+        TypeStatic,
         TypePlant,
         TypeAnimal,
         TypeTree,

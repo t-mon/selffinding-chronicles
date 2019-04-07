@@ -6,28 +6,29 @@ Body {
     world: physicsWorld
 
     property var worldObject
+    property real borderWidth: 1
 
     Box {
         y: worldObject.height
         width: worldObject.width
-        height: app.gridSize
+        height: borderWidth
     }
 
     Box {
-        y: -app.gridSize
-        height: app.gridSize
+        y: -borderWidth
+        height: borderWidth
         width: worldObject.width
     }
 
     Box {
-        x: -app.gridSize
-        width: app.gridSize
+        x: -borderWidth
+        width: borderWidth
         height: worldObject.height
     }
 
     Box {
         x: worldObject.width
-        width: app.gridSize
+        width: borderWidth
         height: worldObject.height
     }
 }

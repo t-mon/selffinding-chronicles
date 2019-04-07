@@ -16,7 +16,7 @@ GamePage {
 
 
         RowLayout {
-            GameLabel {
+            Label {
                 text: qsTr("Map name")
                 color: "white"
             }
@@ -29,7 +29,7 @@ GamePage {
         }
 
         RowLayout {
-            GameLabel {
+            Label {
                 text: qsTr("Map width")
                 color: "white"
             }
@@ -45,7 +45,7 @@ GamePage {
         }
 
         RowLayout {
-            GameLabel {
+            Label {
                 text: qsTr("Map height")
                 color: "white"
             }
@@ -69,14 +69,14 @@ GamePage {
         RowLayout {
             Layout.fillWidth: true
 
-            GameButton {
+            Button {
                 Layout.fillWidth: true
                 text: qsTr("Cancel")
                 font.pixelSize: app.largeFont
                 onClicked: pageStack.pop()
             }
 
-            GameButton {
+            Button {
                 Layout.fillWidth: true
                 text: qsTr("Create")
                 font.pixelSize: app.largeFont
@@ -85,7 +85,6 @@ GamePage {
                     Game.mapEditor.createNewMap()
                     Game.mapEditor.map.name = mapNameField.text;
                     Game.mapEditor.map.size = Qt.size(mapWidthSponBox.value, mapHeightSponBox.value)
-
                     pageStack.push(Qt.resolvedUrl("MapEditor.qml"))
                 }
             }

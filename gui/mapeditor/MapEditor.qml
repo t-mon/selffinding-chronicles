@@ -36,6 +36,7 @@ GamePage {
         console.log("Game scene size:", gamePage.width, "/", gamePage.height, "grid size:", app.gridSize)
         forceActiveFocus()
         Game.mapEditor.loadAvailableGameItems()
+        Game.mapEditor.onEditorViewSizeChanged(Qt.size(gamePage.width, gamePage.height))
     }
 
     property var currentItem: Game.mapEditor.availableItems.get(itemsListView.currentIndex)
@@ -44,8 +45,8 @@ GamePage {
     World {
         id: physicsWorld
         gravity: Qt.point(0, 0)
-        onStepped: Game.onTick()
-        running: Game.running
+        //onStepped: Game.onTick()
+        running: true
     }
 
     Item {
@@ -60,6 +61,7 @@ GamePage {
                 id: mainControlsItem
                 Layout.fillHeight: true
                 Layout.preferredWidth: 300
+                z: 1
 
                 ColumnLayout {
                     id: mainControlsColumn
@@ -216,6 +218,8 @@ GamePage {
                 Layout.fillWidth: true
 
                 function updatePositions() {
+                    // TODO: update position for view
+
                     if (!temporaryItem)
                         return
 
@@ -235,9 +239,9 @@ GamePage {
                 Flickable {
                     id: worldFlickable
                     anchors.fill: parent
-                    clip: true
                     contentWidth: worldItem.width
                     contentHeight: worldItem.height
+                    clip: true
 
                     ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOn }
                     ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AlwaysOn }

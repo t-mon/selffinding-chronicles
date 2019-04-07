@@ -142,16 +142,15 @@ GamePage {
 //                }
             }
 
-            WeatherController {
-                id: weatherController
-                anchors.left: parent.left
-                anchors.right: parent.right
-                width: Game.engine.dataManager.worldSize.width  * app.gridSize
-                height: Game.engine.dataManager.worldSize.height  * app.gridSize
+            Weather {
+                id: weather
+                anchors.fill: parent
                 raining: debugControls.rainingEnabled
                 snowing: debugControls.snowingEnabled
                 turbulence: debugControls.turbulenceEnabled
             }
+
+
 
             DebugDraw {
                 id: debugDraw

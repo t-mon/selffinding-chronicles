@@ -14,14 +14,14 @@ GamePage {
 
         spacing: app.margins
 
-        GameButton {
+        Button {
             Layout.fillWidth: true
             text: qsTr("Create new map")
             font.pixelSize: app.largeFont
             onClicked: pageStack.push(Qt.resolvedUrl("CreateNewMapPage.qml"))
         }
 
-        GameButton {
+        Button {
             Layout.fillWidth: true
             text: qsTr("Load map")
             font.pixelSize: app.largeFont
@@ -34,7 +34,7 @@ GamePage {
             Layout.fillHeight: true
         }
 
-        GameButton {
+        Button {
             Layout.fillWidth: true
             text: qsTr("Cancel")
             font.pixelSize: app.largeFont

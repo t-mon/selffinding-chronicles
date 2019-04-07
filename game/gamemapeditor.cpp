@@ -112,3 +112,18 @@ void GameMapEditor::onDataManagerStateChanged(DataManager::State state)
 {
     qCDebug(dcMapEditor()) << "Dataloader state changed" << state;
 }
+
+void GameMapEditor::onEditorViewOffsetChanged(const QPointF &offset)
+{
+    m_editorViewOffset = offset;
+
+    // TODO: evaluate active items
+}
+
+void GameMapEditor::onEditorViewSizeChanged(const QSize &size)
+{
+    m_editorViewSize = size;
+
+    // TODO: evaluate active items
+
+}

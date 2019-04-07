@@ -7,6 +7,17 @@
 #include <QJsonParseError>
 #include <QCryptographicHash>
 
+StaticItem *DataLoader::createStaticItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+{
+    StaticItem *item = new StaticItem(parent);
+    item->setResourcePath(resourcePath);
+    item->setItemId(getItemIdFromResourcePath(resourcePath));
+    item->setPosition(position);
+    fillGameItemData(qobject_cast<GameItem *>(item), description);
+
+    return item;
+}
+
 PlantItem *DataLoader::createPlantItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     PlantItem *plantItem = new PlantItem(parent);
@@ -250,7 +261,9 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &po
 {
     QString itemTypeString = itemMap.value("type").toString().toLower();
 
-    if (itemTypeString == "plant") {
+    if (itemTypeString == "static") {
+        return createStaticItem(resourcePath, itemMap, position, parent);
+    } else if (itemTypeString == "plant") {
         return createPlantItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "weapon") {
         return createWeaponItem(resourcePath, itemMap, position, parent);

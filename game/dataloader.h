@@ -5,6 +5,7 @@
 #include <QVariantMap>
 
 #include "path.h"
+#include "items/staticitem.h"
 #include "items/treeitem.h"
 #include "items/gameitems.h"
 #include "items/plantitem.h"
@@ -21,6 +22,7 @@ public:
 
 
     // Create
+    static StaticItem *createStaticItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static PlantItem *createPlantItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static TreeItem *createTreeItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static WeaponItem *createWeaponItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
