@@ -1,6 +1,7 @@
 #include "gamemapeditor.h"
 #include "debugcategories.h"
 #include "dataloader.h"
+#include "game.h"
 
 GameMapEditor::GameMapEditor(QObject *parent) :
     QObject(parent)
@@ -33,7 +34,7 @@ GameItems *GameMapEditor::availableItems() const
 void GameMapEditor::loadAvailableGameItems()
 {
     if (!m_availableItems->gameItems().isEmpty()) {
-        qCWarning(dcMapEditor()) << "Available items already loaded. Doing nothing";
+        qCDebug(dcMapEditor()) << "Available items already loaded. Doing nothing";
         return;
     }
 
@@ -98,14 +99,22 @@ void GameMapEditor::createNewMap()
         m_map = nullptr;
     }
 
-    m_map = new Map(this);
+    m_dataManager->resetData();
+    m_map = new Map(m_dataManager->items(), m_dataManager->enemies(), m_dataManager->characters());
+
 }
 
 void GameMapEditor::placeItemOnMap(const QString &resourcePath, const QPointF &position)
 {
     qCDebug(dcMapEditor()) << "Place item" << resourcePath << position;
-
     m_dataManager->createItem(resourcePath, position);
+}
+
+void GameMapEditor::saveMap()
+{
+    QString saveGameFileName(Game::instance()->settings()->settingsPath() + "/mapeditor/" + m_map->name());
+    qCDebug(dcMapEditor()) << "Save map to" << saveGameFileName;
+    m_dataManager->saveMap(m_map, saveGameFileName);
 }
 
 void GameMapEditor::onDataManagerStateChanged(DataManager::State state)

@@ -42,6 +42,9 @@ PhysicsItem {
     Connections {
         target: Game.engine
         onEnginePostTick: {
+            if (!character)
+                return
+
             var currentVelocity = body.linearVelocity
             var dvx = character.movementVector.x * app.gridSize - currentVelocity.x
             var dvy = character.movementVector.y * app.gridSize - currentVelocity.y
@@ -143,6 +146,9 @@ PhysicsItem {
             }
 
             onEndContact: {
+                if (!character)
+                    return
+
                 if (!character.isPlayer)
                     return
 
@@ -273,7 +279,7 @@ PhysicsItem {
                     if (!character.weapon)
                         return ""
 
-                    return dataDirectory + Game.engine.player.weapon.imageName
+                    return dataDirectory + character.weapon.imageName
                 }
             }
         }
@@ -327,7 +333,7 @@ PhysicsItem {
                     if (!character.firearm)
                         return ""
 
-                    return dataDirectory + Game.engine.player.firearm.imageName
+                    return dataDirectory + character.firearm.imageName
                 }
             }
         }
@@ -586,7 +592,7 @@ PhysicsItem {
                 if (!character.weapon)
                     return ""
 
-                return dataDirectory + Game.engine.player.weapon.imageName
+                return dataDirectory + character.weapon.imageName
             }
         }
 
@@ -664,7 +670,7 @@ PhysicsItem {
                 if (!character.firearm)
                     return ""
 
-                return dataDirectory + Game.engine.player.firearm.imageName
+                return dataDirectory + character.firearm.imageName
             }
         }
 

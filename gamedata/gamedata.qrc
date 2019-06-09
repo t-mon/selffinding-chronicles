@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>maps/test-map.json</file>
+        <file>maps/firetest.json</file>
         <file>gamedata/plants/healing-herb.json</file>
         <file>gamedata/trees/tree-1.json</file>
         <file>fonts/EBGaramond/EBGaramond08-Italic.ttf</file>

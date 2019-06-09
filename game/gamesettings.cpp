@@ -1,6 +1,9 @@
 #include "gamesettings.h"
 #include "debugcategories.h"
 
+#include <QDir>
+#include <QFile>
+
 GameSettings::GameSettings(QObject *parent) :
     QObject(parent)
 {
@@ -69,6 +72,12 @@ void GameSettings::setWindowPosition(const QPoint &windowPosition)
     m_settings->setValue("position", m_windowPosition);
     m_settings->endGroup(); // window
     m_settings->endGroup(); // Game
+}
+
+QString GameSettings::settingsPath() const
+{
+    QFileInfo settingsFileInfo(m_settings->fileName());
+    return settingsFileInfo.canonicalPath();
 }
 
 PlayerController::ControlMode GameSettings::controlMode() const

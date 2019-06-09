@@ -30,6 +30,8 @@ public:
     QPoint windowPosition() const;
     void setWindowPosition(const QPoint &windowPosition);
 
+    QString settingsPath() const;
+
     // Game
     PlayerController::ControlMode controlMode() const;
     void setControlMode(PlayerController::ControlMode controlMode);

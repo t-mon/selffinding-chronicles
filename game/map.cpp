@@ -15,6 +15,14 @@ Map::Map(QObject *parent) : QObject(parent)
     m_characters = new GameItems(this);
 }
 
+Map::Map(GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
+    QObject(parent)
+{
+    m_items = items;
+    m_enemies = enemies;
+    m_characters = characters;
+}
+
 Map::~Map()
 {
 

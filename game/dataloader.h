@@ -50,14 +50,35 @@ public:
     static void fillCharacterItemData(Character *character, const QVariantMap &characterMap);
     static void fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap);
 
+    // Save
+    static QVariantMap gameItemToVariantMap(GameItem *item);
+    static QVariantList gameItemsToVariantList(GameItems *items);
+    static QVariantMap enemieToVariantMap(Enemy *enemy);
+
+    static QVariantList charactersToVariantList(GameItems *characters);
+    static QVariantMap characterToVariantMap(Character *character);
+
+    static QVariantList pathsToVariantList(const QList<Path *> paths);
+    static QVariantMap pathToVariantMap(Path *path);
+
+    static QVariantList pathSegmentsToVariantList(const QList<PathSegment> &pathSegments);
+    static QVariantMap pathSegmentToVariantMap(const PathSegment &pathSegment);
+
     // Convert
     static GameObject::Shape convertShapeString(const QString &shapeString);
     static GameObject::BodyType convertBodyTypeString(const QString &bodyTypeString);
-    static Character::Gender convertGenderString(const QString &genderString);
-    static Character::Role convertRoleString(const QString &roleString);
     static FirearmItem::FirearmType convertFirearmTypeString(const QString &firearmTypeString);
-    static PathSegment::Type convertPathSegmentTypeString(const QString &pathSegmentTypeString);
     static QString getItemIdFromResourcePath(const QString &resourcePath);
+
+    static PathSegment::Type convertPathSegmentTypeString(const QString &pathSegmentTypeString);
+    static QString pathSegmentTypeToString(PathSegment::Type pathSegmentType);
+
+    static Character::Gender convertGenderString(const QString &genderString);
+    static QString genderToString(Character::Gender gender);
+
+    static Character::Role convertRoleString(const QString &roleString);
+    static QString roleToString(Character::Role role);
+
 };
 
 #endif // DATALOADER_H

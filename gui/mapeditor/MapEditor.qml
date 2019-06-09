@@ -26,6 +26,7 @@ GamePage {
         RowLayout {
             anchors.fill: parent
             HeaderButton {
+                enabled: !workingOverlay.visible
                 imageSource: dataDirectory + "/icons/back.svg"
                 onClicked: pageStack.pop()
             }
@@ -84,7 +85,8 @@ GamePage {
 
                         Item {
                             id: availableItems
-                            anchors.fill: parent
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
                             ListView {
                                 id: itemsListView
@@ -112,12 +114,16 @@ GamePage {
 
                         Item {
                             id: visibleItems
-                            anchors.fill: parent
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            // Repeater for visible items
                         }
 
                         Item {
                             id: settings
-                            anchors.fill: parent
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
                             property bool itemDebug: false
                             property bool physicsDebug: false
@@ -177,6 +183,17 @@ GamePage {
                                     CheckBox {
                                         onCheckedChanged: settings.gridSnapping = checked
                                         Component.onCompleted: checked = settings.gridSnapping
+                                    }
+                                }
+
+                                Button {
+                                    id: saveButton
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: app.margins
+
+                                    text: qsTr("Save map")
+                                    onClicked: {
+                                        Game.mapEditor.saveMap()
                                     }
                                 }
                             }
@@ -256,7 +273,7 @@ GamePage {
 
                         Rectangle {
                             anchors.fill: parent
-                            color: Game.mapEditor.dataManager.worldBackgroundColor
+                            color: "#307a78"
                         }
 
                         WorldBoundaries {
@@ -333,12 +350,12 @@ GamePage {
                     //preventStealing: true
 
                     onMouseXChanged: {
-                        console.log("--> mouse position changed", mouseX, mouseY)
+                        //console.log("--> mouse position changed", mouseX, mouseY)
                         mainItem.updatePositions()
                     }
 
                     onMouseYChanged: {
-                        console.log("--> mouse position changed", mouseX, mouseY)
+                        //console.log("--> mouse position changed", mouseX, mouseY)
                         mainItem.updatePositions()
                     }
 
@@ -352,6 +369,46 @@ GamePage {
                 }
             }
         }
+    }
+
+    Item {
+        id: workingOverlay
+        anchors.fill: parent
+        visible: Game.mapEditor.dataManager.state != DataManager.StateIdle
+
+        Rectangle {
+            id: loadingScreen
+            anchors.fill: parent
+            color: app.backgroundColor
+
+            Column {
+                id: loadingColumn
+                anchors.centerIn: parent
+
+                GameLabel {
+                    id: loadingLabel
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: {
+                        switch (Game.mapEditor.dataManager.state) {
+                        case DataManager.StateLoading:
+                            return qsTr("Loading...")
+                        case DataManager.StateSaving:
+                            return qsTr("Saving...")
+                        default:
+                            return ""
+                        }
+                    }
+                    font.pixelSize: app.largeFont
+                    color: "white"
+                }
+
+                GameBusyIndicator {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    running: true
+                }
+            }
+        }
+
     }
 }
 

@@ -33,6 +33,7 @@ public:
     Q_ENUM(Layer)
 
     explicit Map(QObject *parent = nullptr);
+    Map(GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent = nullptr);
     ~Map();
 
     QSize size() const;

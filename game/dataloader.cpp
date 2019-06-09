@@ -361,6 +361,117 @@ void DataLoader::fillChestItemData(ChestItem *chestItem, const QVariantMap &ches
     chestItem->setLocked(chestMap.value("locked", false).toBool());
 }
 
+QVariantMap DataLoader::gameItemToVariantMap(GameItem *item)
+{
+    QVariantMap itemMap;
+    itemMap.insert("x", item->position().x());
+    itemMap.insert("y", item->position().y());
+    itemMap.insert("data", item->resourcePath());
+    return itemMap;
+}
+
+QVariantList DataLoader::gameItemsToVariantList(GameItems *items)
+{
+    QVariantList gameItemsList;
+    foreach (GameItem *item, items->gameItems()) {
+        gameItemsList.append(gameItemToVariantMap(item));
+    }
+    return gameItemsList;
+}
+
+QVariantMap DataLoader::enemieToVariantMap(Enemy *enemy)
+{
+    QVariantMap enemyMap;
+    enemyMap.insert("x", enemy->position().x());
+    enemyMap.insert("y", enemy->position().y());
+    enemyMap.insert("data", enemy->resourcePath());
+    enemyMap.insert("character", characterToVariantMap(qobject_cast<Character *>(enemy)));
+    return enemyMap;
+}
+
+QVariantList DataLoader::charactersToVariantList(GameItems *characters)
+{
+    QVariantList charactersList;
+    foreach (GameItem *characterItem, characters->gameItems()) {
+        charactersList.append(characterToVariantMap(qobject_cast<Character *>(characterItem)));
+    }
+    return charactersList;
+}
+
+QVariantMap DataLoader::characterToVariantMap(Character *character)
+{
+    QVariantMap characterMap;
+    characterMap.insert("x", character->position().x());
+    characterMap.insert("y", character->position().y());
+    characterMap.insert("data", character->resourcePath());
+    QVariantMap charachterPropertyMap;
+    charachterPropertyMap.insert("gender", genderToString(character->gender()));
+    charachterPropertyMap.insert("role", roleToString(character->role()));
+    charachterPropertyMap.insert("experience", character->experience());
+    charachterPropertyMap.insert("health", character->health());
+    charachterPropertyMap.insert("healthMax", character->healthMax());
+    charachterPropertyMap.insert("mana", character->mana());
+    charachterPropertyMap.insert("manaMax", character->manaMax());
+    charachterPropertyMap.insert("wisdom", character->wisdom());
+    charachterPropertyMap.insert("strength", character->strength());
+    charachterPropertyMap.insert("weapon", character->weapon() ? character->weapon()->resourcePath() : QString());
+    charachterPropertyMap.insert("firearm", character->firearm() ? character->firearm()->resourcePath() : QString());
+    QVariantList inventoryItemList;
+    foreach (GameItem *inventoryItem, character->inventory()->gameItems()) {
+        QVariantMap inventoryItemMap;
+        inventoryItemMap.insert("data", inventoryItem->resourcePath());
+        inventoryItemList.append(inventoryItemMap);
+    }
+    charachterPropertyMap.insert("inventory", inventoryItemList);
+    charachterPropertyMap.insert("paths", pathsToVariantList(character->paths()));
+
+    characterMap.insert("character", charachterPropertyMap);
+
+    return characterMap;
+}
+
+QVariantList DataLoader::pathsToVariantList(const QList<Path *> paths)
+{
+    QVariantList pathsList;
+    foreach (Path *path, paths) {
+        pathsList.append(pathToVariantMap(path));
+    }
+    return pathsList;
+}
+
+QVariantMap DataLoader::pathToVariantMap(Path *path)
+{
+    QVariantMap pathMap;
+    pathMap.insert("id", path->id());
+    QVariantList segmentsList;
+    foreach (const PathSegment &segment, path->pathSegments()) {
+        segmentsList.append(pathSegmentToVariantMap(segment));
+    }
+    pathMap.insert("segments", segmentsList);
+    return pathMap;
+}
+
+QVariantList DataLoader::pathSegmentsToVariantList(const QList<PathSegment> &pathSegments)
+{
+    QVariantList pathSegmentsList;
+    foreach (const PathSegment &pathSegment, pathSegments) {
+        pathSegmentsList.append(pathSegmentToVariantMap(pathSegment));
+    }
+    return pathSegmentsList;
+}
+
+QVariantMap DataLoader::pathSegmentToVariantMap(const PathSegment &pathSegment)
+{
+    QVariantMap pathSegmentMap;
+    pathSegmentMap.insert("type", pathSegmentTypeToString(pathSegment.type()));
+    pathSegmentMap.insert("offsetX", pathSegment.offset().x());
+    pathSegmentMap.insert("offsetY", pathSegment.offset().y());
+    pathSegmentMap.insert("speed", pathSegment.speed());
+    pathSegmentMap.insert("angle", pathSegment.angle());
+    pathSegmentMap.insert("duration", pathSegment.duration());
+    return pathSegmentMap;
+}
+
 GameObject::Shape DataLoader::convertShapeString(const QString &shapeString)
 {
     GameObject::Shape shape = GameObject::ShapeNone;
@@ -391,6 +502,56 @@ GameObject::BodyType DataLoader::convertBodyTypeString(const QString &bodyTypeSt
     return bodyType;
 }
 
+FirearmItem::FirearmType DataLoader::convertFirearmTypeString(const QString &firearmTypeString)
+{
+    FirearmItem::FirearmType type = FirearmItem::FirearmTypeBow;
+    if (firearmTypeString.toLower() == "bow") {
+        type = FirearmItem::FirearmTypeBow;
+    } else if (firearmTypeString.toLower() == "crossbow") {
+        type = FirearmItem::FirearmTypeCrossbow;
+    } else {
+        qCWarning(dcMap()) << "Invalid firearm type" << firearmTypeString;
+    }
+    return type;
+}
+
+QString DataLoader::getItemIdFromResourcePath(const QString &resourcePath)
+{
+    return QString(QCryptographicHash::hash(resourcePath.toUtf8(), QCryptographicHash::Md5).toHex());
+}
+
+PathSegment::Type DataLoader::convertPathSegmentTypeString(const QString &pathSegmentTypeString)
+{
+    PathSegment::Type type = PathSegment::TypeSegment;
+    if (pathSegmentTypeString.toLower() == "segment") {
+        type = PathSegment::TypeSegment;
+    } else if (pathSegmentTypeString.toLower() == "rotate") {
+        type = PathSegment::TypeRotate;
+    } else if (pathSegmentTypeString.toLower() == "pause") {
+        type = PathSegment::TypePause;
+    } else {
+        qCWarning(dcMap()) << "Invalid path segment type" << pathSegmentTypeString;
+    }
+    return type;
+}
+
+QString DataLoader::pathSegmentTypeToString(PathSegment::Type pathSegmentType)
+{
+    QString pathSegmentTypeString;
+    switch (pathSegmentType) {
+    case PathSegment::TypeSegment:
+        pathSegmentTypeString = "segment";
+        break;
+    case PathSegment::TypeRotate:
+        pathSegmentTypeString = "rotate";
+        break;
+    case PathSegment::TypePause:
+        pathSegmentTypeString = "pause";
+        break;
+    }
+    return pathSegmentTypeString;
+}
+
 Character::Gender DataLoader::convertGenderString(const QString &genderString)
 {
     Character::Gender gender = Character::Male;
@@ -400,6 +561,20 @@ Character::Gender DataLoader::convertGenderString(const QString &genderString)
         gender = Character::Female;
     }
     return gender;
+}
+
+QString DataLoader::genderToString(Character::Gender gender)
+{
+    QString genderString;
+    switch (gender) {
+    case Character::Male:
+        genderString = "male";
+        break;
+    case Character::Female:
+        genderString = "female";
+        break;
+    }
+    return genderString;
 }
 
 Character::Role DataLoader::convertRoleString(const QString &roleString)
@@ -425,35 +600,39 @@ Character::Role DataLoader::convertRoleString(const QString &roleString)
     return role;
 }
 
-FirearmItem::FirearmType DataLoader::convertFirearmTypeString(const QString &firearmTypeString)
+QString DataLoader::roleToString(Character::Role role)
 {
-    FirearmItem::FirearmType type = FirearmItem::FirearmTypeBow;
-    if (firearmTypeString.toLower() == "bow") {
-        type = FirearmItem::FirearmTypeBow;
-    } else if (firearmTypeString.toLower() == "crossbow") {
-        type = FirearmItem::FirearmTypeCrossbow;
-    } else {
-        qCWarning(dcMap()) << "Invalid firearm type" << firearmTypeString;
-    }
-    return type;
-}
+    QString roleString;
 
-PathSegment::Type DataLoader::convertPathSegmentTypeString(const QString &pathSegmentTypeString)
-{
-    PathSegment::Type type = PathSegment::TypeSegment;
-    if (pathSegmentTypeString.toLower() == "segment") {
-        type = PathSegment::TypeSegment;
-    } else if (pathSegmentTypeString.toLower() == "rotate") {
-        type = PathSegment::TypeRotate;
-    } else if (pathSegmentTypeString.toLower() == "pause") {
-        type = PathSegment::TypePause;
-    } else {
-        qCWarning(dcMap()) << "Invalid path segment type" << pathSegmentTypeString;
+    switch (role) {
+    case Character::None:
+        roleString = "none";
+        break;
+    case Character::Player:
+        roleString = "player";
+        break;
+    case Character::Statist:
+        roleString = "statist";
+        break;
+    case Character::Friend:
+        roleString = "friend";
+        break;
+    case Character::Enemy:
+        roleString = "enemy";
+        break;
+    case Character::Professor:
+        roleString = "professor";
+        break;
+    case Character::Magician:
+        roleString = "magician";
+        break;
+    case Character::Warrior:
+        roleString = "warrior";
+        break;
+    case Character::Dealer:
+        roleString = "dealer";
+        break;
     }
-    return type;
-}
 
-QString DataLoader::getItemIdFromResourcePath(const QString &resourcePath)
-{
-    return QString(QCryptographicHash::hash(resourcePath.toUtf8(), QCryptographicHash::Md5).toHex());
+    return roleString;
 }

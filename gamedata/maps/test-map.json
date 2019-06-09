@@ -5,10 +5,6 @@
     "playerStartX": 5,
     "playerStartY": 5,
     "backgroundColor": "#307a78",
-    "defaultField": {
-        "accessable": true,
-        "imageName": "/images/world/base/accessable.png"
-    },
     "items": [
         {
             "x": 1,

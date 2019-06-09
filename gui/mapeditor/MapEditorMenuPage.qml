@@ -18,7 +18,9 @@ GamePage {
             Layout.fillWidth: true
             text: qsTr("Create new map")
             font.pixelSize: app.largeFont
-            onClicked: pageStack.push(Qt.resolvedUrl("CreateNewMapPage.qml"))
+            onClicked: {
+                pageStack.push(Qt.resolvedUrl("CreateNewMapPage.qml"))
+            }
         }
 
         Button {

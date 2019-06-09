@@ -28,7 +28,8 @@ public:
         StateIdle,
         StateStarting,
         StateLoading,
-        StateSaving
+        StateSaving,
+        StateSavingMap
     };
     Q_ENUM(State)
 
@@ -74,9 +75,19 @@ private:
     void setWorldBackgroundColor(const QColor &color);
     void setSaveGameName(const QString &saveGameFileName);
 
-    // Worker methods
-    void loadSaveGame();
-    void saveSaveGame();
+    // Thread tasks
+    void startNewGameTask();
+    void startNewGameTaskFinished();
+
+    void loadGameTask();
+    void loadGameTaskFinished();
+
+    void saveGameTask();
+    void saveGameTaskFinished();
+
+    void saveMapTask();
+    void saveMapTaskFinished();
+
 
 protected:
     void run() override;
@@ -98,6 +109,7 @@ public slots:
     void resetData();
 
     void startNewGame();
+    void saveMap(Map *map, const QString &saveGameFileName);
     void saveGame(const QString &saveGameFileName);
     void loadGame(const QString &saveGameFileName);
 

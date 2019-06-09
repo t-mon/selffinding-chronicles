@@ -15,6 +15,7 @@ class GameMapEditor : public QObject
     Q_PROPERTY(GameItem *selectedGameItem READ selectedGameItem NOTIFY selectedGameItemChanged)
 
     Q_PROPERTY(Map *map READ map NOTIFY mapChanged)
+    Q_PROPERTY(DataManager *dataManager READ dataManager CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
@@ -38,6 +39,7 @@ public:
     Map *map() const;
     Q_INVOKABLE void createNewMap();
     Q_INVOKABLE void placeItemOnMap(const QString &resourcePath, const QPointF &position);
+    Q_INVOKABLE void saveMap();
 
 private:
     GameItems *m_availableItems = nullptr;

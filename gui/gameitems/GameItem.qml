@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import QtGraphicalEffects 1.0
 
 import Box2D 2.0
 import Chronicles 1.0
@@ -19,7 +20,10 @@ PhysicsItem {
     opacity: gameItem ? (gameItem.hidingPlayer ? 0.5 : 1) : 0
 
     onPlayerAuraRangeChanged: gameItem.playerVisible = playerAuraRange
-    onPlayerOnItemChanged: gameItem.playerOnItem = playerOnItem
+    onPlayerOnItemChanged: {
+        //console.log("Player on item", playerOnItem)
+        gameItem.playerOnItem = playerOnItem
+    }
 
     linearDamping: 2
     fixedRotation: true
@@ -179,6 +183,13 @@ PhysicsItem {
         source: gameItem ? dataDirectory + gameItem.imageName : ""
         opacity: root.itemDebugEnabled ? 0.5 : 1
     }
+
+    // TODO: show character begind item
+//    OpacityMask {
+//        anchors.fill: itemImage
+//        source: itemImage
+//        maskSource: null
+//    }
 
     ItemDescription {
         id: nameLabel
