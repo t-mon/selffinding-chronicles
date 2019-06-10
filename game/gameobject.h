@@ -16,6 +16,7 @@ class GameObject : public QObject
     Q_PROPERTY(QPointF centerPosition READ centerPosition NOTIFY positionChanged)
     Q_PROPERTY(double layer READ layer NOTIFY layerChanged)
     Q_PROPERTY(QSize size READ size NOTIFY sizeChanged)
+    Q_PROPERTY(bool active READ active NOTIFY activeChanged)
 
     Q_PROPERTY(Shape shape READ shape NOTIFY shapeChanged)
     Q_PROPERTY(BodyType bodyType READ bodyType NOTIFY bodyTypeChanged)
@@ -84,6 +85,9 @@ public:
     QSize size() const;
     void setSize(const QSize &size);
 
+    bool active() const;
+    void setActive(bool active);
+
     // Physics
     Shape shape() const;
     void setShape(Shape shape);
@@ -111,6 +115,7 @@ private:
     QPointF m_position;
     double m_layer = 0;
     QSize m_size = QSize(1, 1);
+    bool m_active = false;
 
     Shape m_shape = ShapeNone;
     BodyType m_bodyType = BodyTypeStatic;
@@ -125,6 +130,7 @@ signals:
     void positionChanged(const QPointF &position);
     void layerChanged(double layer);
     void sizeChanged(const QSize &size);
+    void activeChanged(bool active);
 
     void shapeChanged(Shape shape);
     void bodyTypeChanged(BodyType bodyType);

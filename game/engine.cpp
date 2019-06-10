@@ -632,6 +632,8 @@ void Engine::onGameItemActiveChanged(GameItem *item, bool active)
             break;
         }
     }
+
+    item->setActive(active);
 }
 
 void Engine::onItemPlayerVisibleChanged(bool playerVisible)

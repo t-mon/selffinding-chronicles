@@ -66,11 +66,19 @@ GamePage {
                     worldObject: worldItem
                 }
 
-//                ParticleSystem {
-//                    id: particles
-//                    anchors.fill: parent
-//                    running: true
-//                }
+                ParticleSystem {
+                    id: particles
+                    anchors.fill: parent
+                    running: true
+
+                    ImageParticle {
+                        id: flameImageParticle
+                        groups: ["flame"]
+                        source: dataDirectory + "/images/game/glowdot.png"
+                        color: "#11ff400f"
+                        colorVariation: 0.2
+                    }
+                }
 
                 Repeater {
                     id: characersRepeater
@@ -83,6 +91,7 @@ GamePage {
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
                         z: model.layer
+                        particleSystem: particles
                         onXChanged: if (character && character.isPlayer) moveCamera()
                         onYChanged: if (character && character.isPlayer) moveCamera()
                         Component.onCompleted: if (character && character.isPlayer) moveCamera()
@@ -117,29 +126,29 @@ GamePage {
                     }
                 }
 
-//                Rectangle {
-//                    id: viewWindowRectangle
-//                    x: Game.engine.viewWindow.x * app.gridSize
-//                    y: Game.engine.viewWindow.y * app.gridSize
-//                    width: Game.engine.viewWindow.width * app.gridSize
-//                    height: Game.engine.viewWindow.height * app.gridSize
-//                    opacity: 0.2
-//                    color: "white"
-//                }
+                //                Rectangle {
+                //                    id: viewWindowRectangle
+                //                    x: Game.engine.viewWindow.x * app.gridSize
+                //                    y: Game.engine.viewWindow.y * app.gridSize
+                //                    width: Game.engine.viewWindow.width * app.gridSize
+                //                    height: Game.engine.viewWindow.height * app.gridSize
+                //                    opacity: 0.2
+                //                    color: "white"
+                //                }
 
-//                FlameItem {
-//                    id: fireItem
-//                    enabled: true
-//                    turbulence: debugControls.turbulenceEnabled
-//                    width: app.gridSize * 6
-//                    height: app.gridSize * 6
-//                    x: app.gridSize * 4
-//                    y: app.gridSize * 4
-//                    angle: 270
-//                    angleVariation: 30
-//                    magnitude: 30
+                //                FlameItem {
+                //                    id: fireItem
+                //                    enabled: true
+                //                    turbulence: debugControls.turbulenceEnabled
+                //                    width: app.gridSize * 6
+                //                    height: app.gridSize * 6
+                //                    x: app.gridSize * 4
+                //                    y: app.gridSize * 4
+                //                    angle: 270
+                //                    angleVariation: 30
+                //                    magnitude: 30
 
-//                }
+                //                }
             }
 
             Weather {

@@ -181,6 +181,12 @@ void Character::setMovementVector(const QPointF &movementVector)
 
     m_movementVector = movementVector;
     emit movementVectorChanged(m_movementVector);
+
+    if (m_movementVector.isNull()) {
+        setMoving(false);
+    } else {
+        setMoving(true);
+    }
 }
 
 bool Character::isPlayer() const

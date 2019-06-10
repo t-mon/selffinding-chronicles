@@ -1,0 +1,32 @@
+{
+    "backgroundColor": "#5f9ea0",
+    "characters": [
+    ],
+    "height": 100,
+    "items": [
+        {
+            "data": ":/gamedata/trees/tree-1.json",
+            "x": 9.644578313253012,
+            "y": 2.174698795180723
+        },
+        {
+            "data": ":/gamedata/trees/tree-1.json",
+            "x": 13.102409638554217,
+            "y": 3.319277108433735
+        },
+        {
+            "data": ":/gamedata/plants/mana-herb.json",
+            "x": 13.75301204819277,
+            "y": 9.391566265060241
+        },
+        {
+            "data": ":/gamedata/plants/healing-herb.json",
+            "x": 12.451807228915662,
+            "y": 9.13855421686747
+        }
+    ],
+    "name": "Map name",
+    "playerStartX": 0,
+    "playerStartY": 0,
+    "width": 100
+}

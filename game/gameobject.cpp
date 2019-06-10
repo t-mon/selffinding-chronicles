@@ -65,6 +65,20 @@ void GameObject::setSize(const QSize &size)
     emit sizeChanged(m_size);
 }
 
+bool GameObject::active() const
+{
+    return m_active;
+}
+
+void GameObject::setActive(bool active)
+{
+    if (m_active == active)
+        return;
+
+    m_active = active;
+    emit activeChanged(m_active);
+}
+
 GameObject::Shape GameObject::shape() const
 {
     return m_shape;

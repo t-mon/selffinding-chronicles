@@ -60,6 +60,19 @@ GamePage {
             }
         }
 
+        RowLayout {
+            Label {
+                text: qsTr("Background color")
+                color: "white"
+            }
+
+            TextField {
+                id: backgroundColorField
+                text: "#307a78"
+                Layout.fillWidth: true
+            }
+        }
+
         Item {
             id: spacingItem
             Layout.fillWidth: true
@@ -85,6 +98,7 @@ GamePage {
                     Game.mapEditor.createNewMap()
                     Game.mapEditor.map.name = mapNameField.text;
                     Game.mapEditor.map.size = Qt.size(mapWidthSponBox.value, mapHeightSponBox.value)
+                    Game.mapEditor.map.backgroundColor = backgroundColorField.text
                     pageStack.push(Qt.resolvedUrl("MapEditor.qml"))
                 }
             }
