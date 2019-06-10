@@ -54,6 +54,32 @@ PhysicsItem {
         }
     }
 
+    Connections {
+        target: root.character
+        onHeadingChanged: evaluateSpriteState()
+        onMovingChanged: evaluateSpriteState()
+    }
+
+    function evaluateSpriteState() {
+        if (!root.character)
+            return
+
+        if (root.character.moving) {
+            if (root.character.heading === Character.HeadingLeft) {
+                characterSpriteSequence.jumpTo("running-left")
+            } else {
+                characterSpriteSequence.jumpTo("running-right")
+            }
+        } else {
+            if (root.character.heading === Character.HeadingLeft) {
+                characterSpriteSequence.jumpTo("idle-left")
+            } else {
+                characterSpriteSequence.jumpTo("idle-right")
+            }
+        }
+    }
+
+
     fixtures: [
         Circle {
             id: bodyCircle
@@ -398,13 +424,55 @@ PhysicsItem {
             }
         }
 
-        Image {
-            id: playerImage
+        SpriteSequence {
+            id: characterSpriteSequence
             anchors.fill: frame
-            mirror: character ? character.heading === Character.HeadingLeft : false
-            source: dataDirectory + "/images/characters/player-male.png"
             opacity: root.itemDebugEnabled ? 0.5 : 1
+            interpolate: false
+
+            sprites: [
+                Sprite {
+                    source: dataDirectory + "/images/characters/character-run/run-left.png"
+                    name: "running-left"
+                    frameCount: 4
+                    frameWidth: 500
+                    frameHeight: 500
+                    frameDuration: 200
+                },
+                Sprite {
+                    source: dataDirectory + "/images/characters/character-run/run-right.png"
+                    name: "running-right"
+                    frameCount: 4
+                    frameWidth: 500
+                    frameHeight: 500
+                    frameDuration: 200
+                },
+                Sprite {
+                    source: dataDirectory + "/images/characters/character-idle/idle-right.png"
+                    name: "idle-right"
+                    frameCount: 1
+                    frameWidth: 500
+                    frameHeight: 500
+                    frameDuration: 0
+                },
+                Sprite {
+                    source: dataDirectory + "/images/characters/character-idle/idle-left.png"
+                    name: "idle-left"
+                    frameCount: 1
+                    frameWidth: 500
+                    frameHeight: 500
+                    frameDuration: 0
+                }
+            ]
         }
+
+        //        Image {
+        //            id: playerImage
+        //            anchors.fill: frame
+        //            mirror: character ? character.heading === Character.HeadingLeft : false
+        //            source: dataDirectory + "/images/characters/player-male.png"
+        //            opacity: root.itemDebugEnabled ? 0.5 : 1
+        //        }
     }
 
     Timer {
