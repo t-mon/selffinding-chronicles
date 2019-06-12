@@ -337,6 +337,34 @@ GamePage {
     }
 
     ShaderEffect {
+        id: grayscaleShader
+        visible: debugControls.grayscaleEnabled
+        width: parent.width
+        height: parent.height
+        property var source: shaderEffectSource
+
+        vertexShader: "
+              uniform highp mat4 qt_Matrix;
+              attribute highp vec4 qt_Vertex;
+              attribute highp vec2 qt_MultiTexCoord0;
+              varying highp vec2 coord;
+              void main() {
+                  coord = qt_MultiTexCoord0;
+                  gl_Position = qt_Matrix * qt_Vertex;
+              }"
+        fragmentShader: "
+              varying highp vec2 coord;
+              uniform sampler2D source;
+              uniform lowp float qt_Opacity;
+              void main() {
+                  lowp vec4 tex = texture2D(source, coord);
+                  gl_FragColor = vec4(vec3(dot(tex.rgb,
+                                      vec3(0.344, 0.5, 0.156))),
+                                           tex.a) * qt_Opacity;
+              }"
+    }
+
+    ShaderEffect {
         id: stonedShader
         width: parent.width
         height: parent.height

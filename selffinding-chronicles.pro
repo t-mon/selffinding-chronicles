@@ -20,6 +20,7 @@ HEADERS += \
     game/game.h \
     game/field.h \
     game/fields.h \
+    game/items/literatureitem.h \
     game/map.h \
     game/debugcategories.h \
     game/playercontroller.h \
@@ -55,6 +56,7 @@ SOURCES += game/main.cpp \
     game/game.cpp \
     game/field.cpp \
     game/fields.cpp \
+    game/items/literatureitem.cpp \
     game/map.cpp \
     game/debugcategories.cpp \
     game/playercontroller.cpp \

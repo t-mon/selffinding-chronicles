@@ -41,7 +41,8 @@ public:
         TypeEnemy,
         TypeArmor,
         TypeMagicArtefact,
-        TypePotion
+        TypePotion,
+        TypeLiterature
     };
     Q_ENUM(Type)
 

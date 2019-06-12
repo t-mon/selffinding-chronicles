@@ -60,6 +60,9 @@ PhysicsItem {
         onMovingChanged: evaluateSpriteState()
     }
 
+    onCharacterChanged: evaluateSpriteState()
+
+
     function evaluateSpriteState() {
         if (!root.character)
             return
@@ -432,22 +435,6 @@ PhysicsItem {
 
             sprites: [
                 Sprite {
-                    source: dataDirectory + "/images/characters/character-run/run-left.png"
-                    name: "running-left"
-                    frameCount: 4
-                    frameWidth: 500
-                    frameHeight: 500
-                    frameDuration: 200
-                },
-                Sprite {
-                    source: dataDirectory + "/images/characters/character-run/run-right.png"
-                    name: "running-right"
-                    frameCount: 4
-                    frameWidth: 500
-                    frameHeight: 500
-                    frameDuration: 200
-                },
-                Sprite {
                     source: dataDirectory + "/images/characters/character-idle/idle-right.png"
                     name: "idle-right"
                     frameCount: 1
@@ -462,6 +449,22 @@ PhysicsItem {
                     frameWidth: 500
                     frameHeight: 500
                     frameDuration: 0
+                },
+                Sprite {
+                    source: dataDirectory + "/images/characters/character-run/run-left.png"
+                    name: "running-left"
+                    frameCount: 4
+                    frameWidth: 500
+                    frameHeight: 500
+                    frameDuration: 200
+                },
+                Sprite {
+                    source: dataDirectory + "/images/characters/character-run/run-right.png"
+                    name: "running-right"
+                    frameCount: 4
+                    frameWidth: 500
+                    frameHeight: 500
+                    frameDuration: 200
                 }
             ]
         }

@@ -14,6 +14,7 @@
 #include "items/character.h"
 #include "items/enemy.h"
 #include "items/chestitem.h"
+#include "items/literatureitem.h"
 
 class DataLoader
 {
@@ -27,6 +28,7 @@ public:
     static TreeItem *createTreeItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static WeaponItem *createWeaponItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static FirearmItem *createFirearmItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static LiteratureItem *createLiteratureItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
 
     static Character *createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static Enemy *createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
@@ -68,6 +70,7 @@ public:
     static GameObject::Shape convertShapeString(const QString &shapeString);
     static GameObject::BodyType convertBodyTypeString(const QString &bodyTypeString);
     static FirearmItem::FirearmType convertFirearmTypeString(const QString &firearmTypeString);
+    static LiteratureItem::LiteratureType convertLiteratureTypeString(const QString &literatureTypeString);
     static QString getItemIdFromResourcePath(const QString &resourcePath);
 
     static PathSegment::Type convertPathSegmentTypeString(const QString &pathSegmentTypeString);

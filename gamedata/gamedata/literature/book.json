@@ -1,0 +1,29 @@
+{
+    "name": "Book",
+    "type": "literature",
+    "imageName": "/images/items/plants/mana-herb.png",
+    "geometry": {
+        "width": 1,
+        "height": 1,
+        "layer": 1
+    },
+
+    "physicsGeometry": {
+        "body": "dynamic",
+        "shape": "circle",
+        "width": 1,
+        "height": 1,
+        "x": 0,
+        "y": 0,
+        "category": 4,
+        "collision": 32,
+        "vertices": []
+    },
+
+    "literature": {
+        "literatureType": "book",
+        "title": "The first book",
+        "description": "This is a test book",
+        "text": "This book shows some content for testing."
+    }
+}

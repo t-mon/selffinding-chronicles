@@ -10,6 +10,7 @@ Item {
     property bool itemDebugEnabled: false
     property bool physicsDebugEnabled: false
     property bool stonedEnabled: false
+    property bool grayscaleEnabled: false
     property bool flamesEnabled: true
     property bool rainingEnabled: false
     property bool snowingEnabled: false
@@ -74,6 +75,14 @@ Item {
                 }
 
                 GameButton {
+                    id: grayscaleEnabledButton
+                    width: parent.width
+                    text: root.grayscaleEnabled ? "Grayscale OFF" : "Grayscale ON"
+                    color: root.grayscaleEnabled ? "green" : "white"
+                    onClicked: root.grayscaleEnabled = !root.grayscaleEnabled
+                }
+
+                GameButton {
                     id: flamesEnabledButton
                     width: parent.width
                     text: root.flamesEnabled ? "Flame arrow OFF" : "Flames arrow ON"
@@ -112,7 +121,5 @@ Item {
                 }
             }
         }
-
     }
-
 }

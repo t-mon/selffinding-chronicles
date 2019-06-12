@@ -78,6 +78,23 @@ FirearmItem *DataLoader::createFirearmItem(const QString &resourcePath, const QV
     return firearmItem;
 }
 
+LiteratureItem *DataLoader::createLiteratureItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+{
+    LiteratureItem *literatureItem = new LiteratureItem(parent);
+    literatureItem->setResourcePath(resourcePath);
+    literatureItem->setItemId(getItemIdFromResourcePath(resourcePath));
+    literatureItem->setPosition(position);
+    fillGameItemData(qobject_cast<GameItem *>(literatureItem), description);
+
+    QVariantMap literatureMap = description.value("literature").toMap();
+    literatureItem->setLiteratureType(convertLiteratureTypeString(literatureMap.value("literatureType").toString()));
+    literatureItem->setTitle(literatureMap.value("title").toString());
+    literatureItem->setDescription(literatureMap.value("description").toString());
+    literatureItem->setText(literatureMap.value("text").toString());
+
+    return literatureItem;
+}
+
 Character *DataLoader::createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     Character *character = new Character(parent);
@@ -277,6 +294,8 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &po
         return createEnemyObject(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "chest") {
         return createChestItem(resourcePath, itemMap, position, parent);
+    } else if (itemTypeString == "literature") {
+        return createLiteratureItem(resourcePath, itemMap, position, parent);
     } else {
         qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
     }
@@ -511,6 +530,19 @@ FirearmItem::FirearmType DataLoader::convertFirearmTypeString(const QString &fir
         type = FirearmItem::FirearmTypeCrossbow;
     } else {
         qCWarning(dcMap()) << "Invalid firearm type" << firearmTypeString;
+    }
+    return type;
+}
+
+LiteratureItem::LiteratureType DataLoader::convertLiteratureTypeString(const QString &literatureTypeString)
+{
+    LiteratureItem::LiteratureType type = LiteratureItem::LiteratureTypeBook;
+    if (literatureTypeString.toLower() == "book") {
+        type = LiteratureItem::LiteratureTypeBook;
+    } else if (literatureTypeString.toLower() == "script") {
+        type = LiteratureItem::LiteratureTypeScript;
+    } else {
+        qCWarning(dcMap()) << "Invalid literature type type" << literatureTypeString;
     }
     return type;
 }
