@@ -96,26 +96,15 @@ GameOverlayItem {
                             case GameItem.TypeWeapon:
                             case GameItem.TypeFirearm:
                                 return qsTr("Arm");
+                            case GameItem.TypeLiterature:
+                                return qsTr("Read");
                             default:
                                 return qsTr("Use");
                             }
                         }
                         onClicked: {
                             console.log("Use clicked for", inventoryContentItem.selectedItem, inventoryContentItem.selectedItem.itemTypeName)
-                            switch (inventoryContentItem.selectedItem.itemType) {
-                            case GameItem.TypeWeapon:
-                                Game.engine.player.weapon = inventoryContentItem.selectedItem
-                                break;
-                            case GameItem.TypeFirearm:
-                                Game.engine.player.firearm = inventoryContentItem.selectedItem
-                                break;
-                            case GameItem.TypePlant:
-                                Game.engine.useInventoryItem(inventoryContentItem.selectedItem.itemId)
-                                break;
-                            default:
-                                console.log("Not implemented yet for item", inventoryContentItem.selectedItem.itemTypeName)
-                                break;
-                            }
+                            inventoryContentItem.useCurrentItem()
                         }
                     }
 

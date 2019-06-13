@@ -34,6 +34,7 @@ class Engine : public QObject
 
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
+    Q_PROPERTY(LiteratureItem *currentLiteratureItem READ currentLiteratureItem NOTIFY currentLiteratureItemChanged)
     Q_PROPERTY(GameItems *currentPlunderItems READ currentPlunderItems NOTIFY currentPlunderItemsChanged)
 
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
@@ -52,7 +53,8 @@ public:
         StateTrade,
         StateConversation,
         StateUnlocking,
-        StatePlunder
+        StatePlunder,
+        StateRead
     };
     Q_ENUM(State)
 
@@ -78,6 +80,7 @@ public:
     GameItem *playerFocusItem() const;
     Conversation *currentConversation() const;
     ChestItem *currentChestItem() const;
+    LiteratureItem *currentLiteratureItem() const;
     GameItems *currentPlunderItems() const;
 
     bool loaded() const;
@@ -91,6 +94,7 @@ public:
 
     Q_INVOKABLE void giveUpUnlocking();
     Q_INVOKABLE void finishPlunder();
+    Q_INVOKABLE void finishReading();
     Q_INVOKABLE void useInventoryItem(const QString &itemId);
 
     Q_INVOKABLE void performHitAttack(Character *attacker, Character *victim, int damage);
@@ -116,7 +120,10 @@ private:
     Conversation *m_currentConversation = nullptr;
     Character *m_currentConversationCharacter = nullptr;
     ChestItem *m_currentChestItem = nullptr;
+    LiteratureItem *m_currentLiteratureItem = nullptr;
     GameItems *m_currentPlunderItems = nullptr;
+
+    bool m_keepInventoryOpen = false;
 
     // View properties
     QPoint m_currentPlayerPosition;
@@ -140,6 +147,7 @@ private:
 
     void setCurrentConversation(Conversation *conversation);
     void setCurrentChestItem(ChestItem *chestItem);
+    void setCurrentLiteratureItem(LiteratureItem *literatureItem);
     void setCurrentPlunderItems(GameItems *plunderItems);
 
     // Move methods
@@ -166,6 +174,7 @@ signals:
     void playerFocusItemChanged(GameItem *playerFocusItem);
     void currentConversationChanged(Conversation *conversation);
     void currentChestItemChanged(ChestItem *chestItem);
+    void currentLiteratureItemChanged(LiteratureItem *literatureItem);
     void currentPlunderItemsChanged(GameItems *plunderItems);
 
 private slots:

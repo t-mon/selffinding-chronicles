@@ -1,7 +1,7 @@
 {
     "name": "Book",
     "type": "literature",
-    "imageName": "/images/items/plants/mana-herb.png",
+    "imageName": "/images/items/literature/book.png",
     "geometry": {
         "width": 1,
         "height": 1,
@@ -21,9 +21,10 @@
     },
 
     "literature": {
+        "price": 500,
         "literatureType": "book",
         "title": "The first book",
         "description": "This is a test book",
-        "text": "This book shows some content for testing."
+        "text": "This book shows some content for testing. Long text long text more text and even more text. Long text long text more text and even more text. Long text long text more text and even more text. Long text long text more text and even more text. Long text long text more text and even more text. Long text long text more text and even more text. Long text long text more text and even more text. Long text long text more text and even more text.\n\nLong text long text more text and even more text.Long text long text more text and even more text.Long text long text more text and even more text.Long text long text more text and even more text."
     }
 }

@@ -23,6 +23,11 @@
             "data": ":/gamedata/plants/healing-herb.json",
             "x": 12.451807228915662,
             "y": 9.13855421686747
+        },
+        {
+            "data": ":/gamedata/literature/book.json",
+            "x": 5,
+            "y": 5
         }
     ],
     "name": "Map name",

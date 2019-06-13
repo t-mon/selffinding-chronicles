@@ -87,6 +87,7 @@ LiteratureItem *DataLoader::createLiteratureItem(const QString &resourcePath, co
     fillGameItemData(qobject_cast<GameItem *>(literatureItem), description);
 
     QVariantMap literatureMap = description.value("literature").toMap();
+    literatureItem->setPrice(literatureMap.value("price").toInt());
     literatureItem->setLiteratureType(convertLiteratureTypeString(literatureMap.value("literatureType").toString()));
     literatureItem->setTitle(literatureMap.value("title").toString());
     literatureItem->setDescription(literatureMap.value("description").toString());

@@ -238,6 +238,12 @@ GamePage {
             opacity: 0
         }
 
+        ReadLiteratureOverlay {
+            id: readItem
+            anchors.fill: parent
+            opacity: 0
+        }
+
         PauseMenuOverlay {
             id: pauseMenuItem
             anchors.fill: parent
@@ -254,6 +260,7 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
@@ -264,6 +271,7 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
 
                 StateChangeScript { script: { touchScreenGameOverlay.reset() } }
@@ -276,6 +284,7 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 1 }
             },
             State {
@@ -286,6 +295,7 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
@@ -296,6 +306,7 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 1 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
@@ -306,6 +317,7 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 1 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
@@ -316,6 +328,7 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
             },
             State {
@@ -326,6 +339,18 @@ GamePage {
                 PropertyChanges { target: inventoryItem; opacity: 0 }
                 PropertyChanges { target: unlockingItem; opacity: 0 }
                 PropertyChanges { target: plunderItem; opacity: 1 }
+                PropertyChanges { target: readItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
+            },
+            State {
+                name: "readState"
+                when: Game.engine.state === Engine.StateRead
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
+                PropertyChanges { target: conversationItem; opacity: 0 }
+                PropertyChanges { target: inventoryItem; opacity: 0 }
+                PropertyChanges { target: unlockingItem; opacity: 0 }
+                PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 1 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
             }
         ]

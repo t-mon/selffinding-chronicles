@@ -109,6 +109,11 @@ ChestItem *Engine::currentChestItem() const
     return m_currentChestItem;
 }
 
+LiteratureItem *Engine::currentLiteratureItem() const
+{
+    return m_currentLiteratureItem;
+}
+
 GameItems *Engine::currentPlunderItems() const
 {
     return m_currentPlunderItems;
@@ -171,22 +176,44 @@ void Engine::finishPlunder()
     setState(StateRunning);
 }
 
+void Engine::finishReading()
+{
+    qCDebug(dcEngine()) << "Finish reading";
+    setCurrentLiteratureItem(nullptr);
+    if (m_keepInventoryOpen) {
+        setState(StateInventory);
+        m_keepInventoryOpen = false;
+    } else {
+        setState(StateRunning);
+    }
+}
+
 void Engine::useInventoryItem(const QString &itemId)
 {
-    GameItem *item = m_player->inventory()->takeLastGameItem(itemId);
+    GameItem *item = m_player->inventory()->getLastGameItem(itemId);
     if (!item) {
         qCWarning(dcEngine()) << "There is no item with the given id in the inventory.";
         return;
     }
 
     qCDebug(dcEngine()) << "Use inventory item" << item;
-    item->deleteLater();
 
     switch (item->itemType()) {
     case GameItem::TypePlant: {
         PlantItem *plant = qobject_cast<PlantItem *>(item);
         m_player->setMana(m_player->mana() + plant->mana());
         m_player->setHealth(m_player->health() + plant->healing());
+        qCDebug(dcEngine()) << "Remove" << plant << "from inventory";
+        m_player->inventory()->removeGameItem(item);
+        item->deleteLater();
+        break;
+    }  
+    case GameItem::TypeLiterature: {
+        LiteratureItem *literature = qobject_cast<LiteratureItem *>(item);
+        qCDebug(dcEngine()) << "Read" << literature << "from inventory";
+        m_keepInventoryOpen = true;
+        setCurrentLiteratureItem(literature);
+        setState(StateRead);
         break;
     }
     default:
@@ -398,8 +425,8 @@ void Engine::setPlayer(Character *player)
         m_player->setMovable(true);
         m_playerController->setPlayer(m_player);
         connect(m_player, &Character::positionChanged, this, &Engine::onPlayerPositionChanged);
-//        evaluatePlayerFocus();
-//        onPlayerPositionChanged();
+        //        evaluatePlayerFocus();
+        //        onPlayerPositionChanged();
     }
 
 }
@@ -445,6 +472,15 @@ void Engine::setCurrentChestItem(ChestItem *chestItem)
         setCurrentPlunderItems(nullptr);
         m_player->setMovable(true);
     }
+}
+
+void Engine::setCurrentLiteratureItem(LiteratureItem *literatureItem)
+{
+    if (m_currentLiteratureItem == literatureItem)
+        return;
+
+    m_currentLiteratureItem = literatureItem;
+    emit currentLiteratureItemChanged(m_currentLiteratureItem);
 }
 
 void Engine::setCurrentPlunderItems(GameItems *plunderItems)
@@ -747,8 +783,22 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
                 setCurrentPlunderItems(enemy->inventory());
                 setState(StatePlunder);
             }
-
             break;
+        case GameItem::TypeLiterature: {
+            qCDebug(dcEngine()) << "Perform literature interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
+            LiteratureItem *literature = qobject_cast<LiteratureItem *>(m_playerFocusItem);
+            if (literature->interaction() == GameItem::InteractionPick) {
+                literature->setInteraction(GameItem::InteractionRead);
+                pickItem(m_playerFocusItem);
+                m_playerFocusItem = nullptr;
+                evaluatePlayerFocus();
+            }
+
+            if (literature->interaction() == GameItem::InteractionRead) {
+                // TODO:
+            }
+            break;
+        }
         default:
             qCWarning(dcEngine()) << "Unhandled action on item" << m_playerFocusItem;
             break;

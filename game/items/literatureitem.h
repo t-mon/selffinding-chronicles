@@ -54,4 +54,7 @@ signals:
 
 };
 
+QDebug operator<<(QDebug debug, LiteratureItem *literatureItem);
+
+
 #endif // LITERATUREITEM_H

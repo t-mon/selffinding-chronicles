@@ -59,5 +59,6 @@
         <file>mapeditor/MapEditorMenuPage.qml</file>
         <file>mapeditor/CreateNewMapPage.qml</file>
         <file>components/Weather.qml</file>
+        <file>gameoverlays/ReadLiteratureOverlay.qml</file>
     </qresource>
 </RCC>

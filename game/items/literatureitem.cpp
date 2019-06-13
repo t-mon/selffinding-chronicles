@@ -4,7 +4,7 @@
 LiteratureItem::LiteratureItem(QObject *parent) :
     GameItem(parent)
 {
-
+    setInteraction(GameItem::InteractionPick);
 }
 
 QString LiteratureItem::itemTypeName() const
@@ -76,4 +76,13 @@ void LiteratureItem::setText(const QString &text)
 
     m_text = text;
     emit textChanged(m_text);
+}
+
+QDebug operator<<(QDebug debug, LiteratureItem *literatureItem)
+{
+    debug.nospace() << "Literature("<< literatureItem->literatureType();
+    debug.nospace() << ", " << literatureItem->name();
+    debug.nospace() << ", " << literatureItem->description();
+    debug.nospace() << ")";
+    return debug.space();
 }

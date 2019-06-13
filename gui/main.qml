@@ -36,8 +36,8 @@ ApplicationWindow {
     property real borderWidth: gridSize / 14
 
     property real smallFont: gridSize * 0.5
-    property real mediumFont: gridSize * 0.6
-    property real largeFont: gridSize * 0.8
+    property real mediumFont: gridSize * 0.7
+    property real largeFont: gridSize
 
     property real iconSize: 40
     property real delegateHeight: 60

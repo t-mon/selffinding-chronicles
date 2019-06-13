@@ -10,6 +10,26 @@ Item {
 
     property GameItem selectedItem
 
+    function useCurrentItem() {
+        switch (selectedItem.itemType) {
+        case GameItem.TypeWeapon:
+            Game.engine.player.weapon = selectedItem
+            break;
+        case GameItem.TypeFirearm:
+            Game.engine.player.firearm = selectedItem
+            break;
+        case GameItem.TypePlant:
+            Game.engine.useInventoryItem(selectedItem.itemId)
+            break;
+        case GameItem.TypeLiterature:
+            Game.engine.useInventoryItem(selectedItem.itemId)
+            break;
+        default:
+            console.log("Not implemented yet for item", selectedItem.itemTypeName)
+            break;
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: app.margins / 2
@@ -38,6 +58,11 @@ Item {
                     name: qsTr("Plants")
                     image: "/images/items/plants/healing-herb.png"
                     type: GameItem.TypePlant
+                }
+                ListElement {
+                    name: qsTr("Literature")
+                    image: "/images/items/literature/book.png"
+                    type: GameItem.TypeLiterature
                 }
             }
 
@@ -119,11 +144,20 @@ Item {
 
             MouseArea {
                 anchors.fill: inventoryGridView
+                onDoubleClicked: {
+                    var clickedIndex = inventoryGridView.indexAt(mouseX, mouseY)
+                    console.log("Double clicked on --> " + clickedIndex)
+                    if (clickedIndex >= 0) {
+                        inventoryGridView.currentIndex = clickedIndex
+                        useCurrentItem();
+                    }
+                }
                 onClicked: {
                     var clickedIndex = inventoryGridView.indexAt(mouseX, mouseY)
                     console.log("Clicked on --> " + clickedIndex)
-                    if (clickedIndex >= 0)
+                    if (clickedIndex >= 0) {
                         inventoryGridView.currentIndex = clickedIndex
+                    }
                 }
             }
         }

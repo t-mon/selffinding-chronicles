@@ -154,6 +154,44 @@ Item {
             }
         }
 
+        GameLabel {
+            id: literatureTitleLabel
+            color: "white"
+            visible: {
+                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
+                    return false
+
+                return true
+            }
+
+            text: {
+                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
+                    return ""
+
+                var literatureItem = Game.castLiteratureItem(root.item)
+                return qsTr("Title") + ": " + literatureItem.title
+            }
+        }
+
+        GameLabel {
+            id: literatureDescriptionLabel
+            color: "white"
+            visible: {
+                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
+                    return false
+
+                return true
+            }
+
+            text: {
+                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
+                    return ""
+
+                var literatureItem = Game.castLiteratureItem(root.item)
+                return literatureItem.description
+            }
+        }
+
         Item {
             id: spacingItem
             Layout.fillWidth: true
