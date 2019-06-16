@@ -11,36 +11,20 @@ Item {
     property bool snowing: false
     property bool raining: false
     property bool turbulence: false
-    property var particleSystem: null
 
-    GridLayout {
-        id: weatherControllerGrid
+    Repeater {
+        id: weatherRepeater
         anchors.fill: parent
-
-        property real weatherCellSize: 10 * app.gridSize
-
-        rows: Math.round(root.height / weatherCellSize)
-        columns: Math.round(root.width / weatherCellSize)
-
-//        Repeater {
-//            id: weatherControllerRepeater
-//            anchors.fill: parent
-//            model: weatherControllerGrid.rows * weatherControllerGrid.columns
-//            delegate: WeatherController {
-//                Layout.fillWidth: true
-//                Layout.fillHeight: true
-//                particleSystem: root.particleSystem
-//                raining: root.raining
-//                snowing: root.snowing
-//                turbulence: debugControls.turbulenceEnabled
-////                Rectangle {
-////                    anchors.fill: parent
-////                    color: "blue"
-////                    opacity: 0.2
-////                    border.width: app.borderWidth
-////                    border.color: "white"
-////                }
-//            }
-//        }
+        model: Game.engine.activeWeatherAreas
+        delegate: WeatherController {
+            raining: root.raining
+            snowing: root.snowing
+            turbulence: debugControls.turbulenceEnabled
+            width: model.size.width * app.gridSize
+            height: model.size.height * app.gridSize
+            x: model.position.x * app.gridSize
+            y: model.position.y * app.gridSize
+        }
     }
 }
+

@@ -11,7 +11,6 @@ Item {
     property bool snowing: false
     property bool raining: false
     property bool turbulence: false
-    property var particleSystem: null
 
     onRainingChanged: {
         if (raining) {
@@ -172,5 +171,4 @@ Item {
             acceleration: PointDirection { y: app.gridSize / 10 }
         }
     }
-
 }

@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MainPage.qml</file>
-        <file>Game.qml</file>
+        <file>GameScenePage.qml</file>
         <file>SettingsPage.qml</file>
         <file>components/ChroniclesHeader.qml</file>
         <file>components/HeaderButton.qml</file>

@@ -16,7 +16,7 @@ GamePage {
     id: root
 
     Component.onCompleted: {
-        console.log("Game scene size:", root.width, "/", root.height, "grid size:", app.gridSize)
+        console.log("Game scene size:", root.width, "/", root.height, "Grid size:", app.gridSize)
         forceActiveFocus()
         moveCamera()
         evaluateViewWindow()
@@ -25,9 +25,8 @@ GamePage {
     Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
     Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
 
-    onWidthChanged: evaluateViewWindow()
-    onHeightChanged: evaluateViewWindow()
-
+    onWidthChanged: console.log("Game page widht changed.") && evaluateViewWindow()
+    onHeightChanged: console.log("Game page height changed.") &&  evaluateViewWindow()
 
     // Pysical world
     World {
@@ -82,10 +81,10 @@ GamePage {
                     ImageParticle {
                         id: footstepImageParticle
                         groups: ["footstep"]
-                        //source: dataDirectory + "/images/characters/footstep.png"
-                        source: dataDirectory + "/images/game/footstep.png"
-                        color: "#55ffffff"
+                        source: dataDirectory + "/images/characters/footstep.png"
                         autoRotation: true
+                        //source: dataDirectory + "/images/game/footstep.png"
+                        color: "#88ffffff"
                     }
                 }
 
@@ -153,7 +152,6 @@ GamePage {
                 raining: debugControls.rainingEnabled
                 snowing: debugControls.snowingEnabled
                 turbulence: debugControls.turbulenceEnabled
-                particleSystem: particles
             }
 
             DebugDraw {
@@ -483,7 +481,7 @@ GamePage {
         var viewOffsetX = Math.round(worldFlickable.contentX / app.gridSize)
         var viewOffsetY = Math.round(worldFlickable.contentY / app.gridSize)
 
-        Game.engine.viewWindow = Qt.rect(viewOffsetX - 2, viewOffsetY - 2, viewWindowX + 4, viewWindowY + 4)
+        Game.engine.viewWindow = Qt.rect(viewOffsetX - 5, viewOffsetY - 5, viewWindowX + 10, viewWindowY + 10)
     }
 
     function calculateAngle() {

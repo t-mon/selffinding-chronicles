@@ -521,11 +521,11 @@ QDebug operator<<(QDebug debug, Character *character)
     debug.nospace() << ", " << character->itemId();
     debug.nospace() << ", " << character->position();
     debug.nospace() << ", " << character->size();
-    debug.nospace() << ")" << endl;
-
-    foreach (GameItem *item, character->inventory()->gameItems()) {
-        debug.nospace() << "    --> " << item->thread() << ", " << item << endl;
-    }
+    debug.nospace() << ")";
+    //    debug.nospace() << endl;
+    //    foreach (GameItem *item, character->inventory()->gameItems()) {
+    //        debug.nospace() << "    --> " << item->thread() << ", " << item << endl;
+    //    }
 
     return debug.space();
 }

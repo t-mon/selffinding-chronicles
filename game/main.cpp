@@ -115,15 +115,15 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("GameInput", false);
     s_loggingFilters.insert("Engine", true);
     s_loggingFilters.insert("EngineData", false);
-    s_loggingFilters.insert("Character", true);
+    s_loggingFilters.insert("Character", false);
     s_loggingFilters.insert("Settings", false);
     s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("PathController", false);
     s_loggingFilters.insert("Map", false);
     s_loggingFilters.insert("MapEditor", true);
-    s_loggingFilters.insert("DataManager", true);
-    s_loggingFilters.insert("Item", true);
-    s_loggingFilters.insert("GameObject", true);
+    s_loggingFilters.insert("DataManager", false);
+    s_loggingFilters.insert("Item", false);
+    s_loggingFilters.insert("GameObject", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
 
@@ -148,7 +148,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItem>("Chronicles", 1, 0, "GameItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML.");
+    qmlRegisterUncreatableType<WeatherAreaModel>("Chronicles", 1, 0, "WeatherAreaModel", "Can't create this in QML.");
     qmlRegisterType<GameItemsProxy>("Chronicles", 1, 0, "GameItemsProxy");
+    qmlRegisterType<WeatherAreaProxy>("Chronicles", 1, 0, "WeatherAreaProxy");
 
     qmlRegisterUncreatableType<TreeItem>("Chronicles", 1, 0, "TreeItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML.");

@@ -251,18 +251,27 @@ PhysicsItem {
 
         Emitter {
             id: footstepEmitter
-            width: root.width / 4
+            width: app.gridSize / 2
             height: width
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: -height / 4
+            anchors.bottomMargin: frame.height / 6
             system: root.particleSystem
             group: "footstep"
             enabled: root.character ? root.character.moving && root.character.active : false
             emitRate: 4
-            lifeSpan: 1000
-            size: app.gridSize / 6
-            sizeVariation: app.gridSize * 0.1 / 6
+            lifeSpan: 1500
+            size: app.gridSize / 2
+            sizeVariation: size * 0.1
+
+            // Give the footsteps the correct orientation
+            onEmitParticles: {
+                for (var i = 0; i < particles.length; i++) {
+                    var particle = particles[i];
+                    particle.rotation = root.character.angle + Math.PI / 2
+                    particle.rotationVelocity = 0
+                }
+            }
         }
 
         ItemDescription {

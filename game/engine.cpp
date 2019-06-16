@@ -23,11 +23,13 @@ Engine::Engine(QObject *parent) :
     m_activeCharacters = new GameItemsProxy(this);
     m_activeCharacters->setGameItems(m_dataManager->characters());
 
+    m_weatherAreaModel = new WeatherAreaModel(this);
+    m_weatherAreaProxy = new WeatherAreaProxy(this);
+    m_weatherAreaProxy->setAreaModel(m_weatherAreaModel);
+
     connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
-
-    setViewWindow(QRectF(0, 0, 10, 10));
 
     // Create player controller
     m_playerController = new PlayerController(this);
@@ -61,12 +63,15 @@ void Engine::setViewWindow(const QRectF &viewWindow)
     if (m_viewWindow == viewWindow)
         return;
 
+    qCDebug(dcEngine()) << "View window changed" << viewWindow;
+
     m_viewWindow = viewWindow;
     emit viewWindowChanged(m_viewWindow);
 
     m_activeItems->setViewFilter(m_viewWindow);
     m_activeCharacters->setViewFilter(m_viewWindow);
     m_activeEnemies->setViewFilter(m_viewWindow);
+    m_weatherAreaProxy->setViewFilter(m_viewWindow);    
 }
 
 Character *Engine::player() const
@@ -87,6 +92,11 @@ GameItemsProxy *Engine::activeCharacters() const
 GameItemsProxy *Engine::activeEnemies() const
 {
     return m_activeEnemies;
+}
+
+WeatherAreaProxy *Engine::activeWeatherAreas() const
+{
+    return m_weatherAreaProxy;
 }
 
 PlayerController *Engine::playerController() const
@@ -620,9 +630,17 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         if (!m_dataManager->player())
             return;
 
+        qCDebug(dcEngine()) << "Initialize weather areas for world size" << m_dataManager->worldSize();
+        m_weatherAreaModel->initializeAreas(m_dataManager->worldSize());
+        qCDebug(dcEngine()) << "Weather area total count for world size" << m_dataManager->worldSize() << "Count:" << m_weatherAreaModel->rowCount();
+
         setPlayer(m_dataManager->player());
         m_player->setName(Game::instance()->settings()->playerName());
+
+        qCDebug(dcEngine()) << "Set control mode" << Game::instance()->settings()->controlMode();
         m_playerController->setControlMode(Game::instance()->settings()->controlMode());
+
+        qCDebug(dcEngine()) << "Initialize engine";
         doPlayerMovement();
         evaluatePlayerFocus();
         setLoading(false);
@@ -780,6 +798,10 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
             qCDebug(dcEngine()) << "Perform enemy interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
             if (m_playerFocusItem->interaction() == GameItem::InteractionPlunder) {
                 Enemy *enemy = qobject_cast<Enemy *>(m_playerFocusItem);
+                if (enemy->inventory()->gameItems().isEmpty()) {
+                    qCDebug(dcEngine) << "The inventory is empty. Doning nothing";
+                    break;
+                }
                 setCurrentPlunderItems(enemy->inventory());
                 setState(StatePlunder);
             }

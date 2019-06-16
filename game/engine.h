@@ -13,6 +13,7 @@
 #include "datamanager.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
+#include "items/weatherareaproxy.h"
 #include "conversation/conversation.h"
 
 class CollisionDetector;
@@ -31,6 +32,7 @@ class Engine : public QObject
     Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
+    Q_PROPERTY(WeatherAreaProxy *activeWeatherAreas READ activeWeatherAreas CONSTANT)
 
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
@@ -74,6 +76,7 @@ public:
     GameItemsProxy *activeItems() const;
     GameItemsProxy *activeCharacters() const;
     GameItemsProxy *activeEnemies() const;
+    WeatherAreaProxy *activeWeatherAreas() const;
 
     PlayerController *playerController() const;
 
@@ -106,7 +109,7 @@ public:
 
 private:
     State m_state = StateUnitialized;
-    QRectF m_viewWindow;
+    QRectF m_viewWindow = QRectF(0, 0, 10, 10);
 
     DataManager *m_dataManager = nullptr;
 
@@ -116,6 +119,9 @@ private:
     GameItemsProxy *m_activeItems = nullptr;
     GameItemsProxy *m_activeEnemies = nullptr;
     GameItemsProxy *m_activeCharacters = nullptr;
+    WeatherAreaModel *m_weatherAreaModel = nullptr;
+    WeatherAreaProxy *m_weatherAreaProxy = nullptr;
+
 
     Conversation *m_currentConversation = nullptr;
     Character *m_currentConversationCharacter = nullptr;
