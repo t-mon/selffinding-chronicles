@@ -137,7 +137,7 @@ void DataManager::startNewGameTask()
     // Create map
     QMutexLocker mapLocker(&m_mapMutex);
     m_map = new Map(nullptr);
-    m_map->loadMap(":/maps/firetest.json");
+    m_map->loadMap(":/maps/test-environment.json");
 
     // Create player
     qCDebug(dcDataManager()) << "Create default player";

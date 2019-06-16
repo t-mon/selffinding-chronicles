@@ -98,6 +98,8 @@ GameOverlayItem {
                                 return qsTr("Arm");
                             case GameItem.TypeLiterature:
                                 return qsTr("Read");
+                            case GameItem.TypePlant:
+                                return qsTr("Eat");
                             default:
                                 return qsTr("Use");
                             }
@@ -110,7 +112,7 @@ GameOverlayItem {
 
                     GameButton {
                         Layout.fillWidth: true
-                        text: "Drop"
+                        text: qsTr("Drop")
                         enabled: false
                         onClicked: console.log("Drop clicked")
                     }

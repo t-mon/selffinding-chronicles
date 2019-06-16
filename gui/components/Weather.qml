@@ -11,7 +11,7 @@ Item {
     property bool snowing: false
     property bool raining: false
     property bool turbulence: false
-
+    property var particleSystem: null
 
     GridLayout {
         id: weatherControllerGrid
@@ -29,13 +29,18 @@ Item {
 //            delegate: WeatherController {
 //                Layout.fillWidth: true
 //                Layout.fillHeight: true
+//                particleSystem: root.particleSystem
 //                raining: root.raining
 //                snowing: root.snowing
 //                turbulence: debugControls.turbulenceEnabled
+////                Rectangle {
+////                    anchors.fill: parent
+////                    color: "blue"
+////                    opacity: 0.2
+////                    border.width: app.borderWidth
+////                    border.color: "white"
+////                }
 //            }
 //        }
-
     }
-
-
 }

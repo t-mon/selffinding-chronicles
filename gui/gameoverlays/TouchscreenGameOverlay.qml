@@ -120,6 +120,18 @@ Item {
         width: app.gridSize * 5
         height: width
         visible: false
+//        onXChanged: {
+//            // Limit the joystick item to the screen
+//            console.log("######### Joystick position changed", joystickController.x, ",", joystickController.y)
+//            if (joystickController.x < 0) {
+//                joystickController.x = 0
+//            }
+
+//            if (joystickController.x > root.width - joystickController.width) {
+//                joystickController.x = root.width - joystickController.width
+//            }
+//        }
+//        onYChanged: console.log("######### Joystick position changed", joystickController.x, ",", joystickController.y)
     }
 
     GameLabel {

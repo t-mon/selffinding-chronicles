@@ -148,5 +148,5 @@ void Field::onGameItemsCountChanged(int count)
 QDebug operator<<(QDebug debug, Field *field)
 {
     debug.nospace() << "Field(" << field->position() << ")";
-    return debug;
+    return debug.space();
 }

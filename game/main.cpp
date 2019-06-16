@@ -122,7 +122,8 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Map", false);
     s_loggingFilters.insert("MapEditor", true);
     s_loggingFilters.insert("DataManager", true);
-    s_loggingFilters.insert("Item", false);
+    s_loggingFilters.insert("Item", true);
+    s_loggingFilters.insert("GameObject", true);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
 

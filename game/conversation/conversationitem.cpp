@@ -127,5 +127,5 @@ QDebug operator<<(QDebug debug, ConversationItem *conversationItem)
     debug.nospace() << ", " << conversationItem->type();
     debug.nospace() << ", " << conversationItem->speeker();
     debug.nospace() << ") ";
-    return debug;
+    return debug.space();
 }

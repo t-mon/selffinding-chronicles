@@ -1,6 +1,5 @@
 #include "gameobject.h"
-
-#include <QDebug>
+#include "debugcategories.h"
 
 GameObject::GameObject(QObject *parent) : QObject(parent)
 {
@@ -17,6 +16,7 @@ void GameObject::setName(const QString &name)
     if (m_name == name)
         return;
 
+    qCDebug(dcGameObject()) << "Name changed" << name;
     m_name = name;
     emit nameChanged(m_name);
 }
@@ -61,6 +61,7 @@ void GameObject::setSize(const QSize &size)
     if (m_size == size)
         return;
 
+    qCDebug(dcGameObject()) << this << "Size changed" << size;
     m_size = size;
     emit sizeChanged(m_size);
 }
@@ -75,6 +76,7 @@ void GameObject::setActive(bool active)
     if (m_active == active)
         return;
 
+    qCDebug(dcGameObject()) << this << "Active changed" << active;
     m_active = active;
     emit activeChanged(m_active);
 }
@@ -89,6 +91,7 @@ void GameObject::setShape(GameObject::Shape shape)
     if (m_shape == shape)
         return;
 
+    qCDebug(dcGameObject()) << "Shape changed" << shape;
     m_shape = shape;
     emit shapeChanged(m_shape);
 }
@@ -103,6 +106,7 @@ void GameObject::setBodyType(GameObject::BodyType bodyType)
     if (m_bodyType == bodyType)
         return;
 
+    qCDebug(dcGameObject()) << this << "Body type changed" << bodyType;
     m_bodyType = bodyType;
     emit bodyTypeChanged(m_bodyType);
 }
@@ -117,6 +121,7 @@ void GameObject::setPhysicsSize(const QSize &physicsSize)
     if (m_physicsSize == physicsSize)
         return;
 
+    qCDebug(dcGameObject()) << this << "Physics size changed" << physicsSize;
     m_physicsSize = physicsSize;
     emit physicsSizeChanged(m_physicsSize);
 }
@@ -131,6 +136,7 @@ void GameObject::setPhysicsPosition(const QPointF &physicsPosition)
     if (m_physicsPosition == physicsPosition)
         return;
 
+    qCDebug(dcGameObject()) << this << "Physics position changed" << physicsPosition;
     m_physicsPosition = physicsPosition;
     emit physicsPositionChanged(m_physicsPosition);
 }
@@ -145,6 +151,7 @@ void GameObject::setCategoryFlag(GameObject::PhysicsFlags categoryFlag)
     if (m_categoryFlag == categoryFlag)
         return;
 
+    qCDebug(dcGameObject()) << this << "Physics flag changed" << categoryFlag;
     m_categoryFlag = categoryFlag;
     emit categoryFlagChanged(m_categoryFlag);
 }
@@ -159,6 +166,7 @@ void GameObject::setCollisionFlag(PhysicsFlags collisionFlag)
     if (m_collisionFlag == collisionFlag)
         return;
 
+    qCDebug(dcGameObject()) << this << "Collision flag changed" << collisionFlag;
     m_collisionFlag = collisionFlag;
     emit collisionFlagChanged(m_collisionFlag);
 }
@@ -183,5 +191,5 @@ QDebug operator<<(QDebug debug, GameObject *gameObject)
     debug.nospace() << ", " << gameObject->position();
     debug.nospace() << ", " << gameObject->shape();
     debug.nospace() << ") ";
-    return debug;
+    return debug.space();
 }

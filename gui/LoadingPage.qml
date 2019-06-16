@@ -21,7 +21,7 @@ GamePage {
         onLoadingChanged: {
             if (!loading) {
                 console.log("Engine loading finished. Load game page...")
-                pageStack.replace(root, Qt.resolvedUrl("GamePage.qml"))
+                pageStack.replace(root, Qt.resolvedUrl("Game.qml"))
 
                 //gamePageLoader.setSource(Qt.resolvedUrl("GamePage.qml"))
             }

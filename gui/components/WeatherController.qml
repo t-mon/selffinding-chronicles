@@ -11,6 +11,7 @@ Item {
     property bool snowing: false
     property bool raining: false
     property bool turbulence: false
+    property var particleSystem: null
 
     onRainingChanged: {
         if (raining) {
@@ -82,7 +83,6 @@ Item {
                 easing.type: Easing.InOutBounce
             }
         }
-
 
         ImageParticle {
             id: raindropParticle

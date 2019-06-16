@@ -9,6 +9,27 @@ Item {
 
     property GameItem item: null
 
+    // Load different content description depending on the item type
+    onItemChanged: {
+        if (!item)
+            return
+
+        switch (item.itemType) {
+        case GameItem.TypeWeapon:
+            itemDescriptionLoader.sourceComponent = weaponComponent
+            break;
+        case GameItem.TypeFirearm:
+            itemDescriptionLoader.sourceComponent = firearmComponent
+            break;
+        case GameItem.TypePlant:
+            itemDescriptionLoader.sourceComponent = plantComponent
+            break;
+        case GameItem.TypeLiterature:
+            itemDescriptionLoader.sourceComponent = literatureComponent
+            break;
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "#55000000"
@@ -56,146 +77,142 @@ Item {
             color: "white"
         }
 
-        GameLabel {
-            color: "white"
-            text: qsTr("Price") + ": " + (root.item ? root.item.price : "")
-        }
-
-        GameLabel {
-            id: damageLabel
-            color: "white"
-            visible: {
-                if (!root.item)
-                    return false
-
-                if (root.item.itemType !== GameItem.TypeWeapon && root.item.itemType !== GameItem.TypeFirearm)
-                    return false
-
-                return true
-            }
-
-            text: {
-                if (!root.item || !visible)
-                    return ""
-
-                if (root.item.itemType === GameItem.TypeWeapon) {
-                    var weaponItem = Game.castWeaponItem(root.item)
-                    return qsTr("Damage") + ": " + weaponItem.damage
-                } else if (root.item.itemType === GameItem.TypeFirearm) {
-                    var firearmItem = Game.castFirearmItem(root.item)
-                    return qsTr("Damage") + ": " + firearmItem.damage
-                } else {
-                    return ""
-                }
-            }
-        }
-
-        GameLabel {
-            id: rangeLabel
-            color: "white"
-            visible: {
-                if (!root.item || root.item.itemType !== GameItem.TypeFirearm)
-                    return false
-
-                return true
-            }
-
-            text: {
-                if (!root.item || !visible)
-                    return ""
-
-                var firearmItem = Game.castFirearmItem(root.item)
-                return qsTr("Range") + ": " + firearmItem.range
-            }
-        }
-
-        GameLabel {
-            id: healingLabel
-            color: "white"
-            visible: {
-                if (!root.item || root.item.itemType !== GameItem.TypePlant)
-                    return false
-
-                var plantItem = Game.castPlantItem(root.item)
-                if (plantItem.healing === 0)
-                    return false
-
-                return true
-            }
-            text: {
-                if (!root.item || !visible)
-                    return ""
-
-                var plantItem = Game.castPlantItem(root.item)
-                return qsTr("Healing") + ": " + plantItem.healing
-            }
-        }
-
-        GameLabel {
-            id: manaLabel
-            color: "white"
-            visible: {
-                if (!root.item || root.item.itemType !== GameItem.TypePlant)
-                    return false
-
-                var plantItem = Game.castPlantItem(root.item)
-                if (plantItem.mana === 0)
-                    return false
-
-                return true
-            }
-
-            text: {
-                if (!root.item || root.item.itemType !== GameItem.TypePlant)
-                    return ""
-
-                var plantItem = Game.castPlantItem(root.item)
-                return qsTr("Mana") + ": " + plantItem.mana
-            }
-        }
-
-        GameLabel {
-            id: literatureTitleLabel
-            color: "white"
-            visible: {
-                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
-                    return false
-
-                return true
-            }
-
-            text: {
-                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
-                    return ""
-
-                var literatureItem = Game.castLiteratureItem(root.item)
-                return qsTr("Title") + ": " + literatureItem.title
-            }
-        }
-
-        GameLabel {
-            id: literatureDescriptionLabel
-            color: "white"
-            visible: {
-                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
-                    return false
-
-                return true
-            }
-
-            text: {
-                if (!root.item || root.item.itemType !== GameItem.TypeLiterature)
-                    return ""
-
-                var literatureItem = Game.castLiteratureItem(root.item)
-                return literatureItem.description
-            }
-        }
-
-        Item {
-            id: spacingItem
+        Loader {
+            id: itemDescriptionLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            property GameItem contentItem: root.item
         }
     }
+
+
+    Component {
+        id: weaponComponent
+
+        Column {
+            id: column
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+
+            property WeaponItem weaponItem: Game.castWeaponItem(contentItem)
+
+            GameLabel {
+                id: priceLabel
+                color: "white"
+                text: qsTr("Price") + ": " + (weaponItem ? weaponItem.price : "")
+            }
+
+            GameLabel {
+                id: damageLabel
+                color: "white"
+                text: qsTr("Damage") + ": " + (weaponItem ? weaponItem.damage : "")
+
+            }
+        }
+    }
+
+    Component {
+        id: firearmComponent
+
+        Column {
+            id: column
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+
+            property FirearmItem firearmItem: Game.castFirearmItem(contentItem)
+
+            GameLabel {
+                id: priceLabel
+                color: "white"
+                text: qsTr("Price") + ": " + (firearmItem ? firearmItem.price : "")
+            }
+
+            GameLabel {
+                id: damageLabel
+                color: "white"
+                text: qsTr("Damage") + ": " + (firearmItem ? firearmItem.damage : "")
+            }
+
+            GameLabel {
+                id: rangeLabel
+                color: "white"
+                text: qsTr("Range") + ": " + (firearmItem ? firearmItem.range : "")
+            }
+        }
+    }
+
+    Component {
+        id: plantComponent
+
+        Column {
+            id: column
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+
+            property PlantItem plantItem: Game.castPlantItem(contentItem)
+
+            GameLabel {
+                id: priceLabel
+                color: "white"
+                text: qsTr("Price") + ": " + (plantItem ? plantItem.price : "")
+            }
+
+            GameLabel {
+                id: healingLabel
+                color: "white"
+                visible: plantItem ? plantItem.healing !== 0 : false
+                text: qsTr("Healing") + ": " + (plantItem ? plantItem.healing : "")
+            }
+
+            GameLabel {
+                id: manaLabel
+                color: "white"
+                visible: plantItem ? plantItem.mana !== 0 : false
+                text: qsTr("Mana") + ": " + (plantItem ? plantItem.mana : "")
+            }
+
+            GameLabel {
+                id: speedLabel
+                color: "white"
+                visible: plantItem ? plantItem.speed !== 0 : false
+                text: qsTr("Speed") + ": " + (plantItem ? plantItem.speed : "")
+            }
+        }
+    }
+
+    Component {
+        id: literatureComponent
+
+        Column {
+            id: column
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+
+            property LiteratureItem literatureItem: Game.castLiteratureItem(contentItem)
+
+            GameLabel {
+                id: titleLabel
+                color: "white"
+                text: qsTr("Title") + ": " + (literatureItem ? literatureItem.title : "")
+            }
+
+            GameLabel {
+                id: descriptionLabel
+                color: "white"
+                text: literatureItem ? literatureItem.description : ""
+            }
+
+            GameLabel {
+                id: priceLabel
+                color: "white"
+                text: qsTr("Price") + ": " + (literatureItem ? literatureItem.price : "")
+            }
+        }
+    }
+
 }

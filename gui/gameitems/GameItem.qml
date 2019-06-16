@@ -208,6 +208,19 @@ PhysicsItem {
         opacity: root.itemDebugEnabled ? 0.2 : 0
     }
 
+    FlameItem {
+        id: fireItem
+        enabled: true
+        anchors.centerIn: parent
+        turbulence: debugControls.turbulenceEnabled
+        particleSystem: particles
+        width: app.gridSize * 6
+        height: app.gridSize * 6
+        angle: 270
+        angleVariation: 30
+        magnitude: 30
+    }
+
     //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
     //    Component.onDestruction: console.log("Destroy item")
 

@@ -58,6 +58,7 @@ Item {
             angleVariation: root.angleVariation
             magnitudeVariation: 8
         }
+
     }
 
     //    TrailEmitter {

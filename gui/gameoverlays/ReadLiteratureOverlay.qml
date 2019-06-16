@@ -17,7 +17,8 @@ GameOverlayItem {
 
         Rectangle {
             anchors.fill: parent
-            color: "#55000000"
+            color: "black"
+            opacity: 0.4
             radius: app.gridSize
         }
 
@@ -38,6 +39,7 @@ GameOverlayItem {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.margins: app.margins
+                clip: true
 
                 TextArea {
                     id: bookTextArea

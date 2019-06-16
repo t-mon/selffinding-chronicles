@@ -78,6 +78,15 @@ GamePage {
                         color: "#11ff400f"
                         colorVariation: 0.2
                     }
+
+                    ImageParticle {
+                        id: footstepImageParticle
+                        groups: ["footstep"]
+                        //source: dataDirectory + "/images/characters/footstep.png"
+                        source: dataDirectory + "/images/game/footstep.png"
+                        color: "#55ffffff"
+                        autoRotation: true
+                    }
                 }
 
                 Repeater {
@@ -86,12 +95,12 @@ GamePage {
                     delegate: CharacterItem {
                         character: Game.engine.activeCharacters.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
+                        particleSystem: particles
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
                         z: model.layer
-                        particleSystem: particles
                         onXChanged: if (character && character.isPlayer) moveCamera()
                         onYChanged: if (character && character.isPlayer) moveCamera()
                         Component.onCompleted: if (character && character.isPlayer) moveCamera()
@@ -136,19 +145,6 @@ GamePage {
                 //                    color: "white"
                 //                }
 
-                //                FlameItem {
-                //                    id: fireItem
-                //                    enabled: true
-                //                    turbulence: debugControls.turbulenceEnabled
-                //                    width: app.gridSize * 6
-                //                    height: app.gridSize * 6
-                //                    x: app.gridSize * 4
-                //                    y: app.gridSize * 4
-                //                    angle: 270
-                //                    angleVariation: 30
-                //                    magnitude: 30
-
-                //                }
             }
 
             Weather {
@@ -157,9 +153,8 @@ GamePage {
                 raining: debugControls.rainingEnabled
                 snowing: debugControls.snowingEnabled
                 turbulence: debugControls.turbulenceEnabled
+                particleSystem: particles
             }
-
-
 
             DebugDraw {
                 id: debugDraw

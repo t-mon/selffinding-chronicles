@@ -21,7 +21,7 @@ PhysicsItem {
     property real hitAttackRadius: attackRunning && character ? (character.physicsSize.width * app.gridSize / 2 + app.gridSize) : hitAttackRadiusBase
     property real hitAttackRadiusBase: root.width / 3
 
-    property var particleSystem: null
+    property ParticleSystem particleSystem: null
 
     antialiasing: app.antialiasing
     bodyType: character ? (character.movable ? character.bodyType : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
@@ -62,6 +62,9 @@ PhysicsItem {
 
     onCharacterChanged: evaluateSpriteState()
 
+    Component.onDestruction: {
+        console.log("Character: destroy")
+    }
 
     function evaluateSpriteState() {
         if (!root.character)
@@ -246,6 +249,22 @@ PhysicsItem {
             opacity: root.itemDebugEnabled? 0.2 : 0
         }
 
+        Emitter {
+            id: footstepEmitter
+            width: root.width / 4
+            height: width
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: -height / 4
+            system: root.particleSystem
+            group: "footstep"
+            enabled: root.character ? root.character.moving && root.character.active : false
+            emitRate: 4
+            lifeSpan: 1000
+            size: app.gridSize / 6
+            sizeVariation: app.gridSize * 0.1 / 6
+        }
+
         ItemDescription {
             id: nameLabel
             anchors.bottom: parent.top
@@ -376,7 +395,7 @@ PhysicsItem {
             anchors.left: parent.left
             anchors.bottom: parent.top
             anchors.bottomMargin: -height * 2 / 3
-            enabled: root.burning && root.character.active
+            enabled: root.character ? root.burning && root.character.active : false
             angle: 270
             angleVariation: 30
             magnitude: 30
@@ -401,29 +420,6 @@ PhysicsItem {
                         root.burning = false
                     }
                 }
-            }
-        }
-
-        Emitter {
-            id: footstepEmitter
-            width: root.width / 4
-            height: width
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            system: root.particleSystem
-            group: "footstep"
-            enabled: root.character.moving
-            emitRate: 4
-            lifeSpan: 1000
-            size: app.gridSize / 2
-
-            ImageParticle {
-                id: footstepImageParticle
-                groups: ["footstep"]
-                system: root.particleSystem
-                source: dataDirectory + "/images/characters/footstep.png"
-                color: "#55ffffff"
-                rotation: root.character.angle * 180 / Math.PI + 90
             }
         }
 
@@ -477,6 +473,7 @@ PhysicsItem {
         //            opacity: root.itemDebugEnabled ? 0.5 : 1
         //        }
     }
+
 
     Timer {
         id: burnDamageTimer
@@ -675,6 +672,19 @@ PhysicsItem {
             border.width: 1
             border.color: "white"
         }
+
+//        FlameItem {
+//            enabled: true
+//            anchors.centerIn: parent
+//            turbulence: debugControls.turbulenceEnabled
+//            particleSystem: particles
+//            width: app.gridSize * 8
+//            height: app.gridSize * 8
+//            angle: 360
+//            angleVariation: 360
+//            magnitude: 10
+//        }
+
 
         Image {
             id: weaponImage

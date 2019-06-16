@@ -22,7 +22,6 @@ ApplicationWindow {
     Material.primary: Material.BlueGrey
     Material.foreground: Material.BlueGrey
 
-
     property int controlMode: PlayerController.ControlModeKeyBoard
     property string gameName: qsTr("Self finding chronicles")
 
