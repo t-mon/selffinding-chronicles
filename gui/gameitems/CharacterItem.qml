@@ -255,7 +255,7 @@ PhysicsItem {
             height: width
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: frame.height / 6
+            anchors.bottomMargin: frame.height / 5
             system: root.particleSystem
             group: "footstep"
             enabled: root.character ? root.character.moving && root.character.active : false
@@ -269,7 +269,6 @@ PhysicsItem {
                 for (var i = 0; i < particles.length; i++) {
                     var particle = particles[i];
                     particle.rotation = root.character.angle + Math.PI / 2
-                    particle.rotationVelocity = 0
                 }
             }
         }

@@ -14,6 +14,7 @@
         <file>components/ContentItem.qml</file>
         <file>gameoverlays/InventoryOverlay.qml</file>
         <file>gameitems/CharacterItem.qml</file>
+        <file>gameitems/CharacterItem2.qml</file>
         <file>ConversationCreatorPage.qml</file>
         <file>gameoverlays/ConversationOverlay.qml</file>
         <file>components/GameButton.qml</file>

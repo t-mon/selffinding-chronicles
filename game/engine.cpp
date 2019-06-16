@@ -63,7 +63,7 @@ void Engine::setViewWindow(const QRectF &viewWindow)
     if (m_viewWindow == viewWindow)
         return;
 
-    qCDebug(dcEngine()) << "View window changed" << viewWindow;
+    //qCDebug(dcEngine()) << "View window changed" << viewWindow;
 
     m_viewWindow = viewWindow;
     emit viewWindowChanged(m_viewWindow);

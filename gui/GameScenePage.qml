@@ -84,14 +84,17 @@ GamePage {
                         source: dataDirectory + "/images/characters/footstep.png"
                         autoRotation: true
                         //source: dataDirectory + "/images/game/footstep.png"
-                        color: "#88ffffff"
+                        color: "#66ffffff"
                     }
                 }
 
                 Repeater {
                     id: characersRepeater
                     model: Game.engine.activeCharacters
-                    delegate: CharacterItem {
+                    delegate: Item {
+
+                        CharacterItem2 {
+                        id: characterBody
                         character: Game.engine.activeCharacters.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
                         particleSystem: particles
@@ -103,8 +106,48 @@ GamePage {
                         onXChanged: if (character && character.isPlayer) moveCamera()
                         onYChanged: if (character && character.isPlayer) moveCamera()
                         Component.onCompleted: if (character && character.isPlayer) moveCamera()
+
+//                        BoxBody {
+//                            id: characterViewBody
+//                            width: parent.width
+//                            height: width / 6
+//                            x: parent.width / 2
+//                            y: characterBody.height / 2
+//                            bodyType: GameObject.BodyTypeDynamic
+//                        }
+
+
+//                        RevoluteJoint {
+//                            id: bodyJoint
+//                            maxMotorTorque: 1000
+//                            motorSpeed: 10
+//                            enableMotor: true
+//                            bodyA: characterBody.body
+//                            bodyB: characterViewBody
+//                            localAnchorA: Qt.point(width / 2, 0)
+//                            localAnchorB: Qt.point(-characterViewBody.width / 2, characterViewBody.height / 2)
+//                        }
+                        }
                     }
                 }
+
+                //                Repeater {
+                //                    id: characersRepeater
+                //                    model: Game.engine.activeCharacters
+                //                    delegate: CharacterItem {
+                //                        character: Game.engine.activeCharacters.get(model.index)
+                //                        itemDebugEnabled: debugControls.itemDebugEnabled
+                //                        particleSystem: particles
+                //                        width: model.size.width * app.gridSize
+                //                        height: model.size.height * app.gridSize
+                //                        x: model.position.x * app.gridSize
+                //                        y: model.position.y * app.gridSize
+                //                        z: model.layer
+                //                        onXChanged: if (character && character.isPlayer) moveCamera()
+                //                        onYChanged: if (character && character.isPlayer) moveCamera()
+                //                        Component.onCompleted: if (character && character.isPlayer) moveCamera()
+                //                    }
+                //                }
 
                 Repeater {
                     id: itemsRepeater
