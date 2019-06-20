@@ -88,11 +88,63 @@ GamePage {
                     }
                 }
 
+
+                //                Component {
+                //                    id: characterComponent
+
+                //                    CharacterItem2 {
+                //                        id: characterBody
+                //                        character: Game.engine.activeCharacters.get(model.index)
+                //                        itemDebugEnabled: debugControls.itemDebugEnabled
+                //                        particleSystem: particles
+                //                        width: character.size.width * app.gridSize
+                //                        height: character.size.height * app.gridSize
+                //                        x: character.position.x * app.gridSize
+                //                        y: character.position.y * app.gridSize
+                //                        z: y + height
+                //                        onXChanged: if (character && character.isPlayer) moveCamera()
+                //                        onYChanged: {
+                //                            if (character && character.isPlayer) {
+                //                                moveCamera()
+                //                            }
+                //                        }
+
+                //                        Component.onCompleted: if (character && character.isPlayer) moveCamera()
+                //                    }
+
+                //                    BoxBody {
+                //                        id: characterViewBody
+                //                        width: characterBody.width
+                //                        height: width / 6
+                //                        x: characterBody.width / 2
+                //                        y: characterBody.height / 2
+                //                        bodyType: GameObject.BodyTypeDynamic
+                //                        linearDamping: 10
+                //                        density: 0.0
+                //                        friction: 0.0
+                //                        restitution: 0.0
+                //                        sensor: true
+                //                        categories: GameItem.PhysicsSensor
+                //                        collidesWith: GameItem.PhysicsAll
+                //                    }
+
+                //                    RevoluteJoint {
+                //                        id: bodyJoint
+                //                        maxMotorTorque: 1000
+                //                        motorSpeed: 10
+                //                        enableMotor: false
+                //                        bodyA: characterViewBody
+                //                        bodyB: characterBody.body
+                //                        localAnchorA: Qt.point(0, 0)
+                //                        localAnchorB: Qt.point(width / 2, 0)
+                //                    }
+
+                //                }
+
                 Repeater {
                     id: characersRepeater
                     model: Game.engine.activeCharacters
-                    delegate:
-                        CharacterItem2 {
+                    delegate: CharacterItem2 {
                         id: characterBody
                         character: Game.engine.activeCharacters.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
@@ -108,30 +160,7 @@ GamePage {
                                 moveCamera()
                             }
                         }
-                        //onZChanged: console.log("Z:", z)
                         Component.onCompleted: if (character && character.isPlayer) moveCamera()
-
-
-                        //                        BoxBody {
-                        //                            id: characterViewBody
-                        //                            width: parent.width
-                        //                            height: width / 6
-                        //                            x: parent.width / 2
-                        //                            y: characterBody.height / 2
-                        //                            bodyType: GameObject.BodyTypeDynamic
-                        //                        }
-
-
-                        //                        RevoluteJoint {
-                        //                            id: bodyJoint
-                        //                            maxMotorTorque: 1000
-                        //                            motorSpeed: 10
-                        //                            enableMotor: true
-                        //                            bodyA: characterBody.body
-                        //                            bodyB: characterViewBody
-                        //                            localAnchorA: Qt.point(width / 2, 0)
-                        //                            localAnchorB: Qt.point(-characterViewBody.width / 2, characterViewBody.height / 2)
-                        //                        }
                     }
                 }
 

@@ -14,20 +14,28 @@ PhysicsItem {
     id: root
 
     property Character character
+    property ParticleSystem particleSystem: null
+    property int itemType: character ? character.itemType : GameItem.TypeNone
+
     property bool itemDebugEnabled: false
     property bool burning: false
+
     property bool attackRunning: false
-    property int itemType: character ? character.itemType : GameItem.TypeNone
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
+
     property real hitAttackRadius: attackRunning && character ? (character.physicsSize.width * app.gridSize / 2 + app.gridSize) : hitAttackRadiusBase
     property real hitAttackRadiusBase: root.width / 3
 
-    property ParticleSystem particleSystem: null
+    property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
 
     bodyType: GameObject.BodyTypeDynamic
     fixedRotation: true
     linearDamping: 10
     antialiasing: app.antialiasing
+
+    onRotationAngleChanged: {
+        bodyJoint.referenceAngle = rotationAngle
+    }
 
     onCharacterChanged: {
         if (!character) return
@@ -96,6 +104,8 @@ PhysicsItem {
             weaponHitAnimation.start()
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
+
+            rotationPhysicsItem.body.applyTorque(1000)
         }
     }
 
@@ -156,6 +166,42 @@ PhysicsItem {
         }
     ]
 
+    PhysicsItem {
+        id: rotationPhysicsItem
+        width: parent.width
+        height: parent.height
+        linearDamping: 10
+        bodyType: GameObject.BodyTypeDynamic
+        antialiasing: app.antialiasing
+        fixedRotation: false
+        rotation: root.rotationAngle
+        fixtures: [
+            Box {
+                id: focusSensor
+                width: root.width / 2
+                height: root.width / 6
+                x: root.width / 2
+                y: root.height / 2 - height / 2
+                categories: GameItem.PhysicsSensor
+                collidesWith: GameItem.PhysicsAll
+                density: 0.0
+                friction: 0.0
+                restitution: 0.0
+                sensor: true
+            }
+        ]
+    }
+
+    RevoluteJoint {
+        id: bodyJoint
+        enableMotor: false
+        collideConnected: true
+        bodyA: root.body
+        bodyB: rotationPhysicsItem.body
+        localAnchorA: Qt.point(root.width / 2, root.height / 2)
+        localAnchorB: Qt.point(rotationPhysicsItem.width / 2, rotationPhysicsItem.height / 2)
+    }
+
     Emitter {
         id: footstepEmitter
         width: app.gridSize / 2
@@ -185,6 +231,7 @@ PhysicsItem {
         anchors.bottom: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         text: character ? character.name : ""
+        z: root.z + 100
         opacity: character ? (root.itemDebugEnabled ? 0.5 : (root.character.playerFocus && !character.isPlayer ? 1 : 0)) : 0
     }
 
@@ -380,13 +427,16 @@ PhysicsItem {
         ]
     }
 
+    // ##################################################################################
+    // Rotation item
+    // ##################################################################################
+
     Item {
         id: rotationItem
         width: parent.width
         height: parent.height
         anchors.centerIn: parent
-
-        rotation: character ? character.angle * 180 / Math.PI : 0
+        rotation: root.rotationAngle
 
         Rectangle {
             id: rotationDebugFrame
@@ -619,6 +669,17 @@ PhysicsItem {
         }
     }
 
+    Timer {
+        id: healthIndicatorTimer
+        interval: 3000
+        repeat: false
+        onTriggered: healthIndicator.opacity = 0
+    }
+
+    // ##################################################################################
+    // Functions
+    // ##################################################################################
+
     function evaluateSpriteState() {
         if (!root.character)
             return
@@ -668,6 +729,16 @@ PhysicsItem {
         bulletObject.fireArrow = debugControls.flamesEnabled
         var velocity = app.gridSize * 1.2
         bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
+    }
+
+    function inflame() {
+        if (flameFadeOutAnimation.running)
+            flameFadeOutAnimation.stop()
+
+        flameItem.opacity = 1
+        flameItem.visible = true
+        buringTimer.restart()
+        root.burning = true
     }
 
 
