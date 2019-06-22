@@ -404,7 +404,6 @@ void DataManager::startNewGame()
 
     // Reset all data
     resetData();
-
     setState(StateStarting);
 }
 

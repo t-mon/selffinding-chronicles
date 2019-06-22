@@ -15,25 +15,30 @@ import "physics"
 GamePage {
     id: root
 
-    Component.onCompleted: {
-        console.log("Game scene size:", root.width, "/", root.height, "Grid size:", app.gridSize)
-        forceActiveFocus()
-        moveCamera()
-        evaluateViewWindow()
-    }
-
     Keys.onPressed: Game.keyPressed(event.key, event.isAutoRepeat)
     Keys.onReleased: Game.keyReleased(event.key, event.isAutoRepeat)
 
     onWidthChanged: console.log("Game page widht changed.") && evaluateViewWindow()
     onHeightChanged: console.log("Game page height changed.") &&  evaluateViewWindow()
 
+    Component.onCompleted: {
+        console.log("Game scene size:", root.width, "/", root.height, "Grid size:", app.gridSize)
+    }
+
+    function runGame() {
+        forceActiveFocus()
+        moveCamera()
+        evaluateViewWindow()
+        particles.running = true
+        Game.running = true
+    }
+
     // Pysical world
     World {
         id: physicsWorld
         gravity: Qt.point(0, 0)
         onStepped: Game.onTick()
-        running: true
+        running: Game.engine.state == Engine.StateRunning
     }
 
     Item {
@@ -68,7 +73,7 @@ GamePage {
                 ParticleSystem {
                     id: particles
                     anchors.fill: parent
-                    running: true
+                    running: false
 
                     ImageParticle {
                         id: flameImageParticle
@@ -88,64 +93,11 @@ GamePage {
                     }
                 }
 
-
-                //                Component {
-                //                    id: characterComponent
-
-                //                    CharacterItem2 {
-                //                        id: characterBody
-                //                        character: Game.engine.activeCharacters.get(model.index)
-                //                        itemDebugEnabled: debugControls.itemDebugEnabled
-                //                        particleSystem: particles
-                //                        width: character.size.width * app.gridSize
-                //                        height: character.size.height * app.gridSize
-                //                        x: character.position.x * app.gridSize
-                //                        y: character.position.y * app.gridSize
-                //                        z: y + height
-                //                        onXChanged: if (character && character.isPlayer) moveCamera()
-                //                        onYChanged: {
-                //                            if (character && character.isPlayer) {
-                //                                moveCamera()
-                //                            }
-                //                        }
-
-                //                        Component.onCompleted: if (character && character.isPlayer) moveCamera()
-                //                    }
-
-                //                    BoxBody {
-                //                        id: characterViewBody
-                //                        width: characterBody.width
-                //                        height: width / 6
-                //                        x: characterBody.width / 2
-                //                        y: characterBody.height / 2
-                //                        bodyType: GameObject.BodyTypeDynamic
-                //                        linearDamping: 10
-                //                        density: 0.0
-                //                        friction: 0.0
-                //                        restitution: 0.0
-                //                        sensor: true
-                //                        categories: GameItem.PhysicsSensor
-                //                        collidesWith: GameItem.PhysicsAll
-                //                    }
-
-                //                    RevoluteJoint {
-                //                        id: bodyJoint
-                //                        maxMotorTorque: 1000
-                //                        motorSpeed: 10
-                //                        enableMotor: false
-                //                        bodyA: characterViewBody
-                //                        bodyB: characterBody.body
-                //                        localAnchorA: Qt.point(0, 0)
-                //                        localAnchorB: Qt.point(width / 2, 0)
-                //                    }
-
-                //                }
-
                 Repeater {
                     id: characersRepeater
                     model: Game.engine.activeCharacters
-                    delegate: CharacterItem2 {
-                        id: characterBody
+                    delegate: CharacterItem {
+                        id: characterItem
                         character: Game.engine.activeCharacters.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
                         particleSystem: particles
@@ -155,32 +107,10 @@ GamePage {
                         y: model.position.y * app.gridSize
                         z: y + height
                         onXChanged: if (character && character.isPlayer) moveCamera()
-                        onYChanged: {
-                            if (character && character.isPlayer) {
-                                moveCamera()
-                            }
-                        }
+                        onYChanged: if (character && character.isPlayer) moveCamera()
                         Component.onCompleted: if (character && character.isPlayer) moveCamera()
                     }
                 }
-
-                //                Repeater {
-                //                    id: characersRepeater
-                //                    model: Game.engine.activeCharacters
-                //                    delegate: CharacterItem {
-                //                        character: Game.engine.activeCharacters.get(model.index)
-                //                        itemDebugEnabled: debugControls.itemDebugEnabled
-                //                        particleSystem: particles
-                //                        width: model.size.width * app.gridSize
-                //                        height: model.size.height * app.gridSize
-                //                        x: model.position.x * app.gridSize
-                //                        y: model.position.y * app.gridSize
-                //                        z: model.layer
-                //                        onXChanged: if (character && character.isPlayer) moveCamera()
-                //                        onYChanged: if (character && character.isPlayer) moveCamera()
-                //                        Component.onCompleted: if (character && character.isPlayer) moveCamera()
-                //                    }
-                //                }
 
                 Repeater {
                     id: itemsRepeater
@@ -230,13 +160,27 @@ GamePage {
                 turbulence: debugControls.turbulenceEnabled
             }
 
-            DebugDraw {
-                id: debugDraw
-                world: physicsWorld
-                opacity: 0.4
-                visible: debugControls.physicsDebugEnabled
+            Loader {
+                id: physicsDebugDrawLoader
+                anchors.fill: parent
+                active: debugControls.physicsDebugEnabled
+                sourceComponent: debugDrawComponent
+
+                Component {
+                    id: debugDrawComponent
+
+                    DebugDraw {
+                        id: debugDraw
+                        world: physicsWorld
+                        opacity: 0.4
+                    }
+                }
             }
         }
+
+        // ##################################################################################
+        // GameScene item overlays
+        // ##################################################################################
 
         MouseArea {
             id: screenMouseArea
@@ -268,7 +212,6 @@ GamePage {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: app.margins
-
             visible: Game.debugging
             width: app.gridSize * 8
             onStonedEnabledChanged: {
@@ -425,6 +368,10 @@ GamePage {
         ]
     }
 
+    // ##################################################################################
+    // GameScene
+    // ##################################################################################
+
     ShaderEffectSource {
         id: shaderEffectSource
         sourceItem: sceneItem
@@ -509,6 +456,9 @@ GamePage {
     }
 
     function moveCamera() {
+        if (!Game.engine.player)
+            return
+
         var worldWidth = Game.engine.dataManager.worldSize.width * app.gridSize
         var worldHeight = Game.engine.dataManager.worldSize.height * app.gridSize
 

@@ -14,7 +14,6 @@
         <file>components/ContentItem.qml</file>
         <file>gameoverlays/InventoryOverlay.qml</file>
         <file>gameitems/CharacterItem.qml</file>
-        <file>gameitems/CharacterItem2.qml</file>
         <file>ConversationCreatorPage.qml</file>
         <file>gameoverlays/ConversationOverlay.qml</file>
         <file>components/GameButton.qml</file>
@@ -61,5 +60,6 @@
         <file>mapeditor/CreateNewMapPage.qml</file>
         <file>components/Weather.qml</file>
         <file>gameoverlays/ReadLiteratureOverlay.qml</file>
+        <file>components/ItemDebugFrame.qml</file>
     </qresource>
 </RCC>

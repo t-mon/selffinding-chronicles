@@ -73,6 +73,12 @@ ApplicationWindow {
     StackView {
         id: pageStack
         anchors.fill: parent
+
+        Loader {
+            id: gamePageLoader
+            anchors.fill: parent
+            asynchronous: true
+        }
     }
 
     Component.onCompleted: {

@@ -53,8 +53,8 @@ void WeatherAreaModel::initializeAreas(const QSize &worldSize)
     // Create all areas for the whole world, only areas within the viewWindow will be drawn
     beginResetModel();
     m_areas.clear();
-    int xCount = worldSize.width() / 10;
-    int yCount = worldSize.height() / 10;
+    int xCount = worldSize.width() / m_areaSize.width();
+    int yCount = worldSize.height() /m_areaSize.height();
 
     for (int x = 0; x < xCount; x++) {
         for (int y = 0; y < yCount; y++) {

@@ -9,37 +9,24 @@ import "components"
 GamePage {
     id: root
 
-    Component.onCompleted: {
-        if (Game.engine.loaded) {
-            console.log("Loading already finished")
-            pageStack.replace(root, Qt.resolvedUrl("GamePage.qml"))
-        }
-    }
-
     Connections {
         target: Game.engine
-        onLoadingChanged: {
-            if (!loading) {
-                console.log("Engine loading finished. Load game page...")
-                pageStack.replace(root, Qt.resolvedUrl("GameScenePage.qml"))
+        onLoadedChanged: {
+            if (loaded) {
+                console.log("Engine loading finished. Load game page async...")
+                gamePageLoader.setSource(Qt.resolvedUrl("GameScenePage.qml"))
             }
         }
     }
 
-//    Loader {
-//        id: gamePageLoader
-//        anchors.fill: parent
-//        asynchronous: true
-//        onLoaded: {
-//            console.log("Game page loading finished.")
-//            pageStack.replace(root, gamePageLoader.source)
-//        }
-//    }
-
-//    MouseArea {
-//        anchors.fill: parent
-//        onClicked: pageLoader.source = "Page1.qml"
-//    }
+    Connections {
+        target: gamePageLoader
+        onLoaded: {
+            console.log("Game page loading finished.")
+            pageStack.replace(root, gamePageLoader.item)
+            gamePageLoader.item.runGame()
+        }
+    }
 
     Rectangle {
         id: loadingScreen

@@ -192,13 +192,10 @@ PhysicsItem {
         opacity: gameItem ? (root.itemDebugEnabled ? 0.5 : (gameItem.playerFocus ? 1 : 0)) : 0
     }
 
-    Rectangle {
-        id: wireFrame
+    Loader {
         anchors.fill: parent
-        color: "gray";
-        border.color: "white";
-        border.width: app.borderWidth / 2
-        opacity: root.itemDebugEnabled ? 0.2 : 0
+        active: root.itemDebugEnabled
+        source: "../components/ItemDebugFrame.qml"
     }
 
 //    FlameItem {

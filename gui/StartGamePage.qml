@@ -15,13 +15,6 @@ GamePage {
 
         spacing: app.margins
 
-//        GameLabel {
-//            Layout.alignment: Qt.AlignHCenter
-//            text: "Start new game"
-//            color: "white"
-//            font.pixelSize: app.largeFont
-//        }
-
         GameButton {
             Layout.fillWidth: true
             text: qsTr("Start new game")
@@ -31,7 +24,6 @@ GamePage {
                 pageStack.push(Qt.resolvedUrl("LoadingPage.qml"))
             }
         }
-
 
         GameButton {
             Layout.fillWidth: true
