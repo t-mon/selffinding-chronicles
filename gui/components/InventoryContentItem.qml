@@ -10,26 +10,6 @@ Item {
 
     property GameItem selectedItem
 
-    function useCurrentItem() {
-        switch (selectedItem.itemType) {
-        case GameItem.TypeWeapon:
-            Game.engine.player.weapon = selectedItem
-            break;
-        case GameItem.TypeFirearm:
-            Game.engine.player.firearm = selectedItem
-            break;
-        case GameItem.TypePlant:
-            Game.engine.useInventoryItem(selectedItem.itemId)
-            break;
-        case GameItem.TypeLiterature:
-            Game.engine.useInventoryItem(selectedItem.itemId)
-            break;
-        default:
-            console.log("Not implemented yet for item", selectedItem.itemTypeName)
-            break;
-        }
-    }
-
     ColumnLayout {
         anchors.fill: parent
         spacing: app.margins / 2
@@ -95,8 +75,8 @@ Item {
 
                     onClicked: inventoryHeaderListView.currentIndex = index
                 }
+                Component.onCompleted: inventoryHeaderListView.currentIndex = 0
             }
-
         }
 
         Rectangle {
@@ -162,6 +142,27 @@ Item {
             }
         }
     }
+
+    function useCurrentItem() {
+        switch (selectedItem.itemType) {
+        case GameItem.TypeWeapon:
+            Game.engine.player.weapon = selectedItem
+            break;
+        case GameItem.TypeFirearm:
+            Game.engine.player.firearm = selectedItem
+            break;
+        case GameItem.TypePlant:
+            Game.engine.useInventoryItem(selectedItem.itemId)
+            break;
+        case GameItem.TypeLiterature:
+            Game.engine.useInventoryItem(selectedItem.itemId)
+            break;
+        default:
+            console.log("Not implemented yet for item", selectedItem.itemTypeName)
+            break;
+        }
+    }
+
 }
 
 

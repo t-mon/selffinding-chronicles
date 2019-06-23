@@ -14,28 +14,20 @@ PhysicsItem {
     id: root
 
     property Character character
-    property ParticleSystem particleSystem: null
+    property ParticleSystem particleSystem
     property int itemType: character ? character.itemType : GameItem.TypeNone
 
     property bool itemDebugEnabled: false
     property bool burning: false
 
-    property bool attackRunning: false
+    property bool hitAttackRunning: false
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
-
-    property real hitAttackRadius: attackRunning && character ? (character.physicsSize.width * app.gridSize / 2 + app.gridSize) : hitAttackRadiusBase
-    property real hitAttackRadiusBase: root.width / 3
-
     property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
 
     bodyType: GameObject.BodyTypeDynamic
     fixedRotation: true
     linearDamping: 10
     antialiasing: app.antialiasing
-
-    onRotationAngleChanged: {
-        bodyJoint.referenceAngle = rotationAngle
-    }
 
     onCharacterChanged: {
         if (!character) return
@@ -100,12 +92,10 @@ PhysicsItem {
             if (character.armed !== Character.ArmedWeapon)
                 return
 
-            console.log("Hit !!!!!")
+            console.log("Hit using weapon", character.weapon.name, character.weapon.damage)
             weaponHitAnimation.start()
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
-
-            rotationPhysicsItem.body.applyTorque(1000)
         }
     }
 
@@ -442,13 +432,13 @@ PhysicsItem {
         enableMotor: false
         collideConnected: true
         bodyA: root.body
-        bodyB: rotationPhysicsItem.body
+        bodyB: focusPhyicsItem.body
         localAnchorA: Qt.point(root.width / 2, root.height / 2)
-        localAnchorB: Qt.point(rotationPhysicsItem.width / 2, rotationPhysicsItem.height / 2)
+        localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
     }
 
     PhysicsItem {
-        id: rotationPhysicsItem
+        id: focusPhyicsItem
         width: root.width
         height: width
         linearDamping: 10
@@ -517,11 +507,11 @@ PhysicsItem {
         antialiasing: app.antialiasing
         fixedRotation: false
         rotation: root.rotationAngle + weaponItem.rotation
-        enabled: root.attackRunning
+        enabled: root.hitAttackRunning
         fixtures: [
             Box {
                 id: weaponSensor
-                width: root.attackRunning ? app.gridSize * 2 : 0
+                width: root.hitAttackRunning ? app.gridSize * 2 : 0
                 height: root.width / 6
                 x: root.width / 2
                 y: root.height / 2 - height / 2
@@ -533,15 +523,15 @@ PhysicsItem {
                 sensor: true
 
                 onBeginContact: {
-                    if (!root.attackRunning)
+                    if (!root.hitAttackRunning)
                         return
 
                     var target = other.getBody().target
 
-                    if (target === root || target === rotationPhysicsItem)
+                    if (target === root || target === focusPhyicsItem)
                         return
 
-                    console.log("Hit sensor touched", target)
+                    //console.log("Hit sensor touched", target)
                     if (target.itemType && target.enemy) {
                         if (character && character.weapon) {
                             console.log("Hit enemy", target.enemy.name)
@@ -620,7 +610,7 @@ PhysicsItem {
                     duration: 175
                     easing.type: Easing.OutQuad
                 }
-                ScriptAction { script: { root.attackRunning = true } }
+                ScriptAction { script: { root.hitAttackRunning = true } }
                 PropertyAnimation {
                     id: weaponHitSwing2Animation
                     target: weaponItem
@@ -629,7 +619,7 @@ PhysicsItem {
                     duration: 150
                     easing.type: Easing.InOutQuart
                 }
-                ScriptAction { script: { root.attackRunning = false } }
+                ScriptAction { script: { root.hitAttackRunning = false } }
                 PropertyAnimation {
                     id: weaponHitSwing3Animation
                     target: weaponItem
