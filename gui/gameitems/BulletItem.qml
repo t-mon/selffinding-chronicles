@@ -33,7 +33,7 @@ PhysicsItem {
 
     fixtures: Circle {
         categories: GameObject.PhysicsBullet
-        collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy | GameObject.PhysicsStaticItem | GameObject.PhysicsBullet
+        collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy | GameObject.PhysicsStaticItem  | GameObject.PhysicsBullet | GameObject.PhysicsBodyHitbox
         radius: root.width / 2
         density: 1
         friction: 0

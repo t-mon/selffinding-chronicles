@@ -116,14 +116,45 @@ PhysicsItem {
     }
 
     fixtures: [
+        Circle {
+            id: headCircle
+            radius: root.width / 4
+            x: root.width / 4
+            y: 0
+            categories: GameItem.PhysicsBodyHitbox
+            collidesWith: GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
+            density: 1
+            friction: 0.0
+            restitution: 0.0
+
+            onBeginContact: {
+                if (!character.isPlayer)
+                    return
+
+                var target = other.getBody().target
+                if (target.itemType) {
+                    target.playerOnItem = true
+                }
+            }
+
+            onEndContact: {
+                if (!character.isPlayer)
+                    return
+
+                var target = other.getBody().target
+                if (target.itemType) {
+                    target.playerOnItem = false
+                }
+            }
+        },
         Box {
             id: bodyBox
             width: root.width / 2
-            height: root.height
+            height: width
             x: root.width / 4
-            y: 0
-            categories: GameItem.PhysicsSensor
-            collidesWith: GameItem.PhysicsAll
+            y: root.width / 4
+            categories: GameItem.PhysicsBodyHitbox
+            collidesWith: GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
             density: 1.0
             friction: 0.0
             restitution: 0.0
@@ -405,6 +436,7 @@ PhysicsItem {
     // Rotation item
     // ##################################################################################
 
+    // Focus sensor
     RevoluteJoint {
         id: bodyJoint
         enableMotor: false
@@ -464,6 +496,70 @@ PhysicsItem {
         ]
     }
 
+
+    // Weapon sensor
+    RevoluteJoint {
+        id: weaponJoint
+        enableMotor: false
+        collideConnected: true
+        bodyA: root.body
+        bodyB: weaponPhysicsItem.body
+        localAnchorA: Qt.point(root.width / 2, root.height / 2)
+        localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
+    }
+
+    PhysicsItem {
+        id: weaponPhysicsItem
+        width: root.width
+        height: width
+        linearDamping: 10
+        bodyType: GameObject.BodyTypeDynamic
+        antialiasing: app.antialiasing
+        fixedRotation: false
+        rotation: root.rotationAngle + weaponItem.rotation
+        enabled: root.attackRunning
+        fixtures: [
+            Box {
+                id: weaponSensor
+                width: root.attackRunning ? app.gridSize * 2 : 0
+                height: root.width / 6
+                x: root.width / 2
+                y: root.height / 2 - height / 2
+                categories: GameItem.PhysicsWeapon
+                collidesWith: GameItem.PhysicsAll
+                density: 0.0
+                friction: 0.0
+                restitution: 0.0
+                sensor: true
+
+                onBeginContact: {
+                    if (!root.attackRunning)
+                        return
+
+                    var target = other.getBody().target
+
+                    if (target === root || target === rotationPhysicsItem)
+                        return
+
+                    console.log("Hit sensor touched", target)
+                    if (target.itemType && target.enemy) {
+                        if (character && character.weapon) {
+                            console.log("Hit enemy", target.enemy.name)
+                            Game.engine.performHitAttack(root.character, Game.castEnemyToCharacter(target.enemy), character.weapon.damage)
+                            return
+                        }
+                    } else if (target.itemType && target.character) {
+                        if (character && character.weapon) {
+                            console.log("Hit character", target.character.name)
+                            Game.engine.performHitAttack(root.character, target.character, character.weapon.damage)
+                            return
+                        }
+                    }
+                }
+            }
+        ]
+    }
+
     Item {
         id: rotationItem
         width: parent.width
@@ -515,7 +611,7 @@ PhysicsItem {
 
             SequentialAnimation {
                 id: weaponHitAnimation
-                onRunningChanged: console.log("Hit animation", running ? "running" : "stopped")
+                //onRunningChanged: console.log("Hit animation", running ? "running" : "stopped")
                 PropertyAnimation {
                     id: weaponHitSwing1Animation
                     target: weaponItem
@@ -524,7 +620,7 @@ PhysicsItem {
                     duration: 175
                     easing.type: Easing.OutQuad
                 }
-                ScriptAction {script: { root.attackRunning = true } }
+                ScriptAction { script: { root.attackRunning = true } }
                 PropertyAnimation {
                     id: weaponHitSwing2Animation
                     target: weaponItem
@@ -533,7 +629,7 @@ PhysicsItem {
                     duration: 150
                     easing.type: Easing.InOutQuart
                 }
-                ScriptAction {script: { root.attackRunning = false } }
+                ScriptAction { script: { root.attackRunning = false } }
                 PropertyAnimation {
                     id: weaponHitSwing3Animation
                     target: weaponItem

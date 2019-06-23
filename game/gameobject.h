@@ -56,7 +56,7 @@ public:
         PhysicsWeapon       = 0x0040,
         PhysicsBullet       = 0x0080,
         PhysicsMagic        = 0x0100,
-        PhysicsCategory10   = 0x0200,
+        PhysicsBodyHitbox   = 0x0200,
         PhysicsCategory11   = 0x0400,
         PhysicsCategory12   = 0x0800,
         PhysicsCategory13   = 0x1000,
