@@ -8,9 +8,10 @@ Item {
     id: root
 
     property bool itemDebugEnabled: false
-    property bool physicsDebugEnabled: true
+    property bool physicsDebugEnabled: false
     property bool stonedEnabled: false
     property bool grayscaleEnabled: false
+    property bool magicEnabled: false
     property bool flamesEnabled: true
     property bool rainingEnabled: false
     property bool snowingEnabled: false
@@ -37,7 +38,6 @@ Item {
             width: parent.width
             height: root.dropDown ? optionsColumn.implicitHeight : 0
             visible: root.dropDown
-
 
             Column {
                 id: optionsColumn
@@ -83,6 +83,14 @@ Item {
                 }
 
                 GameButton {
+                    id: magicEnabledButton
+                    width: parent.width
+                    text: root.magicEnabled ? "Magic OFF" : "Magic ON"
+                    color: root.magicEnabled ? "green" : "white"
+                    onClicked: root.magicEnabled = !root.magicEnabled
+                }
+
+                GameButton {
                     id: flamesEnabledButton
                     width: parent.width
                     text: root.flamesEnabled ? "Flame arrow OFF" : "Flames arrow ON"
@@ -94,6 +102,16 @@ Item {
                     width: parent.width
                     height: 1
                     radius: height / 2
+                }
+
+                Slider {
+                    width: parent.width
+                    from: 0.1
+                    to: 1
+                    stepSize: 0.1
+                    value: 1.0
+                    onValueChanged: app.gameSpeedFactor = value
+                    Component.onCompleted: value = app.gameSpeedFactor
                 }
 
                 GameButton {

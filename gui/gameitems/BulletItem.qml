@@ -111,8 +111,8 @@ PhysicsItem {
             Emitter {
                 anchors.centerIn: parent
                 group: "flame"
-                emitRate: 200
-                lifeSpan: 2000
+                emitRate: 200 * app.gameSpeedFactor
+                lifeSpan: 2000 / app.gameSpeedFactor
                 size: app.gridSize / 2
                 endSize: app.gridSize / 2
                 sizeVariation: app.gridSize / 2

@@ -36,6 +36,8 @@ GamePage {
     // Pysical world
     World {
         id: physicsWorld
+        timeStep: 1/60 * app.gameSpeedFactor
+        onTimeStepChanged: console.log("Game speed changed to", timeStep, "[1/s]", debugControls.gameSpeed)
         gravity: Qt.point(0, 0)
         onStepped: Game.onTick()
         running: Game.engine.state == Engine.StateRunning
@@ -262,6 +264,8 @@ GamePage {
             opacity: 0
         }
 
+        // TODO: Trade overlay, magic overlay
+
         // States
         states: [
             State {
@@ -378,6 +382,24 @@ GamePage {
     }
 
     ShaderEffect {
+        id: magicShader
+        visible: debugControls.magicEnabled
+        width: parent.width
+        height: parent.height
+        property var source: shaderEffectSource
+        property real blueChannel: 0.8
+
+        fragmentShader: "
+            varying highp vec2 qt_TexCoord0;
+            uniform sampler2D source;
+            uniform lowp float qt_Opacity;
+            uniform lowp float blueChannel;
+            void main() {
+                gl_FragColor = texture2D(source, qt_TexCoord0) * vec4(0.5, 0.5, blueChannel, 1.0) * qt_Opacity;
+            }"
+    }
+
+    ShaderEffect {
         id: grayscaleShader
         visible: debugControls.grayscaleEnabled
         width: parent.width
@@ -433,7 +455,7 @@ GamePage {
         target: stonedShader
         property: "amplitude"
         loops: 1
-        duration: 5000
+        duration: 5000 * app.gameSpeedFactor
         from: 0
         to: 0.02
         onRunningChanged: if (!running) console.log("Start stoned animation finished. Fully stoned ;)")
@@ -444,7 +466,7 @@ GamePage {
         target: stonedShader
         property: "amplitude"
         loops: 1
-        duration: 5000
+        duration: 5000 * app.gameSpeedFactor
         to: 0
         onRunningChanged: {
             if (!running)  {

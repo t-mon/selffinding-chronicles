@@ -15,11 +15,10 @@ PhysicsItem {
 
     property Character character
     property ParticleSystem particleSystem
+
     property int itemType: character ? character.itemType : GameItem.TypeNone
-
-    property bool itemDebugEnabled: false
     property bool burning: false
-
+    property bool itemDebugEnabled: false
     property bool hitAttackRunning: false
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
     property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
@@ -28,6 +27,16 @@ PhysicsItem {
     fixedRotation: true
     linearDamping: 10
     antialiasing: app.antialiasing
+
+    onPlayerAuraRangeChanged: {
+        if (!character) return
+        character.playerVisible = playerAuraRange
+    }
+
+    onPlayerOnItemChanged: {
+        if (!character) return
+        character.playerOnItem = playerOnItem
+    }
 
     onCharacterChanged: {
         if (!character) return
@@ -97,12 +106,38 @@ PhysicsItem {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
-    }
 
-    Loader {
-        anchors.fill: parent
-        active: root.itemDebugEnabled
-        source: "../components/ItemDebugFrame.qml"
+        // Health indicator
+        onDamaged: {
+            healthIndicator.opacity = 1
+            healthIndicatorTimer.restart()
+            damageAnimation.restart()
+        }
+
+        onHealed: {
+            healthIndicator.opacity = 1
+            healthIndicatorTimer.restart()
+        }
+
+        onKilled: {
+            healthIndicator.opacity = 0
+            healthIndicatorTimer.stop()
+        }
+
+        onPlayerOnItemChanged: {
+            healthIndicator.opacity = 1
+            healthIndicatorTimer.restart()
+        }
+
+        onPlayerFocusChanged: {
+            if (playerFocus) {
+                healthIndicator.opacity = 1
+                healthIndicatorTimer.restart()
+            } if (!playerFocus) {
+                healthIndicator.opacity = 0
+                healthIndicatorTimer.stop()
+            }
+        }
     }
 
     fixtures: [
@@ -112,30 +147,10 @@ PhysicsItem {
             x: root.width / 4
             y: 0
             categories: GameItem.PhysicsBodyHitbox
-            collidesWith: GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
-            density: 1
+            collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
+            density: 1.0
             friction: 0.0
             restitution: 0.0
-
-            onBeginContact: {
-                if (!character.isPlayer)
-                    return
-
-                var target = other.getBody().target
-                if (target.itemType) {
-                    target.playerOnItem = true
-                }
-            }
-
-            onEndContact: {
-                if (!character.isPlayer)
-                    return
-
-                var target = other.getBody().target
-                if (target.itemType) {
-                    target.playerOnItem = false
-                }
-            }
         },
         Box {
             id: bodyBox
@@ -144,31 +159,11 @@ PhysicsItem {
             x: root.width / 4
             y: root.width / 4
             categories: GameItem.PhysicsBodyHitbox
-            collidesWith: GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
+            collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
             density: 1.0
             friction: 0.0
             restitution: 0.0
             sensor: true
-
-            onBeginContact: {
-                if (!character.isPlayer)
-                    return
-
-                var target = other.getBody().target
-                if (target.itemType) {
-                    target.playerOnItem = true
-                }
-            }
-
-            onEndContact: {
-                if (!character.isPlayer)
-                    return
-
-                var target = other.getBody().target
-                if (target.itemType) {
-                    target.playerOnItem = false
-                }
-            }
         },
         Circle {
             id: bodyCircle
@@ -182,7 +177,7 @@ PhysicsItem {
             restitution: 0.0
 
             onBeginContact: {
-                if (!character.isPlayer)
+                if (!root.character || !character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -192,7 +187,7 @@ PhysicsItem {
             }
 
             onEndContact: {
-                if (!character.isPlayer)
+                if (!root.character || !character.isPlayer)
                     return
 
                 var target = other.getBody().target
@@ -213,8 +208,8 @@ PhysicsItem {
         system: root.particleSystem
         group: "footstep"
         enabled: root.character ? root.character.moving && root.character.active : false
-        emitRate: 4
-        lifeSpan: 1500
+        emitRate: 4 * app.gameSpeedFactor
+        lifeSpan: 1500 / app.gameSpeedFactor
         size: app.gridSize / 2
         sizeVariation: size * 0.1
 
@@ -227,12 +222,17 @@ PhysicsItem {
         }
     }
 
+    Loader {
+        anchors.fill: parent
+        active: root.itemDebugEnabled
+        source: "../components/ItemDebugFrame.qml"
+    }
+
     ItemDescription {
         id: nameLabel
         anchors.bottom: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         text: character ? character.name : ""
-        z: root.z + 100
         opacity: character ? (root.itemDebugEnabled ? 0.5 : (root.character.playerFocus && !character.isPlayer ? 1 : 0)) : 0
     }
 
@@ -271,7 +271,6 @@ PhysicsItem {
             return rotationAngle
         }
 
-
         Loader {
             anchors.fill: parent
             active: root.itemDebugEnabled
@@ -283,10 +282,7 @@ PhysicsItem {
             anchors.fill: parent
             mirror: character ? character.heading === Character.HeadingLeft : false
             source: {
-                if (!character)
-                    return ""
-
-                if (!character.weapon)
+                if (!character || !character.weapon)
                     return ""
 
                 return dataDirectory + character.weapon.imageName
@@ -334,10 +330,7 @@ PhysicsItem {
             anchors.fill: parent
             mirror: character ? character.heading === Character.HeadingLeft : false
             source: {
-                if (!character)
-                    return ""
-
-                if (!character.firearm)
+                if (!character || !character.firearm)
                     return ""
 
                 return dataDirectory + character.firearm.imageName
@@ -360,13 +353,13 @@ PhysicsItem {
 
         Timer {
             id: buringTimer
-            interval: 5000
+            interval: 5000 / app.gameSpeedFactor
             onTriggered: flameFadeOutAnimation.start()
         }
 
         PropertyAnimation {
             id: flameFadeOutAnimation
-            duration: 2000
+            duration: 2000 / app.gameSpeedFactor
             target: flameItem
             property: "opacity"
             loops: 1
@@ -409,7 +402,7 @@ PhysicsItem {
                 frameCount: 4
                 frameWidth: 300
                 frameHeight: 300
-                frameDuration: 200
+                frameDuration: 200 / app.gameSpeedFactor
             },
             Sprite {
                 source: dataDirectory + "/images/characters/character-run/run-right.png"
@@ -417,7 +410,7 @@ PhysicsItem {
                 frameCount: 4
                 frameWidth: 300
                 frameHeight: 300
-                frameDuration: 200
+                frameDuration: 200 / app.gameSpeedFactor
             }
         ]
     }
@@ -461,26 +454,25 @@ PhysicsItem {
                 sensor: true
 
                 onBeginContact: {
-                    if (!character.isPlayer)
+                    if (!root.character || !character.isPlayer)
                         return
 
                     var target = other.getBody().target
-                    if (target.itemType) {
-                        target.playerAuraRange = true
-                    }
+                    if (target === root || !target.itemType)
+                        return
+
+                    target.playerAuraRange = true
                 }
 
                 onEndContact: {
-                    if (!character)
-                        return
-
-                    if (!character.isPlayer)
+                    if (!root.character || !character.isPlayer)
                         return
 
                     var target = other.getBody().target
-                    if (target.itemType) {
-                        target.playerAuraRange = false
-                    }
+                    if (target === root || !target.itemType)
+                        return
+
+                    target.playerAuraRange = false
                 }
             }
         ]
@@ -527,11 +519,9 @@ PhysicsItem {
                         return
 
                     var target = other.getBody().target
-
                     if (target === root || target === focusPhyicsItem)
                         return
 
-                    //console.log("Hit sensor touched", target)
                     if (target.itemType && target.enemy) {
                         if (character && character.weapon) {
                             console.log("Hit enemy", target.enemy.name)
@@ -718,10 +708,7 @@ PhysicsItem {
                 rotation: 90
                 mirror: character ? character.heading === Character.HeadingLeft : false
                 source: {
-                    if (!character)
-                        return ""
-
-                    if (!character.firearm)
+                    if (!character || !character.firearm)
                         return ""
 
                     return dataDirectory + character.firearm.imageName
@@ -768,10 +755,52 @@ PhysicsItem {
 
     Timer {
         id: healthIndicatorTimer
-        interval: 3000
+        interval: 3000 / app.gameSpeedFactor
         repeat: false
         onTriggered: healthIndicator.opacity = 0
     }
+
+    Rectangle {
+        id: damageIndicator
+        width: parent.width
+        height: parent.height
+        radius: parent.width / 2
+        color: "transparent"
+        border.color: app.healthColor
+        border.width: parent.width / 8
+        opacity: 0
+    }
+
+    // Damage
+    ParallelAnimation {
+        id: damageAnimation
+
+        ScaleAnimator {
+            target: damageIndicator
+            duration: 200
+            from: 1.2
+            to: 1.5
+        }
+
+        SequentialAnimation {
+
+            NumberAnimation {
+                target: damageIndicator
+                properties: "opacity"
+                duration: 100
+                from: 0
+                to: 0.5
+            }
+
+            NumberAnimation {
+                target: damageIndicator
+                properties: "opacity"
+                duration:  100
+                to: 0
+            }
+        }
+    }
+
 
     // ##################################################################################
     // Functions

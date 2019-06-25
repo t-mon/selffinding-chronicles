@@ -54,6 +54,9 @@ ApplicationWindow {
     onXChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
     onYChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
 
+    // simulation properties
+    property real gameSpeedFactor: 1.0
+
     Connections {
         id: settingsConnections
         target: Game.settings

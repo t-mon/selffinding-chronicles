@@ -184,6 +184,16 @@ PhysicsItem {
         opacity: root.itemDebugEnabled ? 0.5 : 1
     }
 
+    Glow {
+        source: itemImage
+        anchors.fill: itemImage
+        radius: 8
+        samples: 20
+        color: "white"
+        opacity: root.gameItem && root.gameItem.playerFocus ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 200 } }
+    }
+
     ItemDescription {
         id: nameLabel
         anchors.bottom: root.top

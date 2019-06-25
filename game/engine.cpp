@@ -609,7 +609,6 @@ void Engine::onPlayerPositionChanged()
     int x = static_cast<int>(m_player->centerPosition().x());
     int y = static_cast<int>(m_player->centerPosition().y());
     setCurrentPlayerPosition(QPoint(x, y));
-    //setCurrentPlayerField(m_map->getField(x, y));
 }
 
 void Engine::onDataManagerStateChanged(DataManager::State state)
@@ -961,6 +960,9 @@ void Engine::onEscape()
         break;
     case StatePlunder:
         finishPlunder();
+        break;
+    case StateRead:
+        finishReading();
         break;
     case StateUnlocking:
         giveUpUnlocking();

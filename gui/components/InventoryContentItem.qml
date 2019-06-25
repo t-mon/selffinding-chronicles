@@ -116,9 +116,7 @@ Item {
                         itemIdFilter: inventoryContetItem.item ? inventoryContetItem.item.itemId : ""
                     }
 
-                    onSelectedChanged: {
-                        root.selectedItem = inventoryGridView.model.get(inventoryGridView.currentIndex)
-                    }
+                    onSelectedChanged: root.selectedItem = inventoryGridView.model.get(inventoryGridView.currentIndex)
                 }
             }
 
