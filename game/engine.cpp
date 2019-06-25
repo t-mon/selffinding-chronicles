@@ -693,6 +693,9 @@ void Engine::onItemPlayerVisibleChanged(bool playerVisible)
 {
     GameItem *item = qobject_cast<GameItem *>(sender());
 
+    if (!item->focusVisible())
+        return;
+
     // Add / remove item from visible items list
     if (playerVisible) {
         m_playerVisibleItems.append(item);

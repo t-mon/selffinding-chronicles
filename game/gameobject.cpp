@@ -66,6 +66,21 @@ void GameObject::setSize(const QSize &size)
     emit sizeChanged(m_size);
 }
 
+bool GameObject::focusVisible() const
+{
+    return m_focusVisible;
+}
+
+void GameObject::setFocusVisible(bool focusVisible)
+{
+    if (m_focusVisible == focusVisible)
+        return;
+
+    qCDebug(dcGameObject()) << this << "Focus visible changed" << focusVisible;
+    m_focusVisible = focusVisible;
+    emit focusVisibleChanged(m_focusVisible);
+}
+
 bool GameObject::active() const
 {
     return m_active;

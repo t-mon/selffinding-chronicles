@@ -2,6 +2,7 @@
     "name": "Tree 1",
     "type": "tree",
     "imageName": "/images/world/trees/tree-1.png",
+    "focusVisible": false,
     "geometry": {
         "width": 7,
         "height": 7,

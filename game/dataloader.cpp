@@ -317,6 +317,7 @@ void DataLoader::fillGameItemData(GameItem *item, const QVariantMap &description
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
     item->setName(description.value("name").toString());
     item->setImageName(description.value("imageName").toString());
+    item->setFocusVisible(description.value("focusVisible", true).toBool());
     item->setSize(QSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt()));
     item->setLayer(geometryMap.value("layer").toReal());
     item->setShape(convertShapeString(physicsGeometryMap.value("shape", "none").toString()));

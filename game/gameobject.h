@@ -85,6 +85,9 @@ public:
     QSize size() const;
     void setSize(const QSize &size);
 
+    bool focusVisible() const;
+    void setFocusVisible(bool focusVisible);
+
     bool active() const;
     void setActive(bool active);
 
@@ -115,6 +118,7 @@ private:
     QPointF m_position;
     double m_layer = 0;
     QSize m_size = QSize(1, 1);
+    bool m_focusVisible = true;
     bool m_active = false;
 
     Shape m_shape = ShapeNone;
@@ -130,6 +134,7 @@ signals:
     void positionChanged(const QPointF &position);
     void layerChanged(double layer);
     void sizeChanged(const QSize &size);
+    void focusVisibleChanged(bool focusVisible);
     void activeChanged(bool active);
 
     void shapeChanged(Shape shape);
