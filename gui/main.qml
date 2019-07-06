@@ -26,7 +26,7 @@ ApplicationWindow {
     property string gameName: qsTr("Self finding chronicles")
 
     // This is the main scaling property. Everything scales with the gridSize
-    property real gridSize: Math.min(app.width / 30, app.height / 20)
+    property real gridSize: Math.min(app.width / 32, app.height / 18)
     property real menuItemSize: gridSize * 2.5
 
     // General UI configurations
@@ -87,5 +87,6 @@ ApplicationWindow {
     Component.onCompleted: {
         app.visibility = Game.settings.visibility
         pageStack.push(Qt.resolvedUrl("MainPage.qml"))
+        console.log("Window size:", app.width, "x", app.height, "Grid size:", app.gridSize)
     }
 }

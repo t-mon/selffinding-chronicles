@@ -2,6 +2,9 @@ QT += core qml quick quickcontrols2 svg
 
 CONFIG += c++11
 
+#QMAKE_CXXFLAGS += -isystem "$$PWD/qml-box2d/box2d_lib" -Werror -std=c++11 -g
+QMAKE_LFLAGS *= -std=c++11
+
 RESOURCES += gui/gui.qrc \
              gamedata/gamedata.qrc
 
@@ -21,6 +24,7 @@ HEADERS += \
     game/field.h \
     game/fields.h \
     game/items/literatureitem.h \
+    game/items/teleporteritem.h \
     game/items/weatherareaproxy.h \
     game/map.h \
     game/debugcategories.h \
@@ -58,6 +62,7 @@ SOURCES += game/main.cpp \
     game/field.cpp \
     game/fields.cpp \
     game/items/literatureitem.cpp \
+    game/items/teleporteritem.cpp \
     game/items/weatherareaproxy.cpp \
     game/map.cpp \
     game/debugcategories.cpp \

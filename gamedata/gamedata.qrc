@@ -34,5 +34,7 @@
         <file>gamedata/weapons/wood-stick.json</file>
         <file>gamedata/houses/house-1.json</file>
         <file>gamedata/literature/book.json</file>
+        <file>gamedata/fences/wood-fence.json</file>
+        <file>gamedata/teleport/teleport-test.json</file>
     </qresource>
 </RCC>

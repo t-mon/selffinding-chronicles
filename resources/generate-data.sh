@@ -4,6 +4,8 @@
 #                                                                         #
 #  Copyright (C) 2019 Simon Stürz <stuerz.simon@gmail.com>                #
 #                                                                         #
+#  This file is part of selffinding-chronicles                            #
+#                                                                         #
 #  This program is free software; you can redistribute it and/or          #
 #  modify it under the terms of the GNU General Public License            #
 #  as published by the Free Software Foundation; either version 2         #
@@ -19,11 +21,16 @@
 #                                                                         #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# Note: sudo apt-get install imagemagick krita
+
+
 # Directories
 SOURCE_DIR=$(cd $(dirname $0); cd ..; pwd)
 DATA_DIR=${SOURCE_DIR}/data
 DATA_BACKUP_DIR=${SOURCE_DIR}/data-backup
 RESOURCES_DIR=${SOURCE_DIR}/resources
+
+IGNORE_EXTENSIONS=("kra~" "bundle" "sh")
 
 # Colors
 BASH_GREEN="\e[1;32m"
@@ -41,19 +48,82 @@ function printRed() {
 }
 
 #---------------------------------------------------------------
+function processDirectory() {
+    printGreen "Process directory $1 relative to ${RELATIVE_PATH}"
+    local currentPath=${RELATIVE_PATH}
+    RELATIVE_PATH+="/$1"
+    echo "--> Relative path: ${RELATIVE_PATH}"
+    cd $1
+
+    if [ -z "$(ls -A)" ]; then
+        echo "$RELATIVE_PATH is empty"
+    else
+        for entry in *; do
+            if [ -d $entry ]; then
+                processDirectory $entry
+            fi
+
+           if [ -f $entry ]; then
+               processFile $entry
+           fi
+        done
+    fi
+
+    cd ..
+    RELATIVE_PATH=${currentPath}
+}
+
+#---------------------------------------------------------------
+function processFile() {
+    local fileExtension=${1##*.}
+    local fileName=${1%.*}
+
+    if [ ${fileExtension} == "bundle" ]; then return; fi
+    if [ ${fileExtension} == "kra~" ]; then return; fi
+    if [ ${fileName} == "template" ]; then return; fi
+
+    # we can copy svg files without modification
+    if [ ${fileExtension} == "svg" ]; then
+        echo "TODO: copy svg to data directory"
+    fi
+
+
+    # krita files must be exported as png
+
+    if [ ${fileExtension} == "kra" ]; then
+        exportDrawingToPng $1
+    fi
+
+    printGreen "--> Process file $1 - $fileName $fileExtension"
+
+    TARGETFOLDER=$(readlink -f ${DATA_DIR}/$RELATIVE_PATH)
+    printGreen "Copy to data folder $TARGETFOLDER"
+}
+
+#---------------------------------------------------------------
+function exportDrawingToPng() {
+    OUTPUT_PNG=$(basename "$1" .kra).png
+    printGreen "Export $1 to ${OUTPUT_PNG}"
+    krita $1 --export --export-filename ${OUTPUT_PNG} &> /dev/null || true
+    file ${OUTPUT_PNG}
+}
+
+#---------------------------------------------------------------
 # Main
 #---------------------------------------------------------------
 printGreen "Source: ${SOURCE_DIR}"
 printGreen "Data: ${DATA_DIR}"
 printGreen "Resources: ${RESOURCES_DIR}"
 
-printGreen "Backup current data directory ${DATA_DIR}"
-if [ -d ${DATA_BACKUP_DIR} ]; then rm -rf ${DATA_BACKUP_DIR}; fi
-if [ -d ${DATA_DIR} ]; then mv ${DATA_DIR} ${DATA_BACKUP_DIR}; fi
-
-
-printGreen "Create data directory ${DATA_DIR}"
-mkdir -p ${DATA_DIR}
+RELATIVE_PATH="."
 
 cd ${RESOURCES_DIR}
-ls -l
+for entry in *; do
+    if [ -d $entry ]; then
+        processDirectory $entry
+    fi
+
+    if [ -f $entry ]; then
+       processFile $entry
+    fi
+done

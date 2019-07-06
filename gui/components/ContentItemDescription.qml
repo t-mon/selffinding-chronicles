@@ -27,6 +27,9 @@ Item {
         case GameItem.TypeLiterature:
             itemDescriptionLoader.sourceComponent = literatureComponent
             break;
+        case GameItem.TypeTeleportItem:
+            itemDescriptionLoader.sourceComponent = teleporterComponent
+            break;
         }
     }
 
@@ -211,6 +214,31 @@ Item {
                 id: priceLabel
                 color: "white"
                 text: qsTr("Price") + ": " + (literatureItem ? literatureItem.price : "")
+            }
+        }
+    }
+
+    Component {
+        id: teleporterComponent
+
+        Column {
+            id: column
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+
+            property TeleporterItem teleporterItem: Game.castTeleporterItem(contentItem)
+
+            GameLabel {
+                id: targetMapLabel
+                color: "white"
+                text: teleporterItem ? teleporterItem.targetMap : ""
+            }
+
+            GameLabel {
+                id: targetPointLabel
+                color: "white"
+                text: teleporterItem ? teleporterItem.targetPosition.x + "," + teleporterItem.targetPosition.y : ""
             }
         }
     }

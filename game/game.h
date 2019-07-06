@@ -49,7 +49,8 @@ public:
     Q_INVOKABLE WeaponItem *castWeaponItem(GameItem *item);
     Q_INVOKABLE FirearmItem *castFirearmItem(GameItem *item);
     Q_INVOKABLE PlantItem *castPlantItem(GameItem *item);
-    Q_INVOKABLE LiteratureItem *castLiteratureItem(LiteratureItem *literatureItem);
+    Q_INVOKABLE LiteratureItem *castLiteratureItem(GameItem *item);
+    Q_INVOKABLE TeleporterItem *castTeleporterItem(GameItem *item);
     Q_INVOKABLE Character *castEnemyToCharacter(Enemy *enemy);
 
 private:

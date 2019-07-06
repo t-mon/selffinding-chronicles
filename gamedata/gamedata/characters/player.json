@@ -53,6 +53,14 @@
             {
                 "data": ":/gamedata/firearms/crossbow.json",
                 "count": 1
+            },
+            {
+                "data": ":/gamedata/literature/book.json",
+                "count": 1
+            },
+            {
+                "data": ":/gamedata/teleport/teleport-test.json",
+                "count": 1
             }
         ]
     }

@@ -3,6 +3,7 @@
 #include "../debugcategories.h"
 
 #include <QtMath>
+#include <QtGlobal>
 #include <QVector2D>
 
 Character::Character(QObject *parent):
@@ -215,7 +216,7 @@ double Character::angle() const
 
 void Character::setAngle(double angle)
 {
-    if (m_angle == angle)
+    if (qFuzzyCompare(m_angle, angle))
         return;
 
     //qCDebug(dcCharacter()) << name() << "angle changed" << angle;

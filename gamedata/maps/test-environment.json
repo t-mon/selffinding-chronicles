@@ -225,6 +225,21 @@
             "x": 130,
             "y": 20,
             "data": ":/gamedata/trees/tree-1.json"
+        },
+        {
+            "x": 30,
+            "y": 15,
+            "data": ":/gamedata/fences/wood-fence.json"
+        },
+        {
+            "x": 33,
+            "y": 15,
+            "data": ":/gamedata/fences/wood-fence.json"
+        },
+        {
+            "x": 36,
+            "y": 15,
+            "data": ":/gamedata/fences/wood-fence.json"
         }
     ],
     "characters": [

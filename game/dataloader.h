@@ -15,6 +15,7 @@
 #include "items/enemy.h"
 #include "items/chestitem.h"
 #include "items/literatureitem.h"
+#include "items/teleporteritem.h"
 
 class DataLoader
 {
@@ -29,6 +30,7 @@ public:
     static WeaponItem *createWeaponItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static FirearmItem *createFirearmItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static LiteratureItem *createLiteratureItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
+    static TeleporterItem *createTeleportItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
 
     static Character *createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);
     static Enemy *createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position = QPoint(), QObject *parent = nullptr);

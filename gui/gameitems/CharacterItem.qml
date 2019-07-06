@@ -222,6 +222,16 @@ PhysicsItem {
         }
     }
 
+    Glow {
+        source: characterSpriteSequence
+        anchors.fill: characterSpriteSequence
+        radius: 8
+        samples: 20
+        color: "white"
+        opacity: root.character && root.character.playerFocus ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 200 } }
+    }
+
     Loader {
         anchors.fill: parent
         active: root.itemDebugEnabled

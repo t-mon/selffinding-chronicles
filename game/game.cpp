@@ -104,9 +104,14 @@ PlantItem *Game::castPlantItem(GameItem *item)
     return qobject_cast<PlantItem *>(item);
 }
 
-LiteratureItem *Game::castLiteratureItem(LiteratureItem *literatureItem)
+LiteratureItem *Game::castLiteratureItem(GameItem *item)
 {
-    return qobject_cast<LiteratureItem *>(literatureItem);
+    return qobject_cast<LiteratureItem *>(item);
+}
+
+TeleporterItem *Game::castTeleporterItem(GameItem *item)
+{
+    return qobject_cast<TeleporterItem *>(item);
 }
 
 Character *Game::castEnemyToCharacter(Enemy *enemy)

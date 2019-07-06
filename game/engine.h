@@ -13,6 +13,7 @@
 #include "datamanager.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
+#include "items/teleporteritem.h"
 #include "items/weatherareaproxy.h"
 #include "conversation/conversation.h"
 

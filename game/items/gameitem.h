@@ -35,7 +35,7 @@ public:
         TypeFirearm,
         TypeChest,
         TypeDoor,
-        TypeTeleportStone,
+        TypeTeleportItem,
         TypeBox,
         TypeCharacter,
         TypeEnemy,

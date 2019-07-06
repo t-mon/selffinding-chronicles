@@ -22,7 +22,7 @@ GamePage {
     onHeightChanged: console.log("Game page height changed.") &&  evaluateViewWindow()
 
     Component.onCompleted: {
-        console.log("Game scene size:", root.width, "/", root.height, "Grid size:", app.gridSize)
+        console.log("Game scene size:", root.width, "x", root.height, "Grid size:", app.gridSize)
     }
 
     function runGame() {

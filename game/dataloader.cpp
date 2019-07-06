@@ -96,6 +96,21 @@ LiteratureItem *DataLoader::createLiteratureItem(const QString &resourcePath, co
     return literatureItem;
 }
 
+TeleporterItem *DataLoader::createTeleportItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+{
+    TeleporterItem *teleportItem = new TeleporterItem(parent);
+    teleportItem->setResourcePath(resourcePath);
+    teleportItem->setItemId(getItemIdFromResourcePath(resourcePath));
+    teleportItem->setPosition(position);
+    fillGameItemData(qobject_cast<GameItem *>(teleportItem), description);
+
+    QVariantMap teleportMap = description.value("teleport").toMap();
+    teleportItem->setTargetMap(teleportMap.value("targetMap").toString());
+    teleportItem->setTargetPosition(QPointF(teleportMap.value("targetPositionX").toReal(), teleportMap.value("targetPositionY").toReal()));
+
+    return teleportItem;
+}
+
 Character *DataLoader::createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     Character *character = new Character(parent);
@@ -297,6 +312,8 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &po
         return createChestItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "literature") {
         return createLiteratureItem(resourcePath, itemMap, position, parent);
+    } else if (itemTypeString == "teleport") {
+        return createTeleportItem(resourcePath, itemMap, position, parent);
     } else {
         qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
     }

@@ -119,14 +119,13 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Settings", false);
     s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("PathController", false);
-    s_loggingFilters.insert("Map", false);
+    s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("MapEditor", true);
     s_loggingFilters.insert("DataManager", false);
-    s_loggingFilters.insert("Item", true);
+    s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("GameObject", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
-
     s_loggingFilters.insert("qml", true);
 
     QLoggingCategory::installFilter(loggingCategoryFilter);
@@ -157,6 +156,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<WeaponItem>("Chronicles", 1, 0, "WeaponItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<FirearmItem>("Chronicles", 1, 0, "FirearmItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<LiteratureItem>("Chronicles", 1, 0, "LiteratureItem", "Can't create this in QML.");
+    qmlRegisterUncreatableType<TeleporterItem>("Chronicles", 1, 0, "TeleporterItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<ChestItem>("Chronicles", 1, 0, "ChestItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
     qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");

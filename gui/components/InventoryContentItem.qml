@@ -44,6 +44,11 @@ Item {
                     image: "/images/items/literature/book.png"
                     type: GameItem.TypeLiterature
                 }
+                ListElement {
+                    name: qsTr("Teleport")
+                    image: "/images/items/teleport/teleport-test.png"
+                    type: GameItem.TypeTeleportItem
+                }
             }
 
             ListView {
