@@ -10,6 +10,7 @@ class GameItem : public GameObject
 {
     Q_OBJECT
     Q_PROPERTY(Interaction interaction READ interaction NOTIFY interactionChanged)
+    Q_PROPERTY(Interaction inventoryInteraction READ inventoryInteraction NOTIFY inventoryInteractionChanged)
     Q_PROPERTY(QString interactionString READ interactionString NOTIFY interactionChanged)
     Q_PROPERTY(QString imageName READ imageName NOTIFY imageNameChanged)
     Q_PROPERTY(Type itemType READ itemType CONSTANT)
@@ -49,6 +50,7 @@ public:
     enum Interaction {
         InteractionNone,
         InteractionPick,
+        InteractionArm,
         InteractionOpen,
         InteractionClose,
         InteractionEnter,
@@ -97,11 +99,14 @@ public:
     Interaction interaction() const;
     void setInteraction(Interaction interaction);
 
+    Interaction inventoryInteraction() const;
+    void setInventoryInteraction(Interaction interaction);
+
     QString interactionString() const;
 
     virtual void performInteraction() = 0;
 
-    static QString interactionToString(const Interaction &interaction);
+    Q_INVOKABLE static QString interactionToString(Interaction interaction);
 
 private:
     QString m_itemId;
@@ -115,10 +120,12 @@ private:
 
 protected:
     Interaction m_interaction = InteractionNone;
+    Interaction m_inventoryInteraction = InteractionUse;
 
 signals:
     void imageNameChanged(const QString &imageName);
     void interactionChanged(Interaction interaction);
+    void inventoryInteractionChanged(Interaction interaction);
     void priceChanged(int price);
     void playerFocusChanged(bool playerFocus);
     void playerVisibleChanged(bool playerVisible);

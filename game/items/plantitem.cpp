@@ -5,6 +5,7 @@ PlantItem::PlantItem(QObject *parent) :
     GameItem(parent)
 {
     setInteraction(InteractionPick);
+    setInventoryInteraction(InteractionEat);
 }
 
 QString PlantItem::itemTypeName() const

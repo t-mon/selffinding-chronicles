@@ -131,13 +131,27 @@ void GameItem::setInteraction(GameItem::Interaction interaction)
     emit interactionChanged(m_interaction);
 }
 
+GameItem::Interaction GameItem::inventoryInteraction() const
+{
+    return m_inventoryInteraction;
+}
+
+void GameItem::setInventoryInteraction(GameItem::Interaction interaction)
+{
+    if (m_inventoryInteraction == interaction)
+        return;
+
+    m_inventoryInteraction = interaction;
+    emit inventoryInteractionChanged(m_inventoryInteraction);
+}
+
 
 QString GameItem::interactionString() const
 {
     return interactionToString(m_interaction);
 }
 
-QString GameItem::interactionToString(const GameItem::Interaction &interaction)
+QString GameItem::interactionToString(Interaction interaction)
 {
     QString interactionString;
     switch (interaction) {
@@ -148,6 +162,10 @@ QString GameItem::interactionToString(const GameItem::Interaction &interaction)
     case InteractionPick:
         //: This string describes an interaction for an item.
         interactionString = tr("Pick up");
+        break;
+    case InteractionArm:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Arm");
         break;
     case InteractionOpen:
         //: This string describes an interaction for an item.

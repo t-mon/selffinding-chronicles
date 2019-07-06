@@ -1,0 +1,22 @@
+{
+    "name": "Wood fence",
+    "type": "static",
+    "imageName": "/images/world/fences/wood-fence.png",
+    "focusVisible": false,
+    "geometry": {
+        "width": 3,
+        "height": 3,
+        "layer": 3
+    },
+    "physicsGeometry": {
+        "body": "static",
+        "shape": "rectangle",
+        "width": 3,
+        "height": 0.5,
+        "x": 0,
+        "y": 2,
+        "category": 8,
+        "collision": 169,
+        "vertices": []
+    }
+}

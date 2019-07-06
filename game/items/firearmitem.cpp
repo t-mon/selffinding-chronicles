@@ -5,6 +5,7 @@ FirearmItem::FirearmItem(QObject *parent) :
     GameItem(parent)
 {
     setInteraction(InteractionPick);
+    setInventoryInteraction(InteractionArm);
 }
 
 QString FirearmItem::itemTypeName() const

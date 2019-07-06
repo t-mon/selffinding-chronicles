@@ -154,14 +154,8 @@ Item {
         case GameItem.TypeFirearm:
             Game.engine.player.firearm = selectedItem
             break;
-        case GameItem.TypePlant:
-            Game.engine.useInventoryItem(selectedItem.itemId)
-            break;
-        case GameItem.TypeLiterature:
-            Game.engine.useInventoryItem(selectedItem.itemId)
-            break;
         default:
-            console.log("Not implemented yet for item", selectedItem.itemTypeName)
+            Game.engine.useInventoryItem(selectedItem.itemId)
             break;
         }
     }

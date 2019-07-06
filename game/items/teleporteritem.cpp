@@ -3,7 +3,8 @@
 TeleporterItem::TeleporterItem(QObject *parent) :
     GameItem(parent)
 {
-
+    setInteraction(InteractionPick);
+    setInventoryInteraction(InteractionUse);
 }
 
 QString TeleporterItem::itemTypeName() const
@@ -47,4 +48,13 @@ void TeleporterItem::setTargetPosition(const QPointF &targetPosition)
 
     m_targetPosition = targetPosition;
     emit targetPositionChanged(m_targetPosition);
+}
+
+QDebug operator<<(QDebug debug, TeleporterItem *teleporterItem)
+{
+    debug.nospace() << "TeleportItem(" << teleporterItem->name();
+    debug.nospace() << ", " << teleporterItem->targetMap();
+    debug.nospace() << ", " << teleporterItem->targetPosition();
+    debug.nospace() << ")";
+    return debug.space();
 }

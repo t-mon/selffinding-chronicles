@@ -90,19 +90,9 @@ GameOverlayItem {
                         enabled: inventoryContentItem.selectedItem
                         text: {
                             if (!inventoryContentItem.selectedItem)
-                                return qsTr("Use");
+                                return qsTr("Unknown");
 
-                            switch (inventoryContentItem.selectedItem.itemType) {
-                            case GameItem.TypeWeapon:
-                            case GameItem.TypeFirearm:
-                                return qsTr("Arm");
-                            case GameItem.TypeLiterature:
-                                return qsTr("Read");
-                            case GameItem.TypePlant:
-                                return qsTr("Eat");
-                            default:
-                                return qsTr("Use");
-                            }
+                            return inventoryContentItem.selectedItem.interactionString
                         }
                         onClicked: {
                             console.log("Use clicked for", inventoryContentItem.selectedItem, inventoryContentItem.selectedItem.itemTypeName)

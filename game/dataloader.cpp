@@ -245,6 +245,7 @@ QList<GameItem *> DataLoader::loadCharacterItems(const QVariantList &characterIt
         QVariantMap itemMap = itemVariant.toMap();
         GameItem *gameItem = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
         gameItem->setPosition(QPointF(itemMap.value("x", -1).toDouble(), itemMap.value("y", -1).toDouble()));
+        gameItem->setInteraction(gameItem->inventoryInteraction());
         if (itemMap.contains("character")) {
             QVariantMap characterMap = itemMap.value("character").toMap();
             fillCharacterItemData(qobject_cast<Character *>(gameItem), characterMap);
@@ -264,6 +265,7 @@ QList<GameItem *> DataLoader::loadEnemyItems(const QVariantList &enemyItemsList,
         QVariantMap itemMap = itemVariant.toMap();
         GameItem *gameItem = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
         gameItem->setPosition(QPointF(itemMap.value("x", -1).toDouble(), itemMap.value("y", -1).toDouble()));
+        gameItem->setInteraction(gameItem->inventoryInteraction());
         if (itemMap.contains("character")) {
             QVariantMap characterMap = itemMap.value("character").toMap();
             fillCharacterItemData(qobject_cast<Character *>(gameItem), characterMap);
@@ -283,7 +285,9 @@ QList<GameItem *> DataLoader::loadInventoryItems(const QVariantList &itemsList, 
         QVariantMap itemMap = itemVariant.toMap();
         int count = itemMap.value("count").toInt();
         for (int i = 0; i < count; i++) {
-            gameItems.append(loadGameItemFromResourcePath(itemMap.value("data").toString(), parent));
+            GameItem *item = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
+            item->setInteraction(item->inventoryInteraction());
+            gameItems.append(item);
         }
     }
 

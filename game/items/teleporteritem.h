@@ -1,7 +1,9 @@
 #ifndef TELEPORTERITEM_H
 #define TELEPORTERITEM_H
 
+#include <QDebug>
 #include <QObject>
+
 #include "gameitem.h"
 
 class TeleporterItem : public GameItem
@@ -34,5 +36,8 @@ signals:
     void targetPositionChanged(const QPointF &targetPosition);
 
 };
+
+QDebug operator<<(QDebug debug, TeleporterItem *teleporterItem);
+
 
 #endif // TELEPORTERITEM_H

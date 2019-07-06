@@ -5,6 +5,7 @@ LiteratureItem::LiteratureItem(QObject *parent) :
     GameItem(parent)
 {
     setInteraction(GameItem::InteractionPick);
+    setInventoryInteraction(InteractionRead);
 }
 
 QString LiteratureItem::itemTypeName() const

@@ -2,7 +2,8 @@
 
 StaticItem::StaticItem(QObject *parent) : GameItem(parent)
 {
-
+    setInteraction(InteractionNone);
+    setInventoryInteraction(InteractionNone);
 }
 
 QString StaticItem::itemTypeName() const

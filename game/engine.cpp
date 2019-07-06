@@ -226,8 +226,15 @@ void Engine::useInventoryItem(const QString &itemId)
         setState(StateRead);
         break;
     }
+    case GameItem::TypeTeleportItem: {
+        TeleporterItem *teleporter = qobject_cast<TeleporterItem *>(item);
+        qCDebug(dcEngine()) << "Use" << teleporter;
+        m_keepInventoryOpen = false;
+        break;
+    }
     default:
         qCWarning(dcEngine()) << "Unhandled use for game item" << item;
+        break;
     }
 }
 
@@ -599,7 +606,8 @@ void Engine::pickItem(GameItem *item)
     item->setPlayerVisible(false);
 
     m_dataManager->items()->removeGameItem(item);
-    qCDebug(dcEngineData()) << "Picked item and add it to the inventory" << item;
+    qCDebug(dcEngineData()) << "Picked item and add it to the inventory" << item << item->inventoryInteraction();
+    item->setInteraction(item->inventoryInteraction());
     m_player->inventory()->addGameItem(item);
 }
 
@@ -812,7 +820,6 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
             qCDebug(dcEngine()) << "Perform literature interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
             LiteratureItem *literature = qobject_cast<LiteratureItem *>(m_playerFocusItem);
             if (literature->interaction() == GameItem::InteractionPick) {
-                literature->setInteraction(GameItem::InteractionRead);
                 pickItem(m_playerFocusItem);
                 m_playerFocusItem = nullptr;
                 evaluatePlayerFocus();

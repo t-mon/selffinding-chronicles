@@ -5,6 +5,7 @@ WeaponItem::WeaponItem(QObject *parent):
     GameItem(parent)
 {
     setInteraction(InteractionPick);
+    setInventoryInteraction(InteractionArm);
 }
 
 QString WeaponItem::itemTypeName() const
