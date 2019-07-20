@@ -21,6 +21,20 @@ void Enemy::performInteraction()
     qCDebug(dcItem()) << name() << "Perform interaction" << this;
 }
 
+double Enemy::sensorRadius() const
+{
+    return m_sensorRadius;
+}
+
+void Enemy::setSensorRadius(double sensorRadius)
+{
+    if (qFuzzyCompare(m_sensorRadius, sensorRadius))
+        return;
+
+    m_sensorRadius = sensorRadius;
+    emit sensorRadiusChanged(m_sensorRadius);
+}
+
 int Enemy::touchDamage() const
 {
     return m_touchDamage;

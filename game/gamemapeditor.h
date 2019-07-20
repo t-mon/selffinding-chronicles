@@ -50,7 +50,7 @@ private:
     GameItemsProxy *m_activeCharacters = nullptr;
 
     QPointF m_editorViewOffset;
-    QSize m_editorViewSize;
+    QSizeF m_editorViewSize;
 
     Map *m_map = nullptr;
     GameItem *m_selectedGameItem = nullptr;
@@ -65,7 +65,7 @@ private slots:
 
 public slots:
     void onEditorViewOffsetChanged(const QPointF &offset);
-    void onEditorViewSizeChanged(const QSize &size);
+    void onEditorViewSizeChanged(const QSizeF &size);
 
 };
 

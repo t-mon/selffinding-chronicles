@@ -61,5 +61,7 @@
         <file>components/Weather.qml</file>
         <file>gameoverlays/ReadLiteratureOverlay.qml</file>
         <file>components/ItemDebugFrame.qml</file>
+        <file>shadereffects/teleport.frag</file>
+        <file>shadereffects/+hlsl/teleport.frag</file>
     </qresource>
 </RCC>

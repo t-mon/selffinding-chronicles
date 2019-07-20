@@ -133,6 +133,7 @@ Enemy *DataLoader::createEnemyObject(const QString &resourcePath, const QVariant
     fillCharacterItemData(qobject_cast<Character *>(enemy), description.value("character").toMap());
 
     QVariantMap enemyMap = description.value("enemy").toMap();
+    enemy->setSensorRadius(enemyMap.value("sensorRadius").toDouble());
     enemy->setTouchDamage(enemyMap.value("touchDamage").toInt());
     enemy->setShootDamage(enemyMap.value("shootDamage").toInt());
     enemy->setHitDamage(enemyMap.value("hitDamage").toInt());
@@ -245,7 +246,6 @@ QList<GameItem *> DataLoader::loadCharacterItems(const QVariantList &characterIt
         QVariantMap itemMap = itemVariant.toMap();
         GameItem *gameItem = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
         gameItem->setPosition(QPointF(itemMap.value("x", -1).toDouble(), itemMap.value("y", -1).toDouble()));
-        gameItem->setInteraction(gameItem->inventoryInteraction());
         if (itemMap.contains("character")) {
             QVariantMap characterMap = itemMap.value("character").toMap();
             fillCharacterItemData(qobject_cast<Character *>(gameItem), characterMap);
@@ -265,8 +265,7 @@ QList<GameItem *> DataLoader::loadEnemyItems(const QVariantList &enemyItemsList,
         QVariantMap itemMap = itemVariant.toMap();
         GameItem *gameItem = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
         gameItem->setPosition(QPointF(itemMap.value("x", -1).toDouble(), itemMap.value("y", -1).toDouble()));
-        gameItem->setInteraction(gameItem->inventoryInteraction());
-        if (itemMap.contains("character")) {
+            if (itemMap.contains("character")) {
             QVariantMap characterMap = itemMap.value("character").toMap();
             fillCharacterItemData(qobject_cast<Character *>(gameItem), characterMap);
         }
@@ -339,11 +338,11 @@ void DataLoader::fillGameItemData(GameItem *item, const QVariantMap &description
     item->setName(description.value("name").toString());
     item->setImageName(description.value("imageName").toString());
     item->setFocusVisible(description.value("focusVisible", true).toBool());
-    item->setSize(QSize(geometryMap.value("width", 1).toInt(), geometryMap.value("height", 1).toInt()));
+    item->setSize(QSizeF(geometryMap.value("width", 1).toDouble(), geometryMap.value("height", 1).toDouble()));
     item->setLayer(geometryMap.value("layer").toReal());
     item->setShape(convertShapeString(physicsGeometryMap.value("shape", "none").toString()));
     item->setBodyType(convertBodyTypeString(physicsGeometryMap.value("body", "static").toString()));
-    item->setPhysicsSize(QSize(physicsGeometryMap.value("width", 0).toInt(), physicsGeometryMap.value("height", 0).toInt()));
+    item->setPhysicsSize(QSizeF(physicsGeometryMap.value("width", 0).toDouble(), physicsGeometryMap.value("height", 0).toDouble()));
     item->setPhysicsPosition(QPointF(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble()));
     item->setCategoryFlag(static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt()));
     item->setCollisionFlag(static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt()));
@@ -466,7 +465,6 @@ QVariantMap DataLoader::characterToVariantMap(Character *character)
     }
     charachterPropertyMap.insert("inventory", inventoryItemList);
     charachterPropertyMap.insert("paths", pathsToVariantList(character->paths()));
-
     characterMap.insert("character", charachterPropertyMap);
 
     return characterMap;

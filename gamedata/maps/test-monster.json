@@ -1,0 +1,116 @@
+{
+    "name": "test-monster",
+    "playerStartX": 5,
+    "playerStartY": 5,
+    "width": 100,
+    "height": 100,
+    "backgroundColor": "#307a78",
+    "items": [
+        {
+            "data": ":/gamedata/trees/tree-1.json",
+            "x": 11,
+            "y": -1
+        },
+        {
+            "data": ":/gamedata/trees/tree-1.json",
+            "x": 11,
+            "y": 12
+        }
+    ],
+    "characters": [
+    ],
+    "enemies": [
+        {
+            "x": 15,
+            "y": 8,
+            "data": ":/gamedata/enemies/test-enemy.json",
+            "character": {
+                "gender": "male",
+                "role": "Enemy",
+                "experience": 100,
+                "health": 100,
+                "healthMax": 100,
+                "mana": 10,
+                "manaMax": 10,
+                "wisdom": 10,
+                "strength": 10,
+                "stealth": 0,
+                "weapon": "",
+                "firearm": "",
+                "inventory": [
+                    {
+                        "data": ":/gamedata/plants/healing-herb.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/weapons/sword.json",
+                        "count": 2
+                    }
+                ],
+                "paths": [
+                    {
+                        "id": "2f6cad75-e8ec-4845-9f0e-618c4bec3634",
+                        "segments": [
+                            {
+                                "type": "segment",
+                                "offsetX": 5,
+                                "offsetY": 0,
+                                "speed": 0.1,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 1000
+                            },
+                            {
+                                "type": "segment",
+                                "offsetX": -2,
+                                "offsetY": -2,
+                                "speed": 0.05,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 750
+                            },
+                            {
+                                "type": "segment",
+                                "offsetX": -3,
+                                "offsetY": 2,
+                                "speed": 0.1,
+                                "angle": 0,
+                                "duration": 0
+                            },
+                            {
+                                "type": "rotate",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 45,
+                                "duration": 500
+                            },
+                            {
+                                "type": "pause",
+                                "offsetX": 0,
+                                "offsetY": 0,
+                                "speed": 0,
+                                "angle": 0,
+                                "duration": 750
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

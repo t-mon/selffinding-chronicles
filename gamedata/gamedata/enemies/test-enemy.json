@@ -109,6 +109,7 @@
     },
 
     "enemy": {
+        "sensorRadius": 4.0,
         "touchDamage": 1,
         "hitDamage": 5,
         "shootDamage": 5

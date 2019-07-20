@@ -129,7 +129,7 @@ void GameMapEditor::onEditorViewOffsetChanged(const QPointF &offset)
     // TODO: evaluate active items
 }
 
-void GameMapEditor::onEditorViewSizeChanged(const QSize &size)
+void GameMapEditor::onEditorViewSizeChanged(const QSizeF &size)
 {
     m_editorViewSize = size;
 

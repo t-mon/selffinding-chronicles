@@ -229,7 +229,7 @@ void Engine::useInventoryItem(const QString &itemId)
     case GameItem::TypeTeleportItem: {
         TeleporterItem *teleporter = qobject_cast<TeleporterItem *>(item);
         qCDebug(dcEngine()) << "Use" << teleporter;
-        m_keepInventoryOpen = false;
+        setState(StateTeleport);
         break;
     }
     default:

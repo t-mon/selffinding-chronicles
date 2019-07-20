@@ -23,7 +23,7 @@ PhysicsItem {
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
     property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
 
-    bodyType: GameObject.BodyTypeDynamic
+    bodyType: character ? (character.alive ? GameObject.BodyTypeDynamic : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
     fixedRotation: true
     linearDamping: 10
     antialiasing: app.antialiasing
@@ -53,11 +53,16 @@ PhysicsItem {
         character.position = Qt.point(x / app.gridSize, y / app.gridSize)
     }
 
+    Component.onCompleted: evaluateSpriteState()
+
     // Character movement
     Connections {
         target: Game.engine
         onEnginePostTick: {
             if (!character)
+                return
+
+            if (!character.alive)
                 return
 
             var currentVelocity = body.linearVelocity
@@ -123,6 +128,12 @@ PhysicsItem {
             healthIndicator.opacity = 0
             healthIndicatorTimer.stop()
         }
+
+        onMovableChanged: {
+            if (!character) return
+            evaluateSpriteState()
+        }
+
 
         onPlayerOnItemChanged: {
             healthIndicator.opacity = 1
@@ -811,6 +822,34 @@ PhysicsItem {
         }
     }
 
+    // ##################################################################################
+    // Character shaders
+    // ##################################################################################
+
+
+
+//    ShaderEffect {
+//        id: stonedShader
+//        width: parent.width
+//        height: parent.height
+
+//        property var source: characterShaderEffectSource
+//        property real amplitude: 0.02
+//        property real frequency: 8
+//        property real time: 0
+
+//        NumberAnimation on time {
+//            id: stonedShaderTimeAnimation
+//            loops: Animation.Infinite
+//            from: 0
+//            to: Math.PI * 2
+//            duration: 1800
+//            running: true
+//        }
+
+//        fragmentShader: "qrc:shadereffects/wobble.frag"
+//    }
+
 
     // ##################################################################################
     // Functions
@@ -819,6 +858,24 @@ PhysicsItem {
     function evaluateSpriteState() {
         if (!root.character)
             return
+
+        if (!character.alive) {
+            if (root.character.heading === Character.HeadingLeft) {
+                characterSpriteSequence.jumpTo("idle-left")
+            } else {
+                characterSpriteSequence.jumpTo("idle-right")
+            }
+            return;
+        }
+
+        if (!character.movable) {
+            if (root.character.heading === Character.HeadingLeft) {
+                characterSpriteSequence.jumpTo("idle-left")
+            } else {
+                characterSpriteSequence.jumpTo("idle-right")
+            }
+            return;
+        }
 
         if (root.character.moving) {
             if (root.character.heading === Character.HeadingLeft) {

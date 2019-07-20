@@ -1,7 +1,7 @@
 #ifndef DATAMANAGER_H
 #define DATAMANAGER_H
 
-#include <QSize>
+#include <QSizeF>
 #include <QThread>
 #include <QObject>
 #include <QPointF>
@@ -98,7 +98,7 @@ signals:
 
     void worldSizeChanged(const QSize &worldSize);
     void worldBackgroundColorChanged(const QColor &backgroundColor);
-    void viewSizeChanged(const QSize &viewSize);
+    void viewSizeChanged(const QSizeF &viewSize);
     void viewOffsetChanged(const QPointF &viewOffset);
     void playerChanged(Character *player);
 

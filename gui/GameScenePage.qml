@@ -21,6 +21,8 @@ GamePage {
     onWidthChanged: console.log("Game page widht changed.") && evaluateViewWindow()
     onHeightChanged: console.log("Game page height changed.") &&  evaluateViewWindow()
 
+    property var characterItem: null
+
     Component.onCompleted: {
         console.log("Game scene size:", root.width, "x", root.height, "Grid size:", app.gridSize)
     }
@@ -110,7 +112,12 @@ GamePage {
                         z: y + height
                         onXChanged: if (character && character.isPlayer) moveCamera()
                         onYChanged: if (character && character.isPlayer) moveCamera()
-                        Component.onCompleted: if (character && character.isPlayer) moveCamera()
+                        Component.onCompleted: {
+                            if (character && character.isPlayer) {
+                                moveCamera()
+                                root.characterItem = characterItem
+                            }
+                        }
                     }
                 }
 
@@ -368,6 +375,23 @@ GamePage {
                 PropertyChanges { target: plunderItem; opacity: 0 }
                 PropertyChanges { target: readItem; opacity: 1 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
+            },
+            State {
+                name: "teleportState"
+                when: Game.engine.state === Engine.StateTeleport
+                PropertyChanges { target: sceneItem; gameOverlayVisible: false }
+                PropertyChanges { target: conversationItem; opacity: 0 }
+                PropertyChanges { target: inventoryItem; opacity: 0 }
+                PropertyChanges { target: unlockingItem; opacity: 0 }
+                PropertyChanges { target: plunderItem; opacity: 0 }
+                PropertyChanges { target: readItem; opacity: 0 }
+                PropertyChanges { target: pauseMenuItem; opacity: 0 }
+
+                StateChangeScript {
+                    script: {
+                        console.log("Start teleport animation")
+                    }
+                }
             }
         ]
     }

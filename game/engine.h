@@ -1,7 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <QSize>
+#include <QSizeF>
 #include <QPoint>
 #include <QObject>
 #include <QFuture>
@@ -57,7 +57,8 @@ public:
         StateConversation,
         StateUnlocking,
         StatePlunder,
-        StateRead
+        StateRead,
+        StateTeleport
     };
     Q_ENUM(State)
 

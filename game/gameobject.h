@@ -1,7 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <QSize>
+#include <QSizeF>
 #include <QPoint>
 #include <QPoint>
 #include <QVector>
@@ -15,12 +15,12 @@ class GameObject : public QObject
     Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QPointF centerPosition READ centerPosition NOTIFY positionChanged)
     Q_PROPERTY(double layer READ layer NOTIFY layerChanged)
-    Q_PROPERTY(QSize size READ size NOTIFY sizeChanged)
+    Q_PROPERTY(QSizeF size READ size NOTIFY sizeChanged)
     Q_PROPERTY(bool active READ active NOTIFY activeChanged)
 
     Q_PROPERTY(Shape shape READ shape NOTIFY shapeChanged)
     Q_PROPERTY(BodyType bodyType READ bodyType NOTIFY bodyTypeChanged)
-    Q_PROPERTY(QSize physicsSize READ physicsSize NOTIFY physicsSizeChanged)
+    Q_PROPERTY(QSizeF physicsSize READ physicsSize NOTIFY physicsSizeChanged)
     Q_PROPERTY(QPointF physicsPosition READ physicsPosition NOTIFY physicsPositionChanged)
     Q_PROPERTY(PhysicsFlags categoryFlag READ categoryFlag NOTIFY categoryFlagChanged)
     Q_PROPERTY(PhysicsFlags collisionFlag READ collisionFlag NOTIFY collisionFlagChanged)
@@ -82,8 +82,8 @@ public:
 
     QPointF centerPosition() const;
 
-    QSize size() const;
-    void setSize(const QSize &size);
+    QSizeF size() const;
+    void setSize(const QSizeF &size);
 
     bool focusVisible() const;
     void setFocusVisible(bool focusVisible);
@@ -98,8 +98,8 @@ public:
     BodyType bodyType() const;
     void setBodyType(BodyType bodyType);
 
-    QSize physicsSize() const;
-    void setPhysicsSize(const QSize &physicsSize);
+    QSizeF physicsSize() const;
+    void setPhysicsSize(const QSizeF &physicsSize);
 
     QPointF physicsPosition() const;
     void setPhysicsPosition(const QPointF &physicsPosition);
@@ -117,13 +117,13 @@ private:
     QString m_name;
     QPointF m_position;
     double m_layer = 0;
-    QSize m_size = QSize(1, 1);
+    QSizeF m_size = QSizeF(1, 1);
     bool m_focusVisible = true;
     bool m_active = false;
 
     Shape m_shape = ShapeNone;
     BodyType m_bodyType = BodyTypeStatic;
-    QSize m_physicsSize = QSize(0, 0);
+    QSizeF m_physicsSize = QSizeF(0, 0);
     QPointF m_physicsPosition;
     PhysicsFlags m_categoryFlag = PhysicsNone;
     PhysicsFlags m_collisionFlag = PhysicsNone;
@@ -133,13 +133,13 @@ signals:
     void nameChanged(const QString &name);
     void positionChanged(const QPointF &position);
     void layerChanged(double layer);
-    void sizeChanged(const QSize &size);
+    void sizeChanged(const QSizeF &size);
     void focusVisibleChanged(bool focusVisible);
     void activeChanged(bool active);
 
     void shapeChanged(Shape shape);
     void bodyTypeChanged(BodyType bodyType);
-    void physicsSizeChanged(const QSize &physicsSize);
+    void physicsSizeChanged(const QSizeF &physicsSize);
     void physicsPositionChanged(const QPointF &physicsPosition);
     void categoryFlagChanged(PhysicsFlags categoryFlag);
     void collisionFlagChanged(PhysicsFlags collisionFlag);

@@ -51,12 +51,12 @@ QPointF GameObject::centerPosition() const
     return m_position + QPointF(m_size.width() / 2.0, m_size.height() / 2.0);
 }
 
-QSize GameObject::size() const
+QSizeF GameObject::size() const
 {
     return m_size;
 }
 
-void GameObject::setSize(const QSize &size)
+void GameObject::setSize(const QSizeF &size)
 {
     if (m_size == size)
         return;
@@ -126,12 +126,12 @@ void GameObject::setBodyType(GameObject::BodyType bodyType)
     emit bodyTypeChanged(m_bodyType);
 }
 
-QSize GameObject::physicsSize() const
+QSizeF GameObject::physicsSize() const
 {
     return m_physicsSize;
 }
 
-void GameObject::setPhysicsSize(const QSize &physicsSize)
+void GameObject::setPhysicsSize(const QSizeF &physicsSize)
 {
     if (m_physicsSize == physicsSize)
         return;
