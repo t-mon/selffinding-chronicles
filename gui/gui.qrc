@@ -63,5 +63,6 @@
         <file>components/ItemDebugFrame.qml</file>
         <file>shadereffects/teleport.frag</file>
         <file>shadereffects/+hlsl/teleport.frag</file>
+        <file>shadereffects/LoagSaveGamePage.qml</file>
     </qresource>
 </RCC>
