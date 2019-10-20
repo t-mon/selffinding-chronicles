@@ -2,6 +2,8 @@
 
 TODO: write introduction
 
+# Development notes
+
 ## Generate and render the data folder
 
 If the game get launched on full HD (16:9), one grid size unit is 40 px and the screen has 32x18 grid units.
@@ -16,12 +18,33 @@ First step is generating a equal sized png file out of the krita drawing.
 
 Then the result png will be resized to he specified grid unit size and stored in the data folder.
 
-    
 
-
-## Create sprite out of single images
+## Create sprite out of image series
 
     $ cd data/images/characters/character-run
     $ ls
-      0.png  1.png  2.png  3.png 
+      0.png  1.png  2.png  3.png
     $ convert *.png +append sprite.png
+
+
+## Save game structure
+
+> Note: this is just brainstorming...
+
+    {
+        "name": "My savegame",
+        "timestamp": unixtime,
+        "currentMap": "mapname",
+        "maps": {
+            "mapname": {
+                ... map
+            },
+            "mapname2": {
+                ...map
+            }
+        }
+    }
+
+
+
+

@@ -99,7 +99,6 @@ GameOverlayItem {
                 text: qsTr("Give up")
                 onClicked: { Game.engine.giveUpUnlocking() }
             }
-
         }
     }
 }
