@@ -164,6 +164,10 @@ void Map::loadMapVariant(const QVariantMap &mapData)
         }
     }
 
+    // Load background objects
+    qCDebug(dcMap()) << "--> load objects" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
+    QList<GameObject *> backgroundObjects = DataLoader::loadGameObjects(mapData.value("objects").toList(), this);
+
     // Load items
     qCDebug(dcMap()) << "--> load items" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     QList<GameItem *> items = DataLoader::loadGameItems(mapData.value("items").toList(), this);

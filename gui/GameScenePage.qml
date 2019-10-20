@@ -92,7 +92,6 @@ GamePage {
                         groups: ["footstep"]
                         source: dataDirectory + "/images/characters/footstep.png"
                         autoRotation: true
-                        //source: dataDirectory + "/images/game/footstep.png"
                         color: "#66ffffff"
                     }
                 }

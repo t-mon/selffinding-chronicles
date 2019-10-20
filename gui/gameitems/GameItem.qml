@@ -58,9 +58,9 @@ PhysicsItem {
 
     Component {
         id: circleFixtureComponent
+
         Circle {
             id: circleFixture
-
             property PhysicsItem parentItem
             property GameItem gameItem
 
@@ -77,9 +77,9 @@ PhysicsItem {
 
     Component {
         id: circleSensorFixtureComponent
+
         Circle {
             id: circleSensorFixture
-
             property PhysicsItem parentItem
             property GameItem gameItem
             sensor:  true
@@ -95,9 +95,9 @@ PhysicsItem {
 
     Component {
         id: rectangleFixtureComponent
+
         Box {
             id: rectangleFixture
-
             property PhysicsItem parentItem
             property GameItem gameItem
 
@@ -115,9 +115,9 @@ PhysicsItem {
 
     Component {
         id: rectangleSensorFixtureComponent
+
         Box {
             id: rectangleSensorFixture
-
             property PhysicsItem parentItem
             property GameItem gameItem
 

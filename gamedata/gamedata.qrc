@@ -37,5 +37,6 @@
         <file>gamedata/fences/wood-fence.json</file>
         <file>gamedata/teleport/teleport-test.json</file>
         <file>maps/test-monster.json</file>
+        <file>gamedata/paths/path.json</file>
     </qresource>
 </RCC>

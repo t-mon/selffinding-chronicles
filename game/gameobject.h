@@ -16,6 +16,8 @@ class GameObject : public QObject
     Q_PROPERTY(QPointF centerPosition READ centerPosition NOTIFY positionChanged)
     Q_PROPERTY(double layer READ layer NOTIFY layerChanged)
     Q_PROPERTY(QSizeF size READ size NOTIFY sizeChanged)
+    Q_PROPERTY(bool focusVisible READ focusVisible NOTIFY focusVisibleChanged)
+    Q_PROPERTY(bool backgroundObject READ backgroundObject CONSTANT)
     Q_PROPERTY(bool active READ active NOTIFY activeChanged)
 
     Q_PROPERTY(Shape shape READ shape NOTIFY shapeChanged)
@@ -88,6 +90,9 @@ public:
     bool focusVisible() const;
     void setFocusVisible(bool focusVisible);
 
+    bool backgroundObject() const;
+    void setBackgroundObject(bool backgroundObject);
+
     bool active() const;
     void setActive(bool active);
 
@@ -119,6 +124,7 @@ private:
     double m_layer = 0;
     QSizeF m_size = QSizeF(1, 1);
     bool m_focusVisible = true;
+    bool m_backgroundObject = false;
     bool m_active = false;
 
     Shape m_shape = ShapeNone;
