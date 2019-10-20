@@ -81,6 +81,19 @@ void GameObject::setFocusVisible(bool focusVisible)
     emit focusVisibleChanged(m_focusVisible);
 }
 
+bool GameObject::backgroundObject() const
+{
+    return m_backgroundObject;
+}
+
+void GameObject::setBackgroundObject(bool backgroundObject)
+{
+    if (m_backgroundObject == backgroundObject)
+        return;
+
+    m_backgroundObject = backgroundObject;
+}
+
 bool GameObject::active() const
 {
     return m_active;

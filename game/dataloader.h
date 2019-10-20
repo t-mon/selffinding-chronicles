@@ -47,6 +47,9 @@ public:
     static QList<GameItem *> loadEnemyItems(const QVariantList &enemyItemsList, QObject *parent = nullptr);
     static QList<GameItem *> loadInventoryItems(const QVariantList &itemsList, QObject *parent = nullptr);    
 
+    static QList<GameObject *> loadGameObjects(const QVariantList &objectsList, QObject *parent = nullptr);
+    static GameObject *loadGameObject(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent = nullptr);
+
     static GameItem *loadGameItem(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent = nullptr);
     static GameItem *loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent = nullptr);
 

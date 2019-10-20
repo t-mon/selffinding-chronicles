@@ -1,0 +1,12 @@
+{
+    "name": "Path middle",
+    "type": "static",
+    "imageName": "/images/world/paths/path-middle.png",
+    "focusVisible": false,
+    "background": true,
+    "geometry": {
+        "width": 4,
+        "height": 4,
+        "layer": 4
+    }
+}

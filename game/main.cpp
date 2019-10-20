@@ -34,8 +34,8 @@
 
 #ifndef ANDROID
 static const char *const normal = "\033[0m";
-static const char *const warning = "\e[33m";
-static const char *const error = "\e[31m";
+static const char *const warning = "\033[33m";
+static const char *const error = "\033[31m";
 #endif
 
 static QHash<QString, bool> s_loggingFilters;
@@ -134,7 +134,6 @@ int main(int argc, char *argv[])
 
     // Game
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
-
     qmlRegisterUncreatableType<Engine>("Chronicles", 1, 0, "Engine", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the Engine object.");

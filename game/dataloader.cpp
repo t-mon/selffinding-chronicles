@@ -293,6 +293,23 @@ QList<GameItem *> DataLoader::loadInventoryItems(const QVariantList &itemsList, 
     return gameItems;
 }
 
+QList<GameObject *> DataLoader::loadGameObjects(const QVariantList &objectsList, QObject *parent)
+{
+    QList<GameObject *> gameObjects;
+//    foreach (const QVariant &objectVariant, objectsList) {
+//        QVariantMap objectMap = objectVariant.toMap();
+//        GameObject *gameObject = loadGameObject()
+
+//    }
+
+    return gameObjects;
+}
+
+GameObject *DataLoader::loadGameObject(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent)
+{
+
+}
+
 GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent)
 {
     QString itemTypeString = itemMap.value("type").toString().toLower();
