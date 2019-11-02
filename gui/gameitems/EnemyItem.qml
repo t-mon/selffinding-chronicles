@@ -27,10 +27,16 @@ PhysicsItem {
     Connections {
         target: Game.engine
         onEnginePostTick: {
+            if (!root.enemy)
+                return
+
+            if (!root.enemy.alive)
+                return
+
             var currentVelocity = body.linearVelocity
-            var dvx = root.enemy.movementVector.x * app.gridSize - currentVelocity.x
-            var dvy = root.enemy.movementVector.y * app.gridSize - currentVelocity.y
-            body.applyLinearImpulse(Qt.point(dvx, dvy), body.getWorldCenter())
+            var dvx = root.enemy.movementVector.x * 10 - currentVelocity.x
+            var dvy = root.enemy.movementVector.y * 10 - currentVelocity.y
+            body.applyLinearImpulse(Qt.point(dvx, dvy), Qt.point(root.width / 2, root.height / 2))
         }
     }
 

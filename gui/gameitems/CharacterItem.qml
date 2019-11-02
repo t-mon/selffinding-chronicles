@@ -66,11 +66,8 @@ PhysicsItem {
                 return
 
             var currentVelocity = body.linearVelocity
-//            if (currentVelocity !== Qt.point(0, 0))
-//                console.log("Current velocity", currentVelocity)
-
-            var dvx = character.movementVector.x * app.gridSize - currentVelocity.x
-            var dvy = character.movementVector.y * app.gridSize - currentVelocity.y
+            var dvx = character.movementVector.x * 10 - currentVelocity.x
+            var dvy = character.movementVector.y * 10 - currentVelocity.y
             body.applyLinearImpulse(Qt.point(dvx, dvy), Qt.point(root.width / 2, root.height / 2))
         }
     }
@@ -102,6 +99,7 @@ PhysicsItem {
                 shootBulletObject(bulletIncubator.object)
             }
         }
+
         onHit: {
             if (weaponHitAnimation.running)
                 return
@@ -339,6 +337,7 @@ PhysicsItem {
                     rotationAngle -= 75
                 }
             }
+
             return rotationAngle
         }
 
@@ -442,33 +441,23 @@ PhysicsItem {
     // Rotation item
     // ##################################################################################
 
-//    onWidthChanged:  {
-//        bodyJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-//        bodyJoint.localAnchorB = Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
+    //    onWidthChanged:  {
+    //        bodyJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
+    //        bodyJoint.localAnchorB = Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
 
-//        weaponJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-//        weaponJoint.localAnchorB = Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
-//    }
+    //        weaponJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
+    //        weaponJoint.localAnchorB = Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
+    //    }
 
-//    onHeightChanged: {
-//        bodyJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-//        bodyJoint.localAnchorB = Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
+    //    onHeightChanged: {
+    //        bodyJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
+    //        bodyJoint.localAnchorB = Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
 
-//        weaponJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-//        weaponJoint.localAnchorB = Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
-//    }
+    //        weaponJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
+    //        weaponJoint.localAnchorB = Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
+    //    }
 
     // Focus sensor
-    RevoluteJoint {
-        id: bodyJoint
-        enableMotor: false
-        collideConnected: true
-        bodyA: root.body
-        bodyB: focusPhyicsItem.body
-        localAnchorA: Qt.point(root.width / 2, root.height / 2)
-        localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
-    }
-
     PhysicsItem {
         id: focusPhyicsItem
         width: root.width
@@ -517,17 +506,42 @@ PhysicsItem {
         ]
     }
 
-
-    // Weapon sensor
-    RevoluteJoint {
-        id: weaponJoint
-        enableMotor: false
-        collideConnected: true
-        bodyA: root.body
-        bodyB: weaponPhysicsItem.body
-        localAnchorA: Qt.point(root.width / 2, root.height / 2)
-        localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
+    Connections {
+        target: app
+        onGridSizeChanged: {
+            bodyJointLoader.createJoint();
+            weaponJointLoader.createJoint();
+        }
     }
+
+    Component {
+        id: bodyJointComponent
+
+        RevoluteJoint {
+            enableMotor: false
+            collideConnected: true
+            bodyA: root.body
+            bodyB: focusPhyicsItem.body
+            localAnchorA: Qt.point(root.width / 2, root.height / 2)
+            localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
+            Component.onCompleted: console.log("Joint created")
+            Component.onDestruction: console.log("Joint destroyed")
+        }
+    }
+
+    Loader {
+        id: bodyJointLoader
+
+        function createJoint() {
+            console.log("Create body joint for", character.name)
+            bodyJointLoader.active = false
+            bodyJointLoader.active = true
+        }
+
+        sourceComponent: bodyJointComponent
+        Component.onCompleted: createJoint()
+    }
+
 
     PhysicsItem {
         id: weaponPhysicsItem
@@ -577,6 +591,34 @@ PhysicsItem {
                 }
             }
         ]
+    }
+
+    //Weapon sensor
+    Component {
+        id: weaponJointComponent
+
+        RevoluteJoint {
+            id: weaponJoint
+            enableMotor: false
+            collideConnected: true
+            bodyA: root.body
+            bodyB: weaponPhysicsItem.body
+            localAnchorA: Qt.point(root.width / 2, root.height / 2)
+            localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
+        }
+    }
+
+    Loader {
+        id: weaponJointLoader
+
+        function createJoint() {
+            console.log("Create weapon joint for", character.name)
+            weaponJointLoader.active = false
+            weaponJointLoader.active = true
+        }
+
+        sourceComponent: weaponJointComponent
+        Component.onCompleted: createJoint()
     }
 
     Item {
@@ -846,27 +888,27 @@ PhysicsItem {
 
 
 
-//    ShaderEffect {
-//        id: stonedShader
-//        width: parent.width
-//        height: parent.height
+    //    ShaderEffect {
+    //        id: stonedShader
+    //        width: parent.width
+    //        height: parent.height
 
-//        property var source: characterShaderEffectSource
-//        property real amplitude: 0.02
-//        property real frequency: 8
-//        property real time: 0
+    //        property var source: characterShaderEffectSource
+    //        property real amplitude: 0.02
+    //        property real frequency: 8
+    //        property real time: 0
 
-//        NumberAnimation on time {
-//            id: stonedShaderTimeAnimation
-//            loops: Animation.Infinite
-//            from: 0
-//            to: Math.PI * 2
-//            duration: 1800
-//            running: true
-//        }
+    //        NumberAnimation on time {
+    //            id: stonedShaderTimeAnimation
+    //            loops: Animation.Infinite
+    //            from: 0
+    //            to: Math.PI * 2
+    //            duration: 1800
+    //            running: true
+    //        }
 
-//        fragmentShader: "qrc:shadereffects/wobble.frag"
-//    }
+    //        fragmentShader: "qrc:shadereffects/wobble.frag"
+    //    }
 
 
     // ##################################################################################
