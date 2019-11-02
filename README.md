@@ -27,6 +27,13 @@ Then the result png will be resized to he specified grid unit size and stored in
     $ convert *.png +append sprite.png
 
 
+## Game scene layers
+
+* Layer 0: Background color of the map Rectangle (z = -2)
+* Layer 1: Background objects (GameObject) like paths, ground decorations... (z = -1)
+* Layer 2: GameItems (z = y + height)
+
+
 ## Save game structure
 
 > Note: this is just brainstorming...

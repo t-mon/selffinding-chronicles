@@ -41,8 +41,22 @@ GamePage {
         timeStep: 1/60 * app.gameSpeedFactor
         onTimeStepChanged: console.log("Game speed changed to", timeStep, "[1/s]", debugControls.gameSpeed)
         gravity: Qt.point(0, 0)
+        pixelsPerMeter: app.gridSize
         onStepped: Game.onTick()
         running: Game.engine.state == Engine.StateRunning
+    }
+
+    Connections {
+        target: app
+        onGridSizeChanged: {
+            Game.running = false
+            particles.running = false
+            forceActiveFocus()
+            moveCamera()
+            evaluateViewWindow()
+            particles.running = true
+            Game.running = true
+        }
     }
 
     Item {
@@ -92,7 +106,6 @@ GamePage {
                         groups: ["footstep"]
                         source: dataDirectory + "/images/characters/footstep.png"
                         autoRotation: true
-                        //source: dataDirectory + "/images/game/footstep.png"
                         color: "#66ffffff"
                     }
                 }
