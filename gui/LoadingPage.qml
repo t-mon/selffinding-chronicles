@@ -22,7 +22,7 @@ GamePage {
     Connections {
         target: gamePageLoader
         onLoaded: {
-            console.log("Game page loading finished.")
+            console.log("Game page loading finished...replace current page on stack")
             pageStack.replace(root, gamePageLoader.item)
             gamePageLoader.item.runGame()
         }

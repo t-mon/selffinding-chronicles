@@ -320,8 +320,8 @@ QPointF PlayerController::moveKeyBoard()
         return QPointF();
     }
 
-    double deltaX = qRound(m_player->speed() * qCos(angle));
-    double deltaY = qRound(m_player->speed() * qSin(angle));
+    double deltaX = m_player->speed() * qCos(angle);
+    double deltaY = m_player->speed() * qSin(angle);
 
     m_player->setAngle(angle);
     return QPointF(deltaX, deltaY);
@@ -371,8 +371,8 @@ QPointF PlayerController::moveKeyBoardMouse()
         return QPointF();
     }
 
-    double deltaX = qRound(m_player->speed()) * qCos(angle);
-    double deltaY = qRound(m_player->speed()) * qSin(angle);
+    double deltaX = m_player->speed() * qCos(angle);
+    double deltaY = m_player->speed() * qSin(angle);
 
     return QPointF(deltaX, deltaY);
 }
@@ -386,8 +386,8 @@ QPointF PlayerController::moveTouchscreen()
     if (m_joystickVelocity < 0.7)
         return QPointF(0, 0);
 
-    double deltaX = qRound((m_player->speed() / 5) * qCos(m_joystickAngle) * 10000.0) / 10000.0;
-    double deltaY = qRound((m_player->speed() / 5) * qSin(m_joystickAngle) * 10000.0) / 10000.0;
+    double deltaX = m_player->speed() * qCos(m_joystickAngle);
+    double deltaY = m_player->speed() * qSin(m_joystickAngle);
 
     return QPointF(deltaX, deltaY);
 }

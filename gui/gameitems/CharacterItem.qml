@@ -27,6 +27,11 @@ PhysicsItem {
     fixedRotation: true
     linearDamping: 10
     antialiasing: app.antialiasing
+    active: character ? character.active : false
+
+    Component.onDestruction: {
+        console.log("Character destroyed")
+    }
 
     onPlayerAuraRangeChanged: {
         if (!character) return
@@ -441,22 +446,6 @@ PhysicsItem {
     // Rotation item
     // ##################################################################################
 
-    //    onWidthChanged:  {
-    //        bodyJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-    //        bodyJoint.localAnchorB = Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
-
-    //        weaponJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-    //        weaponJoint.localAnchorB = Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
-    //    }
-
-    //    onHeightChanged: {
-    //        bodyJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-    //        bodyJoint.localAnchorB = Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
-
-    //        weaponJoint.localAnchorA = Qt.point(root.width / 2, root.height / 2)
-    //        weaponJoint.localAnchorB = Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
-    //    }
-
     // Focus sensor
     PhysicsItem {
         id: focusPhyicsItem
@@ -466,6 +455,7 @@ PhysicsItem {
         bodyType: GameObject.BodyTypeDynamic
         antialiasing: app.antialiasing
         fixedRotation: false
+        active: character ? character.active : false
         rotation: root.rotationAngle
         fixtures: [
             Box {
@@ -506,42 +496,14 @@ PhysicsItem {
         ]
     }
 
-    Connections {
-        target: app
-        onGridSizeChanged: {
-            bodyJointLoader.createJoint();
-            weaponJointLoader.createJoint();
-        }
+    RevoluteJoint {
+        enableMotor: false
+        collideConnected: true
+        bodyA: root.body
+        bodyB: focusPhyicsItem.body
+        localAnchorA: Qt.point(root.width / 2, root.height / 2)
+        localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
     }
-
-    Component {
-        id: bodyJointComponent
-
-        RevoluteJoint {
-            enableMotor: false
-            collideConnected: true
-            bodyA: root.body
-            bodyB: focusPhyicsItem.body
-            localAnchorA: Qt.point(root.width / 2, root.height / 2)
-            localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
-            Component.onCompleted: console.log("Joint created")
-            Component.onDestruction: console.log("Joint destroyed")
-        }
-    }
-
-    Loader {
-        id: bodyJointLoader
-
-        function createJoint() {
-            console.log("Create body joint for", character.name)
-            bodyJointLoader.active = false
-            bodyJointLoader.active = true
-        }
-
-        sourceComponent: bodyJointComponent
-        Component.onCompleted: createJoint()
-    }
-
 
     PhysicsItem {
         id: weaponPhysicsItem
@@ -550,6 +512,7 @@ PhysicsItem {
         linearDamping: 10
         bodyType: GameObject.BodyTypeDynamic
         antialiasing: app.antialiasing
+        active: character ? character.active : false
         fixedRotation: false
         rotation: root.rotationAngle + weaponItem.rotation
         enabled: root.hitAttackRunning
@@ -594,31 +557,14 @@ PhysicsItem {
     }
 
     //Weapon sensor
-    Component {
-        id: weaponJointComponent
-
-        RevoluteJoint {
-            id: weaponJoint
-            enableMotor: false
-            collideConnected: true
-            bodyA: root.body
-            bodyB: weaponPhysicsItem.body
-            localAnchorA: Qt.point(root.width / 2, root.height / 2)
-            localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
-        }
-    }
-
-    Loader {
-        id: weaponJointLoader
-
-        function createJoint() {
-            console.log("Create weapon joint for", character.name)
-            weaponJointLoader.active = false
-            weaponJointLoader.active = true
-        }
-
-        sourceComponent: weaponJointComponent
-        Component.onCompleted: createJoint()
+    RevoluteJoint {
+        id: weaponJoint
+        enableMotor: false
+        collideConnected: true
+        bodyA: root.body
+        bodyB: weaponPhysicsItem.body
+        localAnchorA: Qt.point(root.width / 2, root.height / 2)
+        localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
     }
 
     Item {
