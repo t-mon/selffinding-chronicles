@@ -33,7 +33,8 @@ PhysicsItem {
 
     fixtures: Circle {
         categories: GameObject.PhysicsBullet
-        collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy | GameObject.PhysicsStaticItem  | GameObject.PhysicsBullet | GameObject.PhysicsBodyHitbox
+        collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy
+                      | GameObject.PhysicsStaticItem | GameObject.PhysicsBodyHitbox
         radius: root.width / 2
         density: 1
         friction: 0
@@ -47,17 +48,32 @@ PhysicsItem {
                 case GameItem.TypeChest:
                     console.log("Bullet collision with chest")
                     root.body.linearVelocity = Qt.point(0, 0)
+                    root.active = false
+                    dissapearAnimation.start()
+                    break;
+                case GameItem.TypeStatic:
+                    console.log("Bullet collision with static item")
+                    root.body.linearVelocity = Qt.point(0, 0)
+                    root.active = false
+                    dissapearAnimation.start()
+                    break;
+                case GameItem.TypeBox:
+                    console.log("Bullet collision with box")
+                    root.body.linearVelocity = Qt.point(0, 0)
+                    root.active = false
                     dissapearAnimation.start()
                     break;
                 case GameItem.TypeTree:
                     console.log("Bullet collision with tree")
                     root.body.linearVelocity = Qt.point(0, 0)
+                    root.active = false
                     dissapearAnimation.start()
                     break;
-
                     // TODO: colides with burning item
-
                 default:
+                    root.body.linearVelocity = Qt.point(0, 0)
+                    root.active = false
+                    dissapearAnimation.start()
                     break
                 }
                 return

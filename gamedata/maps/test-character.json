@@ -1,0 +1,38 @@
+{
+    "backgroundColor": "#307a78",
+    "characters": [
+        {
+            "character": {
+                "experience": 20,
+                "firearm": "",
+                "gender": "male",
+                "health": 80,
+                "healthMax": 80,
+                "inventory": [
+                    {
+                        "data": ":/gamedata/plants/healing-herb.json",
+                        "count": 2
+                    }
+                ],
+                "mana": 5,
+                "manaMax": 5,
+                "paths": [
+                ],
+                "role": "friend",
+                "strength": 5,
+                "weapon": "",
+                "wisdom": 1
+            },
+            "data": ":/gamedata/characters/test-character.json",
+            "x": 10,
+            "y": 10
+        }
+    ],
+    "height": 100,
+    "items": [
+    ],
+    "name": "Map name",
+    "playerStartX": 5,
+    "playerStartY": 5,
+    "width": 100
+}

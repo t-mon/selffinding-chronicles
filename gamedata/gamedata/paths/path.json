@@ -1,6 +1,6 @@
 {
     "name": "Path middle",
-    "type": "static",
+    "type": "object",
     "imageName": "/images/world/paths/path-middle.png",
     "focusVisible": false,
     "background": true,

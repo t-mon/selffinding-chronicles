@@ -29,10 +29,6 @@ PhysicsItem {
     antialiasing: app.antialiasing
     active: character ? character.active : false
 
-    Component.onDestruction: {
-        console.log("Character destroyed")
-    }
-
     onPlayerAuraRangeChanged: {
         if (!character) return
         character.playerVisible = playerAuraRange
@@ -45,20 +41,27 @@ PhysicsItem {
 
     onCharacterChanged: {
         if (!character) return
+        console.warn("Character changed:", character.name, x, y, character.position)
         evaluateSpriteState()
     }
 
-    onXChanged: {
-        if (!character) return
-        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
-    }
+//    onXChanged: {
+//        if (!character) return
+//        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+//        console.warn("Character position changed:", character.name, x, y, character.position)
 
-    onYChanged: {
-        if (!character) return
-        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
-    }
+//    }
 
-    Component.onCompleted: evaluateSpriteState()
+//    onYChanged: {
+//        if (!character) return
+//        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
+//        console.warn("Character position changed:", character.name, x, y, character.position)
+//    }
+
+    Component.onCompleted: {
+        console.warn("Character created:", character.name, x, y, character.position)
+        evaluateSpriteState()
+    }
 
     // Character movement
     Connections {
@@ -677,7 +680,7 @@ PhysicsItem {
                     PropertyChanges { target: packedWeaponItem; visible: false }
                     StateChangeScript {
                         script: {
-                            console.log("Character no weapon")
+                            console.log("Character", character.name, "no weapon")
                         }
                     }
                 },
@@ -688,7 +691,7 @@ PhysicsItem {
                     PropertyChanges { target: packedWeaponItem; visible: false }
                     StateChangeScript {
                         script: {
-                            console.log("Character holding weapon")
+                            console.log("Character", character.name, "holding weapon")
                         }
                     }
                 },
@@ -699,7 +702,7 @@ PhysicsItem {
                     PropertyChanges { target: packedWeaponItem; visible: true }
                     StateChangeScript {
                         script: {
-                            console.log("Character packed weapon")
+                            console.log("Character", character.name, "packed weapon")
                         }
                     }
                 }
@@ -750,7 +753,7 @@ PhysicsItem {
                     PropertyChanges { target: packedFirearmItem; visible: false }
                     StateChangeScript {
                         script: {
-                            console.log("Character no firearm")
+                            console.log("Character", character.name, "no firearm")
                         }
                     }
                 },
@@ -761,7 +764,7 @@ PhysicsItem {
                     PropertyChanges { target: packedFirearmItem; visible: false }
                     StateChangeScript {
                         script: {
-                            console.log("Character holding firearm")
+                            console.log("Characte", character.name, "holding firearm")
                         }
                     }
                 },
@@ -772,7 +775,7 @@ PhysicsItem {
                     PropertyChanges { target: packedFirearmItem; visible: true }
                     StateChangeScript {
                         script: {
-                            console.log("Character packed firearm")
+                            console.log("Character", character.name, "packed firearm")
                         }
                     }
                 }

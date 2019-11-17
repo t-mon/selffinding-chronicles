@@ -111,6 +111,16 @@ TeleporterItem *DataLoader::createTeleportItem(const QString &resourcePath, cons
     return teleportItem;
 }
 
+BoxItem *DataLoader::createBoxItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+{
+    BoxItem *boxItem = new BoxItem(parent);
+    boxItem->setResourcePath(resourcePath);
+    boxItem->setItemId(getItemIdFromResourcePath(resourcePath));
+    boxItem->setPosition(position);
+    fillGameItemData(qobject_cast<GameItem *>(boxItem), description);
+    return boxItem;
+}
+
 Character *DataLoader::createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
 {
     Character *character = new Character(parent);
@@ -334,6 +344,8 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &po
         return createLiteratureItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "teleport") {
         return createTeleportItem(resourcePath, itemMap, position, parent);
+    } else if (itemTypeString == "box") {
+        return createBoxItem(resourcePath, itemMap, position, parent);
     } else {
         qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
     }

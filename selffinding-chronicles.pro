@@ -23,6 +23,7 @@ HEADERS += \
     game/game.h \
     game/field.h \
     game/fields.h \
+    game/items/boxitem.h \
     game/items/literatureitem.h \
     game/items/teleporteritem.h \
     game/items/weatherareaproxy.h \
@@ -61,6 +62,7 @@ SOURCES += game/main.cpp \
     game/game.cpp \
     game/field.cpp \
     game/fields.cpp \
+    game/items/boxitem.cpp \
     game/items/literatureitem.cpp \
     game/items/teleporteritem.cpp \
     game/items/weatherareaproxy.cpp \

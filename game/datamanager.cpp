@@ -137,7 +137,8 @@ void DataManager::startNewGameTask()
     // Create map
     QMutexLocker mapLocker(&m_mapMutex);
     m_map = new Map(nullptr);
-    m_map->loadMap(":/maps/test-environment.json");
+    m_map->loadMap(":/maps/test-character.json");
+    //m_map->loadMap(":/maps/test-environment.json");
     //m_map->loadMap(":/maps/test-monster.json");
 
     // Create player

@@ -56,7 +56,7 @@ void PathController::evaluatePosition(const QPointF &position)
     //qCDebug(dcPathController()) << "Evaluate path controler for position" << m_path->currentPathSegment();
     switch (m_path->currentPathSegment().type()) {
     case PathSegment::TypeSegment: {
-        //qCDebug(dcPathController()) << " --> Target position:" << m_startPosition << position << m_targetPosition;
+        qCDebug(dcPathController()) << " --> Target position (" << position << "):" << m_startPosition << m_targetPosition;
         QPointF distanceVector = m_targetPosition - position;
         double distanceLength = qSqrt(qPow(distanceVector.x(), 2) + qPow(distanceVector.y(), 2));
 
@@ -71,7 +71,7 @@ void PathController::evaluatePosition(const QPointF &position)
         double movementX = m_path->currentPathSegment().speed() * qCos(m_angle);
         double movementY = m_path->currentPathSegment().speed() * qSin(m_angle);
         m_movementVector = QPointF(movementX, movementY);
-        //qCDebug(dcPathController()) << "--> Remaining distance vector" << distanceVector << distanceLength << m_angle << m_movementVector;
+        qCDebug(dcPathController()) << "--> Remaining distance vector" << distanceVector << distanceLength << m_angle << m_movementVector;
         break;
     }
     case PathSegment::TypeRotate: {

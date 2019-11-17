@@ -442,8 +442,6 @@ void Engine::setPlayer(Character *player)
         m_player->setMovable(true);
         m_playerController->setPlayer(m_player);
         connect(m_player, &Character::positionChanged, this, &Engine::onPlayerPositionChanged);
-        //        evaluatePlayerFocus();
-        //        onPlayerPositionChanged();
     }
 
 }
@@ -614,8 +612,8 @@ void Engine::pickItem(GameItem *item)
 void Engine::onPlayerPositionChanged()
 {
     // Calculate the current field on the map
-    int x = static_cast<int>(m_player->centerPosition().x());
-    int y = static_cast<int>(m_player->centerPosition().y());
+    int x = static_cast<int>(qRound(m_player->centerPosition().x()));
+    int y = static_cast<int>(qRound(m_player->centerPosition().y()));
     setCurrentPlayerPosition(QPoint(x, y));
 }
 
@@ -648,11 +646,11 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         m_playerController->setControlMode(Game::instance()->settings()->controlMode());
 
         qCDebug(dcEngine()) << "Initialize engine";
-        doPlayerMovement();
+        tick();
         evaluatePlayerFocus();
         setLoading(false);
         setLoaded(true);
-        setState(StateRunning);
+        //setState(StateRunning);
         break;
     default:
         qCWarning(dcEngine()) << "Unhandled state" << state;

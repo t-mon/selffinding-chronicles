@@ -38,5 +38,7 @@
         <file>gamedata/teleport/teleport-test.json</file>
         <file>maps/test-monster.json</file>
         <file>gamedata/paths/path.json</file>
+        <file>maps/test-character.json</file>
+        <file>gamedata/boxes/box-1.json</file>
     </qresource>
 </RCC>

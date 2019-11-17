@@ -8,7 +8,7 @@ Item {
     id: root
 
     property bool itemDebugEnabled: false
-    property bool physicsDebugEnabled: false
+    property bool physicsDebugEnabled: true
     property bool stonedEnabled: false
     property bool grayscaleEnabled: false
     property bool magicEnabled: false

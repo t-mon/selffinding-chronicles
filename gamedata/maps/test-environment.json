@@ -2,8 +2,8 @@
     "name": "Test world",
     "width": 400,
     "height": 400,
-    "playerStartX": 13,
-    "playerStartY": 8,
+    "playerStartX": 40,
+    "playerStartY": 20,
     "backgroundColor": "#307a78",
     "items": [
         {

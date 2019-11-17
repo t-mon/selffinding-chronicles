@@ -31,6 +31,7 @@ void GameObject::setPosition(const QPointF &position)
     if (m_position == position)
         return;
 
+    qCDebug(dcGameObject()) << this << "Position changed" << position;
     m_position = position;
     emit positionChanged(m_position);
 }

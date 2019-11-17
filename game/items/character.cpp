@@ -11,6 +11,10 @@ Character::Character(QObject *parent):
 {
     m_inventory = new GameItems(this);
     m_pathController = new PathController(this);
+
+    connect(this, &Character::positionChanged, [this](const QPointF position){
+        qCDebug(dcCharacter()) << name() << "Position changed" << position;
+    });
 }
 
 QString Character::itemTypeName() const
@@ -65,7 +69,7 @@ void Character::setMoving(bool moving)
     if (m_moving == moving)
         return;
 
-    qCDebug(dcCharacter()) << name() << (moving ? "moving" : "stopped");
+    qCDebug(dcCharacter()) << name() << (moving ? "started moving" : "stopped moving");
     m_moving = moving;
     emit movingChanged(m_moving);
 }
