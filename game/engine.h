@@ -2,7 +2,7 @@
 #define WORLD_H
 
 #include <QSizeF>
-#include <QPoint>
+#include <QPointF>
 #include <QObject>
 #include <QFuture>
 #include <QVector2D>
@@ -44,7 +44,7 @@ class Engine : public QObject
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
     Q_PROPERTY(Field* currentPlayerField READ currentPlayerField NOTIFY currentPlayerFieldChanged)
-    Q_PROPERTY(QPoint currentPlayerPosition READ currentPlayerPosition NOTIFY currentPlayerPositionChanged)
+    Q_PROPERTY(QPointF currentPlayerPosition READ currentPlayerPosition NOTIFY currentPlayerPositionChanged)
 
 public:
     enum State {
@@ -70,7 +70,7 @@ public:
     QRectF viewWindow() const;
     void setViewWindow(const QRectF &viewWindow);
 
-    QPoint currentPlayerPosition() const;
+    QPointF currentPlayerPosition() const;
     Field *currentPlayerField() const;
 
     DataManager *dataManager() const;
@@ -134,7 +134,7 @@ private:
     bool m_keepInventoryOpen = false;
 
     // View properties
-    QPoint m_currentPlayerPosition;
+    QPointF m_currentPlayerPosition;
     Field *m_currentPlayerField = nullptr;
 
     QList<GameItem *> m_playerVisibleItems;
@@ -146,7 +146,7 @@ private:
 
     // Set methods
     void setState(State state);
-    void setCurrentPlayerPosition(const QPoint &currentPosition);
+    void setCurrentPlayerPosition(const QPointF &currentPosition);
     void setCurrentPlayerField(Field *field);
     void setPlayerFocusItem(GameItem *focusItem);
     void setLoaded(bool loaded);
@@ -177,8 +177,8 @@ signals:
 
     void playerChanged(Character *player);
     void currentPlayerFieldChanged(Field *currentPlayerField);
-    void currentPlayerPositionChanged(const QPoint &currentPlayerPosition);
-    void currentViewOffsetChanged(const QPoint &currentViewOffset);
+    void currentPlayerPositionChanged(const QPointF &currentPlayerPosition);
+    void currentViewOffsetChanged(const QPointF &currentViewOffset);
     void playerFocusItemChanged(GameItem *playerFocusItem);
     void currentConversationChanged(Conversation *conversation);
     void currentChestItemChanged(ChestItem *chestItem);

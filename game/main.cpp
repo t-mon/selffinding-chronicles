@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("MapEditor", true);
     s_loggingFilters.insert("DataManager", false);
     s_loggingFilters.insert("Item", false);
-    s_loggingFilters.insert("GameObject", true);
+    s_loggingFilters.insert("GameObject", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
     s_loggingFilters.insert("qml", true);

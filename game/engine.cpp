@@ -335,7 +335,7 @@ void Engine::setState(Engine::State state)
     }
 }
 
-QPoint Engine::currentPlayerPosition() const
+QPointF Engine::currentPlayerPosition() const
 {
     return m_currentPlayerPosition;
 }
@@ -350,7 +350,7 @@ DataManager *Engine::dataManager() const
     return m_dataManager;
 }
 
-void Engine::setCurrentPlayerPosition(const QPoint &currentPosition)
+void Engine::setCurrentPlayerPosition(const QPointF &currentPosition)
 {
     if (m_currentPlayerPosition == currentPosition)
         return;
@@ -646,10 +646,11 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         m_playerController->setControlMode(Game::instance()->settings()->controlMode());
 
         qCDebug(dcEngine()) << "Initialize engine";
-        tick();
+        //tick();
         evaluatePlayerFocus();
         setLoading(false);
         setLoaded(true);
+        // Note: the engine will be switched on once the game page is ready
         //setState(StateRunning);
         break;
     default:

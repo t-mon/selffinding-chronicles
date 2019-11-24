@@ -2,9 +2,7 @@
 #define GAMEOBJECT_H
 
 #include <QSizeF>
-#include <QPoint>
-#include <QPoint>
-#include <QVector>
+#include <QPointF>
 #include <QObject>
 #include <QQmlListProperty>
 

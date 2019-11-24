@@ -22,9 +22,9 @@ public:
 private:
     Path *m_path = nullptr;
 
-    QPointF m_startPosition = QPoint(0, 0);
-    QPointF m_lastPosition = QPoint(0, 0);
-    QPointF m_targetPosition = QPoint(0, 0);
+    QPointF m_startPosition = QPointF(0, 0);
+    QPointF m_lastPosition = QPointF(0, 0);
+    QPointF m_targetPosition = QPointF(0, 0);
 
     // Current movement
     QPointF m_movementVector = QPointF(0, 0);

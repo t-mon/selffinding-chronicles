@@ -32,6 +32,7 @@ GamePage {
         moveCamera()
         evaluateViewWindow()
         particles.running = true
+        Game.engine.resumeGame()
         Game.running = true
     }
 
@@ -45,19 +46,6 @@ GamePage {
         onStepped: Game.onTick()
         running: Game.running
     }
-
-//    Connections {
-//        target: app
-//        onGridSizeChanged: {
-//            Game.running = false
-//            particles.running = false
-//            forceActiveFocus()
-//            moveCamera()
-//            evaluateViewWindow()
-//            particles.running = true
-//            Game.running = true
-//        }
-//    }
 
     Item {
         id: sceneItem
@@ -123,29 +111,6 @@ GamePage {
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
                         z: y + height
-
-                        onXChanged: {
-                            if (!character) return
-                            if (!character.isPlayer) console.warn("Character position x changed:", character.name, x, y, Qt.point(x / app.gridSize, y / app.gridSize))
-                            character.position = Qt.point(x / app.gridSize, y / app.gridSize)
-                            if (character.isPlayer) moveCamera()
-                        }
-
-                        onYChanged: {
-                            if (!character) return
-                            if (!character.isPlayer) console.warn("Character position y updated:", character.name, x, y, Qt.point(x / app.gridSize, y / app.gridSize))
-                            character.position = Qt.point(x / app.gridSize, y / app.gridSize)
-                            if (character.isPlayer) moveCamera()
-                        }
-
-                        Component.onCompleted: {
-                            if (character && character.isPlayer) {
-                                moveCamera()
-                                //root.characterItem = characterItem
-                            }
-                            console.error(Qt.point(x / app.gridSize, y / app.gridSize))
-
-                        }
                     }
                 }
 

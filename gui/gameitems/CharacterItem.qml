@@ -10,6 +10,12 @@ import Chronicles 1.0
 import "../components"
 import "../physics"
 
+/* Create order:
+ *   1. root -> on created : 2.
+ *   2. fokus sensor -> on created 3.
+ *   3. weapon sensor -> on created: activate body
+ */
+
 PhysicsItem {
     id: root
 
@@ -22,12 +28,25 @@ PhysicsItem {
     property bool hitAttackRunning: false
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
     property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
+    property bool initialized: false
 
     bodyType: character ? (character.alive ? GameObject.BodyTypeDynamic : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
     fixedRotation: true
     linearDamping: 10
     antialiasing: app.antialiasing
     active: character ? character.active : false
+
+    onXChanged: {
+        if (!character) return
+        character.position.x = x  / app.gridSize
+        if (character.isPlayer) moveCamera()
+    }
+
+    onYChanged: {
+        if (!character) return
+        character.position.y = y  / app.gridSize
+        if (character.isPlayer) moveCamera()
+    }
 
     onPlayerAuraRangeChanged: {
         if (!character) return
@@ -44,19 +63,6 @@ PhysicsItem {
         console.warn("Character changed:", character.name, x, y, character.position)
         evaluateSpriteState()
     }
-
-//    onXChanged: {
-//        if (!character) return
-//        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
-//        console.warn("Character position changed:", character.name, x, y, character.position)
-
-//    }
-
-//    onYChanged: {
-//        if (!character) return
-//        character.position = Qt.point(x / app.gridSize, y / app.gridSize)
-//        console.warn("Character position changed:", character.name, x, y, character.position)
-//    }
 
     Component.onCompleted: {
         console.warn("Character created:", character.name, x, y, character.position)
@@ -454,7 +460,9 @@ PhysicsItem {
         id: focusPhyicsItem
         width: root.width
         height: width
-        linearDamping: 10
+        x: root.x
+        y: root.y
+        linearDamping: 0
         bodyType: GameObject.BodyTypeDynamic
         antialiasing: app.antialiasing
         fixedRotation: false
@@ -497,21 +505,38 @@ PhysicsItem {
                 }
             }
         ]
+
+        Component {
+            id: focusItemJointComponent
+
+            RevoluteJoint {
+                id: focusItemJoint
+                enableMotor: false
+                collideConnected: true
+                bodyA: root.body
+                bodyB: focusPhyicsItem.body
+                localAnchorA: Qt.point(root.width / 2, root.height / 2)
+                localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
+            }
+        }
+
+        Loader {
+            id: focusItemJointLoader
+            active: false
+            sourceComponent: focusItemJointComponent
+        }
+
+        Component.onCompleted: focusItemJointLoader.active = true
+        Component.onDestruction: focusItemJointLoader.active = false
     }
 
-    RevoluteJoint {
-        enableMotor: false
-        collideConnected: true
-        bodyA: root.body
-        bodyB: focusPhyicsItem.body
-        localAnchorA: Qt.point(root.width / 2, root.height / 2)
-        localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
-    }
-
+    // Weapon sensor
     PhysicsItem {
         id: weaponPhysicsItem
         width: root.width
         height: width
+        x: root.x
+        y: root.y
         linearDamping: 10
         bodyType: GameObject.BodyTypeDynamic
         antialiasing: app.antialiasing
@@ -557,18 +582,32 @@ PhysicsItem {
                 }
             }
         ]
+
+        Component {
+            id: weaponItemJointComponent
+
+            RevoluteJoint {
+                id: weaponJoint
+                enableMotor: false
+                collideConnected: true
+                bodyA: root.body
+                bodyB: weaponPhysicsItem.body
+                localAnchorA: Qt.point(root.width / 2, root.height / 2)
+                localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
+            }
+        }
+
+
+        Loader {
+            id: weaponItemJointLoader
+            active: false
+            sourceComponent: weaponItemJointComponent
+        }
+
+        Component.onCompleted: weaponItemJointLoader.active = true
+        Component.onDestruction: weaponItemJointLoader.active = false
     }
 
-    //Weapon sensor
-    RevoluteJoint {
-        id: weaponJoint
-        enableMotor: false
-        collideConnected: true
-        bodyA: root.body
-        bodyB: weaponPhysicsItem.body
-        localAnchorA: Qt.point(root.width / 2, root.height / 2)
-        localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
-    }
 
     Item {
         id: rotationItem

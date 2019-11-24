@@ -13,7 +13,8 @@ GamePage {
         target: Game.engine
         onLoadedChanged: {
             if (loaded) {
-                console.log("Engine loading finished. Load game page async...")
+                console.log("Engine loading finished.")
+                console.log("Loading game page async...")
                 gamePageLoader.setSource(Qt.resolvedUrl("GameScenePage.qml"))
             }
         }
@@ -22,7 +23,7 @@ GamePage {
     Connections {
         target: gamePageLoader
         onLoaded: {
-            console.log("Game page loading finished...replace current page on stack")
+            console.log("Game page loading finished. Replace current page on stack.")
             pageStack.replace(root, gamePageLoader.item)
             gamePageLoader.item.runGame()
         }

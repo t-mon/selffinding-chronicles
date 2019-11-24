@@ -380,7 +380,7 @@ QPointF PlayerController::moveKeyBoardMouse()
 QPointF PlayerController::moveTouchscreen()
 {
     if (m_joystickVelocity == 0.0 || !m_player)
-        return QPoint(0, 0);
+        return QPointF(0, 0);
 
     m_player->setAngle(m_joystickAngle);
     if (m_joystickVelocity < 0.7)

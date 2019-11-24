@@ -7,7 +7,7 @@
 #include <QJsonParseError>
 #include <QCryptographicHash>
 
-StaticItem *DataLoader::createStaticItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+StaticItem *DataLoader::createStaticItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     StaticItem *item = new StaticItem(parent);
     item->setResourcePath(resourcePath);
@@ -18,7 +18,7 @@ StaticItem *DataLoader::createStaticItem(const QString &resourcePath, const QVar
     return item;
 }
 
-PlantItem *DataLoader::createPlantItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+PlantItem *DataLoader::createPlantItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     PlantItem *plantItem = new PlantItem(parent);
     plantItem->setResourcePath(resourcePath);
@@ -35,7 +35,7 @@ PlantItem *DataLoader::createPlantItem(const QString &resourcePath, const QVaria
     return plantItem;
 }
 
-TreeItem *DataLoader::createTreeItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+TreeItem *DataLoader::createTreeItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     TreeItem *treeItem = new TreeItem(parent);
     treeItem->setResourcePath(resourcePath);
@@ -46,7 +46,7 @@ TreeItem *DataLoader::createTreeItem(const QString &resourcePath, const QVariant
     return treeItem;
 }
 
-WeaponItem *DataLoader::createWeaponItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+WeaponItem *DataLoader::createWeaponItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     WeaponItem *weaponItem = new WeaponItem(parent);
     weaponItem->setResourcePath(resourcePath);
@@ -61,7 +61,7 @@ WeaponItem *DataLoader::createWeaponItem(const QString &resourcePath, const QVar
     return weaponItem;
 }
 
-FirearmItem *DataLoader::createFirearmItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+FirearmItem *DataLoader::createFirearmItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     FirearmItem *firearmItem = new FirearmItem(parent);
     firearmItem->setResourcePath(resourcePath);
@@ -78,7 +78,7 @@ FirearmItem *DataLoader::createFirearmItem(const QString &resourcePath, const QV
     return firearmItem;
 }
 
-LiteratureItem *DataLoader::createLiteratureItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+LiteratureItem *DataLoader::createLiteratureItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     LiteratureItem *literatureItem = new LiteratureItem(parent);
     literatureItem->setResourcePath(resourcePath);
@@ -96,7 +96,7 @@ LiteratureItem *DataLoader::createLiteratureItem(const QString &resourcePath, co
     return literatureItem;
 }
 
-TeleporterItem *DataLoader::createTeleportItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+TeleporterItem *DataLoader::createTeleportItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     TeleporterItem *teleportItem = new TeleporterItem(parent);
     teleportItem->setResourcePath(resourcePath);
@@ -111,7 +111,7 @@ TeleporterItem *DataLoader::createTeleportItem(const QString &resourcePath, cons
     return teleportItem;
 }
 
-BoxItem *DataLoader::createBoxItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+BoxItem *DataLoader::createBoxItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     BoxItem *boxItem = new BoxItem(parent);
     boxItem->setResourcePath(resourcePath);
@@ -121,7 +121,7 @@ BoxItem *DataLoader::createBoxItem(const QString &resourcePath, const QVariantMa
     return boxItem;
 }
 
-Character *DataLoader::createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+Character *DataLoader::createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     Character *character = new Character(parent);
     character->setResourcePath(resourcePath);
@@ -133,7 +133,7 @@ Character *DataLoader::createCharacterObject(const QString &resourcePath, const 
     return character;
 }
 
-Enemy *DataLoader::createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+Enemy *DataLoader::createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     Enemy *enemy = new Enemy(parent);
     enemy->setResourcePath(resourcePath);
@@ -151,7 +151,7 @@ Enemy *DataLoader::createEnemyObject(const QString &resourcePath, const QVariant
     return enemy;
 }
 
-ChestItem *DataLoader::createChestItem(const QString &resourcePath, const QVariantMap &description, const QPoint &position, QObject *parent)
+ChestItem *DataLoader::createChestItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     ChestItem *chestItem = new ChestItem(parent);
     chestItem->setResourcePath(resourcePath);
@@ -187,12 +187,12 @@ Path *DataLoader::createPathObject(const QVariantMap &description, QObject *pare
     return path;
 }
 
-QList<QPoint> DataLoader::loadFieldMap(const QVariantList &fieldMap)
+QList<QPointF> DataLoader::loadFieldMap(const QVariantList &fieldMap)
 {
-    QList<QPoint> pointList;
+    QList<QPointF> pointList;
     foreach(const QVariant &pointVariant, fieldMap) {
         QVariantMap pointMap = pointVariant.toMap();
-        pointList.append(QPoint(pointMap.value("x").toInt(), pointMap.value("y").toInt()));
+        pointList.append(QPointF(pointMap.value("x").toInt(), pointMap.value("y").toInt()));
     }
     return pointList;
 }
@@ -315,12 +315,12 @@ QList<GameObject *> DataLoader::loadGameObjects(const QVariantList &objectsList,
     return gameObjects;
 }
 
-GameObject *DataLoader::loadGameObject(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent)
+GameObject *DataLoader::loadGameObject(const QString &resourcePath, const QPointF &position, const QVariantMap &itemMap, QObject *parent)
 {
 
 }
 
-GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &position, const QVariantMap &itemMap, QObject *parent)
+GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPointF &position, const QVariantMap &itemMap, QObject *parent)
 {
     QString itemTypeString = itemMap.value("type").toString().toLower();
 
@@ -356,7 +356,7 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPoint &po
 GameItem *DataLoader::loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent)
 {
     QVariantMap itemMap = loadJsonData(resourcePath);
-    return loadGameItem(resourcePath, QPoint(-1, -1), itemMap, parent);
+    return loadGameItem(resourcePath, QPointF(-1, -1), itemMap, parent);
 }
 
 void DataLoader::fillGameItemData(GameItem *item, const QVariantMap &description)

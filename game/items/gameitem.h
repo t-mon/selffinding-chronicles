@@ -2,7 +2,7 @@
 #define GAMEITEM_H
 
 #include <QObject>
-#include <QPoint>
+#include <QPointF>
 
 #include "../gameobject.h"
 
