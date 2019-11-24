@@ -41,11 +41,11 @@ PhysicsItem {
     }
 
     onXChanged: {
-        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
+        enemy.position.x = x / app.gridSize
     }
 
     onYChanged: {
-        enemy.position = Qt.point(x / app.gridSize, y / app.gridSize)
+        enemy.position.y = y / app.gridSize
     }
 
     fixtures: [

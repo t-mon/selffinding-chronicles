@@ -27,12 +27,12 @@ PhysicsItem {
 
     onXChanged: {
         if (!gameItem) return
-        gameItem.position = Qt.point(x / app.gridSize, y / app.gridSize)
+        gameItem.position.x = x / app.gridSize
     }
 
     onYChanged: {
         if (!gameItem) return
-        gameItem.position = Qt.point(x / app.gridSize, y / app.gridSize)
+        gameItem.position.y = y / app.gridSize
     }
 
     linearDamping: 30
