@@ -278,7 +278,7 @@
                                 "type": "segment",
                                 "offsetX": 5,
                                 "offsetY": 0,
-                                "speed": 0.08,
+                                "speed": 0.5,
                                 "angle": 0,
                                 "duration": 0
                             },
@@ -294,7 +294,7 @@
                                 "type": "segment",
                                 "offsetX": -5,
                                 "offsetY": 0,
-                                "speed": 0.1,
+                                "speed": 1,
                                 "angle": 0,
                                 "duration": 0
                             },
@@ -382,7 +382,7 @@
                                 "type": "segment",
                                 "offsetX": -1,
                                 "offsetY": -5,
-                                "speed": 0.08,
+                                "speed": 1,
                                 "angle": 0,
                                 "duration": 0
                             },
@@ -398,7 +398,7 @@
                                 "type": "segment",
                                 "offsetX": 1,
                                 "offsetY": 5,
-                                "speed": 0.07,
+                                "speed": 0.8,
                                 "angle": 0,
                                 "duration": 0
                             },

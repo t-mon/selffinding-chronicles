@@ -60,12 +60,11 @@ PhysicsItem {
 
     onCharacterChanged: {
         if (!character) return
-        console.warn("Character changed:", character.name, x, y, character.position)
         evaluateSpriteState()
     }
 
     Component.onCompleted: {
-        console.warn("Character created:", character.name, x, y, character.position)
+        if (!character) return
         evaluateSpriteState()
     }
 
