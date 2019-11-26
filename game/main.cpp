@@ -114,12 +114,12 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("GameInput", false);
     s_loggingFilters.insert("Engine", true);
-    s_loggingFilters.insert("EngineData", true);
+    s_loggingFilters.insert("EngineData", false);
     s_loggingFilters.insert("Character", false);
     s_loggingFilters.insert("Settings", false);
     s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("PathController", false);
-    s_loggingFilters.insert("Map", true);
+    s_loggingFilters.insert("Map", false);
     s_loggingFilters.insert("MapEditor", true);
     s_loggingFilters.insert("DataManager", false);
     s_loggingFilters.insert("Item", false);

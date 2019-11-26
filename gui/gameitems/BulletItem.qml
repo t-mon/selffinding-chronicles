@@ -43,33 +43,36 @@ PhysicsItem {
             var target = other.getBody().target
             var victim = null
             if (target.gameItem) {
+
+                // TODO: colides with burning item ignite arrow
+
+
                 // If we have a collision with an item
                 switch (target.itemType) {
                 case GameItem.TypeChest:
-                    console.log("Bullet collision with chest")
+                    console.log("Arrow collision with chest")
                     root.body.linearVelocity = Qt.point(0, 0)
                     root.active = false
                     dissapearAnimation.start()
                     break;
                 case GameItem.TypeStatic:
-                    console.log("Bullet collision with static item")
+                    console.log("Arrow collision with static item")
                     root.body.linearVelocity = Qt.point(0, 0)
                     root.active = false
                     dissapearAnimation.start()
                     break;
                 case GameItem.TypeBox:
-                    console.log("Bullet collision with box")
+                    console.log("Arrow collision with box")
                     root.body.linearVelocity = Qt.point(0, 0)
                     root.active = false
                     dissapearAnimation.start()
                     break;
                 case GameItem.TypeTree:
-                    console.log("Bullet collision with tree")
+                    console.log("Arrow collision with tree")
                     root.body.linearVelocity = Qt.point(0, 0)
                     root.active = false
                     dissapearAnimation.start()
                     break;
-                    // TODO: colides with burning item
                 default:
                     root.body.linearVelocity = Qt.point(0, 0)
                     root.active = false
@@ -92,7 +95,7 @@ PhysicsItem {
                 return
             }
 
-            console.log("Bullet collision " + root.shooter + " --> " + victim )
+            console.log("Arrow impact", root.shooter, " --> ", victim )
             Game.engine.performShootImpact(root.shooter, victim, damage)
             root.destroy()
         }
@@ -169,7 +172,7 @@ PhysicsItem {
         var distance = Math.sqrt(Math.pow(root.x - root.startPositionX, 2) + Math.pow(root.y - root.startPositionY, 2))
         //console.log("Bullet distance traveld", distance, "/", root.maxDistance)
         if (distance >= maxDistance) {
-            console.log("Bullet reached max distance", distance, ">=", root.maxDistance)
+            console.log("Arrow reached max distance", distance, ">=", root.maxDistance)
             root.body.linearVelocity = Qt.point(0, 0)
             dissapearAnimation.start()
         }

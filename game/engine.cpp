@@ -398,7 +398,9 @@ void Engine::setLoaded(bool loaded)
     if (m_loaded == loaded)
         return;
 
-    qCDebug(dcEngine()) << "Loaded changed:" << loaded;
+    if (loaded)
+        qCDebug(dcEngine()) << "Engine data has been loaded";
+
     m_loaded = loaded;
     emit loadedChanged(m_loaded);
 }
@@ -408,7 +410,7 @@ void Engine::setLoading(bool loading)
     if (m_loading == loading)
         return;
 
-    qCDebug(dcEngine()) << "Loading changed:" << loading;
+    qCDebug(dcEngine()) << "Loading" << (loading ? "started" : "finished");
     m_loading = loading;
     emit loadingChanged(m_loading);
 }
@@ -422,11 +424,8 @@ void Engine::setPlayer(Character *player)
         m_player = nullptr;
     }
 
-    if (player) {
+    if (player)
         qCDebug(dcEngine()) << "Set player" << player;
-    } else {
-        qCDebug(dcEngine()) << "Clear player";
-    }
 
     m_player = player;
     emit playerChanged(m_player);
@@ -645,13 +644,10 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         qCDebug(dcEngine()) << "Set control mode" << Game::instance()->settings()->controlMode();
         m_playerController->setControlMode(Game::instance()->settings()->controlMode());
 
-        qCDebug(dcEngine()) << "Initialize engine";
-        //tick();
-        evaluatePlayerFocus();
+        qCDebug(dcEngine()) << "Engine data initialized. Pause engine until the UI is ready.";
+        setState(StatePaused);
         setLoading(false);
         setLoaded(true);
-        // Note: the engine will be switched on once the game page is ready
-        //setState(StateRunning);
         break;
     default:
         qCWarning(dcEngine()) << "Unhandled state" << state;

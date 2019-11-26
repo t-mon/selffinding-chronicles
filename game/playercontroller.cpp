@@ -34,7 +34,7 @@ void PlayerController::setPlayer(Character *player)
     if (m_player == player)
         return;
 
-    qCDebug(dcPlayerController()) << "Player changed" << player;
+    qCDebug(dcPlayerController()) << "Player:" << player;
     m_player = player;
     emit playerChanged(m_player);
 }

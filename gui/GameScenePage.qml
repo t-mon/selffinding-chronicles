@@ -21,19 +21,17 @@ GamePage {
     onWidthChanged: console.log("Game page widht changed.") && evaluateViewWindow()
     onHeightChanged: console.log("Game page height changed.") &&  evaluateViewWindow()
 
-    property var characterItem: null
+    Component.onCompleted: console.log("Game scene created. Scene size:", root.width, "x", root.height, "|" , "Grid size:", app.gridSize)
+    Component.onDestruction: console.log("Game scene destroy")
 
-    Component.onCompleted: {
-        console.log("Game scene size:", root.width, "x", root.height, "Grid size:", app.gridSize)
-    }
+    // This property descibes the frame width in which items will be active
+    property real viewActiveFrameWidth: 10
 
-    function runGame() {
-        forceActiveFocus()
-        moveCamera()
-        evaluateViewWindow()
-        particles.running = true
-        Game.engine.resumeGame()
-        Game.running = true
+    Connections {
+        target: Game.engine
+        onCurrentPlayerPositionChanged: {
+            evaluateViewWindow()
+        }
     }
 
     // Pysical world
@@ -47,22 +45,37 @@ GamePage {
         running: Game.running
     }
 
+    // ##################################################################################
+    // Game scene
+    // ##################################################################################
+
     Item {
         id: sceneItem
         anchors.fill: parent
 
         property bool gameOverlayVisible: true
 
-        // World flickble
+        // Create animation
+        opacity: 0
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 1000
+                easing { type: Easing.InOutExpo }
+            }
+        }
+
         Flickable {
             id: worldFlickable
-            anchors.fill: parent
+            width: worldItem.width > sceneItem.width ? sceneItem.width : worldItem.width
+            height: worldItem.height > sceneItem.height ? sceneItem.height : worldItem.height
+            anchors.centerIn: parent
             contentWidth: worldItem.width
             contentHeight: worldItem.height
             enabled: false
 
             Item {
                 id: worldItem
+                anchors.centerIn: parent
                 width: Game.engine.dataManager.worldSize.width * app.gridSize
                 height: Game.engine.dataManager.worldSize.height * app.gridSize
 
@@ -390,7 +403,7 @@ GamePage {
     }
 
     // ##################################################################################
-    // GameScene
+    // Shader effects
     // ##################################################################################
 
     ShaderEffectSource {
@@ -494,59 +507,77 @@ GamePage {
         }
     }
 
-    function moveCamera() {
-        if (!Game.engine.player)
-            return
+    // ##################################################################################
+    // Functions
+    // ##################################################################################
 
-        var worldWidth = Game.engine.dataManager.worldSize.width * app.gridSize
-        var worldHeight = Game.engine.dataManager.worldSize.height * app.gridSize
-
-        var playerX = Game.engine.player.position.x * app.gridSize
-        var playerY = Game.engine.player.position.y * app.gridSize
-
-        // FIXME: do right border and bottom border
-        //        // Check if we have to move the camera in x directon
-        //        if (playerX >= worldFlickable.width / 2 && playerX <= worldWidth - worldFlickable.width / 2) {
-        //            // In the middle, move the camera
-        //            worldFlickable.contentX = playerX - worldFlickable.width / 2
-        //        } else if (playerX > worldWidth - worldFlickable.width / 2) {
-        //            // Right end
-        //            worldFlickable.contentX = worldWidth - worldFlickable.width
-        //        } else {
-        //            // Left end
-        //            worldFlickable.contentX = 0
-        //        }
-
-        // Check if we have to move the camera in y directon
-        if (playerX >= worldFlickable.width / 2) {
-            worldFlickable.contentX = playerX - worldFlickable.width / 2
-        } else {
-            worldFlickable.contentX = 0
-        }
-
-
-        // Check if we have to move the camera in y directon
-        if (playerY >= worldFlickable.height / 2) {
-            worldFlickable.contentY = playerY - worldFlickable.height / 2
-        } else {
-            worldFlickable.contentY = 0
-        }
+    function runGame() {
+        forceActiveFocus()
+        moveCamera()
+        evaluateViewWindow()
+        particles.running = true
+        sceneItem.opacity = 1
+        Game.engine.resumeGame()
+        Game.running = true
     }
 
-    Connections {
-        target: Game.engine
-        onCurrentPlayerPositionChanged: {
-            evaluateViewWindow()
+    function getPlayerWorldPosition() {
+        var playerX = Game.engine.player.centerPosition.x * app.gridSize
+        var playerY = Game.engine.player.centerPosition.y * app.gridSize
+        return Qt.point(playerX, playerY)
+    }
+
+    function getPlayerScreenPosition() {
+        var playerWorldPosition = getPlayerWorldPosition()        
+        var playerX = worldFlickable.x + (playerWorldPosition.x - worldFlickable.contentX)
+        var playerY = worldFlickable.y + (playerWorldPosition.y - worldFlickable.contentY)
+        return Qt.point(playerX, playerY)
+    }
+
+    function moveCamera() {
+
+        // Get player position in the scene
+        var playerWorldPosition = getPlayerWorldPosition()
+
+        if (worldFlickable.width < worldItem.width) {
+            // Do camera x movement
+            if (playerWorldPosition.x <= worldFlickable.width / 2) {
+                // Reached world left border
+                worldFlickable.contentX = 0
+            } else if (playerWorldPosition.x >= worldItem.width - worldFlickable.width / 2) {
+                // Reached world right border
+                worldFlickable.contentX = worldItem.width - worldFlickable.width
+            } else {
+                // Move camera
+                worldFlickable.contentX = playerWorldPosition.x - worldFlickable.width / 2
+            }
+        }
+
+        if (worldFlickable.height < worldItem.height) {
+            // Do camera y movement
+            if (playerWorldPosition.y < worldFlickable.height / 2) {
+                // Reached world top border
+                worldFlickable.contentY = 0
+            } else if (playerWorldPosition.y > worldItem.height - worldFlickable.height / 2) {
+                // Reached world bottom border
+                worldFlickable.contentY = worldItem.height - worldFlickable.height
+            } else {
+                // Move camera
+                worldFlickable.contentY = playerWorldPosition.y - worldFlickable.height / 2
+            }
         }
     }
 
     function evaluateViewWindow() {
-        var viewWindowX = Math.round(root.width / app.gridSize)
-        var viewWindowY = Math.round(root.height / app.gridSize)
+        var viewWindowX = Math.round(worldItem.width / app.gridSize)
+        var viewWindowY = Math.round(worldItem.height / app.gridSize)
         var viewOffsetX = Math.round(worldFlickable.contentX / app.gridSize)
         var viewOffsetY = Math.round(worldFlickable.contentY / app.gridSize)
 
-        Game.engine.viewWindow = Qt.rect(viewOffsetX - 5, viewOffsetY - 5, viewWindowX + 10, viewWindowY + 10)
+        Game.engine.viewWindow = Qt.rect(viewOffsetX - viewActiveFrameWidth,
+                                         viewOffsetY - viewActiveFrameWidth,
+                                         viewWindowX + (2 * viewActiveFrameWidth),
+                                         viewWindowY + (2 * viewActiveFrameWidth))
     }
 
     function calculateAngle() {
@@ -559,8 +590,10 @@ GamePage {
         if (!Game.engine.player.movable)
             return;
 
-        var dx = (worldFlickable.contentX + screenMouseArea.mouseX) - (Game.engine.player.position.x * app.gridSize + Game.engine.player.size.width * app.gridSize / 2)
-        var dy = (worldFlickable.contentY + screenMouseArea.mouseY) - (Game.engine.player.position.y * app.gridSize + Game.engine.player.size.height * app.gridSize / 2)
+        // Get player position in the scene
+        var playerScenePosition = getPlayerScreenPosition()
+        var dx = screenMouseArea.mouseX - playerScenePosition.x
+        var dy = screenMouseArea.mouseY - playerScenePosition.y
         Game.engine.player.angle = Math.atan2(dy , dx)
     }
 }

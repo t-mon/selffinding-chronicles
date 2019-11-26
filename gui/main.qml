@@ -17,7 +17,6 @@ ApplicationWindow {
 
     // Theme
     Material.theme: Material.Dark
-
     Material.accent: Material.BlueGrey
     Material.primary: Material.BlueGrey
     Material.foreground: Material.BlueGrey
@@ -49,12 +48,12 @@ ApplicationWindow {
     property color healthColor: "#9c2f25"
     property color manaColor: "#0765d4"
 
-    onWidthChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
-    onHeightChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
-    onXChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
-    onYChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
+    onWidthChanged: Game.settings.windowSize.width = app.width
+    onHeightChanged: Game.settings.windowSize.heigt = app.height
+    onXChanged: Game.settings.windowPosition.x = app.x
+    onYChanged: Game.settings.windowPosition.y = app.y
 
-    // simulation properties
+    // Simulation properties
     property real gameSpeedFactor: 1.0
 
     Connections {

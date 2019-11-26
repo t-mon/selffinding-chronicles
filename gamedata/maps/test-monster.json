@@ -2,8 +2,8 @@
     "name": "test-monster",
     "playerStartX": 5,
     "playerStartY": 5,
-    "width": 100,
-    "height": 100,
+    "width": 40,
+    "height": 40,
     "backgroundColor": "#307a78",
     "items": [
         {

@@ -21,7 +21,7 @@ PhysicsItem {
 
     onPlayerAuraRangeChanged: gameItem.playerVisible = playerAuraRange
     onPlayerOnItemChanged: {
-        //console.log("Player on item", playerOnItem)
+        if (!gameItem) return
         gameItem.playerOnItem = playerOnItem
     }
 
@@ -39,8 +39,7 @@ PhysicsItem {
     fixedRotation: true
 
     Component.onCompleted: {
-        if (!gameItem)
-            return
+        if (!gameItem) return
 
         root.bodyType = gameItem.bodyType
         switch (gameItem.shape) {
@@ -143,49 +142,8 @@ PhysicsItem {
         }
     }
 
-    Connections {
-        target: root.gameItem
-        onPlayerOnItemChanged: {
-            //console.log("Player on item " + playerOnItem)
-            if (root.gameItem.itemType === GameItem.TypeTree && playerOnItem) {
-                console.log("Start animation")
-                playerOnItemAnimation.start()
-            }
-        }
-    }
+    // TODO: vertices fixture
 
-    SequentialAnimation {
-        id: playerOnItemAnimation
-        loops: 1
-
-        RotationAnimation {
-            target: root
-            property: "angle"
-            to: 2
-            duration: 80
-        }
-
-        RotationAnimation {
-            target: root
-            property: "angle"
-            to: 0
-            duration: 80
-        }
-
-        RotationAnimation {
-            target: root
-            property: "rotation"
-            to: -2
-            duration: 80
-        }
-
-        RotationAnimation {
-            target: root
-            property: "rotation"
-            to: 0
-            duration: 80
-        }
-    }
 
     Image {
         id: itemImage
@@ -217,22 +175,5 @@ PhysicsItem {
         active: root.itemDebugEnabled
         source: "../components/ItemDebugFrame.qml"
     }
-
-//    FlameItem {
-//        id: fireItem
-//        enabled: true
-//        anchors.centerIn: parent
-//        turbulence: debugControls.turbulenceEnabled
-//        particleSystem: particles
-//        width: app.gridSize * 6
-//        height: app.gridSize * 6
-//        angle: 270
-//        angleVariation: 30
-//        magnitude: 30
-//    }
-
-    //    Component.onCompleted: console.log("Created game item " + gameItem.name + " " + gameItem.imageName)
-    //    Component.onDestruction: console.log("Destroy item")
-
 }
 

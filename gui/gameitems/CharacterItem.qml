@@ -10,12 +10,6 @@ import Chronicles 1.0
 import "../components"
 import "../physics"
 
-/* Create order:
- *   1. root -> on created : 2.
- *   2. fokus sensor -> on created 3.
- *   3. weapon sensor -> on created: activate body
- */
-
 PhysicsItem {
     id: root
 
@@ -28,7 +22,6 @@ PhysicsItem {
     property bool hitAttackRunning: false
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
     property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
-    property bool initialized: false
 
     bodyType: character ? (character.alive ? GameObject.BodyTypeDynamic : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
     fixedRotation: true
@@ -92,14 +85,14 @@ PhysicsItem {
         onMovingChanged: evaluateSpriteState()
         onShoot: {
             if (!character.firearm) {
-                console.log(character.name, "can not shoot. No firearm selected.")
+                console.log("Character", character.name, "can not shoot. No firearm selected.")
                 return
             }
 
             if (character.armed !== Character.ArmedFirearm)
                 return
 
-            console.log(character.name + " SHOOOT! using", character.firearm)
+            console.log("Character", character.name, "shoot arrow using", character.firearm, character.firearm.damage)
             var component = Qt.createComponent("BulletItem.qml");
             var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character, particleSystem: root.particleSystem } )
             if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
@@ -120,7 +113,7 @@ PhysicsItem {
             if (character.armed !== Character.ArmedWeapon)
                 return
 
-            console.log("Hit using weapon", character.weapon.name, character.weapon.damage)
+            console.log("Character", character.name, "hit using weapon", character.weapon.name, character.weapon.damage)
             weaponHitAnimation.start()
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
@@ -519,6 +512,7 @@ PhysicsItem {
             }
         }
 
+        // Note: make sure the joint will be created after the 2 bodies, and destroyed before the bodies
         Loader {
             id: focusItemJointLoader
             active: false
@@ -567,13 +561,11 @@ PhysicsItem {
 
                     if (target.itemType && target.enemy) {
                         if (character && character.weapon) {
-                            console.log("Hit enemy", target.enemy.name)
                             Game.engine.performHitAttack(root.character, Game.castEnemyToCharacter(target.enemy), character.weapon.damage)
                             return
                         }
                     } else if (target.itemType && target.character) {
                         if (character && character.weapon) {
-                            console.log("Hit character", target.character.name)
                             Game.engine.performHitAttack(root.character, target.character, character.weapon.damage)
                             return
                         }
@@ -596,7 +588,7 @@ PhysicsItem {
             }
         }
 
-
+        // Note: make sure the joint will be created after the 2 bodies, and destroyed before the bodies
         Loader {
             id: weaponItemJointLoader
             active: false
@@ -718,7 +710,7 @@ PhysicsItem {
                     PropertyChanges { target: packedWeaponItem; visible: false }
                     StateChangeScript {
                         script: {
-                            console.log("Character", character.name, "no weapon")
+                            console.log("Character", character.name, "holding no weapon")
                         }
                     }
                 },
@@ -791,7 +783,7 @@ PhysicsItem {
                     PropertyChanges { target: packedFirearmItem; visible: false }
                     StateChangeScript {
                         script: {
-                            console.log("Character", character.name, "no firearm")
+                            console.log("Character", character.name, "holding no firearm")
                         }
                     }
                 },
@@ -802,7 +794,7 @@ PhysicsItem {
                     PropertyChanges { target: packedFirearmItem; visible: false }
                     StateChangeScript {
                         script: {
-                            console.log("Characte", character.name, "holding firearm")
+                            console.log("Character", character.name, "holding firearm")
                         }
                     }
                 },

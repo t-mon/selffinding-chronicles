@@ -9,8 +9,6 @@ import "components"
 GamePage {
     id: mainPage
 
-    Component.onCompleted: console.log("Window size " + mainPage.width + "x" + mainPage.height)
-
     GameLabel {
         anchors.left: parent.left
         anchors.leftMargin: app.margins

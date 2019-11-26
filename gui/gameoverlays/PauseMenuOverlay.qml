@@ -67,8 +67,9 @@ GameOverlayItem {
             text: qsTr("Exit game")
             font.pixelSize: app.largeFont
             onClicked: {
-                pageStack.pop()
+                gamePageLoader.active = false
                 Game.engine.resetEngine()
+                pageStack.pop()
             }
         }
     }
