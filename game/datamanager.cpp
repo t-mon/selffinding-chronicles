@@ -1,3 +1,4 @@
+
 #include "dataloader.h"
 #include "datamanager.h"
 #include "debugcategories.h"
@@ -452,6 +453,5 @@ void DataManager::loadGame(const QString &saveGameFileName)
 
     // Reset all data
     resetData();
-
     setState(StateLoading);
 }

@@ -7,6 +7,7 @@
 #include <QFuture>
 #include <QVector2D>
 #include <QFutureWatcher>
+#include <QElapsedTimer>
 
 #include "map.h"
 #include "fields.h"
@@ -114,6 +115,7 @@ private:
     QRectF m_viewWindow = QRectF(0, 0, 10, 10);
 
     DataManager *m_dataManager = nullptr;
+    QElapsedTimer m_loadingTimer;
 
     Character *m_player = nullptr;
     PlayerController *m_playerController = nullptr;

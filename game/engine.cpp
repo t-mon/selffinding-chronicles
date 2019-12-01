@@ -410,8 +410,14 @@ void Engine::setLoading(bool loading)
     if (m_loading == loading)
         return;
 
-    qCDebug(dcEngine()) << "Loading" << (loading ? "started" : "finished");
     m_loading = loading;
+    if (loading) {
+        qCDebug(dcEngine()) << "Loading started...";
+        m_loadingTimer.restart();
+    } else {
+        qCDebug(dcEngine()) << "Loading finished" << m_loadingTimer.elapsed() << "ms";
+    }
+
     emit loadingChanged(m_loading);
 }
 

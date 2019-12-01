@@ -24,7 +24,8 @@ GamePage {
     Component.onCompleted: console.log("Game scene created. Scene size:", root.width, "x", root.height, "|" , "Grid size:", app.gridSize)
     Component.onDestruction: console.log("Game scene destroy")
 
-    // This property descibes the frame width in which items will be active
+    // This property descibes the frame width of the
+    // world in which items will be active
     property real viewActiveFrameWidth: 10
 
     Connections {
@@ -419,14 +420,7 @@ GamePage {
         property var source: shaderEffectSource
         property real blueChannel: 0.8
 
-        fragmentShader: "
-            varying highp vec2 qt_TexCoord0;
-            uniform sampler2D source;
-            uniform lowp float qt_Opacity;
-            uniform lowp float blueChannel;
-            void main() {
-                gl_FragColor = texture2D(source, qt_TexCoord0) * vec4(0.5, 0.5, blueChannel, 1.0) * qt_Opacity;
-            }"
+        fragmentShader: "qrc:shadereffects/fragmentshaders/magic.frag"
     }
 
     ShaderEffect {
@@ -436,25 +430,8 @@ GamePage {
         height: parent.height
         property var source: shaderEffectSource
 
-        vertexShader: "
-              uniform highp mat4 qt_Matrix;
-              attribute highp vec4 qt_Vertex;
-              attribute highp vec2 qt_MultiTexCoord0;
-              varying highp vec2 coord;
-              void main() {
-                  coord = qt_MultiTexCoord0;
-                  gl_Position = qt_Matrix * qt_Vertex;
-              }"
-        fragmentShader: "
-              varying highp vec2 coord;
-              uniform sampler2D source;
-              uniform lowp float qt_Opacity;
-              void main() {
-                  lowp vec4 tex = texture2D(source, coord);
-                  gl_FragColor = vec4(vec3(dot(tex.rgb,
-                                      vec3(0.344, 0.5, 0.156))),
-                                           tex.a) * qt_Opacity;
-              }"
+        vertexShader: "qrc:shadereffects/vertexshaders/grayscale.frag"
+        fragmentShader: "qrc:shadereffects/fragmentshaders/grayscale.frag"
     }
 
     ShaderEffect {
@@ -477,7 +454,7 @@ GamePage {
             running: false
         }
 
-        fragmentShader: "qrc:shadereffects/wobble.frag"
+        fragmentShader: "qrc:shadereffects/fragmentshaders/wobble.frag"
     }
 
     PropertyAnimation {

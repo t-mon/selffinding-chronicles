@@ -38,8 +38,8 @@
         <file>components/ContentItemDescription.qml</file>
         <file>gameoverlays/GameOverlayItem.qml</file>
         <file>components/FlameItem.qml</file>
-        <file>shadereffects/wobble.frag</file>
-        <file>shadereffects/+hlsl/wobble.frag</file>
+        <file>shadereffects/fragmentshaders/wobble.frag</file>
+        <file>shadereffects/fragmentshaders/+hlsl/wobble.frag</file>
         <file>components/DebugControls.qml</file>
         <file>gameitems/BulletItem.qml</file>
         <file>mapeditor/MapEditor.qml</file>
@@ -61,8 +61,11 @@
         <file>components/Weather.qml</file>
         <file>gameoverlays/ReadLiteratureOverlay.qml</file>
         <file>components/ItemDebugFrame.qml</file>
-        <file>shadereffects/teleport.frag</file>
-        <file>shadereffects/+hlsl/teleport.frag</file>
-        <file>shadereffects/LoagSaveGamePage.qml</file>
+        <file>shadereffects/fragmentshaders/teleport.frag</file>
+        <file>shadereffects/fragmentshaders/+hlsl/teleport.frag</file>
+        <file>shadereffects/fragmentshaders/grayscale.frag</file>
+        <file>shadereffects/fragmentshaders/+hlsl/grayscale.frag</file>
+        <file>shadereffects/vertexshaders/grayscale.frag</file>
+        <file>shadereffects/fragmentshaders/magic.frag</file>
     </qresource>
 </RCC>

@@ -123,4 +123,6 @@ android {
 
 }
 
+DISTFILES +=
+
 
