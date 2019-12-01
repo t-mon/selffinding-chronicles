@@ -39,6 +39,11 @@ QString DataManager::saveGameFileName() const
     return m_saveGameFileName;
 }
 
+Map *DataManager::map() const
+{
+    return m_map;
+}
+
 QSize DataManager::worldSize() const
 {
     return m_worldSize;

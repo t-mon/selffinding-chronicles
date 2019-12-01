@@ -39,6 +39,7 @@ public:
     State state() const;
     QString saveGameFileName() const;
 
+    Map *map() const;
     QSize worldSize() const;
     QColor worldBackgroundColor() const;
 

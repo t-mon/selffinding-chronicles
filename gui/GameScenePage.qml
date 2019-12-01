@@ -27,6 +27,7 @@ GamePage {
     // This property descibes the frame width of the
     // world in which items will be active
     property real viewActiveFrameWidth: 10
+    property CharacterItem playerItem: null
 
     Connections {
         target: Game.engine
@@ -125,6 +126,11 @@ GamePage {
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
                         z: y + height
+                        Component.onCompleted: {
+                            if (characterItem.character.isPlayer) {
+                                root.playerItem = characterItem
+                            }
+                        }
                     }
                 }
 
@@ -397,6 +403,12 @@ GamePage {
                 StateChangeScript {
                     script: {
                         console.log("Start teleport animation")
+                        if (!root.playerItem) {
+                            console.warn("There is currently no player character item")
+                            return
+                        }
+
+                        root.playerItem.startTeleportDisappearAnimation()
                     }
                 }
             }

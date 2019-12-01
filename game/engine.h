@@ -24,6 +24,7 @@ class Engine : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(TeleportState teleportState READ teleportState NOTIFY teleportStateChanged)
     Q_PROPERTY(QRectF viewWindow READ viewWindow WRITE setViewWindow NOTIFY viewWindowChanged)
 
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
@@ -63,10 +64,21 @@ public:
     };
     Q_ENUM(State)
 
+    enum TeleportState {
+        TeleportStateNone,
+        TeleportStateDisppear,
+        TeleportStateWorldDestruct,
+        TeleportStateLoading,
+        TeleportStateWorldConstruct,
+        TeleportStateAppear
+    };
+    Q_ENUM(TeleportState)
+
     explicit Engine(QObject *parent = nullptr);
     ~Engine() override = default;
 
     State state() const;
+    TeleportState teleportState() const;
 
     QRectF viewWindow() const;
     void setViewWindow(const QRectF &viewWindow);
@@ -87,6 +99,7 @@ public:
     Conversation *currentConversation() const;
     ChestItem *currentChestItem() const;
     LiteratureItem *currentLiteratureItem() const;
+    TeleporterItem *currentTeleportItem() const;
     GameItems *currentPlunderItems() const;
 
     bool loaded() const;
@@ -110,8 +123,14 @@ public:
     Q_INVOKABLE void takeItem(GameItems *gameItems, GameItem *item);
     Q_INVOKABLE void takeAllItems(GameItems *gameItems);
 
+    // Teleport
+    Q_INVOKABLE void teleportAppearAnimationFinished();
+    Q_INVOKABLE void teleportDisappearAnimationFinished();
+
 private:
     State m_state = StateUnitialized;
+    TeleportState m_teleportState = TeleportStateNone;
+
     QRectF m_viewWindow = QRectF(0, 0, 10, 10);
 
     DataManager *m_dataManager = nullptr;
@@ -126,12 +145,12 @@ private:
     WeatherAreaModel *m_weatherAreaModel = nullptr;
     WeatherAreaProxy *m_weatherAreaProxy = nullptr;
 
-
     Conversation *m_currentConversation = nullptr;
     Character *m_currentConversationCharacter = nullptr;
     ChestItem *m_currentChestItem = nullptr;
     LiteratureItem *m_currentLiteratureItem = nullptr;
     GameItems *m_currentPlunderItems = nullptr;
+    TeleporterItem *m_currentTeleportItem = nullptr;
 
     bool m_keepInventoryOpen = false;
 
@@ -148,6 +167,7 @@ private:
 
     // Set methods
     void setState(State state);
+    void setTeleportState(TeleportState teleportState);
     void setCurrentPlayerPosition(const QPointF &currentPosition);
     void setCurrentPlayerField(Field *field);
     void setPlayerFocusItem(GameItem *focusItem);
@@ -173,6 +193,8 @@ signals:
     void enginePostTick();
 
     void stateChanged(State state);
+    void teleportStateChanged(TeleportState teleportState);
+
     void viewWindowChanged(const QRectF &viewWindow);
     void loadingChanged(bool loading);
     void loadedChanged(bool loaded);
@@ -191,8 +213,8 @@ private slots:
     void onPlayerPositionChanged();
     void onDataManagerStateChanged(DataManager::State state);
 
+    // Item slots
     void onGameItemActiveChanged(GameItem *item, bool active);
-
     void onItemPlayerVisibleChanged(bool playerVisible);
     void onItemPlayerOnItemChanged(bool playerOnItem);
     void onCharacterKilled();

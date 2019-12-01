@@ -36,7 +36,7 @@ PhysicsItem {
         collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy
                       | GameObject.PhysicsStaticItem | GameObject.PhysicsBodyHitbox
         radius: root.width / 2
-        density: 1
+        density: 10
         friction: 0
         restitution: 0
         onBeginContact: {
@@ -45,7 +45,6 @@ PhysicsItem {
             if (target.gameItem) {
 
                 // TODO: colides with burning item ignite arrow
-
 
                 // If we have a collision with an item
                 switch (target.itemType) {

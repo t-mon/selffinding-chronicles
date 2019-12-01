@@ -862,33 +862,69 @@ PhysicsItem {
     }
 
     // ##################################################################################
-    // Character shaders
+    // Character animations
     // ##################################################################################
 
+    ParallelAnimation {
+        id: teleportApprearAnimation
 
+        NumberAnimation {
+            target: root
+            properties: "opacity"
+            duration: 1000
+            from: 0
+            to: 1
+        }
 
-    //    ShaderEffect {
-    //        id: stonedShader
-    //        width: parent.width
-    //        height: parent.height
+        ScaleAnimator {
+            target: root
+            duration: 1000
+            from: 0
+            to: 1
+            easing.type: Easing.InOutElastic;
+            easing.amplitude: 2.0;
+            easing.period: 1.5
+        }
 
-    //        property var source: characterShaderEffectSource
-    //        property real amplitude: 0.02
-    //        property real frequency: 8
-    //        property real time: 0
+        onRunningChanged: {
+            if (running || !character || !character.isPlayer)
+                return
 
-    //        NumberAnimation on time {
-    //            id: stonedShaderTimeAnimation
-    //            loops: Animation.Infinite
-    //            from: 0
-    //            to: Math.PI * 2
-    //            duration: 1800
-    //            running: true
-    //        }
+            console.log("Teleport appear animation finished")
+            Game.engine.teleportAppearAnimationFinished()
+        }
+    }
 
-    //        fragmentShader: "qrc:shadereffects/wobble.frag"
-    //    }
+    ParallelAnimation {
+        id: teleportDisapprearAnimation
 
+        NumberAnimation {
+            target: root
+            properties: "opacity"
+            duration: 1000
+            from: 1
+            to: 0
+        }
+
+        ScaleAnimator {
+            target: root
+            duration: 1000
+            from: 1
+            to: 0
+            easing.type: Easing.OutInElastic;
+            easing.amplitude: 2.0;
+            easing.period: 1.5
+        }
+
+        onRunningChanged: {
+            if (running || !character || !character.isPlayer)
+                return
+
+            console.log("Teleport disappear animation finished")
+            Game.engine.teleportDisappearAnimationFinished()
+        }
+
+    }
 
     // ##################################################################################
     // Functions
@@ -959,7 +995,7 @@ PhysicsItem {
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range
         bulletObject.fireArrow = debugControls.flamesEnabled
-        var velocity = app.gridSize * 1.2
+        var velocity = 40
         bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
     }
 
@@ -971,5 +1007,13 @@ PhysicsItem {
         flameItem.visible = true
         buringTimer.restart()
         root.burning = true
+    }
+
+    function startTeleportApprearAnimation() {
+        teleportApprearAnimation.running = true
+    }
+
+    function startTeleportDisappearAnimation() {
+        teleportDisapprearAnimation.running = true
     }
 }
