@@ -130,9 +130,7 @@ GamePage {
                                 } else if (gameObject.layer === GameObject.LayerOverlay) {
                                     worldItem.height + height + 1
                                 }
-
                             }
-
                             return y + height
                         }
                     }

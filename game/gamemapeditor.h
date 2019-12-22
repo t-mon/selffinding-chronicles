@@ -6,6 +6,7 @@
 
 #include "game/map.h"
 #include "datamanager.h"
+#include "gameobjectsproxy.h"
 #include "items/gameitems.h"
 
 class GameMapEditor : public QObject
@@ -26,6 +27,9 @@ public:
 
     GameItems *availableItems() const;    
     Q_INVOKABLE void loadAvailableGameItems();
+    Q_INVOKABLE void loadAvailableObjects();
+    Q_INVOKABLE void loadAvailableCharacters();
+    Q_INVOKABLE void loadAvailableEnemies();
 
     GameItem *selectedGameItem() const;
     Q_INVOKABLE void createSelectedGameItem(const QString &resourcePath);
@@ -35,16 +39,20 @@ public:
     GameItemsProxy *activeCharacters() const;
     GameItemsProxy *activeEnemies() const;
 
-
     Map *map() const;
     Q_INVOKABLE void createNewMap();
     Q_INVOKABLE void placeItemOnMap(const QString &resourcePath, const QPointF &position);
     Q_INVOKABLE void saveMap();
 
 private:
+    GameObjects *m_availableObjects = nullptr;
     GameItems *m_availableItems = nullptr;
+    GameItems *m_availableCharacters = nullptr;
+    GameItems *m_availableEnemies = nullptr;
+
 
     DataManager *m_dataManager = nullptr;
+    GameObjectsProxy *m_activeObjects = nullptr;
     GameItemsProxy *m_activeItems = nullptr;
     GameItemsProxy *m_activeEnemies = nullptr;
     GameItemsProxy *m_activeCharacters = nullptr;

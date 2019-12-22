@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.0
+import Qt.labs.folderlistmodel 2.1
 
 import Box2D 2.0
 import Chronicles 1.0
@@ -74,6 +75,7 @@ GamePage {
                         TabButton { text: qsTr("Items") }
                         TabButton { text: qsTr("Visible") }
                         TabButton { text: qsTr("Settings") }
+                        TabButton { text: qsTr("Browser")}
                     }
 
                     StackLayout {
@@ -198,32 +200,60 @@ GamePage {
                                 }
                             }
                         }
-                    }
 
-                    Rectangle {
-                        id: itemDescription
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: gamePage.height * 0.2
-                        color: "darkgray"
-
-                        RowLayout {
+                        Item {
+                            id: browserItems
                             Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                            ContentItemImage {
-                                id: gameItemImage
-                                Layout.preferredWidth: 80
-                                Layout.preferredHeight: 80
-                                imageSource: currentItem ? dataDirectory + currentItem.imageName : ""
+                            ListView {
+                                id: browserListView
+                                anchors.fill: parent
+
+                                FolderListModel {
+                                    id: folderModel
+                                    rootFolder: Qt.resolvedUrl(":/gamedata/")
+                                    //nameFilters: ["*.json"]
+                                    showDirs: true
+                                    showFiles: true
+                                }
+
+                                Component {
+                                    id: fileDelegate
+                                    Text { text: fileName }
+                                }
+
+                                model: folderModel
+                                delegate: fileDelegate
                             }
 
-                            Label {
-                                Layout.fillWidth: true
-                                Layout.alignment: Qt.AlignVCenter
-                                text: (currentItem ? currentItem.name : "")
-                                color: "white"
-                            }
                         }
                     }
+
+//                    Rectangle {
+//                        id: itemDescription
+//                        Layout.fillWidth: true
+//                        Layout.preferredHeight: gamePage.height * 0.2
+//                        color: "darkgray"
+
+//                        RowLayout {
+//                            Layout.fillWidth: true
+
+//                            ContentItemImage {
+//                                id: gameItemImage
+//                                Layout.preferredWidth: 80
+//                                Layout.preferredHeight: 80
+//                                imageSource: currentItem ? dataDirectory + currentItem.imageName : ""
+//                            }
+
+//                            Label {
+//                                Layout.fillWidth: true
+//                                Layout.alignment: Qt.AlignVCenter
+//                                text: (currentItem ? currentItem.name : "")
+//                                color: "white"
+//                            }
+//                        }
+//                    }
                 }
             }
 

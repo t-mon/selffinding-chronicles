@@ -38,7 +38,64 @@ void GameMapEditor::loadAvailableGameItems()
         return;
     }
 
-    QString gameDataPath = ":/gamedata/";
+    QString gameDataPath = ":/gamedata/items/";
+    QDir resourceDirectory(gameDataPath);
+    foreach (const QString &gameDataEntry, resourceDirectory.entryList()) {
+        qCDebug(dcMapEditor()) << "--> Resource entry" << QString(gameDataPath + gameDataEntry);
+        QDir typeDirectory(gameDataPath + gameDataEntry);
+        foreach (const QString &entry, typeDirectory.entryList()) {
+            qCDebug(dcMapEditor()) << "          --> entry" << typeDirectory.path() + "/" + entry;
+            m_availableItems->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry, this));
+        }
+    }
+}
+
+void GameMapEditor::loadAvailableObjects()
+{
+    if (!m_availableObjects->gameObjects().isEmpty()) {
+        qCDebug(dcMapEditor()) << "Available objects already loaded. Doing nothing";
+        return;
+    }
+
+    QString gameDataPath = ":/gamedata/objects/";
+    QDir resourceDirectory(gameDataPath);
+    foreach (const QString &gameDataEntry, resourceDirectory.entryList()) {
+        qCDebug(dcMapEditor()) << "--> Resource entry" << QString(gameDataPath + gameDataEntry);
+        QDir typeDirectory(gameDataPath + gameDataEntry);
+        foreach (const QString &entry, typeDirectory.entryList()) {
+            qCDebug(dcMapEditor()) << "          --> entry" << typeDirectory.path() + "/" + entry;
+            m_availableObjects->addGameObject(DataLoader::loadGameObjectFromResourcePath(typeDirectory.path() + "/" + entry, this));
+        }
+    }
+}
+
+void GameMapEditor::loadAvailableCharacters()
+{
+    if (!m_availableCharacters->gameItems().isEmpty()) {
+        qCDebug(dcMapEditor()) << "Available characters already loaded. Doing nothing";
+        return;
+    }
+
+    QString gameDataPath = ":/gamedata/characters/";
+    QDir resourceDirectory(gameDataPath);
+    foreach (const QString &gameDataEntry, resourceDirectory.entryList()) {
+        qCDebug(dcMapEditor()) << "--> Resource entry" << QString(gameDataPath + gameDataEntry);
+        QDir typeDirectory(gameDataPath + gameDataEntry);
+        foreach (const QString &entry, typeDirectory.entryList()) {
+            qCDebug(dcMapEditor()) << "          --> entry" << typeDirectory.path() + "/" + entry;
+            m_availableItems->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry, this));
+        }
+    }
+}
+
+void GameMapEditor::loadAvailableEnemies()
+{
+    if (!m_availableEnemies->gameItems().isEmpty()) {
+        qCDebug(dcMapEditor()) << "Available enemies already loaded. Doing nothing";
+        return;
+    }
+
+    QString gameDataPath = ":/gamedata/enemies/";
     QDir resourceDirectory(gameDataPath);
     foreach (const QString &gameDataEntry, resourceDirectory.entryList()) {
         qCDebug(dcMapEditor()) << "--> Resource entry" << QString(gameDataPath + gameDataEntry);
