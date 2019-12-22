@@ -1,0 +1,22 @@
+{
+    "name": "Bush 1",
+    "type": "tree",
+    "imageName": "/images/world/bushes/bush-1.png",
+    "focusVisible": false,
+    "geometry": {
+        "width": 3,
+        "height": 3,
+        "layer": 2
+    },
+    "physicsGeometry": {
+        "body": "static",
+        "shape": "circle",
+        "width": 1,
+        "height": 1,
+        "x": 1,
+        "y": 2,
+        "category": 16,
+        "collision": 160,
+        "vertices": []
+    }
+}

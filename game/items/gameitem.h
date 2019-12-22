@@ -9,14 +9,11 @@
 class GameItem : public GameObject
 {
     Q_OBJECT
+    Q_PROPERTY(Type itemType READ itemType CONSTANT)
+    Q_PROPERTY(QString itemTypeName READ itemTypeName CONSTANT)
     Q_PROPERTY(Interaction interaction READ interaction NOTIFY interactionChanged)
     Q_PROPERTY(Interaction inventoryInteraction READ inventoryInteraction NOTIFY inventoryInteractionChanged)
     Q_PROPERTY(QString interactionString READ interactionString NOTIFY interactionChanged)
-    Q_PROPERTY(QString imageName READ imageName NOTIFY imageNameChanged)
-    Q_PROPERTY(Type itemType READ itemType CONSTANT)
-    Q_PROPERTY(QString resourcePath READ resourcePath CONSTANT)
-    Q_PROPERTY(QString itemTypeName READ itemTypeName CONSTANT)
-    Q_PROPERTY(QString itemId READ itemId CONSTANT)
     Q_PROPERTY(int price READ price NOTIFY priceChanged)
     Q_PROPERTY(bool playerFocus READ playerFocus NOTIFY playerFocusChanged)
     Q_PROPERTY(bool playerVisible READ playerVisible WRITE setPlayerVisible NOTIFY playerVisibleChanged)
@@ -72,15 +69,6 @@ public:
     virtual Type itemType() const = 0;
     virtual QString itemTypeName() const = 0;
 
-    QString itemId() const;
-    void setItemId(const QString &itemId);
-
-    QString resourcePath() const;
-    void setResourcePath(const QString &resourcePath);
-
-    QString imageName() const;
-    void setImageName(const QString &imageName);
-
     int price() const;
     void setPrice(int price);
 
@@ -109,9 +97,6 @@ public:
     Q_INVOKABLE static QString interactionToString(Interaction interaction);
 
 private:
-    QString m_itemId;
-    QString m_imageName = "/images/game/placeholder.png";
-    QString m_resourcePath;
     int m_price = 0;
     bool m_playerFocus = false;
     bool m_playerVisible = false;
@@ -123,7 +108,6 @@ protected:
     Interaction m_inventoryInteraction = InteractionUse;
 
 signals:
-    void imageNameChanged(const QString &imageName);
     void interactionChanged(Interaction interaction);
     void inventoryInteractionChanged(Interaction interaction);
     void priceChanged(int price);

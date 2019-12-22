@@ -24,9 +24,6 @@ GamePage {
     Component.onCompleted: console.log("Game scene created. Scene size:", root.width, "x", root.height, "|" , "Grid size:", app.gridSize)
     Component.onDestruction: console.log("Game scene destroy")
 
-    // This property descibes the frame width of the
-    // world in which items will be active
-    property real viewActiveFrameWidth: 10
     property CharacterItem playerItem: null
 
     Connections {
@@ -114,6 +111,48 @@ GamePage {
                 }
 
                 Repeater {
+                    id: gameObjectRepeater
+                    model: Game.engine.activeObjects
+                    delegate: GameObject {
+                        id: gameObjet
+                        gameObject: Game.engine.activeObjects.get(model.index)
+                        itemDebugEnabled: debugControls.itemDebugEnabled
+                        width: model.size.width * app.gridSize
+                        height: model.size.height * app.gridSize
+                        x: model.position.x * app.gridSize
+                        y: model.position.y * app.gridSize
+                        z: {
+                            if (gameObject) {
+                                if (gameObject.layer === GameObject.LayerBackground) {
+                                    return -2
+                                } else if (gameObject.layer === GameObject.LayerBase) {
+                                    return -1
+                                } else if (gameObject.layer === GameObject.LayerOverlay) {
+                                    worldItem.height + height + 1
+                                }
+
+                            }
+
+                            return y + height
+                        }
+                    }
+                }
+
+                Repeater {
+                    id: itemsRepeater
+                    model: Game.engine.activeItems
+                    delegate: GameItem {
+                        gameItem: Game.engine.activeItems.get(model.index)
+                        itemDebugEnabled: debugControls.itemDebugEnabled
+                        width: model.size.width * app.gridSize
+                        height: model.size.height * app.gridSize
+                        x: model.position.x * app.gridSize
+                        y: model.position.y * app.gridSize
+                        z: y + height
+                    }
+                }
+
+                Repeater {
                     id: characersRepeater
                     model: Game.engine.activeCharacters
                     delegate: CharacterItem {
@@ -131,20 +170,6 @@ GamePage {
                                 root.playerItem = characterItem
                             }
                         }
-                    }
-                }
-
-                Repeater {
-                    id: itemsRepeater
-                    model: Game.engine.activeItems
-                    delegate: GameItem {
-                        gameItem: Game.engine.activeItems.get(model.index)
-                        itemDebugEnabled: debugControls.itemDebugEnabled
-                        width: model.size.width * app.gridSize
-                        height: model.size.height * app.gridSize
-                        x: model.position.x * app.gridSize
-                        y: model.position.y * app.gridSize
-                        z: y + height
                     }
                 }
 
@@ -286,7 +311,7 @@ GamePage {
 
         // TODO: Trade overlay, magic overlay
 
-        // States
+        // Engine states
         states: [
             State {
                 name: "loadingState"
@@ -402,7 +427,7 @@ GamePage {
 
                 StateChangeScript {
                     script: {
-                        console.log("Start teleport animation")
+                        console.log("Start teleport dissapear animation")
                         if (!root.playerItem) {
                             console.warn("There is currently no player character item")
                             return
@@ -563,10 +588,10 @@ GamePage {
         var viewOffsetX = Math.round(worldFlickable.contentX / app.gridSize)
         var viewOffsetY = Math.round(worldFlickable.contentY / app.gridSize)
 
-        Game.engine.viewWindow = Qt.rect(viewOffsetX - viewActiveFrameWidth,
-                                         viewOffsetY - viewActiveFrameWidth,
-                                         viewWindowX + (2 * viewActiveFrameWidth),
-                                         viewWindowY + (2 * viewActiveFrameWidth))
+        Game.engine.viewWindow = Qt.rect(viewOffsetX - app.viewActiveFrameWidth,
+                                         viewOffsetY - app.viewActiveFrameWidth,
+                                         viewWindowX + (2 * app.viewActiveFrameWidth),
+                                         viewWindowY + (2 * app.viewActiveFrameWidth))
     }
 
     function calculateAngle() {

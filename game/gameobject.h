@@ -9,6 +9,9 @@
 class GameObject : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString resourcePath READ resourcePath CONSTANT)
+    Q_PROPERTY(QString itemId READ itemId CONSTANT)
+    Q_PROPERTY(QString imageName READ imageName NOTIFY imageNameChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QPointF centerPosition READ centerPosition NOTIFY positionChanged)
@@ -68,8 +71,25 @@ public:
     Q_ENUM(PhysicsFlag)
     Q_DECLARE_FLAGS(PhysicsFlags, PhysicsFlag)
 
+    enum Layer {
+        LayerBackground = 0, // -2
+        LayerBase = 1, // -1
+        LayerItems = 2, // y = z
+        LayerOverlay = 3 // height + 1
+    };
+    Q_ENUM(Layer)
+
     explicit GameObject(QObject *parent = nullptr);
     virtual ~GameObject() = default;
+
+    QString itemId() const;
+    void setItemId(const QString &itemId);
+
+    QString resourcePath() const;
+    void setResourcePath(const QString &resourcePath);
+
+    QString imageName() const;
+    void setImageName(const QString &imageName);
 
     QString name() const;
     void setName(const QString &name);
@@ -77,8 +97,8 @@ public:
     QPointF position() const;
     void setPosition(const QPointF &position);
 
-    double layer() const;
-    void setLayer(double layer);
+    Layer layer() const;
+    void setLayer(Layer layer);
 
     QPointF centerPosition() const;
 
@@ -117,9 +137,12 @@ public:
     void setVertices(const QQmlListProperty<QPointF> &vertices);
 
 private:
+    QString m_itemId;
+    QString m_imageName = "/images/game/placeholder.png";
+    QString m_resourcePath;
     QString m_name;
     QPointF m_position;
-    double m_layer = 0;
+    Layer m_layer = LayerBase;
     QSizeF m_size = QSizeF(1, 1);
     bool m_focusVisible = true;
     bool m_backgroundObject = false;
@@ -134,9 +157,10 @@ private:
     QQmlListProperty<QPointF> m_vertices;
 
 signals:
+    void imageNameChanged(const QString &imageName);
     void nameChanged(const QString &name);
     void positionChanged(const QPointF &position);
-    void layerChanged(double layer);
+    void layerChanged(Layer layer);
     void sizeChanged(const QSizeF &size);
     void focusVisibleChanged(bool focusVisible);
     void activeChanged(bool active);

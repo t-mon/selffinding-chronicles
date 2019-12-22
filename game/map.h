@@ -8,6 +8,7 @@
 
 #include "fields.h"
 #include "dataloader.h"
+#include "gameobjects.h"
 #include "items/treeitem.h"
 #include "items/gameitems.h"
 #include "items/plantitem.h"
@@ -23,17 +24,8 @@ class Map : public QObject
     Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
 
 public:
-    enum Layer {
-        Layer0Lowest = 0,
-        Layer1Lower = 1,
-        Layer2Normal = 2,
-        Layer3Higher = 3,
-        Layer4Highest = 4
-    };
-    Q_ENUM(Layer)
-
     explicit Map(QObject *parent = nullptr);
-    Map(GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent = nullptr);
+    Map(GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent = nullptr);
     ~Map();
 
     QSize size() const;
@@ -50,6 +42,7 @@ public:
     QColor backgroundColor() const;
     void setBackgroundColor(const QColor &backgroundColor);
 
+    GameObjects *objects();
     GameItems *items();
     GameItems *enemies();
     GameItems *characters();
@@ -61,12 +54,14 @@ public:
     Q_INVOKABLE Field *getField(const QPointF position) const;
 
 private:
+    QString m_resourcePath;
     QSize m_size;
     QPointF m_playerStartPosition;
     QString m_name;
     QString m_fileName;
     QColor m_backgroundColor;
 
+    GameObjects *m_objects = nullptr;
     GameItems *m_items = nullptr;
     GameItems *m_enemies = nullptr;
     GameItems *m_characters = nullptr;

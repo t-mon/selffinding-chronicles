@@ -5,7 +5,7 @@
     "geometry": {
         "width": 3,
         "height": 3,
-        "layer": 3
+        "layer": 2
     },
 
     "physicsGeometry": {
@@ -31,35 +31,35 @@
         "wisdom": 10,
         "strength": 10,
         "stealth": 0,
-        "weapon": ":/gamedata/weapons/wood-stick.json",
-        "firearm": ":/gamedata/firearms/crossbow.json",
+        "weapon": ":/gamedata/items/weapons/wood-stick.json",
+        "firearm": ":/gamedata/items/firearms/crossbow.json",
         "inventory": [
             {
-                "data": ":/gamedata/plants/healing-herb.json",
+                "data": ":/gamedata/items/plants/healing-herb.json",
                 "count": 2
             },
             {
-                "data": ":/gamedata/weapons/wood-stick.json",
+                "data": ":/gamedata/items/weapons/wood-stick.json",
                 "count": 1
             },
             {
-                "data": ":/gamedata/weapons/sword.json",
+                "data": ":/gamedata/items/weapons/sword.json",
                 "count": 1
             },
             {
-                "data": ":/gamedata/weapons/wood-stick.json",
+                "data": ":/gamedata/items/weapons/wood-stick.json",
                 "count": 1
             },
             {
-                "data": ":/gamedata/firearms/crossbow.json",
+                "data": ":/gamedata/items/firearms/crossbow.json",
                 "count": 1
             },
             {
-                "data": ":/gamedata/literature/book.json",
+                "data": ":/gamedata/items/literature/book.json",
                 "count": 1
             },
             {
-                "data": ":/gamedata/teleport/teleport-test.json",
+                "data": ":/gamedata/items/teleport/teleport-test.json",
                 "count": 1
             }
         ]

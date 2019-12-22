@@ -140,14 +140,14 @@ Item {
             onRunningChanged: if (!running) snowParticleSystem.running = false
         }
 
-        Wander {
-            id: wanderer
-            system: snowParticleSystem
-            affectedParameter: Wander.Position
-            anchors.fill: parent
-            xVariance: parent.width
-            pace: app.gridSize / 2
-        }
+//        Wander {
+//            id: wanderer
+//            system: snowParticleSystem
+//            affectedParameter: Wander.Position
+//            anchors.fill: parent
+//            xVariance: parent.width
+//            pace: app.gridSize / 2
+//        }
 
         ImageParticle {
             id: snowflakeParticle

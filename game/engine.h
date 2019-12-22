@@ -12,9 +12,12 @@
 #include "map.h"
 #include "fields.h"
 #include "datamanager.h"
+#include "gameobjects.h"
+#include "gameobjectsproxy.h"
 #include "items/gameitems.h"
 #include "playercontroller.h"
 #include "items/teleporteritem.h"
+#include "teleportationhandler.h"
 #include "items/weatherareaproxy.h"
 #include "conversation/conversation.h"
 
@@ -24,7 +27,6 @@ class Engine : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(TeleportState teleportState READ teleportState NOTIFY teleportStateChanged)
     Q_PROPERTY(QRectF viewWindow READ viewWindow WRITE setViewWindow NOTIFY viewWindowChanged)
 
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
@@ -32,6 +34,7 @@ class Engine : public QObject
     Q_PROPERTY(GameItem *playerFocusItem READ playerFocusItem NOTIFY playerFocusItemChanged)
 
     Q_PROPERTY(DataManager *dataManager READ dataManager CONSTANT)
+    Q_PROPERTY(GameObjectsProxy *activeObjects READ activeObjects CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
@@ -64,21 +67,10 @@ public:
     };
     Q_ENUM(State)
 
-    enum TeleportState {
-        TeleportStateNone,
-        TeleportStateDisppear,
-        TeleportStateWorldDestruct,
-        TeleportStateLoading,
-        TeleportStateWorldConstruct,
-        TeleportStateAppear
-    };
-    Q_ENUM(TeleportState)
-
     explicit Engine(QObject *parent = nullptr);
     ~Engine() override = default;
 
     State state() const;
-    TeleportState teleportState() const;
 
     QRectF viewWindow() const;
     void setViewWindow(const QRectF &viewWindow);
@@ -88,6 +80,7 @@ public:
 
     DataManager *dataManager() const;
     Character *player() const;
+    GameObjectsProxy *activeObjects() const;
     GameItemsProxy *activeItems() const;
     GameItemsProxy *activeCharacters() const;
     GameItemsProxy *activeEnemies() const;
@@ -123,13 +116,8 @@ public:
     Q_INVOKABLE void takeItem(GameItems *gameItems, GameItem *item);
     Q_INVOKABLE void takeAllItems(GameItems *gameItems);
 
-    // Teleport
-    Q_INVOKABLE void teleportAppearAnimationFinished();
-    Q_INVOKABLE void teleportDisappearAnimationFinished();
-
 private:
     State m_state = StateUnitialized;
-    TeleportState m_teleportState = TeleportStateNone;
 
     QRectF m_viewWindow = QRectF(0, 0, 10, 10);
 
@@ -139,18 +127,20 @@ private:
     Character *m_player = nullptr;
     PlayerController *m_playerController = nullptr;
 
+    GameObjectsProxy *m_activeObjects = nullptr;
     GameItemsProxy *m_activeItems = nullptr;
     GameItemsProxy *m_activeEnemies = nullptr;
     GameItemsProxy *m_activeCharacters = nullptr;
     WeatherAreaModel *m_weatherAreaModel = nullptr;
     WeatherAreaProxy *m_weatherAreaProxy = nullptr;
 
+    TeleportationHandler *m_teleportationHandler = nullptr;
+
     Conversation *m_currentConversation = nullptr;
     Character *m_currentConversationCharacter = nullptr;
     ChestItem *m_currentChestItem = nullptr;
     LiteratureItem *m_currentLiteratureItem = nullptr;
     GameItems *m_currentPlunderItems = nullptr;
-    TeleporterItem *m_currentTeleportItem = nullptr;
 
     bool m_keepInventoryOpen = false;
 
@@ -167,7 +157,6 @@ private:
 
     // Set methods
     void setState(State state);
-    void setTeleportState(TeleportState teleportState);
     void setCurrentPlayerPosition(const QPointF &currentPosition);
     void setCurrentPlayerField(Field *field);
     void setPlayerFocusItem(GameItem *focusItem);
@@ -193,7 +182,6 @@ signals:
     void enginePostTick();
 
     void stateChanged(State state);
-    void teleportStateChanged(TeleportState teleportState);
 
     void viewWindowChanged(const QRectF &viewWindow);
     void loadingChanged(bool loading);
@@ -214,6 +202,7 @@ private slots:
     void onDataManagerStateChanged(DataManager::State state);
 
     // Item slots
+    void onGameObjectActiveChanged(GameObject *object, bool active);
     void onGameItemActiveChanged(GameItem *item, bool active);
     void onItemPlayerVisibleChanged(bool playerVisible);
     void onItemPlayerOnItemChanged(bool playerOnItem);

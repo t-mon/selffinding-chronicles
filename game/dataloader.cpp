@@ -201,14 +201,14 @@ QVariantMap DataLoader::loadJsonData(const QString &dataFileName)
 {
     QFile mapDataFile(dataFileName);
     if (!mapDataFile.open(QFile::ReadOnly)) {
-        qCWarning(dcMap()) << "Could not open map data file" << dataFileName << "for reading.";
+        qCWarning(dcDataManager()) << "Could not open map data file" << dataFileName << "for reading:" << mapDataFile.errorString();
         return QVariantMap();
     }
 
     QJsonParseError error;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(mapDataFile.readAll(), &error);
     if (error.error != QJsonParseError::NoError) {
-        qCWarning(dcMap()) << "Cannot parse map data file:" << error.errorString();
+        qCWarning(dcDataManager()) << "Cannot parse map data file:" << error.errorString();
         return QVariantMap();
     }
 
@@ -303,21 +303,39 @@ QList<GameItem *> DataLoader::loadInventoryItems(const QVariantList &itemsList, 
     return gameItems;
 }
 
+GameObject *DataLoader::loadGameObject(const QString &resourcePath, const QPointF &position, const QVariantMap &objectMap, QObject *parent)
+{
+    QString typeString = objectMap.value("type").toString().toLower();
+    if (typeString != "object") {
+        qCWarning(dcDataManager()) << "Cannot load game object" << resourcePath << "The type is not an object.";
+        return nullptr;
+    }
+
+    GameObject *object = new GameObject(parent);
+    object->setResourcePath(resourcePath);
+    object->setItemId(getItemIdFromResourcePath(resourcePath));
+    object->setPosition(position);
+    fillGameObjectData(object, objectMap);
+    return object;
+}
+
+GameObject *DataLoader::loadGameObjectFromResourcePath(const QString &resourcePath, QObject *parent)
+{
+    QVariantMap objectMap = loadJsonData(resourcePath);
+    return loadGameObject(resourcePath, QPointF(-1, -1), objectMap, parent);
+}
+
 QList<GameObject *> DataLoader::loadGameObjects(const QVariantList &objectsList, QObject *parent)
 {
     QList<GameObject *> gameObjects;
-//    foreach (const QVariant &objectVariant, objectsList) {
-//        QVariantMap objectMap = objectVariant.toMap();
-//        GameObject *gameObject = loadGameObject()
-
-//    }
+    foreach (const QVariant &objectVariant, objectsList) {
+        QVariantMap objectMap = objectVariant.toMap();
+        GameObject *gameObject = loadGameObjectFromResourcePath(objectMap.value("data").toString(), parent);
+        gameObject->setPosition(QPointF(objectMap.value("x", -1).toDouble(), objectMap.value("y", -1).toDouble()));
+        gameObjects.append(gameObject);
+    }
 
     return gameObjects;
-}
-
-GameObject *DataLoader::loadGameObject(const QString &resourcePath, const QPointF &position, const QVariantMap &itemMap, QObject *parent)
-{
-
 }
 
 GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPointF &position, const QVariantMap &itemMap, QObject *parent)
@@ -347,7 +365,7 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPointF &p
     } else if (itemTypeString == "box") {
         return createBoxItem(resourcePath, itemMap, position, parent);
     } else {
-        qCWarning(dcMap()) << "Unhandled type" << itemTypeString;
+        qCWarning(dcDataManager()) << "Unhandled type" << itemTypeString;
     }
 
     return nullptr;
@@ -361,20 +379,25 @@ GameItem *DataLoader::loadGameItemFromResourcePath(const QString &resourcePath, 
 
 void DataLoader::fillGameItemData(GameItem *item, const QVariantMap &description)
 {
-    // Game item properties
+    // Game object properties
+    fillGameObjectData(qobject_cast<GameObject *>(item), description);
+}
+
+void DataLoader::fillGameObjectData(GameObject *object, const QVariantMap &description)
+{
     QVariantMap geometryMap = description.value("geometry").toMap();
     QVariantMap physicsGeometryMap = description.value("physicsGeometry").toMap();
-    item->setName(description.value("name").toString());
-    item->setImageName(description.value("imageName").toString());
-    item->setFocusVisible(description.value("focusVisible", true).toBool());
-    item->setSize(QSizeF(geometryMap.value("width", 1).toDouble(), geometryMap.value("height", 1).toDouble()));
-    item->setLayer(geometryMap.value("layer").toReal());
-    item->setShape(convertShapeString(physicsGeometryMap.value("shape", "none").toString()));
-    item->setBodyType(convertBodyTypeString(physicsGeometryMap.value("body", "static").toString()));
-    item->setPhysicsSize(QSizeF(physicsGeometryMap.value("width", 0).toDouble(), physicsGeometryMap.value("height", 0).toDouble()));
-    item->setPhysicsPosition(QPointF(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble()));
-    item->setCategoryFlag(static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt()));
-    item->setCollisionFlag(static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt()));
+    object->setName(description.value("name").toString());
+    object->setImageName(description.value("imageName").toString());
+    object->setFocusVisible(description.value("focusVisible", true).toBool());
+    object->setSize(QSizeF(geometryMap.value("width", 1).toDouble(), geometryMap.value("height", 1).toDouble()));
+    object->setLayer(convertLayerValue(geometryMap.value("layer").toInt()));
+    object->setShape(convertShapeString(physicsGeometryMap.value("shape", "none").toString()));
+    object->setBodyType(convertBodyTypeString(physicsGeometryMap.value("body", "static").toString()));
+    object->setPhysicsSize(QSizeF(physicsGeometryMap.value("width", 0).toDouble(), physicsGeometryMap.value("height", 0).toDouble()));
+    object->setPhysicsPosition(QPointF(physicsGeometryMap.value("x", 0).toDouble(), physicsGeometryMap.value("y", 0).toDouble()));
+    object->setCategoryFlag(static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("category", 0).toInt()));
+    object->setCollisionFlag(static_cast<GameObject::PhysicsFlags>(physicsGeometryMap.value("collision", 0).toInt()));
 }
 
 void DataLoader::fillCharacterItemData(Character *character, const QVariantMap &characterMap)
@@ -419,7 +442,7 @@ void DataLoader::fillCharacterItemData(Character *character, const QVariantMap &
     QList<Path *> paths;
     foreach (const QVariant &pathVariant, characterMap.value("paths").toList()) {
         paths.append(createPathObject(pathVariant.toMap(), character));
-        qCDebug(dcMap()) << paths.last();
+        qCDebug(dcDataManager()) << paths.last();
     }
     character->setPaths(paths);
 }
@@ -541,6 +564,22 @@ QVariantMap DataLoader::pathSegmentToVariantMap(const PathSegment &pathSegment)
     return pathSegmentMap;
 }
 
+GameObject::Layer DataLoader::convertLayerValue(int layerValue)
+{
+    GameObject::Layer layer = GameObject::LayerBase;
+    if (layerValue == 0) {
+        layer = GameObject::LayerBackground;
+    } else if (layerValue == 1) {
+        layer = GameObject::LayerBase;
+    } else if (layerValue == 2) {
+        layer = GameObject::LayerItems;
+    } else if (layerValue == 3) {
+        layer = GameObject::LayerOverlay;
+    }
+
+    return layer;
+}
+
 GameObject::Shape DataLoader::convertShapeString(const QString &shapeString)
 {
     GameObject::Shape shape = GameObject::ShapeNone;
@@ -579,7 +618,7 @@ FirearmItem::FirearmType DataLoader::convertFirearmTypeString(const QString &fir
     } else if (firearmTypeString.toLower() == "crossbow") {
         type = FirearmItem::FirearmTypeCrossbow;
     } else {
-        qCWarning(dcMap()) << "Invalid firearm type" << firearmTypeString;
+        qCWarning(dcDataManager()) << "Invalid firearm type" << firearmTypeString;
     }
     return type;
 }
@@ -592,7 +631,7 @@ LiteratureItem::LiteratureType DataLoader::convertLiteratureTypeString(const QSt
     } else if (literatureTypeString.toLower() == "script") {
         type = LiteratureItem::LiteratureTypeScript;
     } else {
-        qCWarning(dcMap()) << "Invalid literature type type" << literatureTypeString;
+        qCWarning(dcDataManager()) << "Invalid literature type type" << literatureTypeString;
     }
     return type;
 }
@@ -612,7 +651,7 @@ PathSegment::Type DataLoader::convertPathSegmentTypeString(const QString &pathSe
     } else if (pathSegmentTypeString.toLower() == "pause") {
         type = PathSegment::TypePause;
     } else {
-        qCWarning(dcMap()) << "Invalid path segment type" << pathSegmentTypeString;
+        qCWarning(dcDataManager()) << "Invalid path segment type" << pathSegmentTypeString;
     }
     return type;
 }
@@ -677,7 +716,7 @@ Character::Role DataLoader::convertRoleString(const QString &roleString)
     } else if (roleString.toLower() == "dealer") {
         role = Character::Dealer;
     } else {
-        qCWarning(dcMap()) << "Invalid role" << roleString;
+        qCWarning(dcDataManager()) << "Invalid role" << roleString;
     }
     return role;
 }

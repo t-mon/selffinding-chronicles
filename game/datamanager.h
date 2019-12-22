@@ -19,6 +19,7 @@ class DataManager : public QThread
     Q_PROPERTY(QColor worldBackgroundColor READ worldBackgroundColor NOTIFY worldBackgroundColorChanged)
 
     Q_PROPERTY(Character *player READ player NOTIFY playerChanged)
+    Q_PROPERTY(GameObjects *objects READ objects CONSTANT)
     Q_PROPERTY(GameItems *items READ items CONSTANT)
     Q_PROPERTY(GameItems *enemies READ enemies CONSTANT)
     Q_PROPERTY(GameItems *characters READ characters CONSTANT)
@@ -44,6 +45,7 @@ public:
     QColor worldBackgroundColor() const;
 
     Character *player() const;
+    GameObjects *objects() const;
     GameItems *items() const;
     GameItems *enemies() const;
     GameItems *characters() const;
@@ -66,6 +68,7 @@ private:
     Character *m_player = nullptr;
     QMutex m_playerMutex;
 
+    GameObjects *m_objects = nullptr;
     GameItems *m_items = nullptr;
     GameItems *m_enemies = nullptr;
     GameItems *m_characters = nullptr;

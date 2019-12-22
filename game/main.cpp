@@ -25,12 +25,12 @@
 #include <QCommandLineParser>
 #include <QQmlApplicationEngine>
 
-#include <box2dplugin.h>
-
 #include "game.h"
 #include "debugcategories.h"
 #include "conversation/conversationitem.h"
 #include "conversation/conversationitems.h"
+
+#include "box2dinclude.h"
 
 #ifndef ANDROID
 static const char *const normal = "\033[0m";
@@ -114,23 +114,28 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("GameInput", false);
     s_loggingFilters.insert("Engine", true);
-    s_loggingFilters.insert("EngineData", false);
-    s_loggingFilters.insert("Character", false);
+    s_loggingFilters.insert("EngineData", true);
+    s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("Settings", false);
     s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("PathController", false);
-    s_loggingFilters.insert("Map", false);
+    s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("MapEditor", true);
-    s_loggingFilters.insert("DataManager", false);
+    s_loggingFilters.insert("DataManager", true);
     s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("GameObject", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
+    s_loggingFilters.insert("Teleportation", true);
     s_loggingFilters.insert("qml", true);
 
     QLoggingCategory::installFilter(loggingCategoryFilter);
 
     qCDebug(dcGame()) << "Starting" << app.applicationName() << app.applicationVersion();
+
+    // Load Box2D qml plugin and register it
+    Box2DPlugin plugin;
+    plugin.registerTypes("Box2D");
 
     // Game
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
@@ -142,13 +147,15 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the Engine object.");
     qmlRegisterUncreatableType<GameMapEditor>("Chronicles", 1, 0, "GameMapEditor", "Can't create this in QML. Get it from the Game instance.");
 
-    // Items
+    // Objects
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
+    qmlRegisterUncreatableType<GameObjects>("Chronicles", 1, 0, "GameObjects", "Can't create this in QML.");
+    qmlRegisterType<GameObjectsProxy>("Chronicles", 1, 0, "GameObjectsProxy");
+
+    // Items
     qmlRegisterUncreatableType<GameItem>("Chronicles", 1, 0, "GameItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<GameItems>("Chronicles", 1, 0, "GameItems", "Can't create this in QML.");
-    qmlRegisterUncreatableType<WeatherAreaModel>("Chronicles", 1, 0, "WeatherAreaModel", "Can't create this in QML.");
     qmlRegisterType<GameItemsProxy>("Chronicles", 1, 0, "GameItemsProxy");
-    qmlRegisterType<WeatherAreaProxy>("Chronicles", 1, 0, "WeatherAreaProxy");
 
     qmlRegisterUncreatableType<TreeItem>("Chronicles", 1, 0, "TreeItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<PlantItem>("Chronicles", 1, 0, "PlantItem", "Can't create this in QML.");
@@ -160,14 +167,14 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
     qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");
 
+    // Weather areas
+    qmlRegisterType<WeatherAreaProxy>("Chronicles", 1, 0, "WeatherAreaProxy");
+    qmlRegisterUncreatableType<WeatherAreaModel>("Chronicles", 1, 0, "WeatherAreaModel", "Can't create this in QML.");
+
     // Conversation
     qmlRegisterType<Conversation>("Chronicles", 1, 0, "Conversation");
     qmlRegisterType<ConversationItem>("Chronicles", 1, 0, "ConversationItem");
     qmlRegisterType<ConversationItems>("Chronicles", 1, 0, "ConversationItems");
-
-    // Load Box2D qml plugin and register it
-    Box2DPlugin plugin;
-    plugin.registerTypes("Box2D");
 
     // Create qml engine
     QQmlApplicationEngine engine;

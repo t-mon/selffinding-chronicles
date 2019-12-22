@@ -10,14 +10,16 @@
 
 Map::Map(QObject *parent) : QObject(parent)
 {
+    m_objects = new GameObjects(this);
     m_items = new GameItems(this);
     m_enemies = new GameItems(this);
     m_characters = new GameItems(this);
 }
 
-Map::Map(GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
+Map::Map(GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
     QObject(parent)
 {
+    m_objects = objects;
     m_items = items;
     m_enemies = enemies;
     m_characters = characters;
@@ -87,6 +89,11 @@ void Map::setBackgroundColor(const QColor &backgroundColor)
 
     m_backgroundColor = backgroundColor;
     emit backgroundColorChanged(m_backgroundColor);
+}
+
+GameObjects *Map::objects()
+{
+    return m_objects;
 }
 
 GameItems *Map::items()
@@ -164,9 +171,13 @@ void Map::loadMapVariant(const QVariantMap &mapData)
         }
     }
 
-    // Load background objects
+    // Load objects
     qCDebug(dcMap()) << "--> load objects" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
-    QList<GameObject *> backgroundObjects = DataLoader::loadGameObjects(mapData.value("objects").toList(), this);
+    QList<GameObject *> objects = DataLoader::loadGameObjects(mapData.value("objects").toList(), this);
+    m_objects->addGameObjectList(objects);
+    foreach (GameObject *object, objects)
+        qCDebug(dcMap()) << "        " << object;
+
 
     // Load items
     qCDebug(dcMap()) << "--> load items" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
@@ -181,6 +192,7 @@ void Map::loadMapVariant(const QVariantMap &mapData)
     m_items->addGameItemList(chestItems);
     foreach (GameItem *item, chestItems)
         qCDebug(dcMap()) << "        " << item;
+
 
     // Load characters
     qCDebug(dcMap()) << "--> load characters" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";

@@ -14,6 +14,9 @@ Engine::Engine(QObject *parent) :
     m_dataManager = new DataManager(this);
     connect(m_dataManager, &DataManager::stateChanged, this, &Engine::onDataManagerStateChanged);
 
+    m_activeObjects = new GameObjectsProxy(this);
+    m_activeObjects->setGameObjects(m_dataManager->objects());
+
     m_activeItems = new GameItemsProxy(this);
     m_activeItems->setGameItems(m_dataManager->items());
 
@@ -27,6 +30,7 @@ Engine::Engine(QObject *parent) :
     m_weatherAreaProxy = new WeatherAreaProxy(this);
     m_weatherAreaProxy->setAreaModel(m_weatherAreaModel);
 
+    connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, &Engine::onGameObjectActiveChanged);
     connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
@@ -45,17 +49,15 @@ Engine::Engine(QObject *parent) :
     connect(m_playerController, &PlayerController::beam, this, &Engine::onBeam);
     //connect(m_playerController, &PlayerController::shoot, this, &Engine::onShoot);
 
-    qCDebug(dcEngine()) << "Created engine" << thread();
+    m_teleportationHandler = new TeleportationHandler(this);
+    m_teleportationHandler->reset();
+
+    qCDebug(dcEngine()) << "Created engine" << thread() << "successfully.";
 }
 
 Engine::State Engine::state() const
 {
     return m_state;
-}
-
-Engine::TeleportState Engine::teleportState() const
-{
-    return m_teleportState;
 }
 
 QRectF Engine::viewWindow() const
@@ -82,6 +84,11 @@ void Engine::setViewWindow(const QRectF &viewWindow)
 Character *Engine::player() const
 {
     return m_player;
+}
+
+GameObjectsProxy *Engine::activeObjects() const
+{
+    return m_activeObjects;
 }
 
 GameItemsProxy *Engine::activeItems() const
@@ -127,11 +134,6 @@ ChestItem *Engine::currentChestItem() const
 LiteratureItem *Engine::currentLiteratureItem() const
 {
     return m_currentLiteratureItem;
-}
-
-TeleporterItem *Engine::currentTeleportItem() const
-{
-    return m_currentTeleportItem;
 }
 
 GameItems *Engine::currentPlunderItems() const
@@ -239,8 +241,8 @@ void Engine::useInventoryItem(const QString &itemId)
     case GameItem::TypeTeleportItem: {
         TeleporterItem *teleportItem = qobject_cast<TeleporterItem *>(item);
         qCDebug(dcEngine()) << "Use" << teleportItem;
-        m_currentTeleportItem = teleportItem;
         setState(StateTeleport);
+        m_teleportationHandler->startTeleportation(teleportItem);
         break;
     }
     default:
@@ -307,28 +309,6 @@ void Engine::takeAllItems(GameItems *gameItems)
     }
 }
 
-void Engine::teleportAppearAnimationFinished()
-{
-    if (m_state != StateTeleport) {
-        qCWarning(dcEngine()) << "Teleport appear animation finished but not in teleport state.";
-        return;
-    }
-
-    qCDebug(dcEngine()) << "Teleport finished. Continue game with the game...";
-    setTeleportState(TeleportStateNone);
-    setState(StateRunning);
-}
-
-void Engine::teleportDisappearAnimationFinished()
-{
-    if (m_state != StateTeleport) {
-        qCWarning(dcEngine()) << "Teleport disappear animation finished but not in teleport state.";
-        return;
-    }
-
-    setTeleportState(TeleportStateWorldDestruct);
-}
-
 void Engine::setState(Engine::State state)
 {
     if (m_state == state)
@@ -364,38 +344,6 @@ void Engine::setState(Engine::State state)
         m_player->setMovable(false);
         break;
     default:
-        break;
-    }
-}
-
-void Engine::setTeleportState(Engine::TeleportState teleportState)
-{
-    if (m_teleportState == teleportState)
-        return;
-
-
-    qCDebug(dcEngine()) << "Teleport state changed" << teleportState;
-    m_teleportState = teleportState;
-    emit teleportStateChanged(m_teleportState);
-
-    switch (m_teleportState) {
-    case TeleportStateNone:
-        break;
-    case TeleportStateDisppear:
-        break;
-    case TeleportStateWorldDestruct: {
-        if (m_currentTeleportItem->targetMap() == m_dataManager->map()->name()) {
-            qCDebug(dcEngine()) << "Teleport within the current map";
-        } else {
-            qCDebug(dcEngine()) << "Teleport to other map. Loading required...";
-        }
-        break;
-    }
-    case TeleportStateLoading:
-        break;
-    case TeleportStateWorldConstruct:
-        break;
-    case TeleportStateAppear:
         break;
     }
 }
@@ -723,6 +671,17 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         qCWarning(dcEngine()) << "Unhandled state" << state;
         break;
     }
+}
+
+void Engine::onGameObjectActiveChanged(GameObject *object, bool active)
+{
+    if (active) {
+        qCDebug(dcEngineData()) << "[+] Object changed to active" << object;
+    } else {
+        qCDebug(dcEngineData()) << "[-] Object changed to inactive" << object;
+    }
+
+    object->setActive(active);
 }
 
 void Engine::onGameItemActiveChanged(GameItem *item, bool active)

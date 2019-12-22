@@ -6,6 +6,42 @@ GameObject::GameObject(QObject *parent) : QObject(parent)
     qRegisterMetaType<PhysicsFlags>("PhysicsFlags");
 }
 
+QString GameObject::itemId() const
+{
+    return m_itemId;
+}
+
+void GameObject::setItemId(const QString &itemId)
+{
+    m_itemId = itemId;
+}
+
+QString GameObject::resourcePath() const
+{
+    return m_resourcePath;
+}
+
+void GameObject::setResourcePath(const QString &resourcePath)
+{
+    m_resourcePath = resourcePath;
+}
+
+QString GameObject::imageName() const
+{
+    return m_imageName;
+}
+
+void GameObject::setImageName(const QString &imageName)
+{
+    if (m_imageName == imageName)
+        return;
+
+    qCDebug(dcGameObject()) << this << "image name changed" << imageName;
+    m_imageName = imageName;
+    emit imageNameChanged(m_imageName);
+}
+
+
 QString GameObject::name() const
 {
     return m_name;
@@ -36,12 +72,12 @@ void GameObject::setPosition(const QPointF &position)
     emit positionChanged(m_position);
 }
 
-double GameObject::layer() const
+GameObject::Layer GameObject::layer() const
 {
     return m_layer;
 }
 
-void GameObject::setLayer(double layer)
+void GameObject::setLayer(Layer layer)
 {
     m_layer = layer;
     emit layerChanged(m_layer);
@@ -219,6 +255,7 @@ QDebug operator<<(QDebug debug, GameObject *gameObject)
     debug.nospace() << "GameObject(" << gameObject->name();
     debug.nospace() << ", " << gameObject->position();
     debug.nospace() << ", " << gameObject->shape();
+    debug.nospace() << ", " << gameObject->layer();
     debug.nospace() << ") ";
     return debug.space();
 }

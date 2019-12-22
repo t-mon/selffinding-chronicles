@@ -1,6 +1,13 @@
 QT += core qml quick quickcontrols2 svg
 
-CONFIG += c++11
+CONFIG += c++11 -Wall -Werror
+
+# Add Box2D as static library, disable warnings from upstream
+QMAKE_CFLAGS_WARN_ON -= -Wall
+QMAKE_CXXFLAGS_WARN_ON -= -Wall
+include(qml-box2d/box2d-static.pri)
+QMAKE_CFLAGS_WARN_ON
+QMAKE_CXXFLAGS_WARN_ON
 
 #QMAKE_CXXFLAGS += -isystem "$$PWD/qml-box2d/box2d_lib" -Werror -std=c++11 -g
 QMAKE_LFLAGS *= -std=c++11
@@ -8,7 +15,7 @@ QMAKE_LFLAGS *= -std=c++11
 RESOURCES += gui/gui.qrc \
              gamedata/gamedata.qrc
 
-include(qml-box2d/box2d-static.pri)
+
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -20,9 +27,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    game/box2dinclude.h \
     game/game.h \
     game/field.h \
     game/fields.h \
+    game/gameobjects.h \
+    game/gameobjectsproxy.h \
     game/items/boxitem.h \
     game/items/literatureitem.h \
     game/items/teleporteritem.h \
@@ -55,13 +65,16 @@ HEADERS += \
     game/path.h \
     game/pathsegment.h \
     game/pathcontroller.h \
-    game/items/staticitem.h
+    game/items/staticitem.h \
+    game/teleportationhandler.h
 
 
 SOURCES += game/main.cpp \
     game/game.cpp \
     game/field.cpp \
     game/fields.cpp \
+    game/gameobjects.cpp \
+    game/gameobjectsproxy.cpp \
     game/items/boxitem.cpp \
     game/items/literatureitem.cpp \
     game/items/teleporteritem.cpp \
@@ -93,7 +106,8 @@ SOURCES += game/main.cpp \
     game/path.cpp \
     game/pathsegment.cpp \
     game/pathcontroller.cpp \
-    game/items/staticitem.cpp
+    game/items/staticitem.cpp \
+    game/teleportationhandler.cpp
 
 
 unix:!android {
@@ -120,9 +134,6 @@ android {
         $$ANDROID_PACKAGE_SOURCE_DIR/build.gradle \
         $$ANDROID_PACKAGE_SOURCE_DIR/gradle/wrapper/gradle-wrapper.properties \
         $$ANDROID_PACKAGE_SOURCE_DIR/gradlew.bat
-
 }
-
-DISTFILES +=
 
 

@@ -27,14 +27,14 @@ public:
 
     int count() const;
 
+    Q_INVOKABLE GameItem *get(int index) const;
+    Q_INVOKABLE void resetFilter();
+
     QRectF viewFilter() const;
     void setViewFilter(const QRectF &viewFilter);
 
     GameItem::Type itemTypeFilter() const;
     void setItemTypeFilter(GameItem::Type type);
-
-    Q_INVOKABLE GameItem *get(int index) const;
-    Q_INVOKABLE void resetFilter();
 
     QString itemIdFilter() const;
     void setItemIdFilter(const QString &itemIdFilter);

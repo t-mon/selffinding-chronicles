@@ -9,92 +9,92 @@
         {
             "x": 1,
             "y": 1,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 20,
             "y": 20,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 16,
             "y": 5,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 18,
             "y": 6,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 6,
             "y": 17,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 6,
             "y": 19,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 6,
             "y": 21,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 8,
             "y": 21,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 10,
             "y": 21,
-            "data": ":/gamedata/plants/healing-herb.json"
+            "data": ":/gamedata/items/plants/healing-herb.json"
         },
         {
             "x": 1,
             "y": 5,
-            "data": ":/gamedata/weapons/sword.json"
+            "data": ":/gamedata/items/weapons/sword.json"
         },
         {
             "x": 5,
             "y": 1,
-            "data": ":/gamedata/weapons/sword.json"
+            "data": ":/gamedata/items/weapons/sword.json"
         },
         {
             "x": 26,
             "y": 16,
-            "data": ":/gamedata/bushes/bush-1.json"
+            "data": ":/gamedata/items/bushes/bush-1.json"
         },
         {
             "x": 16,
             "y": 0,
-            "data": ":/gamedata/bushes/bush-1.json"
+            "data": ":/gamedata/items/bushes/bush-1.json"
         },
         {
             "x": 22,
             "y": 0,
-            "data": ":/gamedata/bushes/bush-1.json"
+            "data": ":/gamedata/items/bushes/bush-1.json"
         },
         {
             "x": 24,
             "y": 0,
-            "data": ":/gamedata/bushes/bush-1.json"
+            "data": ":/gamedata/items/bushes/bush-1.json"
         },
         {
             "x": 26,
             "y": 1,
-            "data": ":/gamedata/bushes/bush-1.json"
+            "data": ":/gamedata/items/bushes/bush-1.json"
         },
         {
             "x": 16,
             "y": 12,
-            "data": ":/gamedata/bushes/bush-1.json"
+            "data": ":/gamedata/items/bushes/bush-1.json"
         },
         {
             "x": 11,
             "y": 5,
-            "data": ":/gamedata/bushes/bush-1.json"
+            "data": ":/gamedata/items/bushes/bush-1.json"
         }
     ],
     "characters": [
@@ -108,7 +108,7 @@
         {
             "x": 9,
             "y": 9,
-            "data": ":/gamedata/chests/chest-1.json"
+            "data": ":/gamedata/items/chests/chest-1.json"
         }
     ]
 }

@@ -1,0 +1,28 @@
+{
+    "name": "Crossbow",
+    "type": "firearm",
+    "imageName": "/images/items/firearms/crossbow.png",
+    "geometry": {
+        "width": 1,
+        "height": 1,
+        "layer": 2
+    },
+    "physicsGeometry": {
+        "body": "dynamic",
+        "shape": "circle",
+        "width": 1,
+        "height": 1,
+        "x": 0,
+        "y": 0,
+        "category": 4,
+        "collision": 32,
+        "vertices": []
+    },
+
+    "firearm": {
+        "type": "crossbow",
+        "price": 100,
+        "damage": 32,
+        "range": 20
+    }
+}

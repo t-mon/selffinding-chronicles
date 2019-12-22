@@ -80,7 +80,7 @@ QVariant GameItems::data(const QModelIndex &index, int role) const
     } else if (role == ItemTypeRole) {
         return gameItem->itemType();
     } else if (role == LayerRole) {
-        return gameItem->layer();
+        return static_cast<int>(gameItem->layer());
     } else if (role == ItemIdRole) {
         return gameItem->itemId();
     } else if (role == PriceRole) {

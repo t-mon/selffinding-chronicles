@@ -35,11 +35,11 @@
         "firearm": "",
         "inventory": [
             {
-                "data": ":/gamedata/plants/healing-herb.json",
+                "data": ":/gamedata/items/plants/healing-herb.json",
                 "count": 2
             },
             {
-                "data": ":/gamedata/weapons/sword.json",
+                "data": ":/gamedata/items/weapons/sword.json",
                 "count": 2
             }
         ],

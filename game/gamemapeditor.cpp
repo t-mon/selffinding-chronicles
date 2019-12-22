@@ -100,7 +100,7 @@ void GameMapEditor::createNewMap()
     }
 
     m_dataManager->resetData();
-    m_map = new Map(m_dataManager->items(), m_dataManager->enemies(), m_dataManager->characters());
+    m_map = new Map(m_dataManager->objects(), m_dataManager->items(), m_dataManager->enemies(), m_dataManager->characters());
 
 }
 

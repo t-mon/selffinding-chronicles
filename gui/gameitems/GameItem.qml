@@ -17,7 +17,6 @@ PhysicsItem {
     property real angle: 0
 
     antialiasing: app.antialiasing
-    opacity: gameItem ? (gameItem.hidingPlayer ? 0.5 : 1) : 0
 
     onPlayerAuraRangeChanged: gameItem.playerVisible = playerAuraRange
     onPlayerOnItemChanged: {

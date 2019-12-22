@@ -92,7 +92,7 @@ PhysicsItem {
             if (character.armed !== Character.ArmedFirearm)
                 return
 
-            console.log("Character", character.name, "shoot arrow using", character.firearm, character.firearm.damage)
+            console.log("Character", character.name, "shoot arrow using", character.firearm.name, character.firearm.damage)
             var component = Qt.createComponent("BulletItem.qml");
             var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character, particleSystem: root.particleSystem } )
             if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
@@ -705,7 +705,7 @@ PhysicsItem {
             states: [
                 State {
                     name: "noWeapon"
-                    when: !character.weapon
+                    when: character && !character.weapon
                     PropertyChanges { target: weaponItem; visible: false }
                     PropertyChanges { target: packedWeaponItem; visible: false }
                     StateChangeScript {
@@ -716,7 +716,7 @@ PhysicsItem {
                 },
                 State {
                     name: "holdingWeapon"
-                    when: character.armed === Character.ArmedWeapon
+                    when: character && character.armed === Character.ArmedWeapon
                     PropertyChanges { target: weaponItem; visible: true }
                     PropertyChanges { target: packedWeaponItem; visible: false }
                     StateChangeScript {
@@ -727,7 +727,7 @@ PhysicsItem {
                 },
                 State {
                     name: "packedWeapon"
-                    when: character.weapon && character.armed !== Character.ArmedWeapon
+                    when: character && character.weapon && character.armed !== Character.ArmedWeapon
                     PropertyChanges { target: weaponItem; visible: false }
                     PropertyChanges { target: packedWeaponItem; visible: true }
                     StateChangeScript {
@@ -778,7 +778,7 @@ PhysicsItem {
             states: [
                 State {
                     name: "noFirearm"
-                    when: !character.firearm
+                    when: character && !character.firearm
                     PropertyChanges { target: firearmItem; visible: false }
                     PropertyChanges { target: packedFirearmItem; visible: false }
                     StateChangeScript {
@@ -789,7 +789,7 @@ PhysicsItem {
                 },
                 State {
                     name: "holdingFirearm"
-                    when: character.armed === Character.ArmedFirearm
+                    when: character && character.armed === Character.ArmedFirearm
                     PropertyChanges { target: firearmItem; visible: true }
                     PropertyChanges { target: packedFirearmItem; visible: false }
                     StateChangeScript {
@@ -800,7 +800,7 @@ PhysicsItem {
                 },
                 State {
                     name: "packedFirearm"
-                    when: character.firearm && character.armed !== Character.ArmedFirearm
+                    when: character && character.firearm && character.armed !== Character.ArmedFirearm
                     PropertyChanges { target: firearmItem; visible: false }
                     PropertyChanges { target: packedFirearmItem; visible: true }
                     StateChangeScript {
@@ -923,7 +923,6 @@ PhysicsItem {
             console.log("Teleport disappear animation finished")
             Game.engine.teleportDisappearAnimationFinished()
         }
-
     }
 
     // ##################################################################################
@@ -990,7 +989,7 @@ PhysicsItem {
         bulletObject.rotation = getBulletAngle()
         bulletObject.x = bulletStartPoint.x
         bulletObject.y = bulletStartPoint.y
-        bulletObject.z = Map.Layer2Normal
+        bulletObject.z = GameObject.LayerItems
         bulletObject.startPositionX = bulletStartPoint.x
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range

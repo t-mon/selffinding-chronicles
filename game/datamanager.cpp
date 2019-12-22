@@ -14,6 +14,7 @@
 DataManager::DataManager(QObject *parent) :
     QThread(parent)
 {
+    m_objects = new GameObjects(this);
     m_items = new GameItems(this);
     m_enemies = new GameItems(this);
     m_characters = new GameItems(this);
@@ -75,6 +76,11 @@ void DataManager::setWorldBackgroundColor(const QColor &color)
 Character *DataManager::player() const
 {
     return m_player;
+}
+
+GameObjects *DataManager::objects() const
+{
+    return m_objects;
 }
 
 GameItems *DataManager::items() const
@@ -173,6 +179,10 @@ void DataManager::startNewGameTaskFinished()
     m_map->setParent(this);
     setWorldSize(m_map->size());
 
+    foreach (GameObject *object, m_map->objects()->gameObjects()) {
+        m_objects->addGameObject(object);
+    }
+
     foreach (GameItem *item, m_map->items()->gameItems()) {
         m_items->addGameItem(item);
     }
@@ -209,6 +219,10 @@ void DataManager::loadGameTaskFinished()
     qCDebug(dcDataManager()) << "Initialize the map data";
     m_map->setParent(this);
     setWorldSize(m_map->size());
+
+    foreach (GameObject *object, m_map->objects()->gameObjects()) {
+        m_objects->addGameObject(object);
+    }
 
     foreach (GameItem *item, m_map->items()->gameItems()) {
         m_items->addGameItem(item);
@@ -392,6 +406,7 @@ void DataManager::resetData()
         m_player = nullptr;
     }
 
+    m_objects->clearModel();
     m_items->clearModel();
     m_characters->clearModel();
     m_enemies->clearModel();

@@ -10,7 +10,7 @@
                 "healthMax": 80,
                 "inventory": [
                     {
-                        "data": ":/gamedata/plants/healing-herb.json",
+                        "data": ":/gamedata/items/plants/healing-herb.json",
                         "count": 2
                     }
                 ],

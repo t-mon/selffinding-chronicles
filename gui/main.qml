@@ -56,6 +56,10 @@ ApplicationWindow {
     // Simulation properties
     property real gameSpeedFactor: 1.0
 
+    // This property descibes the frame width of the
+    // visible world in which items will be active
+    property real viewActiveFrameWidth: 10
+
     Connections {
         id: settingsConnections
         target: Game.settings

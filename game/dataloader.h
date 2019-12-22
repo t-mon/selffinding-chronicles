@@ -23,7 +23,6 @@ class DataLoader
 public:
     explicit DataLoader() = default;
 
-
     // Create
     static StaticItem *createStaticItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
     static PlantItem *createPlantItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
@@ -49,13 +48,18 @@ public:
     static QList<GameItem *> loadEnemyItems(const QVariantList &enemyItemsList, QObject *parent = nullptr);
     static QList<GameItem *> loadInventoryItems(const QVariantList &itemsList, QObject *parent = nullptr);    
 
-    static QList<GameObject *> loadGameObjects(const QVariantList &objectsList, QObject *parent = nullptr);
-    static GameObject *loadGameObject(const QString &resourcePath, const QPointF &position, const QVariantMap &itemMap, QObject *parent = nullptr);
-
     static GameItem *loadGameItem(const QString &resourcePath, const QPointF &position, const QVariantMap &itemMap, QObject *parent = nullptr);
     static GameItem *loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent = nullptr);
 
+    // Load object
+    static GameObject *loadGameObject(const QString &resourcePath, const QPointF &position, const QVariantMap &objectMap, QObject *parent = nullptr);
+    static GameObject *loadGameObjectFromResourcePath(const QString &resourcePath, QObject *parent = nullptr);
+
+    static QList<GameObject *> loadGameObjects(const QVariantList &objectsList, QObject *parent = nullptr);
+
+
     static void fillGameItemData(GameItem *item, const QVariantMap &description);
+    static void fillGameObjectData(GameObject *object, const QVariantMap &description);
     static void fillCharacterItemData(Character *character, const QVariantMap &characterMap);
     static void fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap);
 
@@ -74,6 +78,7 @@ public:
     static QVariantMap pathSegmentToVariantMap(const PathSegment &pathSegment);
 
     // Convert
+    static GameObject::Layer convertLayerValue(int layerValue);
     static GameObject::Shape convertShapeString(const QString &shapeString);
     static GameObject::BodyType convertBodyTypeString(const QString &bodyTypeString);
     static FirearmItem::FirearmType convertFirearmTypeString(const QString &firearmTypeString);

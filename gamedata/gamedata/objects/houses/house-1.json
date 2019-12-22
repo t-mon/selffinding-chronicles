@@ -1,0 +1,21 @@
+{
+    "name": "House",
+    "type": "object",
+    "imageName": "/images/world/houses/house-1.png",
+    "geometry": {
+        "width": 7,
+        "height": 7,
+        "layer": 2
+    },
+    "physicsGeometry": {
+        "body": "static",
+        "shape": "circle",
+        "width": 4,
+        "height": 4,
+        "x": 3,
+        "y": 1.5,
+        "category": 16,
+        "collision": 160,
+        "vertices": []
+    }
+}

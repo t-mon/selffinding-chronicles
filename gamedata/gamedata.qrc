@@ -2,8 +2,6 @@
     <qresource prefix="/">
         <file>maps/test-map.json</file>
         <file>maps/firetest.json</file>
-        <file>gamedata/plants/healing-herb.json</file>
-        <file>gamedata/trees/tree-1.json</file>
         <file>fonts/EBGaramond/EBGaramond08-Italic.ttf</file>
         <file>fonts/EBGaramond/EBGaramond08-Regular.ttf</file>
         <file>fonts/EBGaramond/EBGaramond12-AllSC.ttf</file>
@@ -11,34 +9,36 @@
         <file>fonts/EBGaramond/EBGaramond12-Regular.ttf</file>
         <file>fonts/EBGaramond/EBGaramondSC08-Regular.ttf</file>
         <file>fonts/EBGaramond/EBGaramondSC12-Regular.ttf</file>
-        <file>gamedata/weapons/sword.json</file>
         <file>gamedata/characters/test-character.json</file>
-        <file>gamedata/bushes/bush-1.json</file>
         <file>gamedata/characters/player.json</file>
         <file>dialogs/test-dialog.json</file>
         <file>fonts/blackchancery/blkchcry.ttf</file>
-        <file>gamedata/chests/chest-1.json</file>
         <file>maps/test-environment.json</file>
         <file>gamedata/enemies/test-enemy.json</file>
         <file>gamedata/enemies/fire.json</file>
-        <file>gamedata/firearms/hunting-bow.json</file>
-        <file>gamedata/firearms/crossbow.json</file>
         <file>fonts/DejaVu/DejaVuSans.ttf</file>
         <file>fonts/DejaVu/DejaVuSansMono.ttf</file>
-        <file>gamedata/weapons/sword-2.json</file>
-        <file>gamedata/plants/mana-herb.json</file>
         <file>savegames/test-savegame.json</file>
         <file>copyright/copyrights.json</file>
         <file>copyright/logos/qt.svg</file>
         <file>copyright/logos/box2d.png</file>
-        <file>gamedata/weapons/wood-stick.json</file>
-        <file>gamedata/houses/house-1.json</file>
-        <file>gamedata/literature/book.json</file>
-        <file>gamedata/fences/wood-fence.json</file>
-        <file>gamedata/teleport/teleport-test.json</file>
         <file>maps/test-monster.json</file>
-        <file>gamedata/paths/path.json</file>
         <file>maps/test-character.json</file>
-        <file>gamedata/boxes/box-1.json</file>
+        <file>gamedata/items/boxes/box-1.json</file>
+        <file>gamedata/items/chests/chest-1.json</file>
+        <file>gamedata/items/firearms/crossbow.json</file>
+        <file>gamedata/items/firearms/hunting-bow.json</file>
+        <file>gamedata/items/literature/book.json</file>
+        <file>gamedata/items/plants/healing-herb.json</file>
+        <file>gamedata/items/plants/mana-herb.json</file>
+        <file>gamedata/items/teleport/teleport-test.json</file>
+        <file>gamedata/items/weapons/sword-2.json</file>
+        <file>gamedata/items/weapons/sword.json</file>
+        <file>gamedata/items/weapons/wood-stick.json</file>
+        <file>gamedata/objects/fences/wood-fence.json</file>
+        <file>gamedata/objects/houses/house-1.json</file>
+        <file>gamedata/objects/paths/path.json</file>
+        <file>gamedata/items/bushes/bush-1.json</file>
+        <file>gamedata/items/trees/tree-1.json</file>
     </qresource>
 </RCC>

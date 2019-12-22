@@ -45,6 +45,23 @@ int GameItemsProxy::count() const
     return rowCount(QModelIndex());
 }
 
+GameItem *GameItemsProxy::get(int index) const
+{
+    if (!m_gameItems)
+        return nullptr;
+
+    return m_gameItems->get(mapToSource(this->index(index, 0)).row());
+}
+
+void GameItemsProxy::resetFilter()
+{
+    m_shownItemIds.clear();
+    setItemIdFilter(QString());
+    setFilterDuplicates(false);
+    setItemTypeFilter(GameItem::TypeNone);
+}
+
+
 QRectF GameItemsProxy::viewFilter() const
 {
     return m_viewFilter;
@@ -79,22 +96,6 @@ void GameItemsProxy::setItemTypeFilter(GameItem::Type type)
     m_shownItemIds.clear();
     invalidateFilter();
     sort(0);
-}
-
-GameItem *GameItemsProxy::get(int index) const
-{
-    if (!m_gameItems)
-        return nullptr;
-
-    return m_gameItems->get(mapToSource(this->index(index, 0)).row());
-}
-
-void GameItemsProxy::resetFilter()
-{
-    m_shownItemIds.clear();
-    setItemIdFilter(QString());
-    setFilterDuplicates(false);
-    setItemTypeFilter(GameItem::TypeNone);
 }
 
 QString GameItemsProxy::itemIdFilter() const

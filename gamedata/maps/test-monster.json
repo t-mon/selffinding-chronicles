@@ -7,12 +7,12 @@
     "backgroundColor": "#307a78",
     "items": [
         {
-            "data": ":/gamedata/trees/tree-1.json",
+            "data": ":/gamedata/items/trees/tree-1.json",
             "x": 11,
             "y": -1
         },
         {
-            "data": ":/gamedata/trees/tree-1.json",
+            "data": ":/gamedata/items/trees/tree-1.json",
             "x": 11,
             "y": 12
         }
@@ -39,11 +39,11 @@
                 "firearm": "",
                 "inventory": [
                     {
-                        "data": ":/gamedata/plants/healing-herb.json",
+                        "data": ":/gamedata/items/plants/healing-herb.json",
                         "count": 2
                     },
                     {
-                        "data": ":/gamedata/weapons/sword.json",
+                        "data": ":/gamedata/items/weapons/sword.json",
                         "count": 2
                     }
                 ],

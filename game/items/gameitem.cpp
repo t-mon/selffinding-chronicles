@@ -8,41 +8,6 @@ GameItem::GameItem(QObject *parent) :
 
 }
 
-QString GameItem::itemId() const
-{
-    return m_itemId;
-}
-
-void GameItem::setItemId(const QString &itemId)
-{
-    m_itemId = itemId;
-}
-
-QString GameItem::resourcePath() const
-{
-    return m_resourcePath;
-}
-
-void GameItem::setResourcePath(const QString &resourcePath)
-{
-    m_resourcePath = resourcePath;
-}
-
-QString GameItem::imageName() const
-{
-    return m_imageName;
-}
-
-void GameItem::setImageName(const QString &imageName)
-{
-    if (m_imageName == imageName)
-        return;
-
-    qCDebug(dcItem()) << itemTypeName() << "image name changed" << imageName;
-    m_imageName = imageName;
-    emit imageNameChanged(m_imageName);
-}
-
 int GameItem::price() const
 {
     return m_price;

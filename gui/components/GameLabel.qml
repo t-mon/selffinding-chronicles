@@ -10,5 +10,5 @@ Label {
     //font.weight: Font.ExtraBold
     font.family: app.fontFamily
     font.pixelSize: app.mediumFont
-    z: Map.Layer4Highest
+    z: GameObject.LayerOverlay
 }

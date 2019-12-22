@@ -11,10 +11,6 @@ Character::Character(QObject *parent):
 {
     m_inventory = new GameItems(this);
     m_pathController = new PathController(this);
-
-    connect(this, &Character::positionChanged, [this](const QPointF position){
-        qCDebug(dcCharacter()) << name() << "Position changed" << position;
-    });
 }
 
 QString Character::itemTypeName() const

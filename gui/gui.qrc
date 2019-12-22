@@ -67,5 +67,6 @@
         <file>shadereffects/fragmentshaders/+hlsl/grayscale.frag</file>
         <file>shadereffects/vertexshaders/grayscale.frag</file>
         <file>shadereffects/fragmentshaders/magic.frag</file>
+        <file>gameitems/GameObject.qml</file>
     </qresource>
 </RCC>
