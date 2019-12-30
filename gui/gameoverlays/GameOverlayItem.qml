@@ -13,7 +13,7 @@ Item {
         id: backgroundRectangle
         anchors.fill: parent
         color: "black"
-        opacity: 0.2
+        opacity: 0.4
     }
 
     onOpacityChanged: {

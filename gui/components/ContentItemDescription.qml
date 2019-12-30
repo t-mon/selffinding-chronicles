@@ -101,17 +101,37 @@ Item {
 
             property WeaponItem weaponItem: Game.castWeaponItem(contentItem)
 
-            GameLabel {
-                id: priceLabel
-                color: "white"
-                text: qsTr("Price") + ": " + (weaponItem ? weaponItem.price : "")
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Price")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: weaponItem ? weaponItem.price : ""
+                }
             }
 
-            GameLabel {
-                id: damageLabel
-                color: "white"
-                text: qsTr("Damage") + ": " + (weaponItem ? weaponItem.damage : "")
 
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Damage")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: weaponItem ? weaponItem.damage : ""
+                }
             }
         }
     }
@@ -127,22 +147,52 @@ Item {
 
             property FirearmItem firearmItem: Game.castFirearmItem(contentItem)
 
-            GameLabel {
-                id: priceLabel
-                color: "white"
-                text: qsTr("Price") + ": " + (firearmItem ? firearmItem.price : "")
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Price")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: firearmItem ? firearmItem.price : ""
+                }
             }
 
-            GameLabel {
-                id: damageLabel
-                color: "white"
-                text: qsTr("Damage") + ": " + (firearmItem ? firearmItem.damage : "")
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Damage")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: firearmItem ? firearmItem.damage : ""
+                }
             }
 
-            GameLabel {
-                id: rangeLabel
-                color: "white"
-                text: qsTr("Range") + ": " + (firearmItem ? firearmItem.range : "")
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Range")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: firearmItem ? firearmItem.range : ""
+                }
             }
         }
     }
@@ -158,31 +208,71 @@ Item {
 
             property PlantItem plantItem: Game.castPlantItem(contentItem)
 
-            GameLabel {
-                id: priceLabel
-                color: "white"
-                text: qsTr("Price") + ": " + (plantItem ? plantItem.price : "")
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Price")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: plantItem ? plantItem.price : ""
+                }
             }
 
-            GameLabel {
-                id: healingLabel
-                color: "white"
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
                 visible: plantItem ? plantItem.healing !== 0 : false
-                text: qsTr("Healing") + ": " + (plantItem ? plantItem.healing : "")
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Healing")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: plantItem ? plantItem.healing : ""
+                }
             }
 
-            GameLabel {
-                id: manaLabel
-                color: "white"
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
                 visible: plantItem ? plantItem.mana !== 0 : false
-                text: qsTr("Mana") + ": " + (plantItem ? plantItem.mana : "")
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Mana")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: plantItem ? plantItem.mana : ""
+                }
             }
 
-            GameLabel {
-                id: speedLabel
-                color: "white"
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
                 visible: plantItem ? plantItem.speed !== 0 : false
-                text: qsTr("Speed") + ": " + (plantItem ? plantItem.speed : "")
+
+                GameLabel {
+                    Layout.fillWidth: true
+                    color: "white"
+                    text: qsTr("Speed")
+                }
+
+                GameLabel {
+                    color: "white"
+                    text: plantItem ? plantItem.speed : ""
+                }
             }
         }
     }

@@ -79,7 +79,9 @@ GamePage {
                 height: Game.engine.dataManager.worldSize.height * app.gridSize
 
                 Rectangle {
+                    id: backgroundRectangle
                     anchors.fill: parent
+                    z: GameObject.LayerBackground - 1
                     color: Game.engine.dataManager.worldBackgroundColor
                 }
 
@@ -110,6 +112,21 @@ GamePage {
                     }
                 }
 
+
+                function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
+                    if (layer === GameObject.LayerBackground) {
+                        return -2
+                    } else if (layer === GameObject.LayerBase) {
+                        return -1
+                    } else if (layer === GameObject.LayerItem) {
+                        return itemY + itemHeight
+                    }  else if (layer === GameObject.LayerOverlay) {
+                        return worldHeight + itemHeight + 1
+                    } else {
+                        return itemY + itemHeight
+                    }
+                }
+
                 Repeater {
                     id: gameObjectRepeater
                     model: Game.engine.activeObjects
@@ -117,22 +134,12 @@ GamePage {
                         id: gameObjet
                         gameObject: Game.engine.activeObjects.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
+                        worldHeight: worldItem.height
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
-                        z: {
-                            if (gameObject) {
-                                if (gameObject.layer === GameObject.LayerBackground) {
-                                    return -2
-                                } else if (gameObject.layer === GameObject.LayerBase) {
-                                    return -1
-                                } else if (gameObject.layer === GameObject.LayerOverlay) {
-                                    worldItem.height + height + 1
-                                }
-                            }
-                            return y + height
-                        }
+                        z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                     }
                 }
 
@@ -146,7 +153,21 @@ GamePage {
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
-                        z: y + height
+                        z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
+                    }
+                }
+
+                Repeater {
+                    id: chestsRepeater
+                    model: Game.engine.activeChests
+                    delegate: GameItem {
+                        gameItem: Game.engine.activeChests.get(model.index)
+                        itemDebugEnabled: debugControls.itemDebugEnabled
+                        width: model.size.width * app.gridSize
+                        height: model.size.height * app.gridSize
+                        x: model.position.x * app.gridSize
+                        y: model.position.y * app.gridSize
+                        z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                     }
                 }
 
@@ -162,7 +183,7 @@ GamePage {
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
-                        z: y + height
+                        z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                         Component.onCompleted: {
                             if (characterItem.character.isPlayer) {
                                 root.playerItem = characterItem
@@ -181,20 +202,9 @@ GamePage {
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
                         y: model.position.y * app.gridSize
-                        z: y + height
+                        z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                     }
                 }
-
-                //                Rectangle {
-                //                    id: viewWindowRectangle
-                //                    x: Game.engine.viewWindow.x * app.gridSize
-                //                    y: Game.engine.viewWindow.y * app.gridSize
-                //                    width: Game.engine.viewWindow.width * app.gridSize
-                //                    height: Game.engine.viewWindow.height * app.gridSize
-                //                    opacity: 0.2
-                //                    color: "white"
-                //                }
-
             }
 
             Weather {
@@ -237,28 +247,24 @@ GamePage {
             onMouseYChanged: calculateAngle()
         }
 
-        // Game overlays
-        DefaultGameOverlay{
-            id: defaultGameOverlay
+        Loader {
+            id: overlayLoader
             anchors.fill: parent
-            visible: (Game.engine.playerController.controlMode === PlayerController.ControlModeKeyBoardMouse ||
-                      Game.engine.playerController.controlMode === PlayerController.ControlModeKeyBoard) && sceneItem.gameOverlayVisible
-
-        }
-
-        TouchscreenGameOverlay {
-            id: touchScreenGameOverlay
-            anchors.fill: parent
-            visible: Game.engine.playerController.controlMode === PlayerController.ControlModeTouchscreen && sceneItem.gameOverlayVisible
+            active: sceneItem.gameOverlayVisible
+            source: {
+                switch (Game.engine.playerController.controlMode) {
+                case PlayerController.ControlModeTouchscreen:
+                    return "gameoverlays/TouchscreenGameOverlay.qml"
+                default:
+                    return "gameoverlays/DefaultGameOverlay.qml"
+                }
+            }
         }
 
         DebugControls {
             id: debugControls
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: app.margins
+            anchors.fill: parent
             visible: Game.debugging
-            width: app.gridSize * 8
             onStonedEnabledChanged: {
                 if (stonedEnabled) {
                     stonedShader.visible = true
@@ -333,7 +339,13 @@ GamePage {
                 PropertyChanges { target: readItem; opacity: 0 }
                 PropertyChanges { target: pauseMenuItem; opacity: 0 }
 
-                StateChangeScript { script: { touchScreenGameOverlay.reset() } }
+                StateChangeScript {
+                    script: {
+                        if (Game.engine.playerController.controlMode == PlayerController.ControlModeTouchscreen) {
+                            overlayLoader.item.reset()
+                        }
+                    }
+                }
             },
             State {
                 name: "pausedState"
@@ -540,7 +552,7 @@ GamePage {
     }
 
     function getPlayerScreenPosition() {
-        var playerWorldPosition = getPlayerWorldPosition()        
+        var playerWorldPosition = getPlayerWorldPosition()
         var playerX = worldFlickable.x + (playerWorldPosition.x - worldFlickable.contentX)
         var playerY = worldFlickable.y + (playerWorldPosition.y - worldFlickable.contentY)
         return Qt.point(playerX, playerY)
@@ -581,10 +593,10 @@ GamePage {
     }
 
     function evaluateViewWindow() {
-        var viewWindowX = Math.round(worldItem.width / app.gridSize)
-        var viewWindowY = Math.round(worldItem.height / app.gridSize)
         var viewOffsetX = Math.round(worldFlickable.contentX / app.gridSize)
         var viewOffsetY = Math.round(worldFlickable.contentY / app.gridSize)
+        var viewWindowX = Math.round(worldFlickable.width / app.gridSize)
+        var viewWindowY = Math.round(worldFlickable.height / app.gridSize)
 
         Game.engine.viewWindow = Qt.rect(viewOffsetX - app.viewActiveFrameWidth,
                                          viewOffsetY - app.viewActiveFrameWidth,

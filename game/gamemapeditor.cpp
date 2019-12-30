@@ -169,14 +169,14 @@ void GameMapEditor::placeItemOnMap(const QString &resourcePath, const QPointF &p
 
 void GameMapEditor::saveMap()
 {
-    QString saveGameFileName(Game::instance()->settings()->settingsPath() + "/mapeditor/" + m_map->name());
-    qCDebug(dcMapEditor()) << "Save map to" << saveGameFileName;
-    m_dataManager->saveMap(m_map, saveGameFileName);
+    QString saveGameName(Game::instance()->settings()->mapEditorPath() + QDir::separator() + m_map->name());
+    qCDebug(dcMapEditor()) << "Save map to" << saveGameName;
+    m_dataManager->saveMap(m_map, saveGameName);
 }
 
 void GameMapEditor::onDataManagerStateChanged(DataManager::State state)
 {
-    qCDebug(dcMapEditor()) << "Dataloader state changed" << state;
+    qCDebug(dcMapEditor()) << "Datamanager state changed" << state;
 }
 
 void GameMapEditor::onEditorViewOffsetChanged(const QPointF &offset)

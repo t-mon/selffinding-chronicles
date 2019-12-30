@@ -20,6 +20,21 @@
             "x": 36,
             "y": 15,
             "data": ":/gamedata/objects/fences/wood-fence.json"
+        },
+        {
+            "x": 30,
+            "y": 14,
+            "data": ":/gamedata/objects/paths/path.json"
+        },
+        {
+            "x": 34,
+            "y": 14,
+            "data": ":/gamedata/objects/paths/path.json"
+        },
+        {
+            "x": 38,
+            "y": 14,
+            "data": ":/gamedata/objects/paths/path.json"
         }
     ],
     "items": [
@@ -242,6 +257,11 @@
             "x": 130,
             "y": 20,
             "data": ":/gamedata/items/trees/tree-1.json"
+        },
+        {
+            "x": 14,
+            "y": 30,
+            "data": ":/gamedata/items/boxes/box-1.json"
         }
     ],
     "characters": [
@@ -400,7 +420,7 @@
                                 "type": "segment",
                                 "offsetX": 1,
                                 "offsetY": 5,
-                                "speed": 0.8,
+                                "speed": 0.5,
                                 "angle": 0,
                                 "duration": 0
                             },

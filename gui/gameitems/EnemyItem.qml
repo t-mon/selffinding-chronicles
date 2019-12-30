@@ -34,8 +34,8 @@ PhysicsItem {
                 return
 
             var currentVelocity = body.linearVelocity
-            var dvx = root.enemy.movementVector.x * 10 - currentVelocity.x
-            var dvy = root.enemy.movementVector.y * 10 - currentVelocity.y
+            var dvx = root.enemy.movementVector.x * app.velocityScale - currentVelocity.x
+            var dvy = root.enemy.movementVector.y * app.velocityScale - currentVelocity.y
             body.applyLinearImpulse(Qt.point(dvx, dvy), Qt.point(root.width / 2, root.height / 2))
         }
     }

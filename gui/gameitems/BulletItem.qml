@@ -31,6 +31,8 @@ PhysicsItem {
     bodyType: Body.Dynamic
     smooth: true
 
+    z: y + height
+
     fixtures: Circle {
         categories: GameObject.PhysicsBullet
         collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy
@@ -94,7 +96,7 @@ PhysicsItem {
                 return
             }
 
-            console.log("Arrow impact", root.shooter, " --> ", victim )
+            //console.log("Arrow impact", root.shooter.name, " --> ", victim.name, "damage:", damage )
             Game.engine.performShootImpact(root.shooter, victim, damage)
             root.destroy()
         }

@@ -35,9 +35,27 @@ double Character::speed() const
 
 void Character::setSpeed(double speed)
 {
+    if (qFuzzyCompare(m_speed, speed))
+        return;
+
     qCDebug(dcCharacter()) << name() << "speed changed" << speed;
     m_speed = speed;
     emit speedChanged(m_speed);
+}
+
+double Character::currentVelocity() const
+{
+    return m_currentVelocity;
+}
+
+void Character::setCurrentVelocity(double currentVelocity)
+{
+    if (qFuzzyCompare(m_currentVelocity, currentVelocity))
+        return;
+
+    qCDebug(dcCharacter()) << name() << "velocity changed" << currentVelocity;
+    m_currentVelocity = currentVelocity;
+    emit currentVelocityChanged(m_currentVelocity);
 }
 
 bool Character::movable() const
@@ -182,6 +200,8 @@ void Character::setMovementVector(const QPointF &movementVector)
 
     m_movementVector = movementVector;
     emit movementVectorChanged(m_movementVector);
+
+    setCurrentVelocity(sqrt(pow(m_movementVector.x(), 2) + pow(m_movementVector.y(), 2)));
 
     if (m_movementVector.isNull()) {
         setMoving(false);

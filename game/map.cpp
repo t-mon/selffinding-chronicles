@@ -3,6 +3,7 @@
 
 #include <QTime>
 #include <QFile>
+#include <QFileInfo>
 #include <QJsonDocument>
 #include <QElapsedTimer>
 #include <QJsonParseError>
@@ -12,6 +13,7 @@ Map::Map(QObject *parent) : QObject(parent)
 {
     m_objects = new GameObjects(this);
     m_items = new GameItems(this);
+    m_chests = new GameItems(this);
     m_enemies = new GameItems(this);
     m_characters = new GameItems(this);
 }
@@ -72,9 +74,24 @@ void Map::setName(const QString &name)
     emit nameChanged(m_name);
 }
 
-QString Map::fileName() const
+QString Map::resourcePath() const
 {
-    return m_fileName;
+    return m_resourcePath;
+}
+
+void Map::setResourcePath(const QString &resourcePath)
+{
+    if (m_resourcePath == resourcePath)
+        return;
+
+    m_resourcePath = resourcePath;
+    m_resourceFileName = QFileInfo(m_resourcePath).fileName();
+    emit resourceFileNameChanged(m_resourceFileName);
+}
+
+QString Map::resourceFileName() const
+{
+    return m_resourceFileName;
 }
 
 QColor Map::backgroundColor() const
@@ -91,43 +108,61 @@ void Map::setBackgroundColor(const QColor &backgroundColor)
     emit backgroundColorChanged(m_backgroundColor);
 }
 
-GameObjects *Map::objects()
+Character *Map::player() const
+{
+    return m_player;
+}
+
+void Map::setPlayer(Character *player)
+{
+    m_player = player;
+
+    // Note: add the player always to the character list
+    if (m_player)
+        m_characters->addGameItem(m_player);
+}
+
+GameObjects *Map::objects() const
 {
     return m_objects;
 }
 
-GameItems *Map::items()
+GameItems *Map::items() const
 {
     return m_items;
 }
 
-GameItems *Map::enemies()
+GameItems *Map::chests() const
+{
+    return m_chests;
+}
+
+GameItems *Map::enemies() const
 {
     return m_enemies;
 }
 
-GameItems *Map::characters()
+GameItems *Map::characters() const
 {
     return m_characters;
 }
 
-void Map::loadMap(const QString &fileName)
+void Map::loadMap(const QString &resourcePath)
 {
-    qCDebug(dcMap()) << "Start loading map from" << fileName;
+    qCDebug(dcMap()) << "Start loading map from" << resourcePath;
 
-    if (m_fileName == fileName) {
-        qCDebug(dcMap()) << "The map" << fileName << "is already loaded.";
+    if (m_resourcePath == resourcePath) {
+        qCDebug(dcMap()) << "The map" << resourcePath << "is already loaded.";
         return;
     }
 
-    m_fileName = fileName;
-    emit fileNameChanged(m_fileName);
+    setResourcePath(resourcePath);
 
     // Load map information
-    qCDebug(dcMap()) << "--> load json data from file";
-    QVariantMap mapData = DataLoader::loadJsonData(fileName);
+    qCDebug(dcMap()) << "--> load json data from file" << resourcePath;
+    QVariantMap mapData = DataLoader::loadJsonData(resourcePath);
     if (mapData.isEmpty()) {
-        qCWarning(dcMap()) << "The map file" << fileName << "does not contain any valid map data.";
+        qCWarning(dcMap()) << "The map file" << resourcePath << "does not contain any valid map data.";
         return;
     }
 
@@ -189,9 +224,9 @@ void Map::loadMapVariant(const QVariantMap &mapData)
     // Load chests
     qCDebug(dcMap()) << "--> load chests" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     QList<GameItem *> chestItems = DataLoader::loadChestItems(mapData.value("chests").toList(), this);
-    m_items->addGameItemList(chestItems);
+    m_chests->addGameItemList(chestItems);
     foreach (GameItem *item, chestItems)
-        qCDebug(dcMap()) << "        " << item;
+        qCDebug(dcMap()) << "        " << qobject_cast<ChestItem *>(item);
 
 
     // Load characters
@@ -203,7 +238,7 @@ void Map::loadMapVariant(const QVariantMap &mapData)
         if (!characterItem->paths().isEmpty()) {
             characterItem->pathController()->setPath(characterItem->paths().first(), characterItem->position());
         }
-        qCDebug(dcMap()) << "        " << item;
+        qCDebug(dcMap()) << "        " << qobject_cast<Character *>(item);
     }
 
     // Load enemies
@@ -215,7 +250,7 @@ void Map::loadMapVariant(const QVariantMap &mapData)
         if (!characterItem->paths().isEmpty()) {
             characterItem->pathController()->setPath(characterItem->paths().first(), characterItem->position());
         }
-        qCDebug(dcMap()) << "        " << item;
+        qCDebug(dcMap()) << "        " << qobject_cast<Enemy *>(item);
     }
 
     qCDebug(dcMap()) << "Map loading finished successfully:" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
@@ -251,11 +286,15 @@ void Map::clear()
     m_size = QSize();
     m_playerStartPosition = QPointF();
     m_name = QString();
-    m_fileName = QString();
+    m_resourcePath = QString();
+    m_resourceFileName = QString();
     m_backgroundColor = QColor();
 
     // Delete all objects of the map
+    m_player = nullptr;
+    m_objects->clearModel();
     m_items->clearModel();
+    m_chests->clearModel();
     m_characters->clearModel();
     m_enemies->clearModel();
 
@@ -269,33 +308,35 @@ QDebug operator<<(QDebug debug, Map *map)
 {
     debug.nospace() << "Map("<< map->name();
     debug.nospace() << ", " << map->size();
-    debug.nospace() << ", " << map->fileName();
+    debug.nospace() << ", " << map->resourcePath();
+    debug.nospace() << ", " << map->resourceFileName();
     debug.nospace() << ", " << map->playerStartPosition();
     debug.nospace() << ", color: " << map->backgroundColor().name();
     debug.nospace() << ")" << endl;
 
+    debug.nospace() << "--> Objects:" << endl;
+    foreach (GameObject *object, map->objects()->gameObjects()) {
+        debug.nospace() << "    " << object << endl;
+    }
+
     debug.nospace() << "--> Items:" << endl;
     foreach (GameItem *item, map->items()->gameItems()) {
+        debug.nospace() << "    " << item << endl;
+    }
 
-        switch (item->itemType()) {
-        case GameItem::TypeChest:
-            debug.nospace() << "    " << item->thread() << ", " << qobject_cast<ChestItem *>(item) << endl;
-            break;
-        default:
-            debug.nospace() << "    " << item->thread() << ", " << item << endl;
-            break;
-        }
-
+    debug.nospace() << "--> Chests:" << endl;
+    foreach (GameItem *item, map->chests()->gameItems()) {
+        debug.nospace() << "    " << qobject_cast<ChestItem *>(item) << endl;
     }
 
     debug.nospace() << "--> Characters:" << endl;
     foreach (GameItem *item, map->characters()->gameItems()) {
-        debug.nospace() << "    " << item->thread() << ", " << qobject_cast<Character *>(item) << endl;
+        debug.nospace() << "    " << qobject_cast<Character *>(item) << endl;
     }
 
     debug.nospace() << "--> Enemies:" << endl;
     foreach (GameItem *item, map->enemies()->gameItems()) {
-        debug.nospace() << "    " << item->thread() << ", " << item << endl;
+        debug.nospace() << "    " << qobject_cast<Enemy *>(item) << endl;
     }
 
     return debug.space();

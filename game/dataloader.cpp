@@ -321,6 +321,7 @@ GameObject *DataLoader::loadGameObject(const QString &resourcePath, const QPoint
 
 GameObject *DataLoader::loadGameObjectFromResourcePath(const QString &resourcePath, QObject *parent)
 {
+    // TODO: cache resource maps in ram for faster loading
     QVariantMap objectMap = loadJsonData(resourcePath);
     return loadGameObject(resourcePath, QPointF(-1, -1), objectMap, parent);
 }
@@ -373,6 +374,7 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPointF &p
 
 GameItem *DataLoader::loadGameItemFromResourcePath(const QString &resourcePath, QObject *parent)
 {
+    // TODO: check cache for faster loading
     QVariantMap itemMap = loadJsonData(resourcePath);
     return loadGameItem(resourcePath, QPointF(-1, -1), itemMap, parent);
 }
@@ -391,7 +393,7 @@ void DataLoader::fillGameObjectData(GameObject *object, const QVariantMap &descr
     object->setImageName(description.value("imageName").toString());
     object->setFocusVisible(description.value("focusVisible", true).toBool());
     object->setSize(QSizeF(geometryMap.value("width", 1).toDouble(), geometryMap.value("height", 1).toDouble()));
-    object->setLayer(convertLayerValue(geometryMap.value("layer").toInt()));
+    object->setLayer(convertLayerValue(geometryMap.value("layer").toString()));
     object->setShape(convertShapeString(physicsGeometryMap.value("shape", "none").toString()));
     object->setBodyType(convertBodyTypeString(physicsGeometryMap.value("body", "static").toString()));
     object->setPhysicsSize(QSizeF(physicsGeometryMap.value("width", 0).toDouble(), physicsGeometryMap.value("height", 0).toDouble()));
@@ -454,6 +456,24 @@ void DataLoader::fillChestItemData(ChestItem *chestItem, const QVariantMap &ches
     chestItem->setLocked(chestMap.value("locked", false).toBool());
 }
 
+QVariantMap DataLoader::gameObjectToVariantMap(GameObject *object)
+{
+    QVariantMap objectMap;
+    objectMap.insert("x", object->position().x());
+    objectMap.insert("y", object->position().y());
+    objectMap.insert("data", object->resourcePath());
+    return objectMap;
+}
+
+QVariantList DataLoader::gameObjectsToVariantList(GameObjects *objects)
+{
+    QVariantList gameObjectsList;
+    foreach (GameObject *object, objects->gameObjects()) {
+        gameObjectsList.append(gameObjectToVariantMap(object));
+    }
+    return gameObjectsList;
+}
+
 QVariantMap DataLoader::gameItemToVariantMap(GameItem *item)
 {
     QVariantMap itemMap;
@@ -472,23 +492,45 @@ QVariantList DataLoader::gameItemsToVariantList(GameItems *items)
     return gameItemsList;
 }
 
-QVariantMap DataLoader::enemieToVariantMap(Enemy *enemy)
+QVariantList DataLoader::inventoryToVariantList(GameItems *inventory)
+{
+    QVariantList inventoryList;
+
+    GameItemsProxy duplicatesProxy;
+    duplicatesProxy.setFilterDuplicates(true);
+    duplicatesProxy.setGameItems(inventory);
+
+    for (int i = 0; i < duplicatesProxy.count(); i++) {
+        GameItem *item = duplicatesProxy.get(i);
+        GameItemsProxy counterProxy;
+        counterProxy.setItemIdFilter(item->itemId());
+        counterProxy.setGameItems(inventory);
+        QVariantMap itemMap;
+        itemMap.insert("data", item->resourcePath());
+        itemMap.insert("count", counterProxy.count());
+        inventoryList.append(itemMap);
+    }
+
+    return inventoryList;
+}
+
+QVariantMap DataLoader::enemyToVariantMap(Enemy *enemy)
 {
     QVariantMap enemyMap;
     enemyMap.insert("x", enemy->position().x());
     enemyMap.insert("y", enemy->position().y());
     enemyMap.insert("data", enemy->resourcePath());
-    enemyMap.insert("character", characterToVariantMap(qobject_cast<Character *>(enemy)));
+    enemyMap.insert("character", characterPropertiesToVariantMap(qobject_cast<Character *>(enemy)));
     return enemyMap;
 }
 
-QVariantList DataLoader::charactersToVariantList(GameItems *characters)
+QVariantList DataLoader::enemiesToVariantList(GameItems *enemies)
 {
-    QVariantList charactersList;
-    foreach (GameItem *characterItem, characters->gameItems()) {
-        charactersList.append(characterToVariantMap(qobject_cast<Character *>(characterItem)));
+    QVariantList enemyList;
+    foreach (GameItem *enemyItem, enemies->gameItems()) {
+        enemyList.append(enemyToVariantMap(qobject_cast<Enemy *>(enemyItem)));
     }
-    return charactersList;
+    return enemyList;
 }
 
 QVariantMap DataLoader::characterToVariantMap(Character *character)
@@ -497,6 +539,13 @@ QVariantMap DataLoader::characterToVariantMap(Character *character)
     characterMap.insert("x", character->position().x());
     characterMap.insert("y", character->position().y());
     characterMap.insert("data", character->resourcePath());
+    characterMap.insert("character", characterPropertiesToVariantMap(character));
+
+    return characterMap;
+}
+
+QVariantMap DataLoader::characterPropertiesToVariantMap(Character *character)
+{
     QVariantMap charachterPropertyMap;
     charachterPropertyMap.insert("gender", genderToString(character->gender()));
     charachterPropertyMap.insert("role", roleToString(character->role()));
@@ -509,17 +558,50 @@ QVariantMap DataLoader::characterToVariantMap(Character *character)
     charachterPropertyMap.insert("strength", character->strength());
     charachterPropertyMap.insert("weapon", character->weapon() ? character->weapon()->resourcePath() : QString());
     charachterPropertyMap.insert("firearm", character->firearm() ? character->firearm()->resourcePath() : QString());
-    QVariantList inventoryItemList;
-    foreach (GameItem *inventoryItem, character->inventory()->gameItems()) {
-        QVariantMap inventoryItemMap;
-        inventoryItemMap.insert("data", inventoryItem->resourcePath());
-        inventoryItemList.append(inventoryItemMap);
-    }
-    charachterPropertyMap.insert("inventory", inventoryItemList);
+    charachterPropertyMap.insert("inventory", inventoryToVariantList(character->inventory()));
     charachterPropertyMap.insert("paths", pathsToVariantList(character->paths()));
-    characterMap.insert("character", charachterPropertyMap);
+    return charachterPropertyMap;
+}
 
-    return characterMap;
+QVariantList DataLoader::charactersToVariantList(GameItems *characters)
+{
+    QVariantList charactersList;
+    foreach (GameItem *characterItem, characters->gameItems()) {
+        // Note: the player object will be serialized separatly
+        Character *character = qobject_cast<Character *>(characterItem);
+        if (character->isPlayer())
+            continue;
+
+        charactersList.append(characterToVariantMap(character));
+    }
+    return charactersList;
+}
+
+QVariantMap DataLoader::chestToVariantMap(ChestItem *chestItem)
+{
+    QVariantMap chestMap = gameItemToVariantMap(qobject_cast<GameItem *>(chestItem));
+    QVariantMap chestProperties;
+    chestProperties.insert("locked", chestItem->locked());
+    // Note: only save the combination if the chest is still locked
+    if (chestItem->locked()) {
+        QVariantList lockCombinationList;
+        for (int i = 0; i < chestItem->lockCombination().count(); i++) {
+            lockCombinationList.append(chestItem->lockCombination().at(i));
+        }
+        chestProperties.insert("lockCombination", lockCombinationList);
+    }
+    chestProperties.insert("inventory", inventoryToVariantList(chestItem->items()));
+    chestMap.insert("chest", chestProperties);
+    return chestMap;
+}
+
+QVariantList DataLoader::chestsToVariantList(GameItems *chests)
+{
+    QVariantList chestsList;
+    foreach (GameItem *chestItem, chests->gameItems()) {
+        chestsList.append(chestToVariantMap(qobject_cast<ChestItem *>(chestItem)));
+    }
+    return chestsList;
 }
 
 QVariantList DataLoader::pathsToVariantList(const QList<Path *> paths)
@@ -564,16 +646,16 @@ QVariantMap DataLoader::pathSegmentToVariantMap(const PathSegment &pathSegment)
     return pathSegmentMap;
 }
 
-GameObject::Layer DataLoader::convertLayerValue(int layerValue)
+GameObject::Layer DataLoader::convertLayerValue(const QString &layerString)
 {
     GameObject::Layer layer = GameObject::LayerBase;
-    if (layerValue == 0) {
+    if (layerString.toLower() == "background") {
         layer = GameObject::LayerBackground;
-    } else if (layerValue == 1) {
+    } else if (layerString.toLower() == "base") {
         layer = GameObject::LayerBase;
-    } else if (layerValue == 2) {
+    } else if (layerString.toLower() == "items") {
         layer = GameObject::LayerItems;
-    } else if (layerValue == 3) {
+    } else if (layerString.toLower() == "overlay") {
         layer = GameObject::LayerOverlay;
     }
 

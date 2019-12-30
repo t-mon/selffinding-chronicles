@@ -21,7 +21,6 @@ GameOverlayItem {
             radius: app.gridSize
         }
 
-
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: app.margins

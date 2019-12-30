@@ -15,23 +15,33 @@ Engine::Engine(QObject *parent) :
     connect(m_dataManager, &DataManager::stateChanged, this, &Engine::onDataManagerStateChanged);
 
     m_activeObjects = new GameObjectsProxy(this);
+    m_activeObjects->setViewFilter(QRect(-1, -1, 1, 1));
     m_activeObjects->setGameObjects(m_dataManager->objects());
 
     m_activeItems = new GameItemsProxy(this);
+    m_activeItems->setViewFilter(QRect(-1, -1, 1, 1));
     m_activeItems->setGameItems(m_dataManager->items());
 
+    m_activeChests = new GameItemsProxy(this);
+    m_activeChests->setViewFilter(QRect(-1, -1, 1, 1));
+    m_activeChests->setGameItems(m_dataManager->chests());
+
     m_activeEnemies = new GameItemsProxy(this);
+    m_activeEnemies->setViewFilter(QRect(-1, -1, 1, 1));
     m_activeEnemies->setGameItems(m_dataManager->enemies());
 
     m_activeCharacters = new GameItemsProxy(this);
+    m_activeCharacters->setViewFilter(QRect(-1, -1, 1, 1));
     m_activeCharacters->setGameItems(m_dataManager->characters());
 
     m_weatherAreaModel = new WeatherAreaModel(this);
     m_weatherAreaProxy = new WeatherAreaProxy(this);
+    m_weatherAreaProxy->setViewFilter(QRect(-1, -1, 1, 1));
     m_weatherAreaProxy->setAreaModel(m_weatherAreaModel);
 
     connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, &Engine::onGameObjectActiveChanged);
     connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
+    connect(m_activeChests, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
 
@@ -53,6 +63,7 @@ Engine::Engine(QObject *parent) :
     m_teleportationHandler->reset();
 
     qCDebug(dcEngine()) << "Created engine" << thread() << "successfully.";
+    QMetaObject::invokeMethod(m_dataManager, "initSaveGames", Qt::QueuedConnection);
 }
 
 Engine::State Engine::state() const
@@ -70,12 +81,14 @@ void Engine::setViewWindow(const QRectF &viewWindow)
     if (m_viewWindow == viewWindow)
         return;
 
-    //qCDebug(dcEngine()) << "View window changed" << viewWindow;
+    qCDebug(dcEngineData()) << "View window changed" << viewWindow;
 
     m_viewWindow = viewWindow;
     emit viewWindowChanged(m_viewWindow);
 
+    m_activeObjects->setViewFilter(m_viewWindow);
     m_activeItems->setViewFilter(m_viewWindow);
+    m_activeChests->setViewFilter(m_viewWindow);
     m_activeCharacters->setViewFilter(m_viewWindow);
     m_activeEnemies->setViewFilter(m_viewWindow);
     m_weatherAreaProxy->setViewFilter(m_viewWindow);
@@ -94,6 +107,11 @@ GameObjectsProxy *Engine::activeObjects() const
 GameItemsProxy *Engine::activeItems() const
 {
     return m_activeItems;
+}
+
+GameItemsProxy *Engine::activeChests() const
+{
+    return m_activeChests;
 }
 
 GameItemsProxy *Engine::activeCharacters() const
@@ -666,6 +684,10 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         setState(StatePaused);
         setLoading(false);
         setLoaded(true);
+        break;
+    case DataManager::StateSaving:
+        qCDebug(dcEngine()) << "The game is currently saving...";
+
         break;
     default:
         qCWarning(dcEngine()) << "Unhandled state" << state;

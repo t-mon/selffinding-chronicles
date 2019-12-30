@@ -58,6 +58,7 @@ void GameItemsProxy::resetFilter()
     m_shownItemIds.clear();
     setItemIdFilter(QString());
     setFilterDuplicates(false);
+    setViewFilter(QRectF());
     setItemTypeFilter(GameItem::TypeNone);
 }
 

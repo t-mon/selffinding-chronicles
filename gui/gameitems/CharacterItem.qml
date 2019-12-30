@@ -68,12 +68,12 @@ PhysicsItem {
             if (!character)
                 return
 
-            if (!character.alive)
+            if (!character.alive || !character.movable)
                 return
 
             var currentVelocity = body.linearVelocity
-            var dvx = character.movementVector.x * 10 - currentVelocity.x
-            var dvy = character.movementVector.y * 10 - currentVelocity.y
+            var dvx = character.movementVector.x * app.velocityScale - currentVelocity.x
+            var dvy = character.movementVector.y * app.velocityScale - currentVelocity.y
             body.applyLinearImpulse(Qt.point(dvx, dvy), Qt.point(root.width / 2, root.height / 2))
         }
     }
@@ -224,8 +224,8 @@ PhysicsItem {
         anchors.bottomMargin: root.height / 5
         system: root.particleSystem
         group: "footstep"
-        enabled: root.character ? root.character.moving && root.character.active : false
-        emitRate: 4 * app.gameSpeedFactor
+        enabled: root.character ? Game.running && root.character.moving && root.character.alive : false
+        emitRate: root.character ? 4 * app.gameSpeedFactor * root.character.currentVelocity : 0
         lifeSpan: 1500 / app.gameSpeedFactor
         size: app.gridSize / 2
         sizeVariation: size * 0.1
@@ -270,8 +270,8 @@ PhysicsItem {
         anchors.bottom: nameLabel.top
         anchors.horizontalCenter: parent.horizontalCenter
         opacity: 0
-
         color: app.healthColor
+        visible: percentage != 0
         percentage: character ? character.healthPercentage : 0
     }
 
@@ -406,7 +406,7 @@ PhysicsItem {
         anchors.fill: parent
         opacity: root.itemDebugEnabled ? 0.5 : 1
         interpolate: false
-
+        running: Game.running
         sprites: [
             Sprite {
                 source: dataDirectory + "/images/characters/character-idle/idle-right.png"
@@ -989,7 +989,6 @@ PhysicsItem {
         bulletObject.rotation = getBulletAngle()
         bulletObject.x = bulletStartPoint.x
         bulletObject.y = bulletStartPoint.y
-        bulletObject.z = GameObject.LayerItems
         bulletObject.startPositionX = bulletStartPoint.x
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range

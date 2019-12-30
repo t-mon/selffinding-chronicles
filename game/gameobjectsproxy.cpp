@@ -68,7 +68,7 @@ GameObject *GameObjectsProxy::get(int index) const
 
 void GameObjectsProxy::resetFilter()
 {
-
+    setViewFilter(QRectF());
 }
 
 bool GameObjectsProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const

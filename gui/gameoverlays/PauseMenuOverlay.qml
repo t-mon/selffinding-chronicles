@@ -40,6 +40,18 @@ GameOverlayItem {
 
         GameButton {
             Layout.fillWidth: true
+            text: qsTr("Save game")
+            font.pixelSize: app.largeFont
+            onClicked: {
+                worldFlickable.grabToImage(function(result) {
+                    //result.saveToFile("/tmp/something.png");
+                    Game.engine.dataManager.saveGame(result.image)
+                });
+            }
+        }
+
+        GameButton {
+            Layout.fillWidth: true
             text: qsTr("Settings")
             font.pixelSize: app.largeFont
             onClicked: {
@@ -47,14 +59,6 @@ GameOverlayItem {
             }
         }
 
-        GameButton {
-            Layout.fillWidth: true
-            text: Game.debugging ? qsTr("Debug mode OFF") : qsTr("Debug mode ON")
-            font.pixelSize: app.largeFont
-            onClicked: {
-                Game.debugging = !Game.debugging
-            }
-        }
 
         Item {
             id: spacingItem

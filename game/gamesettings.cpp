@@ -80,6 +80,16 @@ QString GameSettings::settingsPath() const
     return settingsFileInfo.canonicalPath();
 }
 
+QString GameSettings::saveGamePath() const
+{
+    return settingsPath() + QDir::separator() + "savegames";
+}
+
+QString GameSettings::mapEditorPath() const
+{
+    return settingsPath() + QDir::separator() + "mapeditor";
+}
+
 PlayerController::ControlMode GameSettings::controlMode() const
 {
     return m_controlMode;

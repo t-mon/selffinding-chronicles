@@ -125,6 +125,15 @@ GamePage {
                     }
                 }
             }
+
+            GameButton {
+                Layout.fillWidth: true
+                text: Game.debugging ? qsTr("Debug mode OFF") : qsTr("Debug mode ON")
+                font.pixelSize: app.largeFont
+                onClicked: {
+                    Game.debugging = !Game.debugging
+                }
+            }
         }
     }
 }

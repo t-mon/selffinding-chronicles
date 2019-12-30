@@ -1,4 +1,5 @@
 
+#include "game.h"
 #include "dataloader.h"
 #include "datamanager.h"
 #include "debugcategories.h"
@@ -16,8 +17,11 @@ DataManager::DataManager(QObject *parent) :
 {
     m_objects = new GameObjects(this);
     m_items = new GameItems(this);
+    m_chests = new GameItems(this);
     m_enemies = new GameItems(this);
     m_characters = new GameItems(this);
+
+    m_saveGames = new SaveGames(this);
 
     connect(this, &DataManager::finished, this, &DataManager::onThreadFinished);
 }
@@ -35,9 +39,14 @@ DataManager::State DataManager::state() const
     return m_state;
 }
 
-QString DataManager::saveGameFileName() const
+QString DataManager::saveGameName() const
 {
-    return m_saveGameFileName;
+    return m_saveGameName;
+}
+
+SaveGames *DataManager::saveGames() const
+{
+    return m_saveGames;
 }
 
 Map *DataManager::map() const
@@ -88,6 +97,11 @@ GameItems *DataManager::items() const
     return m_items;
 }
 
+GameItems *DataManager::chests() const
+{
+    return m_chests;
+}
+
 GameItems *DataManager::enemies() const
 {
     return m_enemies;
@@ -123,7 +137,7 @@ void DataManager::setState(DataManager::State state)
     emit stateChanged(m_state);
     m_stateMutex.unlock();
 
-    // Start the thread
+    // Check if we don't have to start the thread
     if (state == StateIdle)
         return;
 
@@ -131,15 +145,13 @@ void DataManager::setState(DataManager::State state)
     start();
 }
 
-void DataManager::setSaveGameName(const QString &saveGameFileName)
+void DataManager::setSaveGameName(const QString &saveGameName)
 {
-    if (m_saveGameFileName == saveGameFileName)
+    if (m_saveGameName == saveGameName)
         return;
 
-    m_saveGameFileName = saveGameFileName;
-    emit saveGameFileNameChanged(m_saveGameFileName);
-
-    // Create json and dump data
+    m_saveGameName = saveGameName;
+    emit saveGameNameChanged(m_saveGameName);
 }
 
 void DataManager::startNewGameTask()
@@ -155,13 +167,14 @@ void DataManager::startNewGameTask()
 
     // Create player
     qCDebug(dcDataManager()) << "Create default player";
+    QMutexLocker playerLocker(&m_playerMutex);
     GameItem *playerGameItem = DataLoader::loadGameItemFromResourcePath(":/gamedata/characters/player.json", m_map);
     m_player = qobject_cast<Character *>(playerGameItem);
     m_player->setPosition(m_map->playerStartPosition());
     m_player->setIsPlayer(true);
 
-    // Add player to characters and move to application thread
-    m_map->characters()->addGameItem(m_player);
+    // Add player to characters
+    m_map->setPlayer(m_player);
 
     // Set world properties
     setWorldSize(m_map->size());
@@ -175,6 +188,38 @@ void DataManager::startNewGameTask()
 void DataManager::startNewGameTaskFinished()
 {
     qCDebug(dcDataManager()) << "Loading thread for new game finished.";
+    loadGameTaskFinished();
+}
+
+void DataManager::loadGameTask()
+{
+    qCDebug(dcDataManager()) << "Start loading" << m_saveGame;
+    QMutexLocker mapLocker(&m_mapMutex);
+    m_map = new Map(nullptr);
+    m_map->loadMap(m_saveGame->mapFileName());
+
+    // Load player
+    QVariantMap generalMap = DataLoader::loadJsonData(m_saveGame->generalFileName());
+    QVariantMap playerMap = generalMap.value("player").toMap();
+    QPointF position = QPointF(playerMap.value("x").toDouble(), playerMap.value("y").toDouble());
+    m_player = DataLoader::createCharacterObject(playerMap.value("data").toString(), playerMap, position, m_map);
+    m_player->setIsPlayer(true);
+
+    // Add player to characters
+    m_map->setPlayer(m_player);
+
+    // Set world properties
+    setWorldSize(m_map->size());
+    setWorldBackgroundColor(m_map->backgroundColor());
+
+    // Push the map back to the main thread
+    qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();
+    m_map->moveToThread(QCoreApplication::instance()->thread());
+}
+
+void DataManager::loadGameTaskFinished()
+{
+    qCDebug(dcDataManager()) << "Loading finished.";
     qCDebug(dcDataManager()) << "Initialize the map data" << m_map->thread();
     m_map->setParent(this);
     setWorldSize(m_map->size());
@@ -185,6 +230,10 @@ void DataManager::startNewGameTaskFinished()
 
     foreach (GameItem *item, m_map->items()->gameItems()) {
         m_items->addGameItem(item);
+    }
+
+    foreach (GameItem *item, m_map->chests()->gameItems()) {
+        m_chests->addGameItem(item);
     }
 
     foreach (GameItem *item, m_map->characters()->gameItems()) {
@@ -198,87 +247,89 @@ void DataManager::startNewGameTaskFinished()
     qCDebug(dcDataManager()) << m_map;
 }
 
-void DataManager::loadGameTask()
-{
-    qCDebug(dcDataManager()) << "Start loading" << m_saveGameFileName;
-    QMutexLocker mapLocker(&m_mapMutex);
-    m_map = new Map(nullptr);
-    m_map->loadMap(m_saveGameFileName);
-    m_map->moveToThread(QCoreApplication::instance()->thread());
-
-    // Load map
-
-    // Load statistics
-
-    // Load player
-}
-
-void DataManager::loadGameTaskFinished()
-{
-    qCDebug(dcDataManager()) << "Loading thread finished";
-    qCDebug(dcDataManager()) << "Initialize the map data";
-    m_map->setParent(this);
-    setWorldSize(m_map->size());
-
-    foreach (GameObject *object, m_map->objects()->gameObjects()) {
-        m_objects->addGameObject(object);
-    }
-
-    foreach (GameItem *item, m_map->items()->gameItems()) {
-        m_items->addGameItem(item);
-    }
-
-    foreach (GameItem *item, m_map->characters()->gameItems()) {
-        m_characters->addGameItem(item);
-    }
-
-    foreach (GameItem *item, m_map->enemies()->gameItems()) {
-        m_enemies->addGameItem(item);
-    }
-
-}
-
 void DataManager::saveGameTask()
 {
     qCDebug(dcDataManager()) << "Start saving game" << QThread::currentThreadId();
 
-    QVariantMap saveGame;
-    saveGame.insert("name", m_saveGameFileName);
-    saveGame.insert("timestamp", QDateTime::currentDateTime().toSecsSinceEpoch());
+    // Check we have currelty a savegame
+    QMutexLocker saveGameLocker(&m_saveGameMutex);
+    if (!m_saveGame) {
+        m_saveGame = new SaveGame(nullptr);
+        m_saveGame->setId(QUuid::createUuid().toString().remove('-').remove('{').remove('}'));
+        m_saveGames->addSaveGame(m_saveGame);
+        qCDebug(dcDataManager()) << "Created new savegame with ID" << m_saveGame->id();
+    }
 
-    // Game statistics
+    if (!m_saveGame->saveGameDirectory().exists()) {
+        if (!QDir().mkpath(m_saveGame->saveGameDirectory().absolutePath())) {
+            qCWarning(dcDataManager()) << "Could not create save game directory" << m_saveGame->saveGameDirectory().absolutePath();
+            return;
+        }
 
-    // TODO: current map
+        qCDebug(dcDataManager()) << "Created successfully save game dir" << m_saveGame->saveGameDirectory().absolutePath();
+    }
 
-    QVariantList maps;
+    m_saveGame->setDateTime(QDateTime::currentDateTime());
+    m_saveGame->setMapName(m_map->name());
+    m_saveGame->setCurrentMapFileName(m_map->resourceFileName());
+
+    // general
+    QVariantMap generalMap;
+    generalMap.insert("name", m_saveGameName);
+    generalMap.insert("timestamp", m_saveGame->dateTime().toSecsSinceEpoch());
+    generalMap.insert("mapName", m_saveGame->mapName());
+    generalMap.insert("currentMapFileName", m_saveGame->currentMapFileName());
+
+    // TODO: Game statistics...
+
+    // Save the player
+    generalMap.insert("player", DataLoader::characterToVariantMap(m_map->player()));
+
+    // Map file
     QVariantMap map;
+    map.insert("name", m_map->name());
+    map.insert("resourcePath", m_map->resourcePath());
     map.insert("width", m_map->size().width());
     map.insert("height", m_map->size().height());
     map.insert("playerStartX", m_map->playerStartPosition().x());
     map.insert("playerStartY", m_map->playerStartPosition().y());
     map.insert("backgroundColor", m_map->backgroundColor().name());
+    map.insert("objects", DataLoader::gameObjectsToVariantList(m_objects));
+    map.insert("items", DataLoader::gameItemsToVariantList(m_items));
+    map.insert("chests", DataLoader::chestsToVariantList(m_chests));
+    map.insert("enemies", DataLoader::enemiesToVariantList(m_enemies));
+    // Note: the player will not be saved in DataLoader::charactersToVariantList(m_characters)
+    map.insert("characters", DataLoader::charactersToVariantList(m_characters));
 
-
-
-    // Items
-//    saveGame.insert("items", DataLoader::gameItemsToVariantList(m_items));
-
-    // Enemies
-    //saveGame.insert("enemies", )
-
-    // Characters
-
-
-    maps.append(map);
-    saveGame.insert("maps", maps);
-
-    QFile saveGameFile(m_saveGameFileName);
-    if (!saveGameFile.open(QFile::WriteOnly)) {
-        qCWarning(dcDataManager()) << "Could not open file for saving" << m_saveGameFileName;
+    // Write the current map
+    QFile saveGameMapFile(m_saveGame->saveGameDirectory().absolutePath() + QDir::separator() + m_map->resourceFileName());
+    if (!saveGameMapFile.open(QFile::WriteOnly)) {
+        qCWarning(dcDataManager()) << "Could not open map file for saving map data" << saveGameMapFile.errorString();
         return;
     }
 
-    saveGameFile.write(QJsonDocument::fromVariant(saveGame).toJson(QJsonDocument::Indented));
+    saveGameMapFile.write(QJsonDocument::fromVariant(map).toJson(QJsonDocument::Indented));
+    saveGameMapFile.close();
+    qCDebug(dcDataManager()) << "Saved map successfully" << saveGameMapFile.fileName();
+
+    // Write the general data
+    QFile saveGameFile(m_saveGame->saveGameDirectory().absolutePath() + QDir::separator() + "general.json");
+    if (!saveGameFile.open(QFile::WriteOnly)) {
+        qCWarning(dcDataManager()) << "Could not open general file for saving general data" << saveGameFile.errorString();
+        return;
+    }
+
+    saveGameFile.write(QJsonDocument::fromVariant(generalMap).toJson(QJsonDocument::Indented));
+
+    if (!m_screenshot.isNull()) {
+        if (!m_screenshot.save(m_saveGame->screenShotFileName(), "png")) {
+            qCWarning(dcDataManager()) << "Could not save screenshot image to" << m_saveGame->screenShotFileName();
+        } else {
+            qCDebug(dcDataManager()) << "Saved successfully screenshot image";
+        }
+    }
+
+    qCDebug(dcDataManager()) << "Saved general data successfully" << m_saveGame;
 }
 
 void DataManager::saveGameTaskFinished()
@@ -299,12 +350,13 @@ void DataManager::saveMapTask()
     map.insert("playerStartX", m_map->playerStartPosition().x());
     map.insert("playerStartY", m_map->playerStartPosition().y());
     map.insert("backgroundColor", m_map->backgroundColor().name());
+    map.insert("objects", DataLoader::gameObjectsToVariantList(m_map->objects()));
     map.insert("items", DataLoader::gameItemsToVariantList(m_map->items()));
+    map.insert("chests", DataLoader::gameItemsToVariantList(m_map->chests()));
     map.insert("characters", DataLoader::charactersToVariantList(m_map->characters()));
+    map.insert("enemies", DataLoader::enemiesToVariantList(m_map->enemies()));
 
-    QVariantList enemies;
-
-    QDir storageDir(QFileInfo(m_saveGameFileName).absolutePath());
+    QDir storageDir(QFileInfo(m_saveGameName).absolutePath());
     qCDebug(dcDataManager()) << "Verify storage dir" << storageDir.absolutePath();
     if (!storageDir.exists()) {
         qCDebug(dcDataManager()) << "Creating directory" << storageDir.absolutePath();
@@ -313,9 +365,9 @@ void DataManager::saveMapTask()
         }
     }
 
-    QFile saveGameFile(m_saveGameFileName);
+    QFile saveGameFile(m_saveGameName);
     if (!saveGameFile.open(QFile::WriteOnly)) {
-        qCWarning(dcDataManager()) << "Could not open file for saving" << m_saveGameFileName << saveGameFile.errorString();
+        qCWarning(dcDataManager()) << "Could not open file for saving" << m_saveGameName << saveGameFile.errorString();
         return;
     }
 
@@ -325,6 +377,11 @@ void DataManager::saveMapTask()
 void DataManager::saveMapTaskFinished()
 {
     qCDebug(dcDataManager()) << "Save map task finsihed.";
+    QMutexLocker saveGameLocker(&m_saveGameNameMutex);
+
+    if (m_saveGame) {
+        m_saveGame->setParent(this);
+    }
 }
 
 void DataManager::run()
@@ -332,7 +389,7 @@ void DataManager::run()
     // Init
     qCDebug(dcDataManager()) << "Start thread" << QThread::currentThreadId();
     QElapsedTimer timer;
-    QMutexLocker saveGameLocker(&m_saveGameFileNameMutex);
+    QMutexLocker saveGameLocker(&m_saveGameNameMutex);
 
     // Get current state
     m_stateMutex.lock();
@@ -344,16 +401,14 @@ void DataManager::run()
 
     // Load save data
     switch (state) {
-    case StateLoading: {
+    case StateLoading:
         loadGameTask();
         qCDebug(dcDataManager()) << "Loading finished" << timer.elapsed() << "[ms]";
         break;
-    }
-    case StateStarting: {
+    case StateStarting:
         startNewGameTask();
         qCDebug(dcDataManager()) << "Loading finished" << timer.elapsed() << "[ms]";
         break;
-    }
     case StateSaving:
         saveGameTask();
         qCDebug(dcDataManager()) << "Saving finished" << timer.elapsed() << "[ms]";
@@ -408,12 +463,31 @@ void DataManager::resetData()
 
     m_objects->clearModel();
     m_items->clearModel();
+    m_chests->clearModel();
     m_characters->clearModel();
     m_enemies->clearModel();
 
     setWorldSize(QSize());
     setSaveGameName(QString());
     setState(StateIdle);
+}
+
+void DataManager::initSaveGames()
+{
+    qCDebug(dcDataManager()) << "Initialize savegames" << Game::instance()->settings()->saveGamePath();
+    QDir saveGamesDir(Game::instance()->settings()->saveGamePath());
+    QStringList saveGamesList = saveGamesDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable);
+    foreach (const QString &id, saveGamesList) {
+        qCDebug(dcDataManager()) << "Start loading save game" << id;
+        SaveGame *saveGame = new SaveGame(this);
+        saveGame->setId(id);
+
+        QVariantMap saveGameMap = DataLoader::loadJsonData(saveGame->saveGameDirectory().absolutePath() + QDir::separator() + "general.json");
+        saveGame->setMapName(saveGameMap.value("mapName").toString());
+        saveGame->setCurrentMapFileName(saveGameMap.value("currentMapFileName").toString());
+        saveGame->setDateTime(QDateTime::fromSecsSinceEpoch(saveGameMap.value("timestamp").toUInt()));
+        m_saveGames->addSaveGame(saveGame);
+    }
 }
 
 void DataManager::startNewGame()
@@ -430,16 +504,16 @@ void DataManager::startNewGame()
     setState(StateStarting);
 }
 
-void DataManager::saveMap(Map *map, const QString &saveGameFileName)
+void DataManager::saveMap(Map *map, const QString &saveGameName)
 {
     if (isRunning()) {
-        qCWarning(dcDataManager()) << "Could not save map to" << saveGameFileName << ", the thread is still runnging.";
+        qCWarning(dcDataManager()) << "Could not save map to" << saveGameName << ", the thread is still runnging.";
         return;
     }
 
-    QMutexLocker saveGameLocker(&m_saveGameFileNameMutex);
-    qCDebug(dcDataManager()) << "Save the map to" << saveGameFileName;
-    m_saveGameFileName = saveGameFileName;
+    QMutexLocker saveGameLocker(&m_saveGameNameMutex);
+    qCDebug(dcDataManager()) << "Save the map to" << saveGameName;
+    m_saveGameName = saveGameName;
 
     QMutexLocker mapLocker(&m_mapMutex);
     m_map = map;
@@ -447,29 +521,28 @@ void DataManager::saveMap(Map *map, const QString &saveGameFileName)
     setState(StateSavingMap);
 }
 
-void DataManager::saveGame(const QString &saveGameFileName)
+void DataManager::saveGame(const QImage &screenshot)
 {
     if (isRunning()) {
-        qCWarning(dcDataManager()) << "Could not save game" << saveGameFileName << ", the thread is still runnging.";
+        qCWarning(dcDataManager()) << "Could not save game" << screenshot << ", the thread is still runnging.";
         return;
     }
 
-    QMutexLocker saveGameLocker(&m_saveGameFileNameMutex);
-    qCDebug(dcDataManager()) << "Save the game to" << saveGameFileName;
-    m_saveGameFileName = saveGameFileName;
-
+    m_screenshot = screenshot;
     setState(StateSaving);
 }
 
-void DataManager::loadGame(const QString &saveGameFileName)
+void DataManager::loadGame(SaveGame *saveGame)
 {
     if (isRunning()) {
-        qCWarning(dcDataManager()) << "Could not load savegame" << saveGameFileName << ", the thread is still runnging.";
+        qCWarning(dcDataManager()) << "Could not load savegame" << saveGame << ", the thread is still runnging.";
         return;
     }
 
-    QMutexLocker saveGameLocker(&m_saveGameFileNameMutex);
-    m_saveGameFileName = saveGameFileName;
+    qCDebug(dcDataManager()) << "Start loading savegame" << saveGame;
+
+    QMutexLocker saveGameLocker(&m_saveGameNameMutex);
+    m_saveGame = saveGame;
 
     // Reset all data
     resetData();

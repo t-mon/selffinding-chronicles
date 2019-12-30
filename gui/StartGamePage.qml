@@ -8,7 +8,6 @@ import "components"
 GamePage {
     id: root
 
-
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: app.margins * 8
@@ -29,7 +28,7 @@ GamePage {
             Layout.fillWidth: true
             text: qsTr("Load saved game")
             font.pixelSize: app.largeFont
-            //onClicked: Game.engine.resumeGame()
+            onClicked: pageStack.push(Qt.resolvedUrl("SaveGamesPage.qml"))
         }
 
         Item {

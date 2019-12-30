@@ -12,100 +12,89 @@ Item {
     property bool stonedEnabled: false
     property bool grayscaleEnabled: false
     property bool magicEnabled: false
-    property bool flamesEnabled: true
+    property bool flamesEnabled: false
     property bool rainingEnabled: false
     property bool snowingEnabled: false
     property bool turbulenceEnabled: false
 
-    property bool dropDown: false
+    Flickable {
+        width: root.width / 2
+        height: parent.height
+        anchors.right: parent.right
+        anchors.top: parent.top
+        contentHeight: optionsColumn.height
 
-    height: mainColumn.implicitHeight
-
-    Column {
-        id: mainColumn
-        width: parent.width
-        spacing: app.margins
-
-        GameButton {
-            width: parent.width
-            text: "Debug options"
-            color: root.dropDown ? "steelblue" : "white"
-            onClicked: root.dropDown = !root.dropDown
+        Rectangle {
+            anchors.fill: parent
+            color: "white"
+            opacity: 0.6
         }
 
-        Item {
-            id: menuItem
+        Column {
+            id: optionsColumn
             width: parent.width
-            height: root.dropDown ? optionsColumn.implicitHeight : 0
-            visible: root.dropDown
 
-            Column {
-                id: optionsColumn
+            SwitchDelegate {
                 width: parent.width
-                spacing: app.margins
+                height: 40
+                text: qsTr("Item debug")
+                onCheckedChanged: root.itemDebugEnabled = !root.itemDebugEnabled
+                Component.onCompleted: checked = root.itemDebugEnabled
+            }
 
-                Rectangle {
-                    width: parent.width
-                    height: 1
-                    radius: height / 2
-                }
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Physics debug")
+                onCheckedChanged: root.physicsDebugEnabled = !root.physicsDebugEnabled
+                Component.onCompleted: checked = root.physicsDebugEnabled
+            }
 
-                GameButton {
-                    id: itemDebugButton
-                    width: parent.width
-                    text: root.itemDebugEnabled ? "Item debug OFF" : "Item debug ON"
-                    color: root.itemDebugEnabled ? "green" : "white"
-                    onClicked: root.itemDebugEnabled = !root.itemDebugEnabled
-                }
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Stonend")
+                onCheckedChanged: root.stonedEnabled = !root.stonedEnabled
+                Component.onCompleted: checked = root.stonedEnabled
+            }
 
-                GameButton {
-                    id: physicsDebugEnabledButton
-                    width: parent.width
-                    text: root.physicsDebugEnabled ? "Physics debug OFF" : "Physics debug ON"
-                    color: root.physicsDebugEnabled ? "green" : "white"
-                    onClicked: root.physicsDebugEnabled = !root.physicsDebugEnabled
-                }
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Grayscale")
+                onCheckedChanged: root.grayscaleEnabled = !root.grayscaleEnabled
+                Component.onCompleted: checked = root.grayscaleEnabled
+            }
 
-                GameButton {
-                    id: stonedEnabledButton
-                    width: parent.width
-                    text: root.stonedEnabled ? "Stoned OFF" : "Stoned ON"
-                    color: root.stonedEnabled ? "green" : "white"
-                    onClicked: root.stonedEnabled = !root.stonedEnabled
-                }
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Magic")
+                onCheckedChanged: root.magicEnabled = !root.magicEnabled
+                Component.onCompleted: checked = root.magicEnabled
+            }
 
-                GameButton {
-                    id: grayscaleEnabledButton
-                    width: parent.width
-                    text: root.grayscaleEnabled ? "Grayscale OFF" : "Grayscale ON"
-                    color: root.grayscaleEnabled ? "green" : "white"
-                    onClicked: root.grayscaleEnabled = !root.grayscaleEnabled
-                }
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Burning arrows")
+                onCheckedChanged: root.flamesEnabled = !root.flamesEnabled
+                Component.onCompleted: checked = root.flamesEnabled
+            }
 
-                GameButton {
-                    id: magicEnabledButton
-                    width: parent.width
-                    text: root.magicEnabled ? "Magic OFF" : "Magic ON"
-                    color: root.magicEnabled ? "green" : "white"
-                    onClicked: root.magicEnabled = !root.magicEnabled
-                }
+            RowLayout {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
 
-                GameButton {
-                    id: flamesEnabledButton
-                    width: parent.width
-                    text: root.flamesEnabled ? "Flame arrow OFF" : "Flames arrow ON"
-                    color: root.flamesEnabled ? "green" : "white"
-                    onClicked: root.flamesEnabled = !root.flamesEnabled
-                }
-
-                Rectangle {
-                    width: parent.width
-                    height: 1
-                    radius: height / 2
+                Label {
+                    text: qsTr("Gamespeed")
                 }
 
                 Slider {
-                    width: parent.width
+                    Layout.fillWidth: true
                     from: 0.1
                     to: 1
                     stepSize: 0.1
@@ -113,30 +102,22 @@ Item {
                     onValueChanged: app.gameSpeedFactor = value
                     Component.onCompleted: value = app.gameSpeedFactor
                 }
+            }
 
-                GameButton {
-                    id: rainingEnabledButton
-                    width: parent.width
-                    text: root.rainingEnabled ? "Raining OFF" : "Raining ON"
-                    color: root.rainingEnabled ? "green" : "white"
-                    onClicked: root.rainingEnabled = !root.rainingEnabled
-                }
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Raining")
+                onCheckedChanged: root.rainingEnabled = !root.rainingEnabled
+                Component.onCompleted: checked = root.rainingEnabled
+            }
 
-                GameButton {
-                    id: snowingEnabledButton
-                    width: parent.width
-                    text: root.snowingEnabled ? "Snowing OFF" : "Snowing ON"
-                    color: root.snowingEnabled ? "green" : "white"
-                    onClicked: root.snowingEnabled = !root.snowingEnabled
-                }
-
-                GameButton {
-                    id: turbulenceEnabledButton
-                    width: parent.width
-                    text: root.turbulenceEnabled ? "Turbulence OFF" : "Turbulence ON"
-                    color: root.turbulenceEnabled ? "green" : "white"
-                    onClicked: root.turbulenceEnabled = !root.turbulenceEnabled
-                }
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Snowing")
+                onCheckedChanged: root.snowingEnabled = !root.snowingEnabled
+                Component.onCompleted: checked = root.snowingEnabled
             }
         }
     }

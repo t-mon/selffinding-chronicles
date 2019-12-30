@@ -72,10 +72,10 @@ public:
     Q_DECLARE_FLAGS(PhysicsFlags, PhysicsFlag)
 
     enum Layer {
-        LayerBackground = 0, // -2
-        LayerBase = 1, // -1
-        LayerItems = 2, // y = z
-        LayerOverlay = 3 // height + 1
+        LayerBackground, // -2
+        LayerBase, // -1
+        LayerItems, // y = z
+        LayerOverlay // height + 1
     };
     Q_ENUM(Layer)
 

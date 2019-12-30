@@ -12,7 +12,8 @@ import "../physics"
 PhysicsItem {
     id: root
 
-    property GameObject gameObject
+    property GameObject gameObject: null
+    property real worldHeight
     antialiasing: app.antialiasing
     property real angle: 0
 

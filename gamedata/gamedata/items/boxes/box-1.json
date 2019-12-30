@@ -6,7 +6,7 @@
     "geometry": {
         "width": 2,
         "height": 2,
-        "layer": 2
+        "layer": "items"
     },
     "physicsGeometry": {
         "body": "dynamic",

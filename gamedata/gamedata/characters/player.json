@@ -5,7 +5,7 @@
     "geometry": {
         "width": 3,
         "height": 3,
-        "layer": 2
+        "layer": "items"
     },
 
     "physicsGeometry": {

@@ -9,100 +9,105 @@ import "../components"
 GameOverlayItem {
     id: root
 
-    ColumnLayout {
-        anchors.fill: parent
+    Item {
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: app.margins
-        spacing: app.margins / 2
+        width: app.gridSize * 15
 
-        RowLayout {
-            id: inventoryLoyout
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+        ColumnLayout {
+            id: plunderInventoryItem
+            anchors.fill: parent
             spacing: app.margins / 2
 
-            Item {
-                Layout.preferredWidth: app.menuItemSize * 5 + app.margins
+            ObjectContentItem {
+                id: plunderInventory
                 Layout.fillHeight: true
-
-                ColumnLayout {
-                    id: plunderInventoryItem
-                    anchors.fill: parent
-                    spacing: app.margins / 2
-
-                    ObjectContentItem {
-                        id: plunderInventory
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        gameItems: Game.engine.currentPlunderItems
-                        onSelectedGameItemChanged: {
-                            if (!selectedGameItem) {
-                                itemDescription.item = null
-                                return
-                            }
-
-                            console.log("Selected item " + selectedGameItem.name)
-                            itemDescription.item = selectedGameItem
-                        }
+                Layout.fillWidth: true
+                gameItems: Game.engine.currentPlunderItems
+                onSelectedGameItemChanged: {
+                    if (!selectedGameItem) {
+                        itemDescription.item = null
+                        return
                     }
 
-
-                    ContentItemDescription {
-                        id: itemDescription
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: app.gridSize * 10
-                        item: null
-                    }
-
-                    RowLayout {
-                        id: plunderOptionsRow
-                        Layout.fillWidth: true
-                        spacing: app.margins / 2
-
-                        GameButton {
-                            Layout.fillWidth: true
-                            text: qsTr("Take all")
-                            onClicked: {
-                                Game.engine.takeAllItems(Game.engine.currentPlunderItems)
-                                Game.engine.finishPlunder()
-                            }
-                        }
-
-                        GameButton {
-                            Layout.fillWidth: true
-                            text: qsTr("Take")
-                            onClicked: {
-                                if (plunderInventory.selectedGameItem) {
-                                    console.log("Take item", plunderInventory.selectedGameItem.name)
-                                    Game.engine.takeItem(Game.engine.currentPlunderItems, plunderInventory.selectedGameItem)
-                                }
-                            }
-                        }
-
-                        GameButton {
-                            Layout.fillWidth: true
-                            text: qsTr("Close")
-                            onClicked: Game.engine.finishPlunder()
-                        }
-                    }
+                    console.log("Selected item " + selectedGameItem.name)
+                    itemDescription.item = selectedGameItem
                 }
             }
 
-            Item {
-                id: spacingItem
+            ContentItemDescription {
+                id: itemDescription
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.preferredHeight: app.gridSize * 6
+                item: null
             }
 
-            Item {
-                id: playerInventoryItem
-                Layout.fillHeight: true
-                Layout.preferredWidth: app.menuItemSize * 5 + app.margins
+            RowLayout {
+                id: plunderOptionsRow
+                Layout.fillWidth: true
+                spacing: app.margins / 2
 
-                InventoryContentItem {
-                    id: playerInventory
-                    anchors.fill: parent
+                GameButton {
+                    Layout.fillWidth: true
+                    text: qsTr("Take all")
+                    onClicked: {
+                        Game.engine.takeAllItems(Game.engine.currentPlunderItems)
+                        Game.engine.finishPlunder()
+                    }
+                }
+
+                GameButton {
+                    Layout.fillWidth: true
+                    text: qsTr("Take")
+                    onClicked: {
+                        if (plunderInventory.selectedGameItem) {
+                            console.log("Take item", plunderInventory.selectedGameItem.name)
+                            Game.engine.takeItem(Game.engine.currentPlunderItems, plunderInventory.selectedGameItem)
+                        }
+                    }
+                }
+
+                GameButton {
+                    Layout.fillWidth: true
+                    text: qsTr("Close")
+                    onClicked: Game.engine.finishPlunder()
                 }
             }
         }
     }
 }
+
+
+//    ColumnLayout {
+//        anchors.fill: parent
+//        anchors.margins: app.margins
+//        spacing: app.margins / 2
+
+//        RowLayout {
+//            id: inventoryLayout
+//            Layout.fillHeight: true
+//            Layout.fillWidth: true
+//            spacing: app.margins / 2
+
+
+
+//            Item {
+//                id: spacingItem
+//                Layout.fillWidth: true
+//                Layout.fillHeight: true
+//            }
+
+//            Item {
+//                id: playerInventoryItem
+//                Layout.fillHeight: true
+//                Layout.preferredWidth: app.menuItemSize * 5 + app.margins
+
+//                InventoryContentItem {
+//                    id: playerInventory
+//                    anchors.fill: parent
+//                }
+//            }
+//         }
+//    }

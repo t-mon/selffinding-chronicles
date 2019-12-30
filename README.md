@@ -30,26 +30,35 @@ Then the result png will be resized to he specified grid unit size and stored in
 ## Game scene layers
 
 * Layer 0: Background color of the map Rectangle (z = -2)
-* Layer 1: Background objects (GameObject) like paths, ground decorations... (z = -1)
-* Layer 2: GameItems (z = y + height)
+* Layer 1: Base (GameObject) like paths, ground decorations... (z = -1)
+* Layer 2: Items (z = y + height)
+* Layer 3: Overlay (z = worldHeigth + 1)
 
 
 ## Save game structure
 
-> Note: this is just brainstorming...
+### Folder structure
+
+    <settings>/savegames/
+    <settings>/savegames/<uuid1>
+    <settings>/savegames/<uuid2>
+
+### Settings folder content
+
+    <settings>/savegames/<uuid>/general.json
+    <settings>/savegames/<uuid>/screenshot.png
+    <settings>/savegames/<uuid>/map-name-1.json
+    <settings>/savegames/<uuid>/map-name-2.json
+
+
+### Save game information
 
     {
-        "name": "My savegame",
+        "name": "Save game name",
         "timestamp": unixtime,
         "currentMap": "mapname",
-        "maps": {
-            "mapname": {
-                ... map
-            },
-            "mapname2": {
-                ...map
-            }
-        }
+        "player": { ... },
+        "statistics": { ... } 
     }
 
 

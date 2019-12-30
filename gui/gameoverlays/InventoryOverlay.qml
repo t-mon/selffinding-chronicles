@@ -10,7 +10,7 @@ GameOverlayItem {
     id: root
 
     RowLayout {
-        id: inventoryLoyout
+        id: inventoryLayout
         anchors.fill: parent
         anchors.margins: app.margins
         spacing: app.margins / 2

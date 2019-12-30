@@ -36,6 +36,7 @@ class Engine : public QObject
     Q_PROPERTY(DataManager *dataManager READ dataManager CONSTANT)
     Q_PROPERTY(GameObjectsProxy *activeObjects READ activeObjects CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
+    Q_PROPERTY(GameItemsProxy *activeChests READ activeChests CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
     Q_PROPERTY(WeatherAreaProxy *activeWeatherAreas READ activeWeatherAreas CONSTANT)
@@ -82,6 +83,7 @@ public:
     Character *player() const;
     GameObjectsProxy *activeObjects() const;
     GameItemsProxy *activeItems() const;
+    GameItemsProxy *activeChests() const;
     GameItemsProxy *activeCharacters() const;
     GameItemsProxy *activeEnemies() const;
     WeatherAreaProxy *activeWeatherAreas() const;
@@ -129,6 +131,7 @@ private:
 
     GameObjectsProxy *m_activeObjects = nullptr;
     GameItemsProxy *m_activeItems = nullptr;
+    GameItemsProxy *m_activeChests = nullptr;
     GameItemsProxy *m_activeEnemies = nullptr;
     GameItemsProxy *m_activeCharacters = nullptr;
     WeatherAreaModel *m_weatherAreaModel = nullptr;

@@ -189,7 +189,6 @@ QDebug operator<<(QDebug debug, GameItem *gameItem)
 {
     debug.nospace() << "GameItem(" << gameItem->itemTypeName();
     debug.nospace() << ", " << gameItem->name();
-    debug.nospace() << ", " << gameItem->itemId();
     debug.nospace() << ", " << gameItem->resourcePath();
     debug.nospace() << ", " << gameItem->position();
     debug.nospace() << ", " << gameItem->size();

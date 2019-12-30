@@ -5,7 +5,7 @@
     "geometry": {
         "width": 7,
         "height": 7,
-        "layer": 2
+        "layer": "items"
     },
     "physicsGeometry": {
         "body": "static",

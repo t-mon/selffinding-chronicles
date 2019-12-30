@@ -31,6 +31,8 @@ public:
     void setWindowPosition(const QPoint &windowPosition);
 
     QString settingsPath() const;
+    QString saveGamePath() const;
+    QString mapEditorPath() const;
 
     // Game
     PlayerController::ControlMode controlMode() const;

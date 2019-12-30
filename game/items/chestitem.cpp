@@ -130,7 +130,7 @@ QDebug operator<<(QDebug debug, ChestItem *chestItem)
     debug.nospace() << ")" << endl;
 
     foreach (GameItem *item, chestItem->items()->gameItems()) {
-        debug.nospace() << "    --> " << item->thread() << ", " << item << endl;
+        debug.nospace() << "    --> " << item << endl;
     }
 
     return debug.space();

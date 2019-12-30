@@ -16,7 +16,6 @@ RESOURCES += gui/gui.qrc \
              gamedata/gamedata.qrc
 
 
-
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 QML_FILES = $$PWD/gui/*.qml
@@ -27,7 +26,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    game/box2dinclude.h \
     game/game.h \
     game/field.h \
     game/fields.h \
@@ -66,6 +64,9 @@ HEADERS += \
     game/pathsegment.h \
     game/pathcontroller.h \
     game/items/staticitem.h \
+    game/savegame.h \
+    game/savegameproxy.h \
+    game/savegames.h \
     game/teleportationhandler.h
 
 
@@ -107,6 +108,9 @@ SOURCES += game/main.cpp \
     game/pathsegment.cpp \
     game/pathcontroller.cpp \
     game/items/staticitem.cpp \
+    game/savegame.cpp \
+    game/savegameproxy.cpp \
+    game/savegames.cpp \
     game/teleportationhandler.cpp
 
 

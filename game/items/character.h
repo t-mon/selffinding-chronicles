@@ -24,6 +24,8 @@ class Character : public GameItem
     Q_PROPERTY(Heading heading READ heading NOTIFY headingChanged)
     Q_PROPERTY(QPointF movementVector READ movementVector WRITE setMovementVector NOTIFY movementVectorChanged)
     Q_PROPERTY(double angle READ angle WRITE setAngle NOTIFY angleChanged)
+    Q_PROPERTY(double speed READ speed NOTIFY speedChanged)
+    Q_PROPERTY(double currentVelocity READ currentVelocity NOTIFY currentVelocityChanged)
     Q_PROPERTY(double auraRange READ auraRange WRITE setAuraRange NOTIFY auraRangeChanged)
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
@@ -115,6 +117,9 @@ public:
     double speed() const;
     void setSpeed(double speed);
 
+    double currentVelocity() const;
+    void setCurrentVelocity(double currentVelocity);
+
     int auraRange() const;
     void setAuraRange(int auraRange);
 
@@ -187,6 +192,7 @@ private:
     int m_auraRange = 3;
     double m_angle = 0.0;
     double m_speed = 1.0;
+    double m_currentVelocity = 0.0;
     bool m_movable = true;
     bool m_moving = false;
     bool m_running = false;
@@ -228,6 +234,7 @@ signals:
     void angleChanged(const double &angle);
     void auraRangeChanged(const int &auraRange);
     void speedChanged(const double &speed);
+    void currentVelocityChanged(double currentVelocity);
     void movableChanged(bool movable);
     void movingChanged(bool moving);
     void runningChanged(bool running);

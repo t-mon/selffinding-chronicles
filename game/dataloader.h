@@ -5,6 +5,7 @@
 #include <QVariantMap>
 
 #include "path.h"
+#include "gameobjects.h"
 #include "items/staticitem.h"
 #include "items/treeitem.h"
 #include "items/gameitems.h"
@@ -57,19 +58,28 @@ public:
 
     static QList<GameObject *> loadGameObjects(const QVariantList &objectsList, QObject *parent = nullptr);
 
-
     static void fillGameItemData(GameItem *item, const QVariantMap &description);
     static void fillGameObjectData(GameObject *object, const QVariantMap &description);
     static void fillCharacterItemData(Character *character, const QVariantMap &characterMap);
     static void fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap);
 
     // Save
+    static QVariantMap gameObjectToVariantMap(GameObject *object);
+    static QVariantList gameObjectsToVariantList(GameObjects *objects);
+
     static QVariantMap gameItemToVariantMap(GameItem *item);
     static QVariantList gameItemsToVariantList(GameItems *items);
-    static QVariantMap enemieToVariantMap(Enemy *enemy);
+    static QVariantList inventoryToVariantList(GameItems *inventory);
 
-    static QVariantList charactersToVariantList(GameItems *characters);
+    static QVariantMap enemyToVariantMap(Enemy *enemy);
+    static QVariantList enemiesToVariantList(GameItems *enemies);
+
     static QVariantMap characterToVariantMap(Character *character);
+    static QVariantMap characterPropertiesToVariantMap(Character *character);
+    static QVariantList charactersToVariantList(GameItems *characters);
+
+    static QVariantMap chestToVariantMap(ChestItem *chestItem);
+    static QVariantList chestsToVariantList(GameItems *chests);
 
     static QVariantList pathsToVariantList(const QList<Path *> paths);
     static QVariantMap pathToVariantMap(Path *path);
@@ -78,7 +88,7 @@ public:
     static QVariantMap pathSegmentToVariantMap(const PathSegment &pathSegment);
 
     // Convert
-    static GameObject::Layer convertLayerValue(int layerValue);
+    static GameObject::Layer convertLayerValue(const QString &layerString);
     static GameObject::Shape convertShapeString(const QString &shapeString);
     static GameObject::BodyType convertBodyTypeString(const QString &bodyTypeString);
     static FirearmItem::FirearmType convertFirearmTypeString(const QString &firearmTypeString);

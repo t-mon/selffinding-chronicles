@@ -9,6 +9,6 @@ Label {
     //font.bold: true
     //font.weight: Font.ExtraBold
     font.family: app.fontFamily
-    font.pixelSize: app.mediumFont
+    font.pixelSize: app.smallFont
     z: GameObject.LayerOverlay
 }

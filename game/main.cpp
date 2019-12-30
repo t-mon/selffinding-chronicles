@@ -30,7 +30,7 @@
 #include "conversation/conversationitem.h"
 #include "conversation/conversationitems.h"
 
-#include "box2dinclude.h"
+#include "box2dplugin.h"
 
 #ifndef ANDROID
 static const char *const normal = "\033[0m";
@@ -115,13 +115,13 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("GameInput", false);
     s_loggingFilters.insert("Engine", true);
     s_loggingFilters.insert("EngineData", false);
-    s_loggingFilters.insert("Character", false);
+    s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("Settings", false);
     s_loggingFilters.insert("PlayerController", false);
     s_loggingFilters.insert("PathController", false);
-    s_loggingFilters.insert("Map", false);
+    s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("MapEditor", true);
-    s_loggingFilters.insert("DataManager", false);
+    s_loggingFilters.insert("DataManager", true);
     s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("GameObject", false);
     s_loggingFilters.insert("Collision", false);
@@ -144,6 +144,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the Engine object.");
     qmlRegisterUncreatableType<Engine>("Chronicles", 1, 0, "Engine", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<DataManager>("Chronicles", 1, 0, "DataManager", "Can't create this in QML. Get it from the Engine object.");
+    qmlRegisterUncreatableType<SaveGame>("Chronicles", 1, 0, "SaveGame", "Can't create this in QML. Get it from the DataManager object.");
+    qmlRegisterUncreatableType<SaveGames>("Chronicles", 1, 0, "SaveGames", "Can't create this in QML. Get it from the DataManager object.");
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the Engine object.");
     qmlRegisterUncreatableType<GameMapEditor>("Chronicles", 1, 0, "GameMapEditor", "Can't create this in QML. Get it from the Game instance.");
 

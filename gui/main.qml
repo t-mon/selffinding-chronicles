@@ -25,8 +25,9 @@ ApplicationWindow {
     property string gameName: qsTr("Self finding chronicles")
 
     // This is the main scaling property. Everything is scales with the gridSize
-    property real gridSize: Math.min(app.width / 30, app.height / 20)
+    property real gridSize: Math.min(app.width / 25, app.height / 18)
     property real menuItemSize: gridSize * 2.5
+    property real velocityScale: 10
 
     // General UI configurations
     property real margins: gridSize / 2
@@ -42,7 +43,7 @@ ApplicationWindow {
 
     property string fontFamily: gameFont.name
     property string fontMonoFamily: gameMonoFont.name
-    property bool antialiasing: false
+    property bool antialiasing: true
 
     property color backgroundColor: "#333333"
     property color healthColor: "#9c2f25"

@@ -45,7 +45,7 @@ void TeleportationHandler::setTeleportState(TeleportationHandler::TeleportState 
     case TeleportStateDisppear:
         break;
     case TeleportStateWorldDestruct: {
-        if (m_currentTeleportItem->targetMap() == Game::instance()->engine()->dataManager()->map()->fileName()) {
+        if (m_currentTeleportItem->targetMap() == Game::instance()->engine()->dataManager()->map()->resourceFileName()) {
             qCDebug(dcTeleportation()) << "Teleport within the current map";
             setTeleportState(TeleportStateLoading);
         } else {
@@ -55,7 +55,7 @@ void TeleportationHandler::setTeleportState(TeleportationHandler::TeleportState 
         break;
     }
     case TeleportStateLoading:
-        if (m_currentTeleportItem->targetMap() == Game::instance()->engine()->dataManager()->map()->fileName()) {
+        if (m_currentTeleportItem->targetMap() == Game::instance()->engine()->dataManager()->map()->resourceFileName()) {
             // Just update the player position, evaluate stuff and construct the world again
             Game::instance()->engine()->player()->setPosition(m_currentTeleportItem->targetPosition());
             setTeleportState(TeleportStateWorldConstruct);

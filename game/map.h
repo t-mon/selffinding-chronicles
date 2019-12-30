@@ -20,7 +20,7 @@ class Map : public QObject
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)
     Q_PROPERTY(QPointF playerStartPosition READ playerStartPosition WRITE setPlayerStartPosition NOTIFY playerStartPositionChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString fileName READ fileName NOTIFY fileNameChanged)
+    Q_PROPERTY(QString resourceFileName READ resourceFileName NOTIFY resourceFileNameChanged)
     Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
 
 public:
@@ -37,32 +37,41 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    QString fileName() const;
+    QString resourcePath() const;
+    void setResourcePath(const QString &resourcePath);
+
+    QString resourceFileName() const;
 
     QColor backgroundColor() const;
     void setBackgroundColor(const QColor &backgroundColor);
 
-    GameObjects *objects();
-    GameItems *items();
-    GameItems *enemies();
-    GameItems *characters();
+    Character *player() const;
+    void setPlayer(Character *player);
 
-    void loadMap(const QString &fileName);
+    GameObjects *objects() const;
+    GameItems *items() const;
+    GameItems *chests() const;
+    GameItems *enemies() const;
+    GameItems *characters() const;
+
+    void loadMap(const QString &resourcePath);
     void loadMapVariant(const QVariantMap &mapData);
 
     Q_INVOKABLE Field *getField(int x, int y) const;
     Q_INVOKABLE Field *getField(const QPointF position) const;
 
 private:
-    QString m_resourcePath;
     QSize m_size;
     QPointF m_playerStartPosition;
     QString m_name;
-    QString m_fileName;
+    QString m_resourcePath;
+    QString m_resourceFileName;
     QColor m_backgroundColor;
 
+    Character *m_player = nullptr;
     GameObjects *m_objects = nullptr;
     GameItems *m_items = nullptr;
+    GameItems *m_chests = nullptr;
     GameItems *m_enemies = nullptr;
     GameItems *m_characters = nullptr;
     QList<Fields *> m_mapData;
@@ -73,7 +82,7 @@ signals:
     void sizeChanged(const QSize &size);
     void playerStartPositionChanged(const QPointF &playerStartPosition);
     void nameChanged(const QString &name);
-    void fileNameChanged(const QString &fileName);
+    void resourceFileNameChanged(const QString &resourceFileName);
     void backgroundColorChanged(const QColor &backgroundColor);
 
 public slots:

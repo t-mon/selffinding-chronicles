@@ -68,5 +68,6 @@
         <file>shadereffects/vertexshaders/grayscale.frag</file>
         <file>shadereffects/fragmentshaders/magic.frag</file>
         <file>gameitems/GameObject.qml</file>
+        <file>SaveGamesPage.qml</file>
     </qresource>
 </RCC>
