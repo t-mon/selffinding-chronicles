@@ -204,6 +204,7 @@ void DataManager::loadGameTask()
     QPointF position = QPointF(playerMap.value("x").toDouble(), playerMap.value("y").toDouble());
     m_player = DataLoader::createCharacterObject(playerMap.value("data").toString(), playerMap, position, m_map);
     m_player->setIsPlayer(true);
+    m_player->setName(Game::instance()->settings()->playerName());
 
     // Add player to characters
     m_map->setPlayer(m_player);

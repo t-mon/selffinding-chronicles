@@ -69,5 +69,6 @@
         <file>shadereffects/fragmentshaders/magic.frag</file>
         <file>gameitems/GameObject.qml</file>
         <file>SaveGamesPage.qml</file>
+        <file>mapeditor/MapEditorToolButton.qml</file>
     </qresource>
 </RCC>

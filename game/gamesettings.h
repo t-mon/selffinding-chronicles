@@ -17,6 +17,10 @@ class GameSettings : public QObject
 
     Q_PROPERTY(QString playerName READ playerName WRITE setPlayerName NOTIFY playerNameChanged)
 
+    Q_PROPERTY(bool gridSnapping READ gridSnapping WRITE setGridSnipping NOTIFY gridSnappingChanged)
+    Q_PROPERTY(bool itemDebugEnabled READ itemDebugEnabled WRITE setItemDebugEnabled NOTIFY itemDebugEnabledChanged)
+    Q_PROPERTY(bool physicsDebugEnabled READ physicsDebugEnabled WRITE setPhysicsDebugEnabled NOTIFY physicsDebugEnabledChanged)
+
 public:
     explicit GameSettings(QObject *parent = nullptr);
 
@@ -42,6 +46,16 @@ public:
     QString playerName() const;
     void setPlayerName(const QString &playerName);
 
+    // Map Editor
+    bool gridSnapping() const;
+    void setGridSnipping(bool gridSnapping);
+
+    bool itemDebugEnabled() const;
+    void setItemDebugEnabled(bool itemDebugEnabled);
+
+    bool physicsDebugEnabled() const;
+    void setPhysicsDebugEnabled(bool physicsDebugEnabled);
+
 private:
     QSettings *m_settings = nullptr;
 
@@ -55,6 +69,11 @@ private:
 
     // Player
     QString m_playerName;
+
+    // Map Editor
+    bool m_gridSnapping = false;
+    bool m_itemDebugEnabled = false;
+    bool m_physicsDebugEnabled = false;
 
     // Init
     void loadSettings();
@@ -70,6 +89,11 @@ signals:
 
     // Player
     void playerNameChanged(const QString &playerName);
+
+    // Map Editor
+    void gridSnappingChanged(bool gridSnapping);
+    void itemDebugEnabledChanged(bool itemDebugEnabled);
+    void physicsDebugEnabledChanged(bool physicsDebugEnabled);
 
 };
 

@@ -6,10 +6,18 @@
 GameMapEditor::GameMapEditor(QObject *parent) :
     QObject(parent)
 {
+    qRegisterMetaType<GameMapEditor::Tool>("Tool");
+
     m_availableItems = new GameItems(this);
+    m_availableObjects = new GameObjects(this);
+    m_availableCharacters = new GameItems(this);
+    m_availableEnemies = new GameItems(this);
 
     m_dataManager = new DataManager(this);
     connect(m_dataManager, &DataManager::stateChanged, this, &GameMapEditor::onDataManagerStateChanged);
+
+    m_activeObjects = new GameObjectsProxy(this);
+    m_activeObjects->setGameObjects(m_dataManager->objects());
 
     m_activeItems = new GameItemsProxy(this);
     m_activeItems->setGameItems(m_dataManager->items());
@@ -24,11 +32,30 @@ GameMapEditor::GameMapEditor(QObject *parent) :
 //    connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
 //    connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
 
+//    loadAvailableObjects();
+//    loadAvailableGameItems();
+
+}
+
+
+GameObjects *GameMapEditor::availableObjects() const
+{
+    return m_availableObjects;
 }
 
 GameItems *GameMapEditor::availableItems() const
 {
     return m_availableItems;
+}
+
+GameItems *GameMapEditor::availableCharacters() const
+{
+    return m_availableCharacters;
+}
+
+GameItems *GameMapEditor::availableEnemies() const
+{
+    return m_availableEnemies;
 }
 
 void GameMapEditor::loadAvailableGameItems()
@@ -83,7 +110,7 @@ void GameMapEditor::loadAvailableCharacters()
         QDir typeDirectory(gameDataPath + gameDataEntry);
         foreach (const QString &entry, typeDirectory.entryList()) {
             qCDebug(dcMapEditor()) << "          --> entry" << typeDirectory.path() + "/" + entry;
-            m_availableItems->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry, this));
+            m_availableCharacters->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry, this));
         }
     }
 }
@@ -102,9 +129,24 @@ void GameMapEditor::loadAvailableEnemies()
         QDir typeDirectory(gameDataPath + gameDataEntry);
         foreach (const QString &entry, typeDirectory.entryList()) {
             qCDebug(dcMapEditor()) << "          --> entry" << typeDirectory.path() + "/" + entry;
-            m_availableItems->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry, this));
+            m_availableEnemies->addGameItem(DataLoader::loadGameItemFromResourcePath(typeDirectory.path() + "/" + entry, this));
         }
     }
+}
+
+GameMapEditor::Tool GameMapEditor::tool() const
+{
+    return m_tool;
+}
+
+void GameMapEditor::setTool(GameMapEditor::Tool tool)
+{
+    if (m_tool == tool)
+        return;
+
+    qCDebug(dcMapEditor()) << "Tool changed" << tool;
+    m_tool = tool;
+    emit toolChanged(m_tool);
 }
 
 GameItem *GameMapEditor::selectedGameItem() const
@@ -158,7 +200,6 @@ void GameMapEditor::createNewMap()
 
     m_dataManager->resetData();
     m_map = new Map(m_dataManager->objects(), m_dataManager->items(), m_dataManager->enemies(), m_dataManager->characters());
-
 }
 
 void GameMapEditor::placeItemOnMap(const QString &resourcePath, const QPointF &position)

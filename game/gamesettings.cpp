@@ -128,6 +128,64 @@ void GameSettings::setPlayerName(const QString &playerName)
     m_settings->endGroup();
 }
 
+bool GameSettings::gridSnapping() const
+{
+    return m_gridSnapping;
+}
+
+void GameSettings::setGridSnipping(bool gridSnapping)
+{
+    if (m_gridSnapping == gridSnapping)
+        return;
+
+    qCDebug(dcSettings()) << "Map editor grid snipping changed to" << gridSnapping;
+    m_gridSnapping = gridSnapping;
+    emit gridSnappingChanged(m_gridSnapping);
+
+    m_settings->beginGroup("MapEditor");
+    m_settings->setValue("gridSnapping", m_gridSnapping);
+    m_settings->endGroup();
+
+}
+
+bool GameSettings::itemDebugEnabled() const
+{
+    return m_itemDebugEnabled;
+}
+
+void GameSettings::setItemDebugEnabled(bool itemDebugEnabled)
+{
+    if (m_itemDebugEnabled == itemDebugEnabled)
+        return;
+
+    qCDebug(dcSettings()) << "Map editor item debug changed to" << itemDebugEnabled;
+    m_itemDebugEnabled = itemDebugEnabled;
+    emit itemDebugEnabledChanged(m_itemDebugEnabled);
+
+    m_settings->beginGroup("MapEditor");
+    m_settings->setValue("itemDebugEnabled", m_itemDebugEnabled);
+    m_settings->endGroup();
+}
+
+bool GameSettings::physicsDebugEnabled() const
+{
+    return m_physicsDebugEnabled;
+}
+
+void GameSettings::setPhysicsDebugEnabled(bool physicsDebugEnabled)
+{
+    if (m_physicsDebugEnabled == physicsDebugEnabled)
+        return;
+
+    qCDebug(dcSettings()) << "Map editor physics debug changed to" << physicsDebugEnabled;
+    m_physicsDebugEnabled = physicsDebugEnabled;
+    emit physicsDebugEnabledChanged(m_physicsDebugEnabled);
+
+    m_settings->beginGroup("MapEditor");
+    m_settings->setValue("physicsDebugEnabled", m_physicsDebugEnabled);
+    m_settings->endGroup();
+}
+
 void GameSettings::loadSettings()
 {
     qCDebug(dcSettings()) << "Loading game settings from" << m_settings->fileName();
@@ -160,10 +218,19 @@ void GameSettings::loadSettings()
     m_settings->endGroup(); // Game
 
     m_settings->beginGroup("Player");
-
     //: The default value for the player name
     m_playerName = m_settings->value("playerName", tr("Player")).toString();
     emit playerNameChanged(m_playerName);
-
     m_settings->endGroup(); // Player
+
+    m_settings->beginGroup("MapEditor");
+    //: The default value for the player name
+    m_gridSnapping = m_settings->value("gridSnapping", true).toBool();
+    emit gridSnappingChanged(m_gridSnapping);
+    m_itemDebugEnabled = m_settings->value("itemDebugEnabled", false).toBool();
+    emit itemDebugEnabledChanged(m_itemDebugEnabled);
+    m_physicsDebugEnabled = m_settings->value("physicsDebugEnabled", false).toBool();
+    emit physicsDebugEnabledChanged(m_physicsDebugEnabled);
+    m_settings->endGroup(); // MapEditor
+
 }
