@@ -108,11 +108,11 @@ void PlayerController::keyPressed(const Qt::Key &key)
         emit beam();
         break;
     case Qt::Key_1:
-        qCDebug(dcPlayerController()) << "Weapon clicked";
+        qCDebug(dcPlayerController()) << "Weapon button pressed";
         emit weaponPressed();
         break;
     case Qt::Key_2:
-        qCDebug(dcPlayerController()) << "Firearm clicked";
+        qCDebug(dcPlayerController()) << "Firearm button pressed";
         emit firearmPressed();
         break;
     default:

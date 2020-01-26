@@ -275,7 +275,7 @@ QList<GameItem *> DataLoader::loadEnemyItems(const QVariantList &enemyItemsList,
         QVariantMap itemMap = itemVariant.toMap();
         GameItem *gameItem = loadGameItemFromResourcePath(itemMap.value("data").toString(), parent);
         gameItem->setPosition(QPointF(itemMap.value("x", -1).toDouble(), itemMap.value("y", -1).toDouble()));
-            if (itemMap.contains("character")) {
+        if (itemMap.contains("character")) {
             QVariantMap characterMap = itemMap.value("character").toMap();
             fillCharacterItemData(qobject_cast<Character *>(gameItem), characterMap);
         }
@@ -441,12 +441,24 @@ void DataLoader::fillCharacterItemData(Character *character, const QVariantMap &
     }
 
     // Load the paths
-    QList<Path *> paths;
-    foreach (const QVariant &pathVariant, characterMap.value("paths").toList()) {
-        paths.append(createPathObject(pathVariant.toMap(), character));
-        qCDebug(dcDataManager()) << paths.last();
+    QVariantList pathsVariantList = characterMap.value("paths").toList();
+    if (!pathsVariantList.isEmpty()) {
+        QList<Path *> paths;
+        foreach (const QVariant &pathVariant, pathsVariantList) {
+            paths.append(createPathObject(pathVariant.toMap(), character));
+            qCDebug(dcDataManager()) << paths.last();
+        }
+        character->setPaths(paths);
+
+        // Load current path information
+//        QVariantMap currentPathMap = characterMap.value("currentPath").toMap();
+//        QPointF startPosition = QPointF(currentPathMap.value("startPositionX").toDouble(), currentPathMap.value("startPositionY").toDouble());
+//        character->pathController()->setPath()
+
+//        currentPathMap.insert("currentPath", pathController->path()->id());
+
+//        currentPathMap.insert("currentPathIndex", pathController->path()->currentIndex());
     }
-    character->setPaths(paths);
 }
 
 void DataLoader::fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap)
@@ -540,7 +552,6 @@ QVariantMap DataLoader::characterToVariantMap(Character *character)
     characterMap.insert("y", character->position().y());
     characterMap.insert("data", character->resourcePath());
     characterMap.insert("character", characterPropertiesToVariantMap(character));
-
     return characterMap;
 }
 
@@ -559,7 +570,10 @@ QVariantMap DataLoader::characterPropertiesToVariantMap(Character *character)
     charachterPropertyMap.insert("weapon", character->weapon() ? character->weapon()->resourcePath() : QString());
     charachterPropertyMap.insert("firearm", character->firearm() ? character->firearm()->resourcePath() : QString());
     charachterPropertyMap.insert("inventory", inventoryToVariantList(character->inventory()));
-    charachterPropertyMap.insert("paths", pathsToVariantList(character->paths()));
+    if (!character->paths().isEmpty()) {
+        charachterPropertyMap.insert("currentPath", currentPathToVariantMap(character->pathController()));
+        charachterPropertyMap.insert("paths", pathsToVariantList(character->paths()));
+    }
     return charachterPropertyMap;
 }
 
@@ -602,6 +616,16 @@ QVariantList DataLoader::chestsToVariantList(GameItems *chests)
         chestsList.append(chestToVariantMap(qobject_cast<ChestItem *>(chestItem)));
     }
     return chestsList;
+}
+
+QVariantMap DataLoader::currentPathToVariantMap(PathController *pathController)
+{
+    QVariantMap currentPathMap;
+    currentPathMap.insert("currentPath", pathController->path()->id());
+    currentPathMap.insert("startPositionX", pathController->startPosition().x());
+    currentPathMap.insert("startPositionY", pathController->startPosition().y());
+    currentPathMap.insert("currentPathIndex", pathController->path()->currentIndex());
+    return currentPathMap;
 }
 
 QVariantList DataLoader::pathsToVariantList(const QList<Path *> paths)

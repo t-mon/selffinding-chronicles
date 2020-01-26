@@ -17,6 +17,8 @@ class GameMapEditor : public QObject
     Q_PROPERTY(GameItems *availableItems READ availableItems CONSTANT)
     Q_PROPERTY(GameItems *availableCharacters READ availableCharacters CONSTANT)
     Q_PROPERTY(GameItems *availableEnemies READ availableEnemies CONSTANT)
+
+    Q_PROPERTY(GameObject *selectedGameObject READ selectedGameObject NOTIFY selectedGameObjectChanged)
     Q_PROPERTY(GameItem *selectedGameItem READ selectedGameItem NOTIFY selectedGameItemChanged)
 
     Q_PROPERTY(Map *map READ map NOTIFY mapChanged)
@@ -52,6 +54,9 @@ public:
     GameItem *selectedGameItem() const;
     Q_INVOKABLE void createSelectedGameItem(const QString &resourcePath);
 
+    GameObject *selectedGameObject() const;
+    void createSelectedGameObject(const QString &resourcePath);
+
     DataManager *dataManager() const;
     GameItemsProxy *activeItems() const;
     GameItemsProxy *activeCharacters() const;
@@ -61,6 +66,8 @@ public:
     Q_INVOKABLE void createNewMap();
     Q_INVOKABLE void placeItemOnMap(const QString &resourcePath, const QPointF &position);
     Q_INVOKABLE void saveMap();
+    Q_INVOKABLE void deleteAll();
+
 
 private:
     Tool m_tool = ToolSelect;
@@ -80,6 +87,7 @@ private:
 
     Map *m_map = nullptr;
     GameItem *m_selectedGameItem = nullptr;
+    GameObject *m_selectedGameObject = nullptr;
 
 signals:
     void toolChanged(GameMapEditor::Tool tool);
@@ -87,6 +95,7 @@ signals:
     void availableObjectsChanged(GameObjects *gameObjects);
     void mapChanged(Map *map);
     void selectedGameItemChanged(GameItem *selectedGameItem);
+    void selectedGameObjectChanged(GameObject *selectedGameObject);
 
 private slots:
     void onDataManagerStateChanged(DataManager::State state);

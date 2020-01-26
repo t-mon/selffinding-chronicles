@@ -164,6 +164,21 @@ void GameMapEditor::createSelectedGameItem(const QString &resourcePath)
     emit selectedGameItemChanged(m_selectedGameItem);
 }
 
+GameObject *GameMapEditor::selectedGameObject() const
+{
+    return m_selectedGameObject;
+}
+
+void GameMapEditor::createSelectedGameObject(const QString &resourcePath)
+{
+    if (m_selectedGameObject)
+        m_selectedGameObject->deleteLater();
+
+    qCDebug(dcMapEditor()) << "Create selected object" << resourcePath;
+    m_selectedGameObject = DataLoader::loadGameObjectFromResourcePath(resourcePath, this);
+    emit selectedGameObjectChanged(m_selectedGameObject);
+}
+
 DataManager *GameMapEditor::dataManager() const
 {
     return m_dataManager;
@@ -213,6 +228,12 @@ void GameMapEditor::saveMap()
     QString saveGameName(Game::instance()->settings()->mapEditorPath() + QDir::separator() + m_map->name());
     qCDebug(dcMapEditor()) << "Save map to" << saveGameName;
     m_dataManager->saveMap(m_map, saveGameName);
+}
+
+void GameMapEditor::deleteAll()
+{
+    qCDebug(dcMapEditor()) << "Remove all items and objects";
+    m_dataManager->resetData();
 }
 
 void GameMapEditor::onDataManagerStateChanged(DataManager::State state)

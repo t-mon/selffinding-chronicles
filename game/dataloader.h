@@ -81,6 +81,8 @@ public:
     static QVariantMap chestToVariantMap(ChestItem *chestItem);
     static QVariantList chestsToVariantList(GameItems *chests);
 
+    static QVariantMap currentPathToVariantMap(PathController *pathController);
+
     static QVariantList pathsToVariantList(const QList<Path *> paths);
     static QVariantMap pathToVariantMap(Path *path);
 

@@ -716,7 +716,7 @@ PhysicsItem {
                 },
                 State {
                     name: "holdingWeapon"
-                    when: character && character.armed === Character.ArmedWeapon
+                    when: character && character.weapon && character.armed === Character.ArmedWeapon
                     PropertyChanges { target: weaponItem; visible: true }
                     PropertyChanges { target: packedWeaponItem; visible: false }
                     StateChangeScript {
@@ -775,6 +775,8 @@ PhysicsItem {
                 }
             }
 
+            onStateChanged: console.log("Firearm weapon state changed", state)
+
             states: [
                 State {
                     name: "noFirearm"
@@ -789,7 +791,7 @@ PhysicsItem {
                 },
                 State {
                     name: "holdingFirearm"
-                    when: character && character.armed === Character.ArmedFirearm
+                    when: character && character.firearm && character.armed === Character.ArmedFirearm
                     PropertyChanges { target: firearmItem; visible: true }
                     PropertyChanges { target: packedFirearmItem; visible: false }
                     StateChangeScript {

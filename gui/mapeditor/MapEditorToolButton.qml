@@ -9,6 +9,8 @@ Item {
     property bool enabled: false
     property bool selected: false
     property color baseColor: "gray"
+
+    property string title
     property string iconSource
 
     signal clicked()
@@ -42,13 +44,24 @@ Item {
     }
 
     MouseArea {
+        id: toolMouseArea
         anchors.fill: parent
+        hoverEnabled: true
         onClicked: {
             if (root.toggleButton) {
                 root.enabled = !root.enabled
             } else {
                 root.clicked()
             }
+        }
+
+
+        ToolTip {
+            parent: toolMouseArea.handle
+            visible: toolMouseArea.containsMouse
+            text: root.title
+            timeout: 2000
+            delay: 250
         }
     }
 }

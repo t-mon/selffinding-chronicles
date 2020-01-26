@@ -14,6 +14,8 @@ public:
     Path *path() const;
     void setPath(Path *path, const QPointF &startPosition);
 
+    QPointF startPosition() const;
+
     QPointF movementVector() const;
     double angle() const;
 

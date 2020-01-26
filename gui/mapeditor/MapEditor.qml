@@ -14,7 +14,7 @@ import "../gameoverlays"
 import "../physics"
 
 GamePage {
-    id: gamePage
+    id: root
 
     title: qsTr("Map editor")
 
@@ -31,20 +31,54 @@ GamePage {
                 imageSource: dataDirectory + "/icons/back.svg"
                 onClicked: pageStack.pop()
             }
+
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+            }
+
+            HeaderButton {
+                enabled: !workingOverlay.visible
+                imageSource: dataDirectory + "/icons/settings.svg"
+                onClicked: console.log("Open map settings")
+            }
+
         }
     }
 
     Component.onCompleted: {
-        console.log("Game scene size:", gamePage.width, "/", gamePage.height, "grid size:", app.gridSize)
+        console.log("Game scene size:", root.width, "/", root.height, "grid size:", app.gridSize)
         forceActiveFocus()
         Game.mapEditor.loadAvailableGameItems()
         Game.mapEditor.loadAvailableObjects()
         Game.mapEditor.loadAvailableCharacters()
         Game.mapEditor.loadAvailableEnemies()
-        Game.mapEditor.onEditorViewSizeChanged(Qt.size(gamePage.width, gamePage.height))
+        Game.mapEditor.onEditorViewSizeChanged(Qt.size(root.width, root.height))
     }
 
+    property string currentResourcePath: ""
+
     //property var currentItem: Game.mapEditor.availableItems.get(itemsListView.currentIndex)
+
+
+    // Selection mode
+    property var selectedItem: null
+    onSelectedItemChanged: {
+        if (selectedItem) {
+            //console.log("--> Selected item", selectedItem.name)
+        }
+    }
+
+    function selectItem(item) {
+        if (item && selectedItem !== item) {
+            console.log("--> Selected item", item.name)
+            selectedItem = item
+        } else if (selectedItem && !item) {
+            console.log("--> No item selected")
+            selectedItem = null
+        }
+    }
 
     // Pysical world
     World {
@@ -52,6 +86,23 @@ GamePage {
         gravity: Qt.point(0, 0)
         //onStepped: Game.onTick()
         running: true
+    }
+
+    Connections {
+        target: Game.mapEditor
+        onToolChanged: {
+            switch (tool) {
+            case GameMapEditor.ToolSelect:
+                selectedItem = null
+                break;
+            case GameMapEditor.ToolPlace:
+                selectedItem = null
+                break;
+            case GameMapEditor.ToolMove:
+                selectedItem = null
+                break;
+            }
+        }
     }
 
     Item {
@@ -79,8 +130,18 @@ GamePage {
                         TabBar {
                             id: optionsTabBar
                             Layout.fillWidth: true
-                            TabButton { text: qsTr("Objects") }
-                            TabButton { text: qsTr("Items") }
+                            TabButton {
+                                text: qsTr("Items")
+                            }
+
+                            TabButton {
+                                text: qsTr("Objects")
+                                onClicked: {
+
+                                }
+
+                            }
+
                             TabButton { text: qsTr("Characters") }
                             TabButton { text: qsTr("Enemies") }
                         }
@@ -91,36 +152,6 @@ GamePage {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             currentIndex: optionsTabBar.currentIndex
-
-                            Item {
-                                id: objectsItems
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                ListView {
-                                    id: objectsListView
-                                    anchors.fill: parent
-                                    clip: true
-                                    ScrollBar.vertical: ScrollBar { }
-
-                                    model: Game.mapEditor.availableObjects
-                                    delegate: ItemDelegate {
-                                        width: parent.width
-                                        highlighted: ListView.isCurrentItem
-                                        onClicked: itemsListView.currentIndex = index
-
-                                        Label {
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: app.margins
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            text: model.name
-                                            color: itemsListView.currentIndex === index ? "black" : "white"
-                                        }
-                                    }
-
-                                    //onCurrentIndexChanged: Game.mapEditor.createSelectedGameItem(Game.mapEditor.availableItems.get(itemsListView.currentIndex).resourcePath)
-                                }
-                            }
 
                             Item {
                                 id: availableItems
@@ -165,6 +196,49 @@ GamePage {
                             }
 
                             Item {
+                                id: objectsItems
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                ListView {
+                                    id: objectsListView
+                                    anchors.fill: parent
+                                    clip: true
+                                    ScrollBar.vertical: ScrollBar { }
+
+                                    model: Game.mapEditor.availableObjects
+                                    delegate: ItemDelegate {
+                                        width: parent.width
+                                        highlighted: ListView.isCurrentItem
+                                        onClicked: objectsListView.currentIndex = index
+
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            anchors.leftMargin: app.margins
+                                            anchors.verticalCenter: parent.verticalCenter
+
+                                            Image {
+                                                Layout.preferredWidth: parent.height * 0.8
+                                                Layout.preferredHeight: parent.height * 0.8
+                                                Layout.alignment: Qt.AlignVCenter
+                                                source: dataDirectory + model.imageName
+                                            }
+
+                                            Label {
+                                                Layout.fillWidth: true
+                                                Layout.alignment: Qt.AlignVCenter
+                                                text: model.name
+                                                color: objectsListView.currentIndex === index ? "black" : "white"
+                                            }
+                                        }
+                                    }
+
+                                    //onCurrentIndexChanged: Game.mapEditor.createSelectedGameObject(Game.mapEditor.availableItems.get(itemsListView.currentIndex).resourcePath)
+                                }
+                            }
+
+
+                            Item {
                                 id: availableCharacters
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
@@ -205,76 +279,7 @@ GamePage {
                                     onCurrentIndexChanged: Game.mapEditor.createSelectedGameItem(Game.mapEditor.availableCharacters.get(charactersListView.currentIndex).resourcePath)
                                 }
                             }
-
-                            Item {
-                                id: settings
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                property bool itemDebug: false
-                                property bool physicsDebug: false
-                                property bool gridSnapping: false
-
-                                ColumnLayout {
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    anchors.top: parent.top
-
-                                    RowLayout {
-                                        Layout.fillWidth: true
-                                        Layout.leftMargin: app.margins
-
-                                        Label {
-                                            Layout.fillWidth: true
-                                            Layout.alignment: Qt.AlignVCenter
-                                            text: qsTr("Physics debug")
-                                            color: "white"
-                                        }
-
-                                        CheckBox {
-                                            onCheckedChanged: settings.physicsDebug = checked
-                                            Component.onCompleted: checked = settings.physicsDebug
-                                        }
-                                    }
-
-                                    Button {
-                                        id: saveButton
-                                        Layout.fillWidth: true
-                                        Layout.leftMargin: app.margins
-
-                                        text: qsTr("Save map")
-                                        onClicked: {
-                                            Game.mapEditor.saveMap()
-                                        }
-                                    }
-                                }
-                            }
                         }
-
-                        //                    Rectangle {
-                        //                        id: itemDescription
-                        //                        Layout.fillWidth: true
-                        //                        Layout.preferredHeight: gamePage.height * 0.2
-                        //                        color: "darkgray"
-
-                        //                        RowLayout {
-                        //                            Layout.fillWidth: true
-
-                        //                            ContentItemImage {
-                        //                                id: gameItemImage
-                        //                                Layout.preferredWidth: 80
-                        //                                Layout.preferredHeight: 80
-                        //                                imageSource: currentItem ? dataDirectory + currentItem.imageName : ""
-                        //                            }
-
-                        //                            Label {
-                        //                                Layout.fillWidth: true
-                        //                                Layout.alignment: Qt.AlignVCenter
-                        //                                text: (currentItem ? currentItem.name : "")
-                        //                                color: "white"
-                        //                            }
-                        //                        }
-                        //                    }
                     }
                 }
 
@@ -284,6 +289,27 @@ GamePage {
                     id: mainItem
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
+                    function selectItemUnderMouse() {
+                        var positionX = worldFlickable.contentX + editorMouseArea.mouseX
+                        var positionY = worldFlickable.contentY + editorMouseArea.mouseY
+
+                        var currentSelectedItem = null
+
+                        for (var i = 0; i < Game.mapEditor.activeItems.count; i++) {
+                            var item = Game.mapEditor.activeItems.get(i)
+                            var itemRectangle = Qt.rect(item.position.x * app.gridSize, item.position.y * app.gridSize, item.size.width * app.gridSize, item.size.height * app.gridSize)
+                            //console.log("Checking position", Qt.point(positionX, positionY), item.name, itemRectangle)
+                            if (positionX >= itemRectangle.x && positionX <= itemRectangle.x + itemRectangle.width &&
+                                    positionY >= itemRectangle.y && positionY < itemRectangle.y + itemRectangle.height) {
+
+                                //console.log("Intercepts item", item.name, itemRectangle)
+                                currentSelectedItem = item
+                            }
+                        }
+
+                        selectItem(currentSelectedItem)
+                    }
 
                     function updatePositions() {
                         // TODO: update position for view
@@ -310,8 +336,8 @@ GamePage {
                         contentHeight: worldItem.height
                         clip: true
 
-                        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOn }
-                        ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AlwaysOn }
+                        ScrollBar.vertical: ScrollBar { active: true; interactive: true; policy: ScrollBar.AlwaysOn }
+                        ScrollBar.horizontal: ScrollBar { active: true; interactive: true; policy: ScrollBar.AlwaysOn }
 
                         onContentXChanged: mainItem.updatePositions()
                         onContentYChanged: mainItem.updatePositions()
@@ -331,17 +357,33 @@ GamePage {
                                 worldObject: worldItem
                             }
 
+                            function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
+                                if (layer === GameObject.LayerBackground) {
+                                    return -2
+                                } else if (layer === GameObject.LayerBase) {
+                                    return -1
+                                } else if (layer === GameObject.LayerItem) {
+                                    return itemY + itemHeight
+                                }  else if (layer === GameObject.LayerOverlay) {
+                                    return worldHeight + itemHeight + 1
+                                } else {
+                                    return itemY + itemHeight
+                                }
+                            }
+
                             Repeater {
-                                id: characersRepeater
-                                model: Game.mapEditor.activeCharacters
-                                delegate: CharacterItem {
-                                    character: Game.mapEditor.activeCharacters.get(model.index)
-                                    itemDebugEnabled: Game.settings.itemDebugEnabled
+                                id: gameObjectRepeater
+                                model: Game.mapEditor.activeObjects
+                                delegate: GameObject {
+                                    id: gameObjet
+                                    gameObject: Game.mapEditor.activeObjects.get(model.index)
+                                    itemDebugEnabled: debugControls.itemDebugEnabled
+                                    worldHeight: worldItem.height
                                     width: model.size.width * app.gridSize
                                     height: model.size.height * app.gridSize
                                     x: model.position.x * app.gridSize
                                     y: model.position.y * app.gridSize
-                                    z: model.layer
+                                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                                 }
                             }
 
@@ -355,7 +397,21 @@ GamePage {
                                     height: model.size.height * app.gridSize
                                     x: model.position.x * app.gridSize
                                     y: model.position.y * app.gridSize
-                                    z: model.layer
+                                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
+                                }
+                            }
+
+                            Repeater {
+                                id: characersRepeater
+                                model: Game.mapEditor.activeCharacters
+                                delegate: CharacterItem {
+                                    character: Game.mapEditor.activeCharacters.get(model.index)
+                                    itemDebugEnabled: Game.settings.itemDebugEnabled
+                                    width: model.size.width * app.gridSize
+                                    height: model.size.height * app.gridSize
+                                    x: model.position.x * app.gridSize
+                                    y: model.position.y * app.gridSize
+                                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                                 }
                             }
 
@@ -369,7 +425,7 @@ GamePage {
                                     height: model.size.height * app.gridSize
                                     x: model.position.x * app.gridSize
                                     y: model.position.y * app.gridSize
-                                    z: model.layer
+                                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                                 }
                             }
 
@@ -377,14 +433,15 @@ GamePage {
                                 id: temporaryItem
                                 gameItem: Game.mapEditor.selectedGameItem
                                 itemDebugEnabled: Game.settings.itemDebugEnabled
-                                visible: editorMouseArea.containsMouse
+                                visible: editorMouseArea.containsMouse &&
+                                         Game.mapEditor.tool == GameMapEditor.ToolPlace
+
                                 width: gameItem ? gameItem.size.width * app.gridSize : 0
                                 height: gameItem ? gameItem.size.height * app.gridSize : 0
-                                z: gameItem ? gameItem.layer : 0
+                                z: temporaryItem.y + temporaryItem.height
                             }
                         }
                     }
-
 
                     DebugDraw {
                         id: debugDraw
@@ -396,24 +453,58 @@ GamePage {
                     MouseArea {
                         id: editorMouseArea
                         anchors.fill: parent
+                        enabled: Game.mapEditor.tool !== GameMapEditor.ToolMove
                         hoverEnabled: true
                         //preventStealing: true
 
                         onMouseXChanged: {
                             //console.log("--> mouse position changed", mouseX, mouseY)
-                            mainItem.updatePositions()
+
+                            switch (Game.mapEditor.tool) {
+                            case GameMapEditor.ToolPlace:
+                                mainItem.updatePositions()
+                                break;
+                            case GameMapEditor.ToolSelect:
+                                mainItem.selectItemUnderMouse()
+                                break;
+                            case GameMapEditor.ToolMove:
+
+                                break;
+                            }
+
                         }
 
                         onMouseYChanged: {
                             //console.log("--> mouse position changed", mouseX, mouseY)
-                            mainItem.updatePositions()
+
+                            switch (Game.mapEditor.tool) {
+                            case GameMapEditor.ToolPlace:
+                                mainItem.updatePositions()
+                                break;
+                            case GameMapEditor.ToolSelect:
+                                mainItem.selectItemUnderMouse()
+                                break;
+                            case GameMapEditor.ToolMove:
+
+                                break;
+                            }
+
                         }
 
                         onClicked: {
-                            if (temporaryItem) {
-                                var position = Qt.point(temporaryItem.x / app.gridSize, temporaryItem.y / app.gridSize)
+                            switch (Game.mapEditor.tool) {
+                            case GameMapEditor.ToolPlace:
+                                if (temporaryItem) {
+                                    var position = Qt.point(temporaryItem.x / app.gridSize, temporaryItem.y / app.gridSize)
+                                    Game.mapEditor.placeItemOnMap(temporaryItem.gameItem.resourcePath, position)
+                                }
+                                break;
+                            case GameMapEditor.ToolSelect:
 
-                                Game.mapEditor.placeItemOnMap(temporaryItem.gameItem.resourcePath, position)
+                                break;
+                            case GameMapEditor.ToolMove:
+
+                                break;
                             }
                         }
                     }
@@ -432,11 +523,11 @@ GamePage {
                     anchors.leftMargin: app.margins / 2
                     anchors.rightMargin: app.margins / 2
 
-
                     MapEditorToolButton {
                         id: selectToolButton
                         width: 40
                         height: width
+                        title: qsTr("Select tool")
                         selected: Game.mapEditor.tool === GameMapEditor.ToolSelect
                         iconSource: dataDirectory + "/icons/select.svg"
                         onClicked: Game.mapEditor.tool = GameMapEditor.ToolSelect
@@ -446,6 +537,7 @@ GamePage {
                         id: placeToolButton
                         width: 40
                         height: width
+                        title: qsTr("Place tool")
                         selected: Game.mapEditor.tool === GameMapEditor.ToolPlace
                         iconSource: dataDirectory + "/icons/save-to.svg"
                         onClicked: Game.mapEditor.tool = GameMapEditor.ToolPlace
@@ -455,6 +547,7 @@ GamePage {
                         id: moveToolButton
                         width: 40
                         height: width
+                        title: qsTr("Move tool")
                         selected: Game.mapEditor.tool === GameMapEditor.ToolMove
                         iconSource: dataDirectory + "/icons/view-fullscreen.svg"
                         onClicked: Game.mapEditor.tool = GameMapEditor.ToolMove
@@ -479,6 +572,7 @@ GamePage {
                         height: width
                         toggleButton: true
                         baseColor: "green"
+                        title: qsTr("Item debug")
                         iconSource: dataDirectory + "/icons/browser-tabs.svg"
                         onEnabledChanged: {
                             console.log("Item debug enabled changed", enabled)
@@ -488,13 +582,13 @@ GamePage {
                         Component.onCompleted: itemDebugToolButton.enabled = Game.settings.itemDebugEnabled
                     }
 
-
                     MapEditorToolButton {
                         id: physicsDebugToolButton
                         width: 40
                         height: width
                         toggleButton: true
                         baseColor: "green"
+                        title: qsTr("Physics debug")
                         iconSource: dataDirectory + "/icons/torch-on.svg"
                         onEnabledChanged: {
                             console.log("Physics debug enabled changed", enabled)
@@ -510,6 +604,7 @@ GamePage {
                         height: width
                         toggleButton: true
                         baseColor: "green"
+                        title: qsTr("Grid snapping")
                         iconSource: dataDirectory + "/icons/camera-grid.svg"
                         onEnabledChanged: {
                             console.log("Grid snaping enabled changed", enabled)
@@ -536,9 +631,11 @@ GamePage {
                         width: 40
                         height: width
                         baseColor: "red"
+                        title: qsTr("Delete all")
                         iconSource: dataDirectory + "/icons/delete.svg"
                         onClicked: {
                             console.log("Delete all clicked")
+                            Game.mapEditor.deleteAll()
                         }
                     }
 
@@ -558,6 +655,7 @@ GamePage {
                         id: saveMapButton
                         width: 40
                         height: width
+                        title: qsTr("Save map")
                         baseColor: "green"
                         iconSource: dataDirectory + "/icons/drive-harddisk-symbolic.svg"
                         onClicked: {

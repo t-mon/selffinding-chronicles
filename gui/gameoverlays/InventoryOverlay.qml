@@ -47,12 +47,12 @@ GameOverlayItem {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            EquipmentContentItem {
-                id: equipmentRow
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                //anchors.bottomMargin: app.margins
-            }
+//            EquipmentContentItem {
+//                id: equipmentRow
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                anchors.bottom: parent.bottom
+//                //anchors.bottomMargin: app.margins
+//            }
         }
 
         Item {

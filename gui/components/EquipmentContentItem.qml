@@ -18,6 +18,7 @@ Row {
     }
 
     function weaponClicked() {
+        console.log("Weapon clicked")
         if (!Game.engine.player)
             return
 
@@ -32,6 +33,7 @@ Row {
     }
 
     function firearmClicked() {
+        console.log("Firearm clicked")
         if (!Game.engine.player)
             return
 

@@ -35,6 +35,11 @@ void PathController::setPath(Path *path, const QPointF &startPosition)
     m_targetPosition = m_startPosition + m_path->currentPathSegment().offset();
 }
 
+QPointF PathController::startPosition() const
+{
+    return m_startPosition;
+}
+
 QPointF PathController::movementVector() const
 {
     return m_movementVector;
