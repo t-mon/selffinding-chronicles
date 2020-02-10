@@ -11,6 +11,7 @@
 #include "engine.h"
 #include "gamesettings.h"
 #include "gamemapeditor.h"
+#include "audio/soundengine.h"
 
 class Game : public QObject
 {
@@ -58,6 +59,7 @@ private:
     static Game *s_instance;
 
     Engine *m_engine = nullptr;
+    SoundEngine *m_soundEngine = nullptr;
     GameSettings *m_settings = nullptr;
     GameMapEditor *m_mapEditor = nullptr;
 

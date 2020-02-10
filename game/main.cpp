@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
     parser.setApplicationDescription(QString("\nFantasy role play game.\n\n"
-                                             "Copyright %1 2018 - 2019 Simon Stürz <stuerz.simon@gmail.com>\n"
+                                             "Copyright %1 2018 - 2020 Simon Stürz <stuerz.simon@gmail.com>\n"
                                              "Released under the GNU GPLv3.").arg(QChar(0xA9)));
 
     QCommandLineOption dataOption({"d", "data"}, "Specify the relative or absolut path to the game data folder. Default value relative to executable: ../selffinding-chronicles/data", "datapath", "../selffinding-chronicles/data");
@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("MapEditor", true);
     s_loggingFilters.insert("DataManager", true);
+    s_loggingFilters.insert("SoundEngine", true);
     s_loggingFilters.insert("Item", false);
     s_loggingFilters.insert("GameObject", false);
     s_loggingFilters.insert("Collision", false);
@@ -148,6 +149,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SaveGames>("Chronicles", 1, 0, "SaveGames", "Can't create this in QML. Get it from the DataManager object.");
     qmlRegisterUncreatableType<PlayerController>("Chronicles", 1, 0, "PlayerController", "Can't create this in QML. Get it from the Engine object.");
     qmlRegisterUncreatableType<GameMapEditor>("Chronicles", 1, 0, "GameMapEditor", "Can't create this in QML. Get it from the Game instance.");
+
+    qmlRegisterUncreatableType<SoundEngine>("Chronicles", 1, 0, "SoundEngine", "Can't create this in QML. Get it from the Game instance.");
+    qmlRegisterUncreatableType<AudioDecoderStream>("Chronicles", 1, 0, "AudioDecoderStream", "Can't create this in QML. Create it with the SoundEngine instance.");
 
     // Objects
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
@@ -185,7 +189,7 @@ int main(int argc, char *argv[])
 #else
     QDir dataDirectory(parser.value(dataOption));
     if (!dataDirectory.makeAbsolute()) {
-        qCCritical(dcGame()) << "Invalid data path passed:" << parser.value(dataOption);
+        qCCritical(dcGame()) << "Invalid data path argument:" << parser.value(dataOption);
         exit(-1);
     }
 

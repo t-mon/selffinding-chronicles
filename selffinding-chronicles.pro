@@ -1,4 +1,4 @@
-QT += core qml quick quickcontrols2 svg
+QT += core qml quick quickcontrols2 svg multimedia
 
 CONFIG += c++11 -Wall -Werror
 
@@ -26,6 +26,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    game/audio/audiodecoderstream.h \
+    game/audio/audiomixer.h \
+    game/audio/soundengine.h \
     game/game.h \
     game/field.h \
     game/fields.h \
@@ -71,6 +74,9 @@ HEADERS += \
 
 
 SOURCES += game/main.cpp \
+    game/audio/audiodecoderstream.cpp \
+    game/audio/audiomixer.cpp \
+    game/audio/soundengine.cpp \
     game/game.cpp \
     game/field.cpp \
     game/fields.cpp \

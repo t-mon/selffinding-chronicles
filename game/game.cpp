@@ -122,6 +122,7 @@ Character *Game::castEnemyToCharacter(Enemy *enemy)
 Game::Game(QObject *parent) :
     QObject(parent),
     m_engine(new Engine(this)),
+    m_soundEngine(new SoundEngine(this)),
     m_settings(new GameSettings(this)),
     m_mapEditor(new GameMapEditor(this)),
     m_running(false)
