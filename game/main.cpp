@@ -27,6 +27,7 @@
 
 #include "game.h"
 #include "debugcategories.h"
+#include "audio/gamesoundeffect.h"
 #include "conversation/conversationitem.h"
 #include "conversation/conversationitems.h"
 
@@ -152,6 +153,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<SoundEngine>("Chronicles", 1, 0, "SoundEngine", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<AudioDecoderStream>("Chronicles", 1, 0, "AudioDecoderStream", "Can't create this in QML. Create it with the SoundEngine instance.");
+    qmlRegisterType<GameSoundEffect>("Chronicles", 1, 0, "GameSoundEffect");
 
     // Objects
     qmlRegisterUncreatableType<GameObject>("Chronicles", 1, 0, "GameObject", "Can't create this in QML.");
@@ -203,6 +205,9 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("gameVersion", app.applicationVersion());
     qCDebug(dcGame()) << "Data directory:" << engine.rootContext()->contextProperty("dataDirectory").toString();
+
+    Game::instance()->setDataDirectory(engine.rootContext()->contextProperty("dataDirectory").toString());
+
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     return app.exec();

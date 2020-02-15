@@ -1,23 +1,20 @@
 #include "soundengine.h"
 #include "../debugcategories.h"
 
-SoundEngine::SoundEngine(QObject *parent) : QObject(parent)
+SoundEngine::SoundEngine(QObject *parent) :
+    QObject(parent),
+    m_audioDeviceInfo(QAudioDeviceInfo::defaultOutputDevice()),
+    m_audioFormat(m_audioDeviceInfo.preferredFormat())
 {
-    QAudioDeviceInfo device = QAudioDeviceInfo::defaultOutputDevice();
-    qCDebug(dcSoundEngine()) << "Picking default output device for sound";
-    qCDebug(dcSoundEngine()) << device.deviceName();
-    qCDebug(dcSoundEngine()) << device.preferredFormat();
-    QAudioFormat audioFormat = device.preferredFormat();
+    qCDebug(dcSoundEngine()) << "Picking default output device" << m_audioDeviceInfo.deviceName();
+    qCDebug(dcSoundEngine()) << m_audioFormat;
 
-    m_output = new QAudioOutput(audioFormat, this);
-    m_audioMixer = new AudioMixer(audioFormat, this);
+    m_output = new QAudioOutput(m_audioFormat, this);
+    m_output->setBufferSize(12000);
+    m_audioMixer = new AudioMixer(m_audioFormat, this);
     m_output->start(m_audioMixer);
 
-    AudioDecoderStream *ambientSound = new AudioDecoderStream(audioFormat);
-    ambientSound->setSource("/home/timon/development/selffinding-chronicles/selffinding-chronicles/resources/sounds/ambient/spring-birds-loop.ogg");
-    m_audioMixer->addAudioDecoderStream(ambientSound);
-
-    qCDebug(dcSoundEngine()) << "Initialized successfully";
+    qCDebug(dcSoundEngine()) << "Initialized successfully" << m_output->bufferSize();
 }
 
 qreal SoundEngine::soundEffectVolume() const
@@ -46,11 +43,63 @@ void SoundEngine::setMusicVolume(qreal volume)
         return;
 
     qCDebug(dcSoundEngine()) << "Music volume changed" << volume;
-    m_musicVolume = volume;
-    emit musicVolumeChanged(m_musicVolume);
+        m_musicVolume = volume;
+        emit musicVolumeChanged(m_musicVolume);
 }
 
-void SoundEngine::playInventoryOpen()
+AudioDecoderStream *SoundEngine::registerMusicStream(const QString &source)
 {
+    AudioDecoderStream *musicStream = new AudioDecoderStream(source, m_audioFormat, this);
+    musicStream->setRepeating(true);
 
+    qCDebug(dcSoundEngine()) << "Register music stream" << musicStream;
+    connect(musicStream, &AudioDecoderStream::readyChanged, this, [this, musicStream](bool ready){
+        if (ready && musicStream->state() == AudioDecoderStream::Playing) {
+            qCDebug(dcSoundEngine()) << musicStream << "add to the mixer";
+            m_audioMixer->addAudioDecoderStream(musicStream);
+        }
+    });
+
+    // Start initializing decoder data
+    musicStream->initialize();
+    return musicStream;
+}
+
+void SoundEngine::unregisterMusicStream(AudioDecoderStream *musicStream)
+{
+    qCDebug(dcSoundEngine()) << "Unregister music stream" << musicStream;
+    m_audioMixer->removeAudioDescoderStream(musicStream);
+    musicStream->clear();
+    musicStream->deleteLater();
+}
+
+AudioDecoderStream *SoundEngine::registerSoundEffect(const QString &source)
+{
+    AudioDecoderStream *soundEffectStream = new AudioDecoderStream(source, m_audioFormat, this);
+    soundEffectStream->setRepeating(false);
+
+    qCDebug(dcSoundEngine()) << "Register sound effect stream" << soundEffectStream;
+    connect(soundEffectStream, &AudioDecoderStream::stateChanged, this, [this, soundEffectStream](AudioDecoderStream::State state){
+        switch (state) {
+        case AudioDecoderStream::Playing:
+            qCDebug(dcSoundEngine()) << "Start playing sound effect" << soundEffectStream;
+            m_audioMixer->addAudioDecoderStream(soundEffectStream);
+            break;
+        default:
+            qCDebug(dcSoundEngine()) << "Stop playing sound effect" << soundEffectStream;
+            m_audioMixer->removeAudioDescoderStream(soundEffectStream);
+            break;
+        }
+    }, Qt::DirectConnection);
+
+    // Start initializing decoder data
+    soundEffectStream->initialize();
+    return soundEffectStream;
+}
+
+void SoundEngine::unregisterSoundEffect(AudioDecoderStream *soundEffectStream)
+{
+    qCDebug(dcSoundEngine()) << "Unregister sound effect stream" << soundEffectStream;
+    m_audioMixer->removeAudioDescoderStream(soundEffectStream);
+    soundEffectStream->clear();
 }

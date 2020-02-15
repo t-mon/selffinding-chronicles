@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+ import QtMultimedia 5.9
 
 import Chronicles 1.0
 
@@ -8,6 +9,10 @@ import "components"
 
 GamePage {
     id: mainPage
+
+    property var music: Game.soundEngine.registerMusicStream(dataDirectory + "/sounds/ambient/spring-birds-loop.ogg")
+    Component.onCompleted: music.play()
+    Component.onDestruction: Game.soundEngine.unregisterMusicStream(music)
 
     GameLabel {
         anchors.left: parent.left
@@ -17,7 +22,6 @@ GamePage {
         text: "v " + gameVersion
         color: "white"
     }
-
 
     ColumnLayout {
         anchors.centerIn: parent

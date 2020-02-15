@@ -26,14 +26,14 @@ qint64 AudioMixer::readData(char *data, qint64 maxlen)
     const qint16 samples = static_cast<qint16>(maxlen / depth);
 
     foreach (AudioDecoderStream *stream, m_streams) {
-        if (!stream->ready())
+        if (!stream->isReady() || stream->state() != AudioDecoderStream::Playing)
             continue;
 
         qint16 sample;
         qint16 *cursor = reinterpret_cast<qint16 *>(data);
         for (int i = 0; i < samples; i++, cursor++) {
             if (stream->read(reinterpret_cast<char *>(&sample), depth)) {
-                *cursor = mixAudioData(*cursor, sample);
+                *cursor = mixAudioData(*cursor, qRound(sample * stream->volume()));
             }
         }
     }

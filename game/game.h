@@ -17,6 +17,7 @@ class Game : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Engine *engine READ engine CONSTANT)
+    Q_PROPERTY(SoundEngine *soundEngine READ soundEngine CONSTANT)
     Q_PROPERTY(GameSettings *settings READ settings CONSTANT)
     Q_PROPERTY(GameMapEditor *mapEditor READ mapEditor CONSTANT)
 
@@ -33,7 +34,11 @@ public:
     static Game* instance();
     static QObject *qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
 
+    QString dataDirectory() const;
+    void setDataDirectory(const QString &dataDirectory);
+
     Engine *engine() const;
+    SoundEngine *soundEngine() const;
     GameSettings *settings() const;
     GameMapEditor *mapEditor() const;
 
@@ -57,6 +62,8 @@ public:
 private:
     explicit Game(QObject *parent = nullptr);
     static Game *s_instance;
+
+    QString m_dataDirectory;
 
     Engine *m_engine = nullptr;
     SoundEngine *m_soundEngine = nullptr;

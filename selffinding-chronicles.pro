@@ -28,6 +28,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     game/audio/audiodecoderstream.h \
     game/audio/audiomixer.h \
+    game/audio/gamemusic.h \
+    game/audio/gamesoundeffect.h \
+    game/audio/gamesoundsource.h \
     game/audio/soundengine.h \
     game/game.h \
     game/field.h \
@@ -76,6 +79,9 @@ HEADERS += \
 SOURCES += game/main.cpp \
     game/audio/audiodecoderstream.cpp \
     game/audio/audiomixer.cpp \
+    game/audio/gamemusic.cpp \
+    game/audio/gamesoundeffect.cpp \
+    game/audio/gamesoundsource.cpp \
     game/audio/soundengine.cpp \
     game/game.cpp \
     game/field.cpp \

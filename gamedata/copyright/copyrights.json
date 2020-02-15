@@ -80,6 +80,20 @@
             "source": "https://freesound.org/people/LittleRobotSoundFactory/sounds/270392/",
             "license": "CC BY 3.0",
             "licenseLink": "https://creativecommons.org/licenses/by/3.0/"
+        },
+        {
+            "name": "highflow-river.ogg",
+            "creators": ["CaganCelik"],
+            "source": "https://freesound.org/people/CaganCelik/sounds/415267/",
+            "license": "CC0 1.0",
+            "licenseLink": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+            "name": "spring-birds-loop.ogg",
+            "creators": ["hargissssound"],
+            "source": "https://freesound.org/people/hargissssound/sounds/345852/",
+            "license": "CC0 1.0",
+            "licenseLink": "https://creativecommons.org/publicdomain/zero/1.0/"
         }
     ]
 }

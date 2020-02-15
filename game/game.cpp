@@ -18,9 +18,20 @@ QObject *Game::qmlInstance(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
     return Game::instance();
 }
 
+void Game::setDataDirectory(const QString &dataDirectory)
+{
+    m_dataDirectory = dataDirectory;
+    qCDebug(dcGame()) << "Data directory:" << m_dataDirectory;
+}
+
 Engine *Game::engine() const
 {
     return m_engine;
+}
+
+SoundEngine *Game::soundEngine() const
+{
+    return m_soundEngine;
 }
 
 GameSettings *Game::settings() const

@@ -21,11 +21,20 @@ public:
     qreal musicVolume() const;
     void setMusicVolume(qreal volume);
 
-    Q_INVOKABLE void playInventoryOpen();
+    // Can be used to register music
+    Q_INVOKABLE AudioDecoderStream *registerMusicStream(const QString &source);
+    Q_INVOKABLE void unregisterMusicStream(AudioDecoderStream *musicStream);
+
+    // Can be used to add decoded sound effects and play them when required
+    Q_INVOKABLE AudioDecoderStream *registerSoundEffect(const QString &source);
+    Q_INVOKABLE void unregisterSoundEffect(AudioDecoderStream *soundEffectStream);
 
 private:
-    qreal m_soundEffectVolume = 1;
-    qreal m_musicVolume = 1;
+    QAudioDeviceInfo m_audioDeviceInfo;
+    QAudioFormat m_audioFormat;
+
+    qreal m_soundEffectVolume = 1.0;
+    qreal m_musicVolume = 1.0;
 
     QAudioOutput *m_output = nullptr;
     AudioMixer *m_audioMixer = nullptr;

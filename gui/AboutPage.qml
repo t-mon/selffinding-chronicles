@@ -9,10 +9,20 @@ import "components"
 Page {
     id: root
 
+
     header: ChroniclesHeader {
         text: qsTr("About %1").arg(app.title)
         backButtonVisible: true
         onBackPressed: pageStack.pop()
+    }
+
+    property var music: Game.soundEngine.registerMusicStream(dataDirectory + "/sounds/ambient/highflow-river.ogg")
+    Component.onCompleted: music.play()
+    Component.onDestruction: Game.soundEngine.unregisterMusicStream(root.music)
+
+    GameSoundEffect {
+        id: inventorySoundEffect
+        source: dataDirectory + "/sounds/game/effects/coins-several-04.wav"
     }
 
     Flickable {
@@ -39,6 +49,10 @@ Page {
                     Layout.fillWidth: true
                     font.pixelSize: app.mediumFont
                     text: "Simon Stürz"
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: inventorySoundEffect.play()
+                    }
                 }
             }
         }

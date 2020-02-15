@@ -1,6 +1,7 @@
 #include "audiodecoderstream.h"
 #include "../debugcategories.h"
 
+#include <QDir>
 #include <QFileInfo>
 
 AudioDecoderStream::AudioDecoderStream(const QAudioFormat &audioFormat, QObject *parent) :
@@ -35,6 +36,20 @@ void AudioDecoderStream::setSource(const QString &source)
     m_source = source;
 }
 
+qreal AudioDecoderStream::volume() const
+{
+    return m_volume;
+}
+
+void AudioDecoderStream::setVolume(qreal volume)
+{
+    if (qFuzzyCompare(m_volume, volume))
+        return;
+
+    m_volume = volume;
+    emit volumeChanged(m_volume);
+}
+
 bool AudioDecoderStream::repeating() const
 {
     return m_repeating;
@@ -49,7 +64,7 @@ void AudioDecoderStream::setRepeating(bool repeating)
     emit repeatingChanged(m_repeating);
 }
 
-bool AudioDecoderStream::ready() const
+bool AudioDecoderStream::isReady() const
 {
     return m_ready;
 }
@@ -80,6 +95,28 @@ bool AudioDecoderStream::atEnd() const
     return m_output.size() && m_output.atEnd() && m_ready;
 }
 
+void AudioDecoderStream::initialize()
+{
+    if (m_ready)
+        return;
+
+    // Clean up
+    clear();
+
+    // Open the file
+    m_file.setFileName(m_source.remove("file://"));
+    if (!m_file.open(QIODevice::ReadOnly)) {
+        qCWarning(dcSoundEngine()) << "Could not open audio file" << m_file.fileName() << m_file.errorString();
+        return;
+    }
+
+    // Start decoding
+    m_decoder.setSourceDevice(&m_file);
+    m_decoder.start();
+
+    // Note: will be ready once the decoder has finished
+}
+
 void AudioDecoderStream::clear()
 {
     m_decoder.stop();
@@ -102,8 +139,10 @@ qint64 AudioDecoderStream::readData(char *data, qint64 maxlen)
         }
 
         // Todo: check repeating
-        if (atEnd() && !m_repeating) {
-            stop();
+        if (atEnd()) {
+            rewind();
+            if (!m_repeating)
+                pause();
         }
     }
 
@@ -122,7 +161,7 @@ void AudioDecoderStream::init()
     setOpenMode(QIODevice::ReadOnly);
 
     // Initialize decoder
-    m_decoder.setNotifyInterval(10);
+    m_decoder.setNotifyInterval(1);
     m_decoder.setAudioFormat(m_audioFormat);
     connect(&m_decoder, &QAudioDecoder::bufferReady, this, &AudioDecoderStream::onBufferReady);
     connect(&m_decoder, &QAudioDecoder::finished, this, &AudioDecoderStream::onFinished);
@@ -144,29 +183,15 @@ void AudioDecoderStream::onBufferReady()
 
 void AudioDecoderStream::onFinished()
 {
-    qCDebug(dcSoundEngine()) << this << "deconding finished";
+    qCDebug(dcSoundEngine()) << this << "is now ready to play";
     m_ready = true;
     emit readyChanged(m_ready);
 }
 
 void AudioDecoderStream::play()
 {
-    qCDebug(dcSoundEngine()) << this << "start playing";
-
-    // Clean up
-    clear();
-
-    // Open the file
-    m_file.setFileName(m_source);
-    if (!m_file.open(QIODevice::ReadOnly)) {
-        qCWarning(dcSoundEngine()) << "Could not open audio file of" << this;
-        return;
-    }
-
-    // Start decoding
-    m_decoder.setSourceDevice(&m_file);
-    m_decoder.start();
-
+    qCDebug(dcSoundEngine()) << this << "playing";
+    rewind();
     m_state = State::Playing;
     emit stateChanged(m_state);
 }
@@ -183,6 +208,11 @@ void AudioDecoderStream::resume()
     qCDebug(dcSoundEngine()) << this << "resume";
     m_state = State::Playing;
     emit stateChanged(m_state);
+}
+
+void AudioDecoderStream::rewind()
+{
+    m_output.seek(0);
 }
 
 void AudioDecoderStream::stop()

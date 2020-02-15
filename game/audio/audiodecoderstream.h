@@ -11,7 +11,7 @@ class AudioDecoderStream : public QIODevice
 {
     Q_OBJECT
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(bool repearing READ repearing WRITE setRepearing NOTIFY repearingChanged)
+    Q_PROPERTY(bool repeating READ repeating WRITE setRepeating NOTIFY repeatingChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
 public:
@@ -28,10 +28,13 @@ public:
     QString source() const;
     void setSource(const QString &source);
 
+    qreal volume() const;
+    void setVolume(qreal volume);
+
     bool repeating() const;
     void setRepeating(bool repeating);
 
-    bool ready() const;
+    bool isReady() const;
     State state() const;
 
     int position() const;
@@ -40,6 +43,7 @@ public:
 
     bool atEnd() const override;
 
+    void initialize();
     void clear();
 
 protected:
@@ -48,6 +52,7 @@ protected:
 
 private:
     QString m_source;
+    qreal m_volume = 1.0;
     QAudioFormat m_audioFormat;
 
     bool m_repeating = false;
@@ -64,6 +69,7 @@ private:
 
 signals:
     void sourceChanged(const QString &source);
+    void volumeChanged(qreal volume);
     void repeatingChanged(bool repeating);
     void readyChanged(bool ready);
     void stateChanged(AudioDecoderStream::State state);
@@ -77,8 +83,8 @@ public slots:
     void play();
     void pause();
     void resume();
+    void rewind();
     void stop();
-
 };
 
 QDebug operator<<(QDebug debug, AudioDecoderStream *stream);

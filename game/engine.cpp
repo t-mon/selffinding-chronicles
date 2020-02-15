@@ -1046,6 +1046,8 @@ void Engine::tick()
     doEnemiesMovement();
     doCharactersMovement();
 
+    // audio source distance volume
+
     // Do other evaluation stuff
 
     emit enginePostTick();
