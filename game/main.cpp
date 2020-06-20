@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("PathController", false);
     s_loggingFilters.insert("Map", true);
     s_loggingFilters.insert("MapEditor", true);
+    s_loggingFilters.insert("MapEditorData", true);
     s_loggingFilters.insert("DataManager", true);
     s_loggingFilters.insert("SoundEngine", true);
     s_loggingFilters.insert("Item", false);

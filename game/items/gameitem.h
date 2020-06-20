@@ -15,7 +15,7 @@ class GameItem : public GameObject
     Q_PROPERTY(Interaction inventoryInteraction READ inventoryInteraction NOTIFY inventoryInteractionChanged)
     Q_PROPERTY(QString interactionString READ interactionString NOTIFY interactionChanged)
     Q_PROPERTY(int price READ price NOTIFY priceChanged)
-    Q_PROPERTY(bool playerFocus READ playerFocus NOTIFY playerFocusChanged)
+    Q_PROPERTY(bool playerFocus READ playerFocus WRITE setPlayerFocus NOTIFY playerFocusChanged)
     Q_PROPERTY(bool playerVisible READ playerVisible WRITE setPlayerVisible NOTIFY playerVisibleChanged)
     Q_PROPERTY(bool hidingPlayer READ hidingPlayer NOTIFY hidingPlayerChanged)
     Q_PROPERTY(bool playerOnItem READ playerOnItem WRITE setPlayerOnItem NOTIFY playerOnItemChanged)

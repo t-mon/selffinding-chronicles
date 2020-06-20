@@ -373,6 +373,7 @@ void DataManager::saveMapTask()
     }
 
     saveGameFile.write(QJsonDocument::fromVariant(map).toJson(QJsonDocument::Indented));
+    saveGameFile.close();
 }
 
 void DataManager::saveMapTaskFinished()
@@ -449,7 +450,7 @@ void DataManager::onThreadFinished()
 void DataManager::resetData()
 {
     if (isRunning()) {
-        qCWarning(dcDataManager()) << "Could not reset data, the thread is still runnging.";
+        qCWarning(dcDataManager()) << "Could not reset data, the thread is still runing.";
         return;
     }
 

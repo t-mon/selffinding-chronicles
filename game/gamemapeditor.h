@@ -1,8 +1,9 @@
 #ifndef GAMEMAPEDITOR_H
 #define GAMEMAPEDITOR_H
 
-#include <QObject>
 #include <QDir>
+#include <QRectF>
+#include <QObject>
 
 #include "game/map.h"
 #include "datamanager.h"
@@ -18,6 +19,7 @@ class GameMapEditor : public QObject
     Q_PROPERTY(GameItems *availableCharacters READ availableCharacters CONSTANT)
     Q_PROPERTY(GameItems *availableEnemies READ availableEnemies CONSTANT)
 
+    Q_PROPERTY(QRectF viewWindow READ viewWindow WRITE setViewWindow NOTIFY viewWindowChanged)
     Q_PROPERTY(GameObject *selectedGameObject READ selectedGameObject NOTIFY selectedGameObjectChanged)
     Q_PROPERTY(GameItem *selectedGameItem READ selectedGameItem NOTIFY selectedGameItemChanged)
 
@@ -26,7 +28,6 @@ class GameMapEditor : public QObject
     Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
-
 
 public:
     enum Tool {
@@ -62,6 +63,9 @@ public:
     GameItemsProxy *activeCharacters() const;
     GameItemsProxy *activeEnemies() const;
 
+    QRectF viewWindow() const;
+    void setViewWindow(const QRectF &viewWindow);
+
     Map *map() const;
     Q_INVOKABLE void createNewMap();
     Q_INVOKABLE void placeItemOnMap(const QString &resourcePath, const QPointF &position);
@@ -82,8 +86,7 @@ private:
     GameItemsProxy *m_activeEnemies = nullptr;
     GameItemsProxy *m_activeCharacters = nullptr;
 
-    QPointF m_editorViewOffset;
-    QSizeF m_editorViewSize;
+    QRectF m_viewWindow;
 
     Map *m_map = nullptr;
     GameItem *m_selectedGameItem = nullptr;
@@ -94,15 +97,14 @@ signals:
     void availableItemsChanged(GameItems *gameItems);
     void availableObjectsChanged(GameObjects *gameObjects);
     void mapChanged(Map *map);
+    void viewWindowChanged(const QRectF viewWindow);
+    void editorViewOffsetChanged(const QPointF &editorViewOffset);
     void selectedGameItemChanged(GameItem *selectedGameItem);
     void selectedGameObjectChanged(GameObject *selectedGameObject);
 
+
 private slots:
     void onDataManagerStateChanged(DataManager::State state);
-
-public slots:
-    void onEditorViewOffsetChanged(const QPointF &offset);
-    void onEditorViewSizeChanged(const QSizeF &size);
 
 };
 

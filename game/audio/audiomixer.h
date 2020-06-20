@@ -29,7 +29,6 @@ protected:
 private:
     qint16 mixAudioData(qint32 sampleOne, qint32 sampleTwo);
 
-
 signals:
 
 };

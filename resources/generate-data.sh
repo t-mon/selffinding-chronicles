@@ -23,7 +23,6 @@
 
 # Note: sudo apt-get install imagemagick krita
 
-
 # Directories
 SOURCE_DIR=$(cd $(dirname $0); cd ..; pwd)
 DATA_DIR=${SOURCE_DIR}/data
@@ -36,6 +35,10 @@ IGNORE_EXTENSIONS=("kra~" "bundle" "sh")
 BASH_GREEN="\e[1;32m"
 BASH_RED="\e[1;31m"
 BASH_NORMAL="\e[0m"
+
+# Image scaling
+GRID_UNIT_PX=500
+
 
 #---------------------------------------------------------------
 function printGreen() {

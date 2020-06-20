@@ -18,23 +18,56 @@ GameMapEditor::GameMapEditor(QObject *parent) :
 
     m_activeObjects = new GameObjectsProxy(this);
     m_activeObjects->setGameObjects(m_dataManager->objects());
+    connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, [](GameObject *object, bool active){
+        if (active) {
+            qCDebug(dcMapEditorData()) << "[+] Object changed to active" << object;
+        } else {
+            qCDebug(dcMapEditorData()) << "[-] Object changed to inactive" << object;
+        }
+
+        object->setActive(active);
+    });
+
 
     m_activeItems = new GameItemsProxy(this);
     m_activeItems->setGameItems(m_dataManager->items());
+    connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, [](GameItem *item, bool active){
+        if (active) {
+            qCDebug(dcMapEditorData()) << "[+] Item changed to active" << item;
+        } else {
+            qCDebug(dcMapEditorData()) << "[-] Item changed to inactive" << item;
+        }
+
+        item->setActive(active);
+    });
+
 
     m_activeEnemies = new GameItemsProxy(this);
     m_activeEnemies->setGameItems(m_dataManager->enemies());
+    connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, [](GameItem *item, bool active){
+        if (active) {
+            qCDebug(dcMapEditorData()) << "[+] Enemie changed to active" << item;
+        } else {
+            qCDebug(dcMapEditorData()) << "[-] Enemie changed to inactive" << item;
+        }
+
+        item->setActive(active);
+    });
 
     m_activeCharacters = new GameItemsProxy(this);
     m_activeCharacters->setGameItems(m_dataManager->characters());
+    connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, [](GameItem *item, bool active){
+        if (active) {
+            qCDebug(dcMapEditorData()) << "[+] Character changed to active" << item;
+        } else {
+            qCDebug(dcMapEditorData()) << "[-] Character changed to inactive" << item;
+        }
 
-//    connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
-//    connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
-//    connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
+        item->setActive(active);
+    });
 
-//    loadAvailableObjects();
-//    loadAvailableGameItems();
-
+    //    loadAvailableObjects();
+    //    loadAvailableGameItems();
 }
 
 
@@ -199,6 +232,28 @@ GameItemsProxy *GameMapEditor::activeEnemies() const
     return m_activeEnemies;
 }
 
+QRectF GameMapEditor::viewWindow() const
+{
+    return m_viewWindow;
+}
+
+void GameMapEditor::setViewWindow(const QRectF &viewWindow)
+{
+    if (m_viewWindow == viewWindow)
+        return;
+
+    //qCDebug(dcMapEditor()) << "Editor view window changed" << viewWindow;
+    m_viewWindow = viewWindow;
+    emit viewWindowChanged(m_viewWindow);
+
+    m_activeObjects->setViewFilter(m_viewWindow);
+    m_activeItems->setViewFilter(m_viewWindow);
+    //m_activeChests->setViewFilter(m_viewWindow);
+    m_activeCharacters->setViewFilter(m_viewWindow);
+    m_activeEnemies->setViewFilter(m_viewWindow);
+    //m_weatherAreaProxy->setViewFilter(m_viewWindow);
+}
+
 Map *GameMapEditor::map() const
 {
     return m_map;
@@ -241,17 +296,3 @@ void GameMapEditor::onDataManagerStateChanged(DataManager::State state)
     qCDebug(dcMapEditor()) << "Datamanager state changed" << state;
 }
 
-void GameMapEditor::onEditorViewOffsetChanged(const QPointF &offset)
-{
-    m_editorViewOffset = offset;
-
-    // TODO: evaluate active items
-}
-
-void GameMapEditor::onEditorViewSizeChanged(const QSizeF &size)
-{
-    m_editorViewSize = size;
-
-    // TODO: evaluate active items
-
-}

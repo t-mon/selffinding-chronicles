@@ -54,7 +54,6 @@ GamePage {
         Game.mapEditor.loadAvailableObjects()
         Game.mapEditor.loadAvailableCharacters()
         Game.mapEditor.loadAvailableEnemies()
-        Game.mapEditor.onEditorViewSizeChanged(Qt.size(root.width, root.height))
     }
 
     property string currentResourcePath: ""
@@ -73,20 +72,18 @@ GamePage {
     function selectItem(item) {
         if (item && selectedItem !== item) {
             console.log("--> Selected item", item.name)
+            if (selectedItem)
+                selectedItem.playerFocus = false
+
             selectedItem = item
+            item.playerFocus = true
         } else if (selectedItem && !item) {
             console.log("--> No item selected")
+            selectedItem.playerFocus = false
             selectedItem = null
         }
     }
 
-    // Pysical world
-    World {
-        id: physicsWorld
-        gravity: Qt.point(0, 0)
-        //onStepped: Game.onTick()
-        running: true
-    }
 
     Connections {
         target: Game.mapEditor
@@ -303,7 +300,7 @@ GamePage {
                             if (positionX >= itemRectangle.x && positionX <= itemRectangle.x + itemRectangle.width &&
                                     positionY >= itemRectangle.y && positionY < itemRectangle.y + itemRectangle.height) {
 
-                                //console.log("Intercepts item", item.name, itemRectangle)
+                                console.log("Intercepts item", item.name, itemRectangle)
                                 currentSelectedItem = item
                             }
                         }
@@ -339,8 +336,18 @@ GamePage {
                         ScrollBar.vertical: ScrollBar { active: true; interactive: true; policy: ScrollBar.AlwaysOn }
                         ScrollBar.horizontal: ScrollBar { active: true; interactive: true; policy: ScrollBar.AlwaysOn }
 
-                        onContentXChanged: mainItem.updatePositions()
-                        onContentYChanged: mainItem.updatePositions()
+                        onContentXChanged: {
+                            mainItem.updatePositions()
+                            // Update the map editor view window for evaluating the active items
+                            Game.mapEditor.viewWindow = Qt.rect(contentX / app.gridSize, contentY / app.gridSize, worldFlickable.width / app.gridSize, worldFlickable.height / app.gridSize)
+                        }
+                        onContentYChanged: {
+                            mainItem.updatePositions()
+                            // Update the map editor view window for evaluating the active items
+                            Game.mapEditor.viewWindow = Qt.rect(contentX / app.gridSize, contentY / app.gridSize, worldFlickable.width / app.gridSize, worldFlickable.height / app.gridSize)
+                        }
+
+                        Component.onCompleted: Game.mapEditor.viewWindow = Qt.rect(contentX / app.gridSize, contentY / app.gridSize, worldFlickable.width / app.gridSize, worldFlickable.height / app.gridSize)
 
                         Item {
                             id: worldItem
@@ -350,6 +357,15 @@ GamePage {
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#307a78"
+                            }
+
+                            // Pysical world
+                            World {
+                                id: physicsWorld
+                                gravity: Qt.point(0, 0)
+                                pixelsPerMeter: app.gridSize
+                                //onStepped: Game.onTick()
+                                running: true
                             }
 
                             WorldBoundaries {
@@ -440,15 +456,29 @@ GamePage {
                                 height: gameItem ? gameItem.size.height * app.gridSize : 0
                                 z: temporaryItem.y + temporaryItem.height
                             }
+
+                        }
+
+                        Loader {
+                            id: physicsDebugDrawLoader
+                            anchors.fill: parent
+                            active: Game.settings.physicsDebugEnabled
+                            sourceComponent: debugDrawComponent
+
+                            Component {
+                                id: debugDrawComponent
+
+                                DebugDraw {
+                                    id: debugDraw
+                                    world: physicsWorld
+                                    opacity: 0.4
+                                }
+                            }
                         }
                     }
 
-                    DebugDraw {
-                        id: debugDraw
-                        world: physicsWorld
-                        opacity: 0.4
-                        visible: Game.settings.physicsDebugEnabled
-                    }
+
+
 
                     MouseArea {
                         id: editorMouseArea
