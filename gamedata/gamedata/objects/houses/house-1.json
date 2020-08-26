@@ -14,8 +14,8 @@
         "height": 4,
         "x": 3,
         "y": 1.5,
-        "category": 16,
-        "collision": 160,
+        "category": 8,
+        "collision": 169,
         "vertices": []
     }
 }

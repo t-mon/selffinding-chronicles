@@ -45,7 +45,7 @@ public:
 private:
     GameItems *m_gameItems = nullptr;
 
-    QRectF m_viewFilter;
+    QRectF m_viewFilter = QRectF();
     QStringList m_shownItemIds;
     QString m_itemIdFilter;
     GameItem::Type m_itemTypeFilter = GameItem::TypeNone;

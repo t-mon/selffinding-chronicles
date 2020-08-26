@@ -18,6 +18,8 @@
 #include "items/literatureitem.h"
 #include "items/teleporteritem.h"
 #include "items/boxitem.h"
+#include "items/dooritem.h"
+#include "items/passageitem.h"
 
 class DataLoader
 {
@@ -38,6 +40,9 @@ public:
     static Enemy *createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
     static ChestItem *createChestItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
     static Path *createPathObject(const QVariantMap &description, QObject *parent);
+
+    static DoorItem *createDoorItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
+    static PassageItem *createPassageItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
 
     // Load
     static QList<QPointF> loadFieldMap(const QVariantList &fieldMap);
@@ -61,7 +66,9 @@ public:
     static void fillGameItemData(GameItem *item, const QVariantMap &description);
     static void fillGameObjectData(GameObject *object, const QVariantMap &description);
     static void fillCharacterItemData(Character *character, const QVariantMap &characterMap);
+    static void fillLockItemData(LockItem *lockItem, const QVariantMap &lockMap);
     static void fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap);
+    static void fillPassageItemData(PassageItem *passageItem, const QVariantMap &passageMap);
 
     // Save
     static QVariantMap gameObjectToVariantMap(GameObject *object);

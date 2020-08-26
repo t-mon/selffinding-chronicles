@@ -38,11 +38,15 @@ HEADERS += \
     game/gameobjects.h \
     game/gameobjectsproxy.h \
     game/items/boxitem.h \
+    game/items/dooritem.h \
     game/items/literatureitem.h \
+    game/items/lockitem.h \
+    game/items/passageitem.h \
     game/items/teleporteritem.h \
     game/items/weatherareaproxy.h \
     game/map.h \
     game/debugcategories.h \
+    game/mapscene.h \
     game/playercontroller.h \
     game/collisiondetector.h \
     game/gameobject.h \
@@ -89,11 +93,15 @@ SOURCES += game/main.cpp \
     game/gameobjects.cpp \
     game/gameobjectsproxy.cpp \
     game/items/boxitem.cpp \
+    game/items/dooritem.cpp \
     game/items/literatureitem.cpp \
+    game/items/lockitem.cpp \
+    game/items/passageitem.cpp \
     game/items/teleporteritem.cpp \
     game/items/weatherareaproxy.cpp \
     game/map.cpp \
     game/debugcategories.cpp \
+    game/mapscene.cpp \
     game/playercontroller.cpp \
     game/collisiondetector.cpp \
     game/gameobject.cpp \

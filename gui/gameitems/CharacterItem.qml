@@ -31,13 +31,15 @@ PhysicsItem {
 
     onXChanged: {
         if (!character) return
-        character.position.x = x  / app.gridSize
+        character.position.x = x / app.gridSize
+        //console.log(character.name, "position changed", x, ",", y)
         if (character.isPlayer) moveCamera()
     }
 
     onYChanged: {
         if (!character) return
-        character.position.y = y  / app.gridSize
+        character.position.y = y / app.gridSize
+        //console.log(character.name, "position changed", x, ",", y)
         if (character.isPlayer) moveCamera()
     }
 
@@ -74,6 +76,7 @@ PhysicsItem {
             var currentVelocity = body.linearVelocity
             var dvx = character.movementVector.x * app.velocityScale - currentVelocity.x
             var dvy = character.movementVector.y * app.velocityScale - currentVelocity.y
+            //console.log("Apply linear impulse to body", currentVelocity)
             body.applyLinearImpulse(Qt.point(dvx, dvy), Qt.point(root.width / 2, root.height / 2))
         }
     }

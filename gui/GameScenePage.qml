@@ -36,7 +36,7 @@ GamePage {
     // Pysical world
     World {
         id: physicsWorld
-        timeStep: 1/60 * app.gameSpeedFactor
+        timeStep: app.gameSpeedFactor / 60 // Default 60 Hz
         onTimeStepChanged: console.log("Game speed changed to", timeStep, "[1/s]", debugControls.gameSpeed)
         gravity: Qt.point(0, 0)
         pixelsPerMeter: app.gridSize
@@ -75,14 +75,14 @@ GamePage {
             Item {
                 id: worldItem
                 anchors.centerIn: parent
-                width: Game.engine.dataManager.worldSize.width * app.gridSize
-                height: Game.engine.dataManager.worldSize.height * app.gridSize
+                width: Game.engine.mapScene.map.size.width * app.gridSize
+                height: Game.engine.mapScene.map.size.height * app.gridSize
 
                 Rectangle {
                     id: backgroundRectangle
                     anchors.fill: parent
                     z: GameObject.LayerBackground - 1
-                    color: Game.engine.dataManager.worldBackgroundColor
+                    color: Game.engine.mapScene.map.backgroundColor
                 }
 
                 WorldBoundaries {
@@ -112,7 +112,6 @@ GamePage {
                     }
                 }
 
-
                 function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
                     if (layer === GameObject.LayerBackground) {
                         return -2
@@ -129,10 +128,10 @@ GamePage {
 
                 Repeater {
                     id: gameObjectRepeater
-                    model: Game.engine.activeObjects
+                    model: Game.engine.mapScene.activeObjects
                     delegate: GameObject {
                         id: gameObjet
-                        gameObject: Game.engine.activeObjects.get(model.index)
+                        gameObject: Game.engine.mapScene.activeObjects.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
                         worldHeight: worldItem.height
                         width: model.size.width * app.gridSize
@@ -145,9 +144,9 @@ GamePage {
 
                 Repeater {
                     id: itemsRepeater
-                    model: Game.engine.activeItems
+                    model: Game.engine.mapScene.activeItems
                     delegate: GameItem {
-                        gameItem: Game.engine.activeItems.get(model.index)
+                        gameItem: Game.engine.mapScene.activeItems.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
@@ -159,9 +158,9 @@ GamePage {
 
                 Repeater {
                     id: chestsRepeater
-                    model: Game.engine.activeChests
+                    model: Game.engine.mapScene.activeChests
                     delegate: GameItem {
-                        gameItem: Game.engine.activeChests.get(model.index)
+                        gameItem: Game.engine.mapScene.activeChests.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
@@ -173,10 +172,10 @@ GamePage {
 
                 Repeater {
                     id: characersRepeater
-                    model: Game.engine.activeCharacters
+                    model: Game.engine.mapScene.activeCharacters
                     delegate: CharacterItem {
                         id: characterItem
-                        character: Game.engine.activeCharacters.get(model.index)
+                        character: Game.engine.mapScene.activeCharacters.get(model.index)
                         itemDebugEnabled: debugControls.itemDebugEnabled
                         particleSystem: particles
                         width: model.size.width * app.gridSize
@@ -194,10 +193,10 @@ GamePage {
 
                 Repeater {
                     id: enemiesRepeater
-                    model: Game.engine.activeEnemies
+                    model: Game.engine.mapScene.activeEnemies
                     delegate: EnemyItem {
                         itemDebugEnabled: debugControls.itemDebugEnabled
-                        enemy: Game.engine.activeEnemies.get(model.index)
+                        enemy: Game.engine.mapScene.activeEnemies.get(model.index)
                         width: model.size.width * app.gridSize
                         height: model.size.height * app.gridSize
                         x: model.position.x * app.gridSize
@@ -233,6 +232,34 @@ GamePage {
             }
         }
 
+        Flickable {
+            id: lightsFlickable
+            anchors.fill: worldFlickable
+            contentWidth: worldFlickable.contentWidth
+            contentHeight: worldFlickable.contentHeight
+            contentX: worldFlickable.contentX
+            contentY: worldFlickable.contentY
+            enabled: false
+            visible: false
+
+            Item {
+                id: lightItem
+                anchors.centerIn: parent
+                width: worldItem.width
+                height: worldItem.height
+
+                Image {
+                    id: characterLight
+                    source: dataDirectory + "/lights/spotlight.svg"
+                    property point playerWorldPosition: getPlayerWorldPosition()
+                    x: playerWorldPosition.x - width / 2
+                    y: playerWorldPosition.y - height / 2
+                    width: 20 * app.gridSize
+                    height: width
+                }
+            }
+        }
+
         // ##################################################################################
         // GameScene item overlays
         // ##################################################################################
@@ -257,21 +284,6 @@ GamePage {
                     return "gameoverlays/TouchscreenGameOverlay.qml"
                 default:
                     return "gameoverlays/DefaultGameOverlay.qml"
-                }
-            }
-        }
-
-        DebugControls {
-            id: debugControls
-            anchors.fill: parent
-            visible: Game.debugging
-            onStonedEnabledChanged: {
-                if (stonedEnabled) {
-                    stonedShader.visible = true
-                    stonedStartAnimation.start()
-                    stonedShaderTimeAnimation.start()
-                } else {
-                    stonedStopAnimation.start()
                 }
             }
         }
@@ -456,14 +468,18 @@ GamePage {
 
     ShaderEffectSource {
         id: shaderEffectSource
-        sourceItem: sceneItem
+        width: worldItem.width > sceneItem.width ? sceneItem.width : worldItem.width
+        height: worldItem.height > sceneItem.height ? sceneItem.height : worldItem.height
+        anchors.centerIn: parent
+        sourceItem: worldFlickable
     }
 
     ShaderEffect {
         id: magicShader
         visible: debugControls.magicEnabled
-        width: parent.width
-        height: parent.height
+        anchors.fill: source
+        blending: false
+
         property var source: shaderEffectSource
         property real blueChannel: 0.8
 
@@ -473,19 +489,108 @@ GamePage {
     ShaderEffect {
         id: grayscaleShader
         visible: debugControls.grayscaleEnabled
-        width: parent.width
-        height: parent.height
+        anchors.fill: source
+
+        blending: false
+
         property var source: shaderEffectSource
 
         vertexShader: "qrc:shadereffects/vertexshaders/grayscale.frag"
         fragmentShader: "qrc:shadereffects/fragmentshaders/grayscale.frag"
     }
 
+    //    ShaderEffect {
+    //        id: lightShader
+    //        visible: debugControls.lightEnabled
+    //        width: parent.width
+    //        height: parent.height
+    //        blending: false
+
+    //        property var source: shaderEffectSource
+    //        property point playerScreenPosition: getPlayerScreenPosition()
+    //        property point playerPosition: Qt.point(playerScreenPosition.x / sceneItem.width, playerScreenPosition.y / sceneItem.height)
+    //        property point screenSize: Qt.point(sceneItem.width, sceneItem.height)
+    //        property real screenRatio: sceneItem.width / sceneItem.height
+    //        property real lightRadius: 10 * (sceneItem.width / app.gridSize) / sceneItem.width
+
+    //        fragmentShader: "qrc:shadereffects/fragmentshaders/light.frag"
+    //    }
+
+    ShaderEffect {
+        id: ambientShader
+        visible: debugControls.lightEnabled
+        anchors.fill: world
+
+        blending: false
+
+        property var world: shaderEffectSource
+        property var light: ShaderEffectSource {
+            sourceItem: lightsFlickable
+            hideSource: true
+        }
+
+        property real ambientBrightness: debugControls.ambientBrightness
+        property real alpha: 0.2
+
+        fragmentShader: "
+            varying highp vec2 qt_TexCoord0;
+            uniform sampler2D world;
+            uniform sampler2D light;
+
+            uniform lowp float qt_Opacity;
+
+            uniform lowp float ambientBrightness;
+            uniform lowp float alpha;
+
+            vec3 rgb2hsb(vec3 c);
+            vec3 hsb2rgb(vec3 c);
+
+            void main(void) {
+                lowp vec4 worldTexture = texture2D(world, qt_TexCoord0);
+                lowp vec4 lightTexture = texture2D(light, qt_TexCoord0);
+
+                lowp float brightness = ambientBrightness;
+
+                if (lightTexture.a != 0.0) {
+                    brightness = mix(ambientBrightness, 1.0, lightTexture.a);
+                }
+
+                vec3 hsbWorldColor = rgb2hsb(worldTexture.rgb);
+                hsbWorldColor.b = hsbWorldColor.b * brightness;
+                vec3 finalColor = hsb2rgb(hsbWorldColor);
+                gl_FragColor = vec4(finalColor, worldTexture.a) * qt_Opacity;
+            }
+
+            vec3 rgb2hsb(vec3 c) {
+                vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+                vec4 p = mix(vec4(c.bg, K.wz),
+                             vec4(c.gb, K.xy),
+                             step(c.b, c.g));
+                vec4 q = mix(vec4(p.xyw, c.r),
+                             vec4(c.r, p.yzx),
+                             step(p.x, c.r));
+                float d = q.x - min(q.w, q.y);
+                float e = 1.0e-10;
+                return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)),
+                            d / (q.x + e),
+                            q.x);
+            }
+
+            vec3 hsb2rgb(vec3 c) {
+                vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0), 6.0)-3.0)-1.0, 0.0, 1.0 );
+                rgb = rgb*rgb*(3.0 - 2.0 * rgb);
+                return c.z * mix(vec3(1.0), rgb, c.y);
+            }
+        "
+    }
+
+
     ShaderEffect {
         id: stonedShader
-        width: parent.width
-        height: parent.height
+        anchors.fill: source
+
         visible: false
+        blending: false
 
         property var source: shaderEffectSource
         property real amplitude: 0.02
@@ -532,13 +637,34 @@ GamePage {
     }
 
     // ##################################################################################
+    // Debug controls on top of the scene item
+    // ##################################################################################
+
+
+
+    DebugControls {
+        id: debugControls
+        anchors.fill: parent
+        visible: Game.debugging
+        onStonedEnabledChanged: {
+            if (stonedEnabled) {
+                stonedShader.visible = true
+                stonedStartAnimation.start()
+                stonedShaderTimeAnimation.start()
+            } else {
+                stonedStopAnimation.start()
+            }
+        }
+    }
+
+    // ##################################################################################
     // Functions
     // ##################################################################################
 
     function runGame() {
         forceActiveFocus()
-        moveCamera()
         evaluateViewWindow()
+        moveCamera()
         particles.running = true
         sceneItem.opacity = 1
         Game.engine.resumeGame()
@@ -598,10 +724,10 @@ GamePage {
         var viewWindowX = Math.round(worldFlickable.width / app.gridSize)
         var viewWindowY = Math.round(worldFlickable.height / app.gridSize)
 
-        Game.engine.viewWindow = Qt.rect(viewOffsetX - app.viewActiveFrameWidth,
-                                         viewOffsetY - app.viewActiveFrameWidth,
-                                         viewWindowX + (2 * app.viewActiveFrameWidth),
-                                         viewWindowY + (2 * app.viewActiveFrameWidth))
+        Game.engine.mapScene.viewWindow = Qt.rect(viewOffsetX - app.viewActiveFrameWidth,
+                                                  viewOffsetY - app.viewActiveFrameWidth,
+                                                  viewWindowX + (2 * app.viewActiveFrameWidth),
+                                                  viewWindowY + (2 * app.viewActiveFrameWidth))
     }
 
     function calculateAngle() {

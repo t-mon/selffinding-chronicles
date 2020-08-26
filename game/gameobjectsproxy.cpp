@@ -26,12 +26,13 @@ void GameObjectsProxy::setGameObjects(GameObjects *gameObjects)
     m_gameObjects = gameObjects;
     emit gameObjectsChanged(gameObjects);
     setSourceModel(m_gameObjects);
-    endResetModel();
 
     if (m_gameObjects) {
         connect(m_gameObjects, &GameObjects::countChanged, this, &GameObjectsProxy::onSourceModelCountChanged);
         invalidateFilter();
     }
+
+    endResetModel();
 
     emit countChanged();
 }

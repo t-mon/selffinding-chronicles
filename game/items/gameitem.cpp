@@ -180,6 +180,10 @@ QString GameItem::interactionToString(Interaction interaction)
         //: This string describes an interaction for an item.
         interactionString = tr("Plunder");
         break;
+    case InteractionUnlock:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Unlock");
+        break;
     }
 
     return interactionString;

@@ -127,18 +127,26 @@ GamePage {
                         TabBar {
                             id: optionsTabBar
                             Layout.fillWidth: true
-                            TabButton {
-                                text: qsTr("Items")
-                            }
 
-                            TabButton {
-                                text: qsTr("Objects")
-                                onClicked: {
-
+                            onCurrentIndexChanged: {
+                                switch(currentIndex) {
+                                case 0:
+                                    Game.mapEditor.mode = GameMapEditor.ModeItems
+                                    break;
+                                case 1:
+                                    Game.mapEditor.mode = GameMapEditor.ModeObjects
+                                    break;
+                                case 2:
+                                    Game.mapEditor.mode = GameMapEditor.ModeCharacters
+                                    break;
+                                case 3:
+                                    Game.mapEditor.mode = GameMapEditor.ModeEnemies
+                                    break;
                                 }
-
                             }
 
+                            TabButton { text: qsTr("Items") }
+                            TabButton { text: qsTr("Objects") }
                             TabButton { text: qsTr("Characters") }
                             TabButton { text: qsTr("Enemies") }
                         }
@@ -287,25 +295,78 @@ GamePage {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
+                    function mouseItemIntercepts(item, positionX, positionY) {
+                        var itemRectangle = Qt.rect(item.gameItem.position.x * app.gridSize, item.gameItem.position.y * app.gridSize, item.gameItem.size.width * app.gridSize, item.gameItem.size.height * app.gridSize)
+                        //console.log("Checking position", Qt.point(positionX, positionY), item.name, itemRectangle)
+                        if (positionX >= itemRectangle.x && positionX <= itemRectangle.x + itemRectangle.width &&
+                                positionY >= itemRectangle.y && positionY < itemRectangle.y + itemRectangle.height) {
+                            return true;
+                        }
+
+                        return false;
+                    }
+
                     function selectItemUnderMouse() {
                         var positionX = worldFlickable.contentX + editorMouseArea.mouseX
                         var positionY = worldFlickable.contentY + editorMouseArea.mouseY
 
-                        var currentSelectedItem = null
+                        // Select object or item, depending on the mode
 
-                        for (var i = 0; i < Game.mapEditor.activeItems.count; i++) {
-                            var item = Game.mapEditor.activeItems.get(i)
-                            var itemRectangle = Qt.rect(item.position.x * app.gridSize, item.position.y * app.gridSize, item.size.width * app.gridSize, item.size.height * app.gridSize)
-                            //console.log("Checking position", Qt.point(positionX, positionY), item.name, itemRectangle)
-                            if (positionX >= itemRectangle.x && positionX <= itemRectangle.x + itemRectangle.width &&
-                                    positionY >= itemRectangle.y && positionY < itemRectangle.y + itemRectangle.height) {
+                        if (Game.mapEditor.mode == GameMapEditor.ModeObjects) {
+                            var objectsUnderMouse = []
 
-                                console.log("Intercepts item", item.name, itemRectangle)
-                                currentSelectedItem = item
+                            // TODO
+
+                        } else {
+                            // The rest are game items
+                            var itemsUnderMouse = []
+
+                            switch (Game.mapEditor.mode) {
+                            case GameMapEditor.ModeItems:
+                                for (var itemsIndex = 0; itemsIndex < itemsRepeater.count  ; itemsIndex++) {
+                                    var item = itemsRepeater.itemAt(itemsIndex)
+                                    if (mouseItemIntercepts(item, positionX, positionY)) {
+                                        itemsUnderMouse.push(item)
+                                    }
+                                }
+                                break;
+//                            case GameMapEditor.ModeCharacters:
+//                                for (var characterIndex = 0; characterIndex < Game.mapEditor.activeCharacters.count; characterIndex++) {
+//                                    var character = Game.mapEditor.activeCharacters.get(characterIndex)
+//                                    if (mouseItemIntercepts(character, positionX, positionY)) {
+//                                        itemsUnderMouse.push(character)
+//                                    }
+//                                }
+//                                break;
+//                            case GameMapEditor.ModeEnemies:
+//                                for (var enemyIndex = 0; enemyIndex < Game.mapEditor.activeEnemies.count; enemyIndex++) {
+//                                    var enemy = Game.mapEditor.activeEnemies.get(enemyIndex)
+//                                    if (mouseItemIntercepts(enemy, positionX, positionY)) {
+//                                        itemsUnderMouse.push(enemy)
+//                                    }
+//                                }
+//                                break;
+                            default:
+                                console.warn("Unkandled mode for selecting items")
+                                break;
+                            }
+
+                            // Not check all intercepting items if the pixel under the mouse is 0
+                            if (itemsUnderMouse.length > 0) {
+                                console.log("Intercepting", itemsUnderMouse.length, "item areas")
+                            }
+
+                            // Now get the item where the pixel under the curser is not 0
+                            for (var x = 0; x < itemsUnderMouse.length; x++) {
+                                // Get the image and the pixel under the mouse
+                                var interceptingItem = itemsUnderMouse[x]
+                                console.log("  Intercepts item", interceptingItem.gameItem.name)
+
+                                var image = interceptingItem.itemImage
                             }
                         }
 
-                        selectItem(currentSelectedItem)
+                        //selectItem(currentSelectedItem)
                     }
 
                     function updatePositions() {
@@ -476,9 +537,6 @@ GamePage {
                             }
                         }
                     }
-
-
-
 
                     MouseArea {
                         id: editorMouseArea

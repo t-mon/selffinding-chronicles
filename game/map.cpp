@@ -16,6 +16,7 @@ Map::Map(QObject *parent) : QObject(parent)
     m_chests = new GameItems(this);
     m_enemies = new GameItems(this);
     m_characters = new GameItems(this);
+    m_weatherAreaModel = new WeatherAreaModel(this);
 }
 
 Map::Map(GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
@@ -147,6 +148,11 @@ GameItems *Map::characters() const
     return m_characters;
 }
 
+WeatherAreaModel *Map::weatherAreas() const
+{
+    return m_weatherAreaModel;
+}
+
 void Map::loadMap(const QString &resourcePath)
 {
     qCDebug(dcMap()) << "Start loading map from" << resourcePath;
@@ -252,6 +258,12 @@ void Map::loadMapVariant(const QVariantMap &mapData)
         }
         qCDebug(dcMap()) << "        " << qobject_cast<Enemy *>(item);
     }
+
+    // Create weater areas for the entire map
+    qCDebug(dcMap()) << "Initialize weather areas for map size" << m_size;
+    m_weatherAreaModel->initializeAreas(m_size);
+    qCDebug(dcMap()) << "Weather area total count for world size" << m_size << "Count:" << m_weatherAreaModel->rowCount();
+
 
     qCDebug(dcMap()) << "Map loading finished successfully:" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
 }

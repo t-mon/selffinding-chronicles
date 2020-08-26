@@ -444,8 +444,10 @@
             "y": 10,
             "data": ":/gamedata/items/chests/chest-1.json",
             "chest": {
-                "locked": true,
-                "lockCombination": [ 0, 1, 0, 1 ],
+                "lock": {
+                    "locked": true,
+                    "lockCombination": [ 0, 1, 0, 1 ]
+                },
                 "inventory": [
                     {
                         "data": ":/gamedata/items/plants/healing-herb.json",
@@ -467,8 +469,10 @@
             "y": 1,
             "data": ":/gamedata/items/chests/chest-1.json",
             "chest": {
-                "locked": true,
-                "lockCombination": [ 1, 1, 0, 0 ],
+                "lock": {
+                    "locked": true,
+                    "lockCombination": [ 1, 1, 0, 0 ]
+                },
                 "inventory": [
                     {
                         "data": ":/gamedata/items/plants/healing-herb.json",

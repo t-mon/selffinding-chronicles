@@ -1,0 +1,35 @@
+{
+    "name": "Locked door",
+    "type": "door",
+    "imageName": "/images/world/doors/door-1.png",
+    "geometry": {
+        "width": 3,
+        "height": 4,
+        "layer": "items"
+    },
+    "physicsGeometry": {
+        "body": "static",
+        "shape": "rectangle",
+        "width": 2,
+        "height": 3,
+        "x": 0.5,
+        "y": 1,
+        "category": 8,
+        "collision": 171,
+        "vertices": []
+    },
+
+    "passage": {
+        "targetMap": ":/maps/test-monster.json",
+        "targetPositionX": 0,
+        "targetPositionY": 10
+    },
+
+    "door": {
+        "open": false,
+        "lock": {
+            "locked": true,
+            "lockCombination": [ 1, 0, 1, 0 ]
+        }
+    }
+}

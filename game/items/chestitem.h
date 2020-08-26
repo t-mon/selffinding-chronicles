@@ -3,15 +3,14 @@
 
 #include <QObject>
 
+#include "lockitem.h"
 #include "gameitemsproxy.h"
 
 class ChestItem : public GameItem
 {
     Q_OBJECT
     Q_PROPERTY(GameItems *items READ items CONSTANT)
-    Q_PROPERTY(bool locked READ locked NOTIFY lockedChanged)
-    Q_PROPERTY(QStringList lockCombination READ lockCombination NOTIFY lockCombinationChanged)
-    Q_PROPERTY(int unlockProgress READ unlockProgress NOTIFY unlockProgressChanged)
+    Q_PROPERTY(LockItem *lockItem READ lockItem CONSTANT)
 
 public:
     explicit ChestItem(QObject *parent = nullptr);
@@ -23,36 +22,18 @@ public:
     Q_INVOKABLE void performInteraction() override;
 
     GameItems *items() const;
+    LockItem *lockItem() const;
 
-    bool locked() const;
-    void setLocked(bool locked);
-
-    QStringList lockCombination() const;
-    void setLockCombination(const QStringList &lockCombination);
-
-    int unlockProgress() const;
-
-    Q_INVOKABLE void unlockLeftMovement();
-    Q_INVOKABLE void unlockRightMovement();
+    bool open() const;
+    void setOpen(bool open);
 
 private:
+    LockItem *m_lockItem = nullptr;
     GameItems *m_items = nullptr;
-    bool m_locked = false;
-    QStringList m_lockCombination;
-
-    int m_unlockProgress = 0;
-    int m_unlockProgressStep = 0;
-
-    void resetUnlock();
-    void setUnlockProgress(int unlockProgress);
+    bool m_open = false;
 
 signals:
-    void lockedChanged(bool locked);
-    void lockCombinationChanged(const QStringList &lockCombination);
-
-    void unlockProgressChanged(int unlockProgress);
-    void successfullUnlockMove();
-    void unlockReset();
+    void openChanged(bool open);
 };
 
 QDebug operator<<(QDebug debug, ChestItem *chestItem);

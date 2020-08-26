@@ -20,9 +20,11 @@
     },
 
     "chest": {
-        "locked": false,
-        "lockCombination": [ ],
-        "inventory": [ ]
+        "inventory": [ ],
+        "lock": {
+            "locked": false,
+            "lockCombination": [ ]
+        }
     }
 }
  

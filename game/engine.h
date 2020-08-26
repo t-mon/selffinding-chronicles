@@ -10,6 +10,8 @@
 #include <QElapsedTimer>
 
 #include "map.h"
+#include "mapscene.h"
+
 #include "fields.h"
 #include "datamanager.h"
 #include "gameobjects.h"
@@ -27,22 +29,17 @@ class Engine : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(QRectF viewWindow READ viewWindow WRITE setViewWindow NOTIFY viewWindowChanged)
 
     Q_PROPERTY(PlayerController *playerController READ playerController CONSTANT)
     Q_PROPERTY(Character *player READ player NOTIFY playerChanged)
     Q_PROPERTY(GameItem *playerFocusItem READ playerFocusItem NOTIFY playerFocusItemChanged)
 
     Q_PROPERTY(DataManager *dataManager READ dataManager CONSTANT)
-    Q_PROPERTY(GameObjectsProxy *activeObjects READ activeObjects CONSTANT)
-    Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
-    Q_PROPERTY(GameItemsProxy *activeChests READ activeChests CONSTANT)
-    Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
-    Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
-    Q_PROPERTY(WeatherAreaProxy *activeWeatherAreas READ activeWeatherAreas CONSTANT)
+    Q_PROPERTY(MapScene *mapScene READ mapScene CONSTANT)
 
     Q_PROPERTY(Conversation *currentConversation READ currentConversation NOTIFY currentConversationChanged)
     Q_PROPERTY(ChestItem *currentChestItem READ currentChestItem NOTIFY currentChestItemChanged)
+    Q_PROPERTY(LockItem *currentLockItem READ currentLockItem NOTIFY currentLockItemChanged)
     Q_PROPERTY(LiteratureItem *currentLiteratureItem READ currentLiteratureItem NOTIFY currentLiteratureItemChanged)
     Q_PROPERTY(GameItems *currentPlunderItems READ currentPlunderItems NOTIFY currentPlunderItemsChanged)
 
@@ -73,26 +70,20 @@ public:
 
     State state() const;
 
-    QRectF viewWindow() const;
-    void setViewWindow(const QRectF &viewWindow);
-
     QPointF currentPlayerPosition() const;
     Field *currentPlayerField() const;
 
     DataManager *dataManager() const;
     Character *player() const;
-    GameObjectsProxy *activeObjects() const;
-    GameItemsProxy *activeItems() const;
-    GameItemsProxy *activeChests() const;
-    GameItemsProxy *activeCharacters() const;
-    GameItemsProxy *activeEnemies() const;
-    WeatherAreaProxy *activeWeatherAreas() const;
+
+    MapScene *mapScene() const;
 
     PlayerController *playerController() const;
 
     GameItem *playerFocusItem() const;
     Conversation *currentConversation() const;
     ChestItem *currentChestItem() const;
+    LockItem *currentLockItem() const;
     LiteratureItem *currentLiteratureItem() const;
     TeleporterItem *currentTeleportItem() const;
     GameItems *currentPlunderItems() const;
@@ -121,27 +112,20 @@ public:
 private:
     State m_state = StateUnitialized;
 
-    QRectF m_viewWindow = QRectF(0, 0, 10, 10);
-
     DataManager *m_dataManager = nullptr;
     QElapsedTimer m_loadingTimer;
 
+    MapScene *m_mapScene = nullptr;
+
     Character *m_player = nullptr;
     PlayerController *m_playerController = nullptr;
-
-    GameObjectsProxy *m_activeObjects = nullptr;
-    GameItemsProxy *m_activeItems = nullptr;
-    GameItemsProxy *m_activeChests = nullptr;
-    GameItemsProxy *m_activeEnemies = nullptr;
-    GameItemsProxy *m_activeCharacters = nullptr;
-    WeatherAreaModel *m_weatherAreaModel = nullptr;
-    WeatherAreaProxy *m_weatherAreaProxy = nullptr;
 
     TeleportationHandler *m_teleportationHandler = nullptr;
 
     Conversation *m_currentConversation = nullptr;
     Character *m_currentConversationCharacter = nullptr;
     ChestItem *m_currentChestItem = nullptr;
+    LockItem *m_currentLockItem = nullptr;
     LiteratureItem *m_currentLiteratureItem = nullptr;
     GameItems *m_currentPlunderItems = nullptr;
 
@@ -169,6 +153,7 @@ private:
 
     void setCurrentConversation(Conversation *conversation);
     void setCurrentChestItem(ChestItem *chestItem);
+    void setCurrentLockItem(LockItem *lockItem);
     void setCurrentLiteratureItem(LiteratureItem *literatureItem);
     void setCurrentPlunderItems(GameItems *plunderItems);
 
@@ -186,7 +171,6 @@ signals:
 
     void stateChanged(State state);
 
-    void viewWindowChanged(const QRectF &viewWindow);
     void loadingChanged(bool loading);
     void loadedChanged(bool loaded);
 
@@ -197,6 +181,7 @@ signals:
     void playerFocusItemChanged(GameItem *playerFocusItem);
     void currentConversationChanged(Conversation *conversation);
     void currentChestItemChanged(ChestItem *chestItem);
+    void currentLockItemChanged(LockItem *lockItem);
     void currentLiteratureItemChanged(LiteratureItem *literatureItem);
     void currentPlunderItemsChanged(GameItems *plunderItems);
 

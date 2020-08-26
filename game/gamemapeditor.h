@@ -13,7 +13,8 @@
 class GameMapEditor : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(GameMapEditor::Tool tool READ tool WRITE setTool NOTIFY toolChanged)
+    Q_PROPERTY(Tool tool READ tool WRITE setTool NOTIFY toolChanged)
+    Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
     Q_PROPERTY(GameObjects *availableObjects READ availableObjects CONSTANT)
     Q_PROPERTY(GameItems *availableItems READ availableItems CONSTANT)
     Q_PROPERTY(GameItems *availableCharacters READ availableCharacters CONSTANT)
@@ -37,6 +38,14 @@ public:
     };
     Q_ENUM(Tool)
 
+    enum Mode {
+        ModeObjects,
+        ModeItems,
+        ModeCharacters,
+        ModeEnemies
+    };
+    Q_ENUM(Mode)
+
     explicit GameMapEditor(QObject *parent = nullptr);
 
     GameObjects *availableObjects() const;
@@ -51,6 +60,9 @@ public:
 
     GameMapEditor::Tool tool() const;
     void setTool(GameMapEditor::Tool tool);
+
+    GameMapEditor::Mode mode() const;
+    void setMode(GameMapEditor::Mode mode);
 
     GameItem *selectedGameItem() const;
     Q_INVOKABLE void createSelectedGameItem(const QString &resourcePath);
@@ -75,6 +87,8 @@ public:
 
 private:
     Tool m_tool = ToolSelect;
+    Mode m_mode = ModeItems;
+
     GameObjects *m_availableObjects = nullptr;
     GameItems *m_availableItems = nullptr;
     GameItems *m_availableCharacters = nullptr;
@@ -94,6 +108,8 @@ private:
 
 signals:
     void toolChanged(GameMapEditor::Tool tool);
+    void modeChanged(GameMapEditor::Mode mode);
+
     void availableItemsChanged(GameItems *gameItems);
     void availableObjectsChanged(GameObjects *gameObjects);
     void mapChanged(Map *map);
@@ -101,7 +117,6 @@ signals:
     void editorViewOffsetChanged(const QPointF &editorViewOffset);
     void selectedGameItemChanged(GameItem *selectedGameItem);
     void selectedGameObjectChanged(GameObject *selectedGameObject);
-
 
 private slots:
     void onDataManagerStateChanged(DataManager::State state);

@@ -22,8 +22,10 @@
     },
 
     "teleport": {
-        "targetMap": ":/maps/test-environment.json",
-        "targetPositionX": 20,
-        "targetPositionY": 20
+        "passage": {
+            "targetMap": ":/maps/test-environment.json",
+            "targetPositionX": 20,
+            "targetPositionY": 20
+        }
     }
 }

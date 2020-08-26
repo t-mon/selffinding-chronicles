@@ -13,6 +13,7 @@
 #include "items/gameitems.h"
 #include "items/plantitem.h"
 #include "items/weaponitem.h"
+#include "items/weatherareaproxy.h"
 
 class Map : public QObject
 {
@@ -53,6 +54,7 @@ public:
     GameItems *chests() const;
     GameItems *enemies() const;
     GameItems *characters() const;
+    WeatherAreaModel *weatherAreas() const;
 
     void loadMap(const QString &resourcePath);
     void loadMapVariant(const QVariantMap &mapData);
@@ -74,6 +76,8 @@ private:
     GameItems *m_chests = nullptr;
     GameItems *m_enemies = nullptr;
     GameItems *m_characters = nullptr;
+    WeatherAreaModel *m_weatherAreaModel = nullptr;
+
     QList<Fields *> m_mapData;
 
     void placeItemOnMap(GameItem *item);

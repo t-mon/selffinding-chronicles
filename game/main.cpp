@@ -116,16 +116,17 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("GameInput", true);
     s_loggingFilters.insert("Engine", true);
     s_loggingFilters.insert("EngineData", false);
-    s_loggingFilters.insert("Character", true);
+    s_loggingFilters.insert("Character", false);
     s_loggingFilters.insert("Settings", true);
     s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("PathController", false);
     s_loggingFilters.insert("Map", true);
+    s_loggingFilters.insert("MapScene", true);
     s_loggingFilters.insert("MapEditor", true);
     s_loggingFilters.insert("MapEditorData", true);
     s_loggingFilters.insert("DataManager", true);
     s_loggingFilters.insert("SoundEngine", true);
-    s_loggingFilters.insert("Item", false);
+    s_loggingFilters.insert("Item", true);
     s_loggingFilters.insert("GameObject", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
@@ -142,9 +143,11 @@ int main(int argc, char *argv[])
 
     // Game
     qmlRegisterSingletonType<Game>("Chronicles", 1, 0, "Game", Game::qmlInstance);
+
     qmlRegisterUncreatableType<Engine>("Chronicles", 1, 0, "Engine", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Field>("Chronicles", 1, 0, "Field", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<Map>("Chronicles", 1, 0, "Map", "Can't create this in QML. Get it from the Engine object.");
+    qmlRegisterUncreatableType<MapScene>("Chronicles", 1, 0, "MapScene", "Can't create this in QML. Get it from the Engine object.");
     qmlRegisterUncreatableType<Engine>("Chronicles", 1, 0, "Engine", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<DataManager>("Chronicles", 1, 0, "DataManager", "Can't create this in QML. Get it from the Engine object.");
     qmlRegisterUncreatableType<SaveGame>("Chronicles", 1, 0, "SaveGame", "Can't create this in QML. Get it from the DataManager object.");
@@ -154,6 +157,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<SoundEngine>("Chronicles", 1, 0, "SoundEngine", "Can't create this in QML. Get it from the Game instance.");
     qmlRegisterUncreatableType<AudioDecoderStream>("Chronicles", 1, 0, "AudioDecoderStream", "Can't create this in QML. Create it with the SoundEngine instance.");
+
     qmlRegisterType<GameSoundEffect>("Chronicles", 1, 0, "GameSoundEffect");
 
     // Objects
@@ -175,6 +179,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<ChestItem>("Chronicles", 1, 0, "ChestItem", "Can't create this in QML.");
     qmlRegisterUncreatableType<Character>("Chronicles", 1, 0, "Character", "Can't create this in QML.");
     qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");
+
+    qmlRegisterUncreatableType<LockItem>("Chronicles", 1, 0, "LockItem", "Can't create this in QML.");
 
     // Weather areas
     qmlRegisterType<WeatherAreaProxy>("Chronicles", 1, 0, "WeatherAreaProxy");

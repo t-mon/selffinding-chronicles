@@ -20,22 +20,23 @@ void GameItemsProxy::setGameItems(GameItems *gameItems)
         return;
 
     // Disconnect old model
+    beginResetModel();
     if (m_gameItems)
         disconnect(m_gameItems, &GameItems::countChanged, this, &GameItemsProxy::onSourceModelCountChanged);
 
-    beginResetModel();
     m_gameItems = gameItems;
     emit gameItemsChanged(gameItems);
     setSourceModel(m_gameItems);
     setSortRole(GameItems::PriceRole);
-    endResetModel();
 
     if (m_gameItems) {
-        connect(m_gameItems, &GameItems::countChanged, this, &GameItemsProxy::onSourceModelCountChanged);
         m_shownItemIds.clear();
         invalidateFilter();
         sort(0);
     }
+    connect(m_gameItems, &GameItems::countChanged, this, &GameItemsProxy::onSourceModelCountChanged);
+
+    endResetModel();
 
     emit countChanged();
 }
@@ -61,7 +62,6 @@ void GameItemsProxy::resetFilter()
     setViewFilter(QRectF());
     setItemTypeFilter(GameItem::TypeNone);
 }
-
 
 QRectF GameItemsProxy::viewFilter() const
 {
@@ -149,7 +149,7 @@ bool GameItemsProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourcePa
         return true;
 
     // If no filter, return always true
-    if (m_itemTypeFilter == GameItem::TypeNone && !m_filterDuplicates && m_itemIdFilter.isEmpty() && m_viewFilter.isNull())
+    if (m_itemTypeFilter == GameItem::TypeNone && !m_filterDuplicates && m_itemIdFilter.isEmpty() && !m_viewFilter.isValid())
         return true;
 
     // Filter out items not matching the given id filter
@@ -157,7 +157,7 @@ bool GameItemsProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourcePa
         return false;
 
     // Filter out items not in the view filter
-    if (!m_viewFilter.isNull() && !m_viewFilter.intersects(QRectF(gameItem->position(), gameItem->size())))
+    if (m_viewFilter.isValid() && !m_viewFilter.intersects(QRectF(gameItem->position(), gameItem->size())))
         return false;
 
     // Filter out items not matching the item type filter

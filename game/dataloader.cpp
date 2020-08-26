@@ -166,6 +166,41 @@ ChestItem *DataLoader::createChestItem(const QString &resourcePath, const QVaria
     return chestItem;
 }
 
+DoorItem *DataLoader::createDoorItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
+{
+    DoorItem *doorItem = new DoorItem(parent);
+    doorItem->setResourcePath(resourcePath);
+    doorItem->setItemId(getItemIdFromResourcePath(resourcePath));
+    doorItem->setPosition(position);
+    fillGameItemData(qobject_cast<GameItem *>(doorItem), description);
+
+    // Passage properties
+    QVariantMap passageMap = description.value("passage").toMap();
+    fillPassageItemData(qobject_cast<PassageItem *>(doorItem), passageMap);
+
+    // Door properties
+    QVariantMap doorMap = description.value("door").toMap();
+    doorItem->setOpen(doorMap.value("open", false).toBool());
+    doorItem->setLockCombination(doorMap.value("lockCombination").toStringList());
+    doorItem->setLocked(doorMap.value("locked", false).toBool());
+
+    return doorItem;
+}
+
+PassageItem *DataLoader::createPassageItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
+{
+    PassageItem *passageItem = new PassageItem(parent);
+    passageItem->setResourcePath(resourcePath);
+    passageItem->setItemId(getItemIdFromResourcePath(resourcePath));
+    passageItem->setPosition(position);
+    fillGameItemData(qobject_cast<GameItem *>(passageItem), description);
+
+    QVariantMap passageMap = description.value("passage").toMap();
+    fillPassageItemData(passageItem, passageMap);
+
+    return passageItem;
+}
+
 Path *DataLoader::createPathObject(const QVariantMap &description, QObject *parent)
 {
     Path *path = new Path(parent);
@@ -359,6 +394,8 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPointF &p
         return createEnemyObject(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "chest") {
         return createChestItem(resourcePath, itemMap, position, parent);
+    } else if (itemTypeString == "door") {
+        return createDoorItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "literature") {
         return createLiteratureItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "teleport") {
@@ -461,11 +498,25 @@ void DataLoader::fillCharacterItemData(Character *character, const QVariantMap &
     }
 }
 
+void DataLoader::fillLockItemData(LockItem *lockItem, const QVariantMap &lockMap)
+{
+    lockItem->setLockCombination(lockMap.value("lockCombination").toStringList());
+    lockItem->setLocked(lockMap.value("locked", false).toBool());
+}
+
 void DataLoader::fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap)
 {
     chestItem->items()->addGameItemList(loadInventoryItems(chestMap.value("inventory").toList(), chestItem));
-    chestItem->setLockCombination(chestMap.value("lockCombination").toStringList());
-    chestItem->setLocked(chestMap.value("locked", false).toBool());
+    fillLockItemData(chestItem->lockItem(), chestMap.value("lock").toMap());
+}
+
+void DataLoader::fillPassageItemData(PassageItem *passageItem, const QVariantMap &passageMap)
+{
+    passageItem->setTargetMap(passageMap.value("targetMap").toString());
+    QPointF targetPosition;
+    targetPosition.setX(passageMap.value("targetPositionX").toDouble());
+    targetPosition.setY(passageMap.value("targetPositionY").toDouble());
+    passageItem->setTargetPosition(targetPosition);
 }
 
 QVariantMap DataLoader::gameObjectToVariantMap(GameObject *object)
@@ -552,6 +603,9 @@ QVariantMap DataLoader::characterToVariantMap(Character *character)
     characterMap.insert("y", character->position().y());
     characterMap.insert("data", character->resourcePath());
     characterMap.insert("character", characterPropertiesToVariantMap(character));
+
+    // FIXME: save current path progress if the is one
+
     return characterMap;
 }
 
@@ -595,15 +649,17 @@ QVariantMap DataLoader::chestToVariantMap(ChestItem *chestItem)
 {
     QVariantMap chestMap = gameItemToVariantMap(qobject_cast<GameItem *>(chestItem));
     QVariantMap chestProperties;
-    chestProperties.insert("locked", chestItem->locked());
+    QVariantMap lockMap;
+    lockMap.insert("locked", chestItem->lockItem()->locked());
     // Note: only save the combination if the chest is still locked
-    if (chestItem->locked()) {
+    if (chestItem->lockItem()->locked()) {
         QVariantList lockCombinationList;
-        for (int i = 0; i < chestItem->lockCombination().count(); i++) {
-            lockCombinationList.append(chestItem->lockCombination().at(i));
+        for (int i = 0; i < chestItem->lockItem()->lockCombination().count(); i++) {
+            lockCombinationList.append(chestItem->lockItem()->lockCombination().at(i));
         }
-        chestProperties.insert("lockCombination", lockCombinationList);
+        lockMap.insert("lockCombination", lockCombinationList);
     }
+    chestProperties.insert("lock", lockMap);
     chestProperties.insert("inventory", inventoryToVariantList(chestItem->items()));
     chestMap.insert("chest", chestProperties);
     return chestMap;

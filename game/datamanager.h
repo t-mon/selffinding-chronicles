@@ -18,16 +18,8 @@ class DataManager : public QThread
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(SaveGames *saveGames READ saveGames CONSTANT)
     Q_PROPERTY(QString saveGameName READ saveGameName NOTIFY saveGameNameChanged)
-
-    Q_PROPERTY(QSize worldSize READ worldSize NOTIFY worldSizeChanged)
-    Q_PROPERTY(QColor worldBackgroundColor READ worldBackgroundColor NOTIFY worldBackgroundColorChanged)
-
+    Q_PROPERTY(Map *map READ map NOTIFY mapChanged)
     Q_PROPERTY(Character *player READ player NOTIFY playerChanged)
-    Q_PROPERTY(GameObjects *objects READ objects CONSTANT)
-    Q_PROPERTY(GameItems *items READ items CONSTANT)
-    Q_PROPERTY(GameItems *chests READ chests CONSTANT)
-    Q_PROPERTY(GameItems *enemies READ enemies CONSTANT)
-    Q_PROPERTY(GameItems *characters READ characters CONSTANT)
 
 public:
     enum State {
@@ -48,15 +40,7 @@ public:
     SaveGames *saveGames() const;
 
     Map *map() const;
-    QSize worldSize() const;
-    QColor worldBackgroundColor() const;
-
     Character *player() const;
-    GameObjects *objects() const;
-    GameItems *items() const;
-    GameItems *chests() const;
-    GameItems *enemies() const;
-    GameItems *characters() const;
 
     void createItem(const QString &resourcePath, const QPointF &position);
 
@@ -82,16 +66,8 @@ private:
     Character *m_player = nullptr;
     QMutex m_playerMutex;
 
-    GameObjects *m_objects = nullptr;
-    GameItems *m_items = nullptr;
-    GameItems *m_chests = nullptr;
-    GameItems *m_enemies = nullptr;
-    GameItems *m_characters = nullptr;
-
     // Set members
     void setState(State state);
-    void setWorldSize(const QSize &worlSize);
-    void setWorldBackgroundColor(const QColor &color);
     void setSaveGameName(const QString &saveGameName);
 
     // Thread tasks
@@ -117,10 +93,7 @@ signals:
     void loadingFinished();
     void savingFinished();
 
-    void worldSizeChanged(const QSize &worldSize);
-    void worldBackgroundColorChanged(const QColor &backgroundColor);
-    void viewSizeChanged(const QSizeF &viewSize);
-    void viewOffsetChanged(const QPointF &viewOffset);
+    void mapChanged(Map *map);
     void playerChanged(Character *player);
 
 private slots:

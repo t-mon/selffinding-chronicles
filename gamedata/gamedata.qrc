@@ -40,5 +40,9 @@
         <file>gamedata/objects/paths/path.json</file>
         <file>gamedata/items/bushes/bush-1.json</file>
         <file>gamedata/items/trees/tree-1.json</file>
+        <file>maps/test-door.json</file>
+        <file>gamedata/items/doors/door-1.json</file>
+        <file>gamedata/items/doors/door-2.json</file>
+        <file>maps/test-chest.json</file>
     </qresource>
 </RCC>

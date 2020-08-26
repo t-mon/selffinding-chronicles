@@ -14,36 +14,13 @@ Engine::Engine(QObject *parent) :
     m_dataManager = new DataManager(this);
     connect(m_dataManager, &DataManager::stateChanged, this, &Engine::onDataManagerStateChanged);
 
-    m_activeObjects = new GameObjectsProxy(this);
-    m_activeObjects->setViewFilter(QRect(-1, -1, 1, 1));
-    m_activeObjects->setGameObjects(m_dataManager->objects());
+    m_mapScene = new MapScene(this);
 
-    m_activeItems = new GameItemsProxy(this);
-    m_activeItems->setViewFilter(QRect(-1, -1, 1, 1));
-    m_activeItems->setGameItems(m_dataManager->items());
-
-    m_activeChests = new GameItemsProxy(this);
-    m_activeChests->setViewFilter(QRect(-1, -1, 1, 1));
-    m_activeChests->setGameItems(m_dataManager->chests());
-
-    m_activeEnemies = new GameItemsProxy(this);
-    m_activeEnemies->setViewFilter(QRect(-1, -1, 1, 1));
-    m_activeEnemies->setGameItems(m_dataManager->enemies());
-
-    m_activeCharacters = new GameItemsProxy(this);
-    m_activeCharacters->setViewFilter(QRect(-1, -1, 1, 1));
-    m_activeCharacters->setGameItems(m_dataManager->characters());
-
-    m_weatherAreaModel = new WeatherAreaModel(this);
-    m_weatherAreaProxy = new WeatherAreaProxy(this);
-    m_weatherAreaProxy->setViewFilter(QRect(-1, -1, 1, 1));
-    m_weatherAreaProxy->setAreaModel(m_weatherAreaModel);
-
-    connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, &Engine::onGameObjectActiveChanged);
-    connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
-    connect(m_activeChests, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
-    connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
-    connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
+    connect(m_mapScene->activeObjects(), &GameObjectsProxy::gameObjectActiveChanged, this, &Engine::onGameObjectActiveChanged);
+    connect(m_mapScene->activeItems(), &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
+    connect(m_mapScene->activeChests(), &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
+    connect(m_mapScene->activeEnemies(), &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
+    connect(m_mapScene->activeCharacters(), &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
 
     // Create player controller
     m_playerController = new PlayerController(this);
@@ -71,62 +48,14 @@ Engine::State Engine::state() const
     return m_state;
 }
 
-QRectF Engine::viewWindow() const
-{
-    return m_viewWindow;
-}
-
-void Engine::setViewWindow(const QRectF &viewWindow)
-{
-    if (m_viewWindow == viewWindow)
-        return;
-
-    qCDebug(dcEngineData()) << "View window changed" << viewWindow;
-
-    m_viewWindow = viewWindow;
-    emit viewWindowChanged(m_viewWindow);
-
-    m_activeObjects->setViewFilter(m_viewWindow);
-    m_activeItems->setViewFilter(m_viewWindow);
-    m_activeChests->setViewFilter(m_viewWindow);
-    m_activeCharacters->setViewFilter(m_viewWindow);
-    m_activeEnemies->setViewFilter(m_viewWindow);
-    m_weatherAreaProxy->setViewFilter(m_viewWindow);
-}
-
 Character *Engine::player() const
 {
     return m_player;
 }
 
-GameObjectsProxy *Engine::activeObjects() const
+MapScene *Engine::mapScene() const
 {
-    return m_activeObjects;
-}
-
-GameItemsProxy *Engine::activeItems() const
-{
-    return m_activeItems;
-}
-
-GameItemsProxy *Engine::activeChests() const
-{
-    return m_activeChests;
-}
-
-GameItemsProxy *Engine::activeCharacters() const
-{
-    return m_activeCharacters;
-}
-
-GameItemsProxy *Engine::activeEnemies() const
-{
-    return m_activeEnemies;
-}
-
-WeatherAreaProxy *Engine::activeWeatherAreas() const
-{
-    return m_weatherAreaProxy;
+    return m_mapScene;
 }
 
 PlayerController *Engine::playerController() const
@@ -147,6 +76,11 @@ Conversation *Engine::currentConversation() const
 ChestItem *Engine::currentChestItem() const
 {
     return m_currentChestItem;
+}
+
+LockItem *Engine::currentLockItem() const
+{
+    return m_currentLockItem;
 }
 
 LiteratureItem *Engine::currentLiteratureItem() const
@@ -510,9 +444,9 @@ void Engine::setCurrentChestItem(ChestItem *chestItem)
     if (m_currentChestItem) {
         qCDebug(dcEngineData()) << "Set current chest item" << m_currentChestItem << "containing" << m_currentChestItem->items()->gameItems().count() << "items";
         setCurrentPlunderItems(m_currentChestItem->items());
-        if (m_currentChestItem->locked()) {
-            qCDebug(dcEngine()) << "The chest is locked. Show unlock screen";
-            setState(StateUnlocking);
+        if (m_currentChestItem->lockItem()->locked()) {
+            qCDebug(dcEngine()) << "The chest is locked. Set the current lock item";
+            setCurrentLockItem(m_currentChestItem->lockItem());
         } else {
             qCDebug(dcEngine()) << "The chest is not locked. Show plunder screen";
             setState(StatePlunder);
@@ -520,6 +454,29 @@ void Engine::setCurrentChestItem(ChestItem *chestItem)
     } else {
         qCDebug(dcEngine()) << "Reset chest item.";
         setCurrentPlunderItems(nullptr);
+        m_player->setMovable(true);
+    }
+}
+
+void Engine::setCurrentLockItem(LockItem *lockItem)
+{
+    if (m_currentLockItem == lockItem)
+        return;
+
+    m_currentLockItem = lockItem;
+    emit currentLockItemChanged(m_currentLockItem);
+
+    if (m_currentLockItem) {
+        qCDebug(dcEngineData()) << "Set current lock item" << m_currentLockItem << "containing";
+        if (m_currentLockItem->locked()) {
+            qCDebug(dcEngine()) << "The lock is locked. Show unlock screen";
+            setState(StateUnlocking);
+        } else {
+            setCurrentLockItem(nullptr);
+        }
+    } else {
+        qCDebug(dcEngine()) << "Reset lock item.";
+        setCurrentLockItem(nullptr);
         m_player->setMovable(true);
     }
 }
@@ -555,8 +512,8 @@ void Engine::doPlayerMovement()
 
 void Engine::doEnemiesMovement()
 {
-    for (int i = 0; i < m_activeEnemies->count(); i++) {
-        Enemy *enemy = qobject_cast<Enemy *>(m_activeEnemies->get(i));
+    for (int i = 0; i < m_mapScene->activeEnemies()->count(); i++) {
+        Enemy *enemy = qobject_cast<Enemy *>(m_mapScene->activeEnemies()->get(i));
         if (!enemy->movable())
             continue;
 
@@ -566,9 +523,9 @@ void Engine::doEnemiesMovement()
 
 void Engine::doCharactersMovement()
 {
-    for (int i = 0; i < m_activeCharacters->count(); i++) {
-        Character *character = qobject_cast<Character *>(m_activeCharacters->get(i));
-        if (!character->movable())
+    for (int i = 0; i < m_mapScene->activeCharacters()->count(); i++) {
+        Character *character = qobject_cast<Character *>(m_mapScene->activeCharacters()->get(i));
+        if (!character->movable() || character->isPlayer())
             continue;
 
         character->onTick();
@@ -638,7 +595,7 @@ void Engine::pickItem(GameItem *item)
     item->setPlayerFocus(false);
     item->setPlayerVisible(false);
 
-    m_dataManager->items()->removeGameItem(item);
+    mapScene()->map()->items()->removeGameItem(item);
     qCDebug(dcEngineData()) << "Picked item and add it to the inventory" << item << item->inventoryInteraction();
     item->setInteraction(item->inventoryInteraction());
     m_player->inventory()->addGameItem(item);
@@ -670,11 +627,11 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         if (!m_dataManager->player())
             return;
 
-        qCDebug(dcEngine()) << "Initialize weather areas for world size" << m_dataManager->worldSize();
-        m_weatherAreaModel->initializeAreas(m_dataManager->worldSize());
-        qCDebug(dcEngine()) << "Weather area total count for world size" << m_dataManager->worldSize() << "Count:" << m_weatherAreaModel->rowCount();
+        // Set the map to the map scene
+        m_mapScene->setMap(m_dataManager->map());
 
-        setPlayer(m_dataManager->player());
+        // Initialize the player
+        setPlayer(m_mapScene->map()->player());
         m_player->setName(Game::instance()->settings()->playerName());
 
         qCDebug(dcEngine()) << "Set control mode" << Game::instance()->settings()->controlMode();
@@ -687,7 +644,6 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         break;
     case DataManager::StateSaving:
         qCDebug(dcEngine()) << "The game is currently saving...";
-
         break;
     default:
         qCWarning(dcEngine()) << "Unhandled state" << state;
@@ -702,8 +658,6 @@ void Engine::onGameObjectActiveChanged(GameObject *object, bool active)
     } else {
         qCDebug(dcEngineData()) << "[-] Object changed to inactive" << object;
     }
-
-    object->setActive(active);
 }
 
 void Engine::onGameItemActiveChanged(GameItem *item, bool active)
@@ -739,8 +693,6 @@ void Engine::onGameItemActiveChanged(GameItem *item, bool active)
             break;
         }
     }
-
-    item->setActive(active);
 }
 
 void Engine::onItemPlayerVisibleChanged(bool playerVisible)
@@ -820,9 +772,20 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
             break;
         case GameItem::TypeChest:
             qCDebug(dcEngine()) << "Perform interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
-            if (m_playerFocusItem->interaction() == GameItem::InteractionOpen) {
+            if (m_playerFocusItem->interaction() == GameItem::InteractionUnlock) {
                 ChestItem *chestItem = qobject_cast<ChestItem *>(m_playerFocusItem);
                 setCurrentChestItem(chestItem);
+            }
+            break;
+        case GameItem::TypeDoor:
+            qCDebug(dcEngine()) << "Perform interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
+            if (m_playerFocusItem->interaction() == GameItem::InteractionOpen) {
+                DoorItem *doorItem = qobject_cast<DoorItem *>(m_playerFocusItem);
+                // FIXME: show unlock
+                qCDebug(dcEngine()) << "Unlock door" << doorItem;
+            } else if (m_playerFocusItem->interaction() == GameItem::InteractionEnter) {
+                DoorItem *doorItem = qobject_cast<DoorItem *>(m_playerFocusItem);
+                qCDebug(dcEngine()) << "Enter door" << doorItem;
             }
             break;
         case GameItem::TypeCharacter:
@@ -915,10 +878,9 @@ void Engine::onLeftClicked()
 {
     switch (m_state) {
     case StateUnlocking:
-        m_currentChestItem->unlockLeftMovement();
-        if (!m_currentChestItem->locked()) {
-            qCDebug(dcEngine()) << "Chest unlocked!";
-            setState(StatePlunder);
+        m_currentLockItem->unlockLeftMovement();
+        if (!m_currentLockItem->locked()) {
+            qCDebug(dcEngine()) << "Lock unlocked!";
         }
         break;
     default:
@@ -930,10 +892,9 @@ void Engine::onRightClicked()
 {
     switch (m_state) {
     case StateUnlocking:
-        m_currentChestItem->unlockRightMovement();
-        if (!m_currentChestItem->locked()) {
+        m_currentLockItem->unlockRightMovement();
+        if (!m_currentLockItem->locked()) {
             qCDebug(dcEngine()) << "Chest unlocked!";
-            setState(StatePlunder);
         }
         break;
     default:
@@ -1068,6 +1029,7 @@ void Engine::resetEngine()
     setCurrentPlunderItems(nullptr);
 
     m_dataManager->resetData();
+    m_mapScene->setMap(nullptr);
     setPlayer(nullptr);
 
     setState(StateUnitialized);

@@ -11,6 +11,8 @@ Item {
     property bool physicsDebugEnabled: false
     property bool stonedEnabled: false
     property bool grayscaleEnabled: false
+    property bool lightEnabled: false
+    property real ambientBrightness: 1.0
     property bool magicEnabled: false
     property bool flamesEnabled: false
     property bool rainingEnabled: false
@@ -64,6 +66,35 @@ Item {
                 text: qsTr("Grayscale")
                 onCheckedChanged: root.grayscaleEnabled = !root.grayscaleEnabled
                 Component.onCompleted: checked = root.grayscaleEnabled
+            }
+
+            SwitchDelegate {
+                width: parent.width
+                height: 40
+                text: qsTr("Light")
+                onCheckedChanged: root.lightEnabled = !root.lightEnabled
+                Component.onCompleted: checked = root.lightEnabled
+            }
+
+            RowLayout {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
+
+                Label {
+                    text: qsTr("Ambient brightness")
+                }
+
+                Slider {
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 1
+                    value: 1.0
+                    onValueChanged: root.ambientBrightness = value
+                    Component.onCompleted: value = root.ambientBrightness
+                }
             }
 
             SwitchDelegate {

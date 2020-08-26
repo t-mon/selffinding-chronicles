@@ -14,6 +14,7 @@ GamePage {
         onLoadedChanged: {
             if (loaded) {
                 console.log("Engine loading finished.")
+
                 console.log("Loading game page async...")
                 gamePageLoader.setSource(Qt.resolvedUrl("GameScenePage.qml"))
                 gamePageLoader.active = true

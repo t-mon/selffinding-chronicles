@@ -62,7 +62,6 @@ void TeleportationHandler::setTeleportState(TeleportationHandler::TeleportState 
         } else {
 
         }
-
         break;
     case TeleportStateWorldConstruct:
         setTeleportState(TeleportStateAppear);

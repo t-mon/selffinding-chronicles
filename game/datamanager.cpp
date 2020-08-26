@@ -15,12 +15,6 @@
 DataManager::DataManager(QObject *parent) :
     QThread(parent)
 {
-    m_objects = new GameObjects(this);
-    m_items = new GameItems(this);
-    m_chests = new GameItems(this);
-    m_enemies = new GameItems(this);
-    m_characters = new GameItems(this);
-
     m_saveGames = new SaveGames(this);
 
     connect(this, &DataManager::finished, this, &DataManager::onThreadFinished);
@@ -54,75 +48,22 @@ Map *DataManager::map() const
     return m_map;
 }
 
-QSize DataManager::worldSize() const
-{
-    return m_worldSize;
-}
-
-QColor DataManager::worldBackgroundColor() const
-{
-    return m_worldBackgroundColor;
-}
-
-void DataManager::setWorldSize(const QSize &worldSize)
-{
-    if (m_worldSize == worldSize)
-        return;
-
-    m_worldSize = worldSize;
-    emit worldSizeChanged(m_worldSize);
-}
-
-void DataManager::setWorldBackgroundColor(const QColor &color)
-{
-    if (m_worldBackgroundColor == color)
-        return;
-
-    m_worldBackgroundColor = color;
-    emit worldBackgroundColorChanged(m_worldBackgroundColor);
-}
-
 Character *DataManager::player() const
 {
     return m_player;
 }
 
-GameObjects *DataManager::objects() const
-{
-    return m_objects;
-}
-
-GameItems *DataManager::items() const
-{
-    return m_items;
-}
-
-GameItems *DataManager::chests() const
-{
-    return m_chests;
-}
-
-GameItems *DataManager::enemies() const
-{
-    return m_enemies;
-}
-
-GameItems *DataManager::characters() const
-{
-    return m_characters;
-}
-
 void DataManager::createItem(const QString &resourcePath, const QPointF &position)
 {
-    GameItem *item = DataLoader::loadGameItemFromResourcePath(resourcePath, this);
+    GameItem *item = DataLoader::loadGameItemFromResourcePath(resourcePath, m_map);
     item->setPosition(position);
 
     if (item->itemType() == GameItem::TypeCharacter) {
-        m_characters->addGameItem(item);
+        m_map->characters()->addGameItem(item);
     } else if (item->itemType() == GameItem::TypeEnemy) {
-        m_enemies->addGameItem(item);
+        m_map->enemies()->addGameItem(item);
     } else {
-        m_items->addGameItem(item);
+        m_map->items()->addGameItem(item);
     }
 }
 
@@ -161,11 +102,13 @@ void DataManager::startNewGameTask()
     // Create map
     QMutexLocker mapLocker(&m_mapMutex);
     m_map = new Map(nullptr);
-    //m_map->loadMap(":/maps/test-character.json");
-    m_map->loadMap(":/maps/test-environment.json");
+    m_map->loadMap(":/maps/test-character.json");
+    //m_map->loadMap(":/maps/test-door.json");
+    //m_map->loadMap(":/maps/test-environment.json");
+    //m_map->loadMap(":/maps/test-chest.json");
     //m_map->loadMap(":/maps/test-monster.json");
 
-    // Create player
+    // Create default player
     qCDebug(dcDataManager()) << "Create default player";
     QMutexLocker playerLocker(&m_playerMutex);
     GameItem *playerGameItem = DataLoader::loadGameItemFromResourcePath(":/gamedata/characters/player.json", m_map);
@@ -175,10 +118,6 @@ void DataManager::startNewGameTask()
 
     // Add player to characters
     m_map->setPlayer(m_player);
-
-    // Set world properties
-    setWorldSize(m_map->size());
-    setWorldBackgroundColor(m_map->backgroundColor());
 
     // Push the map back to the main thread
     qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();
@@ -209,9 +148,6 @@ void DataManager::loadGameTask()
     // Add player to characters
     m_map->setPlayer(m_player);
 
-    // Set world properties
-    setWorldSize(m_map->size());
-    setWorldBackgroundColor(m_map->backgroundColor());
 
     // Push the map back to the main thread
     qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();
@@ -223,28 +159,6 @@ void DataManager::loadGameTaskFinished()
     qCDebug(dcDataManager()) << "Loading finished.";
     qCDebug(dcDataManager()) << "Initialize the map data" << m_map->thread();
     m_map->setParent(this);
-    setWorldSize(m_map->size());
-
-    foreach (GameObject *object, m_map->objects()->gameObjects()) {
-        m_objects->addGameObject(object);
-    }
-
-    foreach (GameItem *item, m_map->items()->gameItems()) {
-        m_items->addGameItem(item);
-    }
-
-    foreach (GameItem *item, m_map->chests()->gameItems()) {
-        m_chests->addGameItem(item);
-    }
-
-    foreach (GameItem *item, m_map->characters()->gameItems()) {
-        m_characters->addGameItem(item);
-    }
-
-    foreach (GameItem *item, m_map->enemies()->gameItems()) {
-        m_enemies->addGameItem(item);
-    }
-
     qCDebug(dcDataManager()) << m_map;
 }
 
@@ -286,6 +200,8 @@ void DataManager::saveGameTask()
     // Save the player
     generalMap.insert("player", DataLoader::characterToVariantMap(m_map->player()));
 
+    // TODO: save player story progress
+
     // Map file
     QVariantMap map;
     map.insert("name", m_map->name());
@@ -295,12 +211,12 @@ void DataManager::saveGameTask()
     map.insert("playerStartX", m_map->playerStartPosition().x());
     map.insert("playerStartY", m_map->playerStartPosition().y());
     map.insert("backgroundColor", m_map->backgroundColor().name());
-    map.insert("objects", DataLoader::gameObjectsToVariantList(m_objects));
-    map.insert("items", DataLoader::gameItemsToVariantList(m_items));
-    map.insert("chests", DataLoader::chestsToVariantList(m_chests));
-    map.insert("enemies", DataLoader::enemiesToVariantList(m_enemies));
+    map.insert("objects", DataLoader::gameObjectsToVariantList(m_map->objects()));
+    map.insert("items", DataLoader::gameItemsToVariantList(m_map->items()));
+    map.insert("chests", DataLoader::chestsToVariantList(m_map->chests()));
+    map.insert("enemies", DataLoader::enemiesToVariantList(m_map->enemies()));
     // Note: the player will not be saved in DataLoader::charactersToVariantList(m_characters)
-    map.insert("characters", DataLoader::charactersToVariantList(m_characters));
+    map.insert("characters", DataLoader::charactersToVariantList(m_map->characters()));
 
     // Write the current map
     QFile saveGameMapFile(m_saveGame->saveGameDirectory().absolutePath() + QDir::separator() + m_map->resourceFileName());
@@ -463,13 +379,7 @@ void DataManager::resetData()
         m_player = nullptr;
     }
 
-    m_objects->clearModel();
-    m_items->clearModel();
-    m_chests->clearModel();
-    m_characters->clearModel();
-    m_enemies->clearModel();
 
-    setWorldSize(QSize());
     setSaveGameName(QString());
     setState(StateIdle);
 }

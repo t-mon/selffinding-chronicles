@@ -70,5 +70,8 @@
         <file>gameitems/GameObject.qml</file>
         <file>SaveGamesPage.qml</file>
         <file>mapeditor/MapEditorToolButton.qml</file>
+        <file>shadereffects/fragmentshaders/light.frag</file>
+        <file>shadereffects/fragmentshaders/shadow.frag</file>
+        <file>GameScene.qml</file>
     </qresource>
 </RCC>

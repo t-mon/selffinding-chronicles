@@ -15,7 +15,7 @@ Item {
     Repeater {
         id: weatherRepeater
         anchors.fill: parent
-        model: Game.engine.activeWeatherAreas
+        model: Game.engine.mapScene.activeWeatherAreas
         delegate: WeatherController {
             raining: root.raining
             snowing: root.snowing

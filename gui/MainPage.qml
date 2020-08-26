@@ -33,7 +33,6 @@ GamePage {
             text: qsTr("Play")
             font.pixelSize: app.largeFont
             onClicked: {
-                //Game.engine.loadMap(":/maps/test-environment.json")
                 pageStack.push(Qt.resolvedUrl("StartGamePage.qml"))
             }
         }

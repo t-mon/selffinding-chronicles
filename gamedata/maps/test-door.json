@@ -1,0 +1,22 @@
+{
+    "backgroundColor": "#307a78",
+    "characters": [
+    ],
+    "height": 20,
+    "items": [
+        {
+            "data": ":/gamedata/items/doors/door-1.json",
+            "x": 10,
+            "y": 10
+        },
+        {
+            "data": ":/gamedata/items/doors/door-2.json",
+            "x": 10,
+            "y": 6
+        }
+    ],
+    "name": "Test door",
+    "playerStartX": 2,
+    "playerStartY": 8,
+    "width": 20
+}
