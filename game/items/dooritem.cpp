@@ -154,6 +154,6 @@ QDebug operator<<(QDebug debug, DoorItem *doorItem)
     debug.nospace() << ", " << (doorItem->open() ? "open" : "closed");
     debug.nospace() << ", " << (doorItem->locked() ? "locked" : "unlocked");
     debug.nospace() << ", " << doorItem->lockCombination();
-    debug.nospace() << ")" << endl;
+    debug.nospace() << ")" << Qt::endl;
     return debug.space();
 }

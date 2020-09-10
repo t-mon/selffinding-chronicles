@@ -46,25 +46,22 @@ public:
 
 private:
     State m_state = StateIdle;
-    QMutex m_stateMutex;
+    mutable QMutex m_stateMutex;
 
     SaveGames *m_saveGames = nullptr;
     SaveGame *m_saveGame = nullptr;
-    QMutex m_saveGameMutex;
     QImage m_screenshot;
+    mutable QMutex m_saveGameMutex;
 
     QDir m_saveGameDir;
     QString m_saveGameName;
-    QMutex m_saveGameNameMutex;
-
-    QSize m_worldSize;
-    QColor m_worldBackgroundColor = QColor("#307a78");
+    mutable QMutex m_saveGameNameMutex;
 
     Map *m_map = nullptr;
-    QMutex m_mapMutex;
+    mutable QMutex m_mapMutex;
 
     Character *m_player = nullptr;
-    QMutex m_playerMutex;
+    mutable QMutex m_playerMutex;
 
     // Set members
     void setState(State state);

@@ -66,7 +66,7 @@ PhysicsItem {
     // Character movement
     Connections {
         target: Game.engine
-        onEnginePostTick: {
+        function onEnginePostTick() {
             if (!character)
                 return
 
@@ -84,9 +84,9 @@ PhysicsItem {
     // Character connections
     Connections {
         target: root.character
-        onHeadingChanged: evaluateSpriteState()
-        onMovingChanged: evaluateSpriteState()
-        onShoot: {
+        function onHeadingChanged(heading) { evaluateSpriteState() }
+        function onMovingChanged(moving) { evaluateSpriteState() }
+        function onShoot() {
             if (!character.firearm) {
                 console.log("Character", character.name, "can not shoot. No firearm selected.")
                 return
@@ -109,7 +109,7 @@ PhysicsItem {
             }
         }
 
-        onHit: {
+        function onHit() {
             if (weaponHitAnimation.running)
                 return
 
@@ -123,33 +123,33 @@ PhysicsItem {
         }
 
         // Health indicator
-        onDamaged: {
+        function onDamaged() {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
             damageAnimation.restart()
         }
 
-        onHealed: {
+        function onHealed() {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
 
-        onKilled: {
+        function onKilled() {
             healthIndicator.opacity = 0
             healthIndicatorTimer.stop()
         }
 
-        onMovableChanged: {
+        function onMovableChanged(movable) {
             if (!character) return
             evaluateSpriteState()
         }
 
-        onPlayerOnItemChanged: {
+        function onPlayerOnItemChanged(playerOnItem) {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
 
-        onPlayerFocusChanged: {
+        function onPlayerFocusChanged(playerFocus) {
             if (playerFocus) {
                 healthIndicator.opacity = 1
                 healthIndicatorTimer.restart()
@@ -998,7 +998,7 @@ PhysicsItem {
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range
         bulletObject.fireArrow = debugControls.flamesEnabled
-        var velocity = 40
+        var velocity = 25
         bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
     }
 

@@ -16,67 +16,25 @@ GameMapEditor::GameMapEditor(QObject *parent) :
     m_dataManager = new DataManager(this);
     connect(m_dataManager, &DataManager::stateChanged, this, &GameMapEditor::onDataManagerStateChanged);
 
-    m_activeObjects = new GameObjectsProxy(this);
-    if (m_dataManager->map())
-        m_activeObjects->setGameObjects(m_dataManager->map()->objects());
+    m_mapScene = new MapScene(this);
 
-    connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, [](GameObject *object, bool active){
-        if (active) {
-            qCDebug(dcMapEditorData()) << "[+] Object changed to active" << object;
-        } else {
-            qCDebug(dcMapEditorData()) << "[-] Object changed to inactive" << object;
-        }
-
-        object->setActive(active);
-    });
-
-    m_activeItems = new GameItemsProxy(this);
-    if (m_dataManager->map())
-        m_activeItems->setGameItems(m_dataManager->map()->items());
-
-    connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, [](GameItem *item, bool active){
-        if (active) {
-            qCDebug(dcMapEditorData()) << "[+] Item changed to active" << item;
-        } else {
-            qCDebug(dcMapEditorData()) << "[-] Item changed to inactive" << item;
-        }
-
-        item->setActive(active);
-    });
-
-
-    m_activeEnemies = new GameItemsProxy(this);
-    if (m_dataManager->map())
-        m_activeEnemies->setGameItems(m_dataManager->map()->enemies());
-
-    connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, [](GameItem *item, bool active){
-        if (active) {
-            qCDebug(dcMapEditorData()) << "[+] Enemie changed to active" << item;
-        } else {
-            qCDebug(dcMapEditorData()) << "[-] Enemie changed to inactive" << item;
-        }
-
-        item->setActive(active);
-    });
-
-    m_activeCharacters = new GameItemsProxy(this);
-    if (m_dataManager->map())
-        m_activeCharacters->setGameItems(m_dataManager->map()->characters());
-
-    connect(m_activeCharacters, &GameItemsProxy::gameItemActiveChanged, this, [](GameItem *item, bool active){
-        if (active) {
-            qCDebug(dcMapEditorData()) << "[+] Character changed to active" << item;
-        } else {
-            qCDebug(dcMapEditorData()) << "[-] Character changed to inactive" << item;
-        }
-
-        item->setActive(active);
-    });
-
-    //    loadAvailableObjects();
-    //    loadAvailableGameItems();
+    qCDebug(dcMapEditor()) << "Instance created";
 }
 
+Map *GameMapEditor::map() const
+{
+    return m_map;
+}
+
+MapScene *GameMapEditor::mapScene() const
+{
+    return m_mapScene;
+}
+
+DataManager *GameMapEditor::dataManager() const
+{
+    return m_dataManager;
+}
 
 GameObjects *GameMapEditor::availableObjects() const
 {
@@ -105,6 +63,8 @@ void GameMapEditor::loadAvailableGameItems()
         return;
     }
 
+    qCDebug(dcMapEditor()) << "Loading available items...";
+
     QString gameDataPath = ":/gamedata/items/";
     QDir resourceDirectory(gameDataPath);
     foreach (const QString &gameDataEntry, resourceDirectory.entryList()) {
@@ -123,6 +83,8 @@ void GameMapEditor::loadAvailableObjects()
         qCDebug(dcMapEditor()) << "Available objects already loaded. Doing nothing";
         return;
     }
+
+    qCDebug(dcMapEditor()) << "Loading available objects...";
 
     QString gameDataPath = ":/gamedata/objects/";
     QDir resourceDirectory(gameDataPath);
@@ -143,6 +105,8 @@ void GameMapEditor::loadAvailableCharacters()
         return;
     }
 
+    qCDebug(dcMapEditor()) << "Loading available characters...";
+
     QString gameDataPath = ":/gamedata/characters/";
     QDir resourceDirectory(gameDataPath);
     foreach (const QString &gameDataEntry, resourceDirectory.entryList()) {
@@ -161,6 +125,8 @@ void GameMapEditor::loadAvailableEnemies()
         qCDebug(dcMapEditor()) << "Available enemies already loaded. Doing nothing";
         return;
     }
+
+    qCDebug(dcMapEditor()) << "Loading available enemies...";
 
     QString gameDataPath = ":/gamedata/enemies/";
     QDir resourceDirectory(gameDataPath);
@@ -234,70 +200,36 @@ void GameMapEditor::createSelectedGameObject(const QString &resourcePath)
     emit selectedGameObjectChanged(m_selectedGameObject);
 }
 
-DataManager *GameMapEditor::dataManager() const
+void GameMapEditor::createNewMap(const QString &mapName, const QSize &mapSize)
 {
-    return m_dataManager;
-}
-
-GameItemsProxy *GameMapEditor::activeItems() const
-{
-    return m_activeItems;
-}
-
-GameItemsProxy *GameMapEditor::activeCharacters() const
-{
-    return m_activeCharacters;
-}
-
-GameItemsProxy *GameMapEditor::activeEnemies() const
-{
-    return m_activeEnemies;
-}
-
-QRectF GameMapEditor::viewWindow() const
-{
-    return m_viewWindow;
-}
-
-void GameMapEditor::setViewWindow(const QRectF &viewWindow)
-{
-    if (m_viewWindow == viewWindow)
-        return;
-
-    //qCDebug(dcMapEditor()) << "Editor view window changed" << viewWindow;
-    m_viewWindow = viewWindow;
-    emit viewWindowChanged(m_viewWindow);
-
-    m_activeObjects->setViewFilter(m_viewWindow);
-    m_activeItems->setViewFilter(m_viewWindow);
-    //m_activeChests->setViewFilter(m_viewWindow);
-    m_activeCharacters->setViewFilter(m_viewWindow);
-    m_activeEnemies->setViewFilter(m_viewWindow);
-    //m_weatherAreaProxy->setViewFilter(m_viewWindow);
-}
-
-Map *GameMapEditor::map() const
-{
-    return m_map;
-}
-
-void GameMapEditor::createNewMap()
-{
-    qCDebug(dcMapEditor()) << "Create new map.";
+    qCDebug(dcMapEditor()) << "Create new map" << mapName << mapSize;
     if (m_map) {
-        qCWarning(dcMapEditor()) << "Deleting current loaded map. FIXE: check if autosave";
+        qCWarning(dcMapEditor()) << "Deleting current loaded map. FIXME: check if autosave";
         m_map->deleteLater();
         m_map = nullptr;
     }
 
-    m_dataManager->resetData();
-    m_map = new Map(m_dataManager->map()->objects(), m_dataManager->map()->items(), m_dataManager->map()->enemies(), m_dataManager->map()->characters());
+    m_map = new Map(this);
+    m_map->setName(mapName);
+    m_map->setSize(mapSize);
+
+    m_mapScene->setMap(m_map);
 }
 
 void GameMapEditor::placeItemOnMap(const QString &resourcePath, const QPointF &position)
 {
     qCDebug(dcMapEditor()) << "Place item" << resourcePath << position;
-    m_dataManager->createItem(resourcePath, position);
+    GameItem *item = DataLoader::loadGameItemFromResourcePath(resourcePath, m_map);
+    item->setPosition(position);
+
+    if (item->itemType() == GameItem::TypeCharacter) {
+        m_map->characters()->addGameItem(item);
+    } else if (item->itemType() == GameItem::TypeEnemy) {
+        m_map->enemies()->addGameItem(item);
+    } else {
+        m_map->items()->addGameItem(item);
+    }
+
 }
 
 void GameMapEditor::saveMap()
@@ -310,7 +242,11 @@ void GameMapEditor::saveMap()
 void GameMapEditor::deleteAll()
 {
     qCDebug(dcMapEditor()) << "Remove all items and objects";
-    m_dataManager->resetData();
+    m_map->objects()->clearModel();
+    m_map->items()->clearModel();
+    m_map->chests()->clearModel();
+    m_map->characters()->clearModel();
+    m_map->enemies()->clearModel();
 }
 
 void GameMapEditor::onDataManagerStateChanged(DataManager::State state)

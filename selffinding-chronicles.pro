@@ -1,4 +1,4 @@
-QT += core qml quick quickcontrols2 svg multimedia
+QT += core qml quick quickcontrols2 svg xml multimedia
 
 CONFIG += c++11 -Wall -Werror
 
@@ -44,6 +44,7 @@ HEADERS += \
     game/items/passageitem.h \
     game/items/teleporteritem.h \
     game/items/weatherareaproxy.h \
+    game/lightsource.h \
     game/map.h \
     game/debugcategories.h \
     game/mapscene.h \
@@ -99,6 +100,7 @@ SOURCES += game/main.cpp \
     game/items/passageitem.cpp \
     game/items/teleporteritem.cpp \
     game/items/weatherareaproxy.cpp \
+    game/lightsource.cpp \
     game/map.cpp \
     game/debugcategories.cpp \
     game/mapscene.cpp \

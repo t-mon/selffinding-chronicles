@@ -13,7 +13,7 @@ ApplicationWindow {
     height: Game.settings.windowSize.height
     x: Game.settings.windowPosition.x
     y: Game.settings.windowPosition.y
-    visibility: ApplicationWindow.Windowed
+    visibility: Game.settings.visibility
 
     // Theme
     Material.theme: Material.Dark
@@ -49,10 +49,10 @@ ApplicationWindow {
     property color healthColor: "#9c2f25"
     property color manaColor: "#0765d4"
 
-    onWidthChanged: Game.settings.windowSize.width = app.width
-    onHeightChanged: Game.settings.windowSize.heigt = app.height
-    onXChanged: Game.settings.windowPosition.x = app.x
-    onYChanged: Game.settings.windowPosition.y = app.y
+    onWidthChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
+    onHeightChanged: Game.settings.windowSize = Qt.size(app.width, app.height)
+    onXChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
+    onYChanged: Game.settings.windowPosition = Qt.point(app.x, app.y)
 
     // Simulation properties
     property real gameSpeedFactor: 1.0
@@ -64,7 +64,9 @@ ApplicationWindow {
     Connections {
         id: settingsConnections
         target: Game.settings
-        onVisibilityChanged: app.visibility = Game.settings.visibility
+        function onVisibilityChanged(visibility) {
+            app.visibility = Game.settings.visibility
+        }
     }
 
     FontLoader {
@@ -89,7 +91,6 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        app.visibility = Game.settings.visibility
         pageStack.push(Qt.resolvedUrl("MainPage.qml"))
         console.log("Window size:", app.width, "x", app.height, "Grid size:", app.gridSize)
     }

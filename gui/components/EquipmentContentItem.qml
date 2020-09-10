@@ -13,8 +13,8 @@ Row {
     Connections {
         id: playerControllerConnections
         target: Game.engine.playerController
-        onWeaponPressed: weaponClicked()
-        onFirearmPressed: firearmClicked()
+        function onWeaponPressed() { weaponClicked() }
+        function onFirearmPressed() { firearmClicked() }
     }
 
     function weaponClicked() {

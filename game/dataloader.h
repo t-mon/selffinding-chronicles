@@ -6,6 +6,7 @@
 
 #include "path.h"
 #include "gameobjects.h"
+#include "lightsource.h"
 #include "items/staticitem.h"
 #include "items/treeitem.h"
 #include "items/gameitems.h"

@@ -66,10 +66,10 @@ void Path::previousSegment()
 
 QDebug operator<<(QDebug debug, Path *path)
 {
-    debug.nospace() << "Path(" << path->id() << ")" << endl;
+    debug.nospace() << "Path(" << path->id() << ")" << Qt::endl;
     for (int i = 0; i < path->pathSegments().count(); i++) {
         debug.nospace() << "    [" << i << "] " << path->pathSegments()[i];
-        if (i < path->pathSegments().count() -1) debug.nospace() << endl;
+        if (i < path->pathSegments().count() -1) debug.nospace() << Qt::endl;
     }
     return debug.space();
 }

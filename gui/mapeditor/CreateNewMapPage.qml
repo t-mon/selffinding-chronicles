@@ -37,7 +37,7 @@ GamePage {
             SpinBox {
                 id: mapWidthSponBox
                 value: 100
-                from: 50
+                from: 10
                 to: 5000
                 editable: true
                 Layout.fillWidth: true
@@ -53,7 +53,7 @@ GamePage {
             SpinBox {
                 id: mapHeightSponBox
                 value: 100
-                from: 50
+                from: 10
                 to: 5000
                 editable: true
                 Layout.fillWidth: true
@@ -95,9 +95,7 @@ GamePage {
                 font.pixelSize: app.largeFont
                 onClicked: {
                     console.log("Create map", mapNameField.text)
-                    Game.mapEditor.createNewMap()
-                    Game.mapEditor.map.name = mapNameField.text;
-                    Game.mapEditor.map.size = Qt.size(mapWidthSponBox.value, mapHeightSponBox.value)
+                    Game.mapEditor.createNewMap(mapNameField.text, Qt.size(mapWidthSponBox.value, mapHeightSponBox.value))
                     Game.mapEditor.map.backgroundColor = backgroundColorField.text
                     pageStack.push(Qt.resolvedUrl("MapEditor.qml"))
                 }

@@ -57,8 +57,12 @@ void MapScene::setMap(Map *map)
 
         // Default view window for preloading items in the scene
         QSizeF windowSize(30, 30);
-        setViewWindow(QRectF(QPointF(m_map->player()->centerPosition().x() - windowSize.width() / 2,
-                                     m_map->player()->centerPosition().y() - windowSize.height() / 2), windowSize));
+        if (m_map->player()) {
+            setViewWindow(QRectF(QPointF(m_map->player()->centerPosition().x() - windowSize.width() / 2,
+                                         m_map->player()->centerPosition().y() - windowSize.height() / 2), windowSize));
+        } else {
+            setViewWindow(QRectF(QPointF(0, 0), windowSize));
+        }
 
         // Activate all objects
         qCDebug(dcMapScene()) << "Active objects" << m_activeObjects->count();

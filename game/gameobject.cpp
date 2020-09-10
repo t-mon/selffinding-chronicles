@@ -72,6 +72,21 @@ void GameObject::setPosition(const QPointF &position)
     emit positionChanged(m_position);
 }
 
+double GameObject::rotationAngle() const
+{
+    return m_rotationAngle;
+}
+
+void GameObject::setRotationAngle(double rotationAngle)
+{
+    if (m_rotationAngle == rotationAngle)
+        return;
+
+    qCDebug(dcGameObject()) << this << "Rotation angle changed" << rotationAngle;
+    m_rotationAngle = rotationAngle;
+    emit rotationAngleChanged(m_rotationAngle);
+}
+
 GameObject::Layer GameObject::layer() const
 {
     return m_layer;
