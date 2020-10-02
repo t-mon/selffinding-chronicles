@@ -41,10 +41,12 @@ PhysicsItem {
     }
 
     onXChanged: {
+        if (!enemy) return
         enemy.position.x = x / app.gridSize
     }
 
     onYChanged: {
+        if (!enemy) return
         enemy.position.y = y / app.gridSize
     }
 
@@ -144,28 +146,28 @@ PhysicsItem {
     Connections {
         id: healthIndicatorConnections
         target: root.enemy
-        onDamaged: {
+        function onDamaged() {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
             damageAnimation.restart()
         }
 
-        onHealed: {
+        function onHealed() {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
 
-        onKilled: {
+        function onKilled() {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
 
-        onPlayerOnItemChanged: {
+        function onPlayerOnItemChanged(playerOnItem) {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
 
-        onPlayerFocusChanged: {
+        function onPlayerFocusChanged(playerFocus) {
             if (playerFocus) {
                 healthIndicator.opacity = 1
                 healthIndicatorTimer.restart()

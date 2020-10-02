@@ -26,7 +26,7 @@ class Map : public QObject
 
 public:
     explicit Map(QObject *parent = nullptr);
-    Map(GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent = nullptr);
+    Map(GameObjects *backgroundLights, GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent = nullptr);
     ~Map();
 
     QSize size() const;
@@ -50,6 +50,7 @@ public:
     void setPlayer(Character *player);
 
     GameObjects *objects() const;
+    GameObjects *backgroundLights() const;
     GameItems *items() const;
     GameItems *chests() const;
     GameItems *enemies() const;
@@ -72,6 +73,7 @@ private:
 
     Character *m_player = nullptr;
     GameObjects *m_objects = nullptr;
+    GameObjects *m_backgroundLights = nullptr;
     GameItems *m_items = nullptr;
     GameItems *m_chests = nullptr;
     GameItems *m_enemies = nullptr;

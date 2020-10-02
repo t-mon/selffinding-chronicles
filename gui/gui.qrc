@@ -69,12 +69,13 @@
         <file>shadereffects/fragmentshaders/magic.frag</file>
         <file>gameitems/GameObject.qml</file>
         <file>SaveGamesPage.qml</file>
-        <file>mapeditor/MapEditorToolButton.qml</file>
+        <file>mapeditor/components/MapEditorToolButton.qml</file>
         <file>shadereffects/fragmentshaders/light.frag</file>
         <file>shadereffects/fragmentshaders/shadow.frag</file>
         <file>GameScene.qml</file>
-        <file>mapeditor/AvailableItemMenu.qml</file>
-        <file>mapeditor/ColorPicker.qml</file>
-        <file>mapeditor/MapEditorToolBar.qml</file>
+        <file>mapeditor/components/AvailableItemMenu.qml</file>
+        <file>mapeditor/components/ColorPicker.qml</file>
+        <file>mapeditor/components/MapEditorToolBar.qml</file>
+        <file>gameitems/LightSourceItem.qml</file>
     </qresource>
 </RCC>

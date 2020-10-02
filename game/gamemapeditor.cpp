@@ -7,6 +7,7 @@ GameMapEditor::GameMapEditor(QObject *parent) :
     QObject(parent)
 {
     qRegisterMetaType<GameMapEditor::Tool>("Tool");
+    qRegisterMetaType<LightSource::LightType>("LightType");
 
     m_availableItems = new GameItems(this);
     m_availableObjects = new GameObjects(this);
@@ -229,7 +230,27 @@ void GameMapEditor::placeItemOnMap(const QString &resourcePath, const QPointF &p
     } else {
         m_map->items()->addGameItem(item);
     }
+}
 
+void GameMapEditor::addBackgroundLightSource(LightSource::LightType lightType, const QColor &color, const QPointF &position)
+{
+    qCDebug(dcMapEditor()) << "Add background light source" << lightType << color.name() << position;
+    LightSource *lightSource = new LightSource(m_map);
+    lightSource->setName("Background light");
+    lightSource->setLightType(lightType);
+    lightSource->setColor(color);
+    lightSource->setLayer(GameObject::LayerBackground);
+    lightSource->setSize(QSize(10, 10));
+    lightSource->setPosition(QPointF(position.x() - lightSource->size().width() / 2,
+                                     position.y() - lightSource->size().height() / 2));
+
+    m_map->backgroundLights()->addGameObject(lightSource);
+}
+
+void GameMapEditor::removeGameItem(GameItem *item)
+{
+    qCDebug(dcMapEditor()) << "Remove game item from map" << item;
+    m_map->items()->removeGameItem(item);
 }
 
 void GameMapEditor::saveMap()

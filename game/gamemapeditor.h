@@ -81,6 +81,9 @@ public:
 
     Q_INVOKABLE void createNewMap(const QString &mapName, const QSize &mapSize);
     Q_INVOKABLE void placeItemOnMap(const QString &resourcePath, const QPointF &position);
+    Q_INVOKABLE void addBackgroundLightSource(LightSource::LightType lightType, const QColor &color, const QPointF &position);
+
+    Q_INVOKABLE void removeGameItem(GameItem *item);
     Q_INVOKABLE void saveMap();
     Q_INVOKABLE void deleteAll();
 

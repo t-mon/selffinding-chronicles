@@ -4,6 +4,9 @@
 MapScene::MapScene(QObject *parent) : QObject(parent)
 {
     // The visible and active items of the scene
+    m_activeBackgroundLights = new GameObjectsProxy(this);
+    m_activeBackgroundLights->setViewFilter(m_viewWindow);
+
     m_activeObjects = new GameObjectsProxy(this);
     m_activeObjects->setViewFilter(m_viewWindow);
 
@@ -22,6 +25,7 @@ MapScene::MapScene(QObject *parent) : QObject(parent)
     m_activeWeatherAreas = new WeatherAreaProxy(this);
     m_activeWeatherAreas->setViewFilter(m_viewWindow);
 
+    connect(m_activeBackgroundLights, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
     connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
     connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
     connect(m_activeChests, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
@@ -48,6 +52,7 @@ void MapScene::setMap(Map *map)
         qCDebug(dcMapScene()) << "Initialize active objects and items";
 
         // Initialize the proxies
+        m_activeBackgroundLights->setGameObjects(m_map->backgroundLights());
         m_activeObjects->setGameObjects(m_map->objects());
         m_activeItems->setGameItems(m_map->items());
         m_activeChests->setGameItems(m_map->chests());
@@ -65,6 +70,11 @@ void MapScene::setMap(Map *map)
         }
 
         // Activate all objects
+        qCDebug(dcMapScene()) << "Active background lights" << m_activeBackgroundLights->count();
+        for (int i = 0; i < m_activeObjects->count(); i++) {
+            m_activeObjects->get(i)->setActive(true);
+        }
+
         qCDebug(dcMapScene()) << "Active objects" << m_activeObjects->count();
         for (int i = 0; i < m_activeObjects->count(); i++) {
             m_activeObjects->get(i)->setActive(true);
@@ -115,6 +125,11 @@ void MapScene::setViewWindow(const QRectF &viewWindow)
     evaluateProxies();
 }
 
+GameObjectsProxy *MapScene::activeBackgroundLights() const
+{
+    return m_activeBackgroundLights;
+}
+
 GameObjectsProxy *MapScene::activeObjects() const
 {
     return m_activeObjects;
@@ -147,6 +162,7 @@ WeatherAreaProxy *MapScene::activeWeatherAreas() const
 
 void MapScene::evaluateProxies()
 {
+    m_activeBackgroundLights->setViewFilter(m_viewWindow);
     m_activeObjects->setViewFilter(m_viewWindow);
     m_activeItems->setViewFilter(m_viewWindow);
     m_activeChests->setViewFilter(m_viewWindow);

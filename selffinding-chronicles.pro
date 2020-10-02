@@ -32,6 +32,7 @@ HEADERS += \
     game/audio/gamesoundeffect.h \
     game/audio/gamesoundsource.h \
     game/audio/soundengine.h \
+    game/components/svgitem.h \
     game/game.h \
     game/field.h \
     game/fields.h \
@@ -88,6 +89,7 @@ SOURCES += game/main.cpp \
     game/audio/gamesoundeffect.cpp \
     game/audio/gamesoundsource.cpp \
     game/audio/soundengine.cpp \
+    game/components/svgitem.cpp \
     game/game.cpp \
     game/field.cpp \
     game/fields.cpp \

@@ -9,7 +9,7 @@ import Box2D 2.0
 import Chronicles 1.0
 
 ColumnLayout {
-    id: mainControlsColumn
+    id: root
     anchors.fill: parent
     clip: true
 

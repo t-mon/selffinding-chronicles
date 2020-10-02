@@ -24,7 +24,7 @@ GamePage {
     Component.onCompleted: console.log("Game scene created. Scene size:", root.width, "x", root.height, "|" , "Grid size:", app.gridSize)
     Component.onDestruction: console.log("Game scene destroy")
 
-    property CharacterItem playerItem: null
+    property CharacterItem playerItem: gameScene.playerItem
 
     Connections {
         target: Game.engine
@@ -57,13 +57,11 @@ GamePage {
 
         itemDebugEnabled: debugControls.itemDebugEnabled
         physicsDebugEnabled: debugControls.physicsDebugEnabled
-
         rainingEnabled: debugControls.rainingEnabled
         snowingEnabled: debugControls.snowingEnabled
         turbulenceEnabled: debugControls.turbulenceEnabled
 
         property bool gameOverlayVisible: true
-
 
         // ##################################################################################
         // GameScene item overlays
@@ -491,7 +489,7 @@ GamePage {
 
         // Get player position in the scene
         var playerWorldPosition = getPlayerWorldPosition()
-
+        //console.log("#############", playerWorldPosition.x, playerWorldPosition.y)
         if (gameScene.flickable.width < gameScene.world.width) {
             // Do camera x movement
             if (playerWorldPosition.x <= gameScene.flickable.width / 2) {

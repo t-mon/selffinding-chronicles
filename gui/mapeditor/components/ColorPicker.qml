@@ -3,12 +3,16 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
 
-import "../components"
+import "../../components"
 
 Item {
     id: root
 
     property color currentColor: Qt.rgba(red, green, blue, alpha)
+
+    function setInitialColor(color) {
+
+    }
 
     property real red: 0
     property real green: 0
@@ -36,9 +40,6 @@ Item {
                 color: Qt.rgba(root.red, root.green, root.blue, root.alpha)
             }
         }
-
-
-
 
         GridLayout {
             Layout.fillWidth: true

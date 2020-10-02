@@ -8,6 +8,7 @@ import Qt.labs.folderlistmodel 2.1
 import Box2D 2.0
 import Chronicles 1.0
 
+import "components"
 import "../components"
 import "../"
 import "../gameitems"
@@ -41,14 +42,33 @@ GamePage {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
-
-            HeaderButton {
-                enabled: !workingOverlay.visible
-                imageSource: dataDirectory + "/icons/settings.svg"
-                onClicked: console.log("Open map settings")
-            }
         }
     }
+
+    // Shortcuts
+
+    Keys.onPressed: {
+        switch (event.key) {
+        case Qt.Key_S:
+            Game.mapEditor.tool = GameMapEditor.ToolSelect
+            break;
+        case Qt.Key_M:
+            Game.mapEditor.tool = GameMapEditor.ToolMove
+            break;
+        case Qt.Key_P:
+            Game.mapEditor.tool = GameMapEditor.ToolPlace
+            break;
+        case Qt.Key_G:
+            Game.settings.gridSnapping = !Game.settings.gridSnapping
+            break;
+        case Qt.Key_Backspace:
+            if (currentSelectedItem) {
+                Game.mapEditor.removeGameItem(currentSelectedItem.gameItem)
+            }
+            break;
+        }
+    }
+
 
     Component.onCompleted: {
         console.log("Game scene size:", root.width, "/", root.height, "grid size:", app.gridSize)
@@ -58,44 +78,27 @@ GamePage {
         Game.mapEditor.loadAvailableEnemies()
     }
 
-    property string currentResourcePath: ""
-
     // Selection mode
-    property var selectedItem: null
-    onSelectedItemChanged: {
-        if (selectedItem) {
-            console.log("--> Selected item", selectedItem.name, selectedItem.position.x, selectedItem.position.y)
-        }
-    }
-
-    function selectItem(item) {
-        if (item && selectedItem !== item) {
-            //console.log("--> Selected item", item.name, item.position.x, item.position.y)
-            if (selectedItem)
-                selectedItem.playerFocus = false
-
-            selectedItem = item
-            item.playerFocus = true
-        } else if (selectedItem && !item) {
-            console.log("--> No item selected")
-            selectedItem.playerFocus = false
-            selectedItem = null
-        }
-    }
-
+    property var currentItemUnderCurser: null
+    property var currentSelectedItem: null
 
     Connections {
         target: Game.mapEditor
         function onToolChanged(tool) {
             switch (tool) {
             case GameMapEditor.ToolSelect:
-                selectedItem = null
+                currentItemUnderCurser = null
+                currentSelectedItem = null
+                evaluateItemUnderCurser()
                 break;
             case GameMapEditor.ToolPlace:
-                selectedItem = null
+                currentItemUnderCurser = null
+                currentSelectedItem = null
+                updatePositions()
                 break;
             case GameMapEditor.ToolMove:
-                selectedItem = null
+                currentItemUnderCurser = null
+                currentSelectedItem = null
                 break;
             }
         }
@@ -136,8 +139,32 @@ GamePage {
 
                     Component {
                         id: colorPickerComponent
-                        ColorPicker {
-                            id: colorPicker
+
+                        Item {
+                            ColumnLayout {
+                                anchors.fill: parent
+
+
+                                GameLabel {
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 30
+                                    verticalAlignment: Qt.AlignVCenter
+                                    color: "white"
+                                    text: qsTr("World background color")
+                                }
+
+                                ColorPicker {
+                                    Layout.fillWidth: true
+                                    id: colorPicker
+                                    function onColorChanged(color) {
+                                        gameScene.mapScene.map.backgroundColor = color
+                                    }
+
+                                    Component.onCompleted: currentColor = gameScene.mapScene.map.backgroundColor
+                                }
+
+                                Item { Layout.fillWidth: true; Layout.fillHeight: true }
+                            }
                         }
                     }
 
@@ -148,6 +175,10 @@ GamePage {
                         }
                     }
                 }
+
+                // ##################################################################################
+                // Game scene
+                // ##################################################################################
 
                 GameScene {
                     id: gameScene
@@ -180,14 +211,46 @@ GamePage {
                         }
                     }
 
-                    GameItem {
-                        id: temporaryItem
-                        gameItem: Game.mapEditor.selectedGameItem
-                        itemDebugEnabled: Game.settings.itemDebugEnabled
-                        visible: editorMouseArea.containsMouse && Game.mapEditor.tool == GameMapEditor.ToolPlace
-                        width: gameItem ? gameItem.size.width * app.gridSize : 0
-                        height: gameItem ? gameItem.size.height * app.gridSize : 0
+                    Loader {
+                        id: temporaryItemLoader
+                        active: Game.mapEditor.selectedGameItem && editorMouseArea.containsMouse && Game.mapEditor.tool == GameMapEditor.ToolPlace
+                        sourceComponent: temporaryItemComponent
+
+                        Component{
+                            id: temporaryItemComponent
+                            Item {
+                                id: temporaryItem
+                                property bool itemDebugEnabled: Game.settings.itemDebugEnabled
+
+                                width: Game.mapEditor.selectedGameItem.size.width * app.gridSize
+                                height: Game.mapEditor.selectedGameItem.size.height * app.gridSize
+
+                                Image {
+                                    id: itemImage
+                                    anchors.fill: parent
+                                    source: dataDirectory + Game.mapEditor.selectedGameItem.imageName
+                                    opacity: Game.settings.itemDebugEnabled ? 0.5 : 1
+                                }
+
+                                ItemDescription {
+                                    id: nameLabel
+                                    anchors.bottom: temporaryItem.top
+                                    anchors.horizontalCenter: temporaryItem.horizontalCenter
+                                    text: Game.mapEditor.selectedGameItem.name
+                                }
+
+                                Loader {
+                                    anchors.fill: parent
+                                    active: Game.settings.itemDebugEnabled
+                                    source: "../components/ItemDebugFrame.qml"
+                                }
+                            }
+                        }
                     }
+
+                    // ##################################################################################
+                    // Editor mouse area
+                    // ##################################################################################
 
                     MouseArea {
                         id: editorMouseArea
@@ -209,7 +272,7 @@ GamePage {
                                 updatePositions()
                                 break;
                             case GameMapEditor.ToolSelect:
-                                selectItemUnderMouse()
+                                evaluateItemUnderCurser()
                                 break;
                             case GameMapEditor.ToolMove:
                                 if (moveDrag) {
@@ -229,7 +292,7 @@ GamePage {
                                 updatePositions()
                                 break;
                             case GameMapEditor.ToolSelect:
-                                selectItemUnderMouse()
+                                evaluateItemUnderCurser()
                                 break;
                             case GameMapEditor.ToolMove:
                                 if (moveDrag) {
@@ -251,16 +314,21 @@ GamePage {
                                 return
                             }
 
-
                             switch (Game.mapEditor.tool) {
                             case GameMapEditor.ToolPlace:
-                                if (temporaryItem) {
-                                    var position = Qt.point((gameScene.flickable.contentX + temporaryItem.x) / app.gridSize,
-                                                            (gameScene.flickable.contentY + temporaryItem.y) / app.gridSize)
-                                    Game.mapEditor.placeItemOnMap(temporaryItem.gameItem.resourcePath, position)
+                                if (temporaryItemLoader.active) {
+                                    var position = Qt.point((gameScene.flickable.contentX + temporaryItemLoader.item.x) / app.gridSize,
+                                                            (gameScene.flickable.contentY + temporaryItemLoader.item.y) / app.gridSize)
+                                    Game.mapEditor.placeItemOnMap(Game.mapEditor.selectedGameItem.resourcePath, position)
                                 }
                                 break;
                             case GameMapEditor.ToolSelect:
+                                if (root.currentItemUnderCurser) {
+                                    setCurrentSelectedItem(root.currentItemUnderCurser)
+                                } else {
+                                    setCurrentSelectedItem(null)
+                                    evaluateItemUnderCurser()
+                                }
 
                                 break;
                             case GameMapEditor.ToolMove:
@@ -295,6 +363,121 @@ GamePage {
                         }
                     }
 
+
+                    Loader {
+                        id: selectedItemRegionLoader
+                        //anchors.fill: parent
+                        active: root.currentSelectedItem !== null
+                        sourceComponent: itemRegionComponent
+
+                        Component {
+                            id: itemRegionComponent
+
+                            Rectangle {
+                                id: selectedItemRegion
+                                x: root.currentSelectedItem.x - gameScene.flickable.contentX
+                                y: root.currentSelectedItem.y - gameScene.flickable.contentY
+                                height: root.currentSelectedItem.height
+                                width: root.currentSelectedItem.width
+                                color: "#354682B4"
+                                border {
+                                    width: 2
+                                    color: "steelblue"
+                                }
+
+                                property bool moveItemDrag: false
+                                property point moveItemDragPoint: Qt.point(0,0)
+                                onMoveItemDragChanged: console.log("Move item", root.currentSelectedItem.gameItem.name)
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                                    onClicked: {
+                                        if (mouse.button == Qt.LeftButton) {
+                                            console.log("Clicked on selected item")
+                                        } else if (mouse.button == Qt.RightButton) {
+                                            console.log("Right clicked on selected item")
+                                            console.log("Open map menu")
+                                            itemMenu.x = mouse.x
+                                            itemMenu.y = mouse.y
+                                            itemMenu.open()
+                                        }
+                                    }
+
+                                    //                                    function evaluateMouseChanged() {
+                                    //                                        if (moveItemDrag) {
+                                    //                                            var deltaX = mouseX - moveItemDragPoint.x
+                                    //                                            var deltaY = mouseY - moveItemDragPoint.y
+
+                                    //                                            console.log("Raw delta", deltaX, deltaY)
+
+                                    //                                            if (Game.settings.gridSnapping) {
+
+                                    //                                            } else {
+                                    //                                                root.currentSelectedItem.gameItem.position.x += (deltaX / app.gridSize)
+                                    //                                                root.currentSelectedItem.gameItem.position.y += (deltaY / app.gridSize)
+                                    //                                                moveItemDragPoint = Qt.point(mouseX, mouseY)
+                                    //                                            }
+
+                                    //                                            if (Game.settings.gridSnapping) {
+                                    //                                                deltaX = Math.round(deltaX / app.gridSize) * app.gridSize
+                                    //                                                deltaY = Math.round(deltaY / app.gridSize) * app.gridSize
+                                    //                                            }
+
+                                    //                                            console.log("Actual delta", deltaX, deltaY)
+
+                                    //                                            var positionX = (root.currentSelectedItem.x - gameScene.flickable.contentX + deltaX) / app.gridSize
+                                    //                                            var positionY = (root.currentSelectedItem.y - gameScene.flickable.contentY + deltaY) / app.gridSize
+
+                                    //                                            console.log("Absolute position", positionX, positionY)
+                                    //                                            root.currentSelectedItem.gameItem.position.x = positionX
+                                    //                                            root.currentSelectedItem.gameItem.position.y = positionY
+                                    //                                            moveItemDragPoint = Qt.point(mouseX, mouseY)
+                                    //                                        }
+                                    //                                    }
+
+                                    onMouseXChanged: {
+                                        if (moveItemDrag) {
+                                            var deltaX = mouseX - moveItemDragPoint.x
+                                            console.log("Raw delta x", deltaX)
+
+                                            if (Game.settings.gridSnapping) {
+
+                                            } else {
+                                                moveItemDragPoint.x += deltaX
+                                                root.currentSelectedItem.gameItem.position.x += (deltaX / app.gridSize)
+                                            }
+                                        }
+                                    }
+
+                                    onMouseYChanged: {
+                                        if (moveItemDrag) {
+                                            var deltaY = mouseY - moveItemDragPoint.y
+                                            console.log("Raw delta y", deltaY)
+
+                                            if (Game.settings.gridSnapping) {
+
+                                            } else {
+                                                moveItemDragPoint.y += deltaY
+                                                root.currentSelectedItem.gameItem.position.y += (deltaY / app.gridSize)
+                                            }
+                                        }
+                                    }
+
+                                    onPressed: {
+                                        moveItemDragPoint = Qt.point(mouseX, mouseY)
+                                        console.log("Start draging", moveItemDragPoint.x, moveItemDragPoint.y)
+                                        moveItemDrag = true
+                                    }
+
+                                    onReleased: {
+                                        moveItemDrag = false
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     Menu {
                         id: mapMenu
                         title: "Map menu"
@@ -304,6 +487,25 @@ GamePage {
 
                         MenuItem {
                             text: "Test..."
+                        }
+
+                        MenuItem {
+                            text: "Add light source"
+                            onTriggered: {
+                                Game.mapEditor.addBackgroundLightSource(LightSource.LightTypeSpotlight, "#FFFFFF", convertMouseCoordinatesToWorldCoordinates(mapMenu.x, mapMenu.y))
+                            }
+                        }
+                    }
+
+                    Menu {
+                        id: itemMenu
+                        title: "Item menu"
+                        MenuItem {
+                            text: "Delete"
+                        }
+
+                        MenuItem {
+                            text: "Rotates"
                         }
                     }
                 }
@@ -316,6 +518,10 @@ GamePage {
             Layout.preferredHeight: 40
         }
     }
+
+    // ##################################################################################
+    // Functions
+    // ##################################################################################
 
     Item {
         id: workingOverlay
@@ -356,17 +562,58 @@ GamePage {
         }
     }
 
+    // ##################################################################################
+    // Functions
+    // ##################################################################################
 
-    function mouseItemIntercepts(item, positionX, positionY) {
+    function setCurrentItemUnderCurser(item) {
+        if (currentSelectedItem) {
+            return
+        }
+
+        if (item && currentItemUnderCurser !== item) {
+            if (currentItemUnderCurser)
+                currentItemUnderCurser.gameItem.playerFocus = false
+
+            currentItemUnderCurser = item
+            console.log("--> Current item under curser:", currentItemUnderCurser.gameItem.name, currentItemUnderCurser.gameItem.position.x, currentItemUnderCurser.gameItem.position.y)
+            item.gameItem.playerFocus = true
+        } else if (currentItemUnderCurser && !item) {
+            console.log("--> No item under curser")
+            currentItemUnderCurser.gameItem.playerFocus = false
+            currentItemUnderCurser = null
+        }
+    }
+
+
+    function setCurrentSelectedItem(item) {
+        if (item && currentSelectedItem !== item) {
+            currentItemUnderCurser = null
+            currentSelectedItem = item
+            currentSelectedItem.gameItem.playerFocus = true
+            console.log("--> Select item:", currentSelectedItem.gameItem.name, currentSelectedItem.gameItem.position.x, currentSelectedItem.gameItem.position.y)
+        } else if (currentSelectedItem && !item) {
+            currentItemUnderCurser = null
+            currentSelectedItem.gameItem.playerFocus = false
+            currentSelectedItem = item
+            console.log("--> No item selected")
+        }
+    }
+
+
+    function mouseInterceptsItem(item, positionX, positionY) {
         var itemRectangle = Qt.rect(item.gameItem.position.x * app.gridSize, item.gameItem.position.y * app.gridSize, item.gameItem.size.width * app.gridSize, item.gameItem.size.height * app.gridSize)
         //console.log("Checking position", Qt.point(positionX, positionY), item.name, itemRectangle)
-        if (positionX >= itemRectangle.x && positionX <= itemRectangle.x + itemRectangle.width &&
-                positionY >= itemRectangle.y && positionY < itemRectangle.y + itemRectangle.height) {
+        if (positionX >= itemRectangle.x &&
+                positionX <= itemRectangle.x + itemRectangle.width &&
+                positionY >= itemRectangle.y &&
+                positionY < itemRectangle.y + itemRectangle.height) {
             return true;
         }
 
         return false;
     }
+
 
     // Returns the center point of the given item in screen coordinates
     function getItemCenterScreenCoordinates(item) {
@@ -375,25 +622,33 @@ GamePage {
         return Qt.point(itemCenterScreenPositionX, itemCenterScreenPositionY)
     }
 
+    // Returns the given mouse coordinates in world coordinates
+    function convertMouseCoordinatesToWorldCoordinates(mouseX, mouseY) {
+        var worldX = (mouseX + gameScene.flickable.contentX) / app.gridSize
+        var worldY = (mouseY + gameScene.flickable.contentY) / app.gridSize
+        console.log("Mouse position", mouseX, mouseY, "--> world position", worldX, worldY)
+        return Qt.point(worldX, worldY)
+    }
+
     function updatePositions() {
         // TODO: update position for view
 
-        if (!temporaryItem)
+        if (!temporaryItemLoader.active)
             return
 
-        var positionX = editorMouseArea.mouseX - temporaryItem.width / 2
-        var positionY = editorMouseArea.mouseY - temporaryItem.height / 2
+        var positionX = editorMouseArea.mouseX - temporaryItemLoader.item.width / 2
+        var positionY = editorMouseArea.mouseY - temporaryItemLoader.item.height / 2
 
         if (Game.settings.gridSnapping) {
             positionX = Math.round(positionX / app.gridSize) * app.gridSize
             positionY = Math.round(positionY / app.gridSize) * app.gridSize
         }
 
-        temporaryItem.x = positionX
-        temporaryItem.y = positionY
+        temporaryItemLoader.item.x = positionX
+        temporaryItemLoader.item.y = positionY
     }
 
-    function selectItemUnderMouse() {
+    function evaluateItemUnderCurser() {
         var positionX = gameScene.flickable.contentX + editorMouseArea.mouseX
         var positionY = gameScene.flickable.contentY + editorMouseArea.mouseY
 
@@ -409,7 +664,7 @@ GamePage {
             case GameMapEditor.ModeItems:
                 for (var itemsIndex = 0; itemsIndex < gameScene.items.count  ; itemsIndex++) {
                     var item = gameScene.items.itemAt(itemsIndex)
-                    if (mouseItemIntercepts(item, positionX, positionY)) {
+                    if (mouseInterceptsItem(item, positionX, positionY)) {
                         itemsUnderMouse.push(item)
                     }
                 }
@@ -422,7 +677,7 @@ GamePage {
             // Now check all intercepting items if the pixel under the mouse is 0
             if (itemsUnderMouse.length > 0) {
                 //console.log("Intercepting", itemsUnderMouse.length, "item areas")
-                // For now, get the distance to the center for selecting
+                // For now, get the shortest distance to the center for selecting
                 var closestItem = null
                 var bestCenterDistance = -1
                 for (var x = 0; x < itemsUnderMouse.length; x++) {
@@ -441,13 +696,11 @@ GamePage {
                         bestCenterDistance = distance
                     }
                 }
-                selectItem(closestItem.gameItem)
+                setCurrentItemUnderCurser(closestItem)
             } else {
-                selectItem(null)
+                setCurrentItemUnderCurser(null)
             }
         }
-
-        //
     }
 }
 

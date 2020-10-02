@@ -11,6 +11,8 @@
 
 Map::Map(QObject *parent) : QObject(parent)
 {
+    m_backgroundLights = new GameObjects(this);
+
     m_objects = new GameObjects(this);
     m_items = new GameItems(this);
     m_chests = new GameItems(this);
@@ -19,9 +21,11 @@ Map::Map(QObject *parent) : QObject(parent)
     m_weatherAreaModel = new WeatherAreaModel(this);
 }
 
-Map::Map(GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
+Map::Map(GameObjects *backgroundLights, GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
     QObject(parent)
 {
+    m_backgroundLights = backgroundLights;
+
     m_objects = objects;
     m_items = items;
     m_enemies = enemies;
@@ -126,6 +130,11 @@ void Map::setPlayer(Character *player)
 GameObjects *Map::objects() const
 {
     return m_objects;
+}
+
+GameObjects *Map::backgroundLights() const
+{
+    return m_backgroundLights;
 }
 
 GameItems *Map::items() const

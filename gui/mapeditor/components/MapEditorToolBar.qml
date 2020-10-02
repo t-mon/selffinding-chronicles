@@ -96,12 +96,13 @@ Item {
             baseColor: "green"
             title: qsTr("Grid snapping")
             iconSource: dataDirectory + "/icons/camera-grid.svg"
+            enabled: Game.settings.gridSnapping
             onEnabledChanged: {
                 console.log("Grid snaping enabled changed", enabled)
                 Game.settings.gridSnapping = enabled
             }
 
-            Component.onCompleted: gridSnappingToolButton.enabled = Game.settings.gridSnapping
+            //Component.onCompleted: gridSnappingToolButton.enabled = Game.settings.gridSnapping
         }
 
         Item {
