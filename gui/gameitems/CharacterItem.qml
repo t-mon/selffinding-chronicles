@@ -39,6 +39,7 @@ PhysicsItem {
     onYChanged: {
         if (!character) return
         character.position.y = y / app.gridSize
+        z = worldItem.calculateLayerValue(character.layer, y, height, worldItem.height)
         //console.log(character.name, "position changed", x, ",", y)
         if (character.isPlayer) moveCamera()
     }

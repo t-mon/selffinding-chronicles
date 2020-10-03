@@ -32,6 +32,7 @@ PhysicsItem {
     onYChanged: {
         if (!gameItem) return
         gameItem.position.y = y / app.gridSize
+        z = worldItem.calculateLayerValue(gameItem.layer, y, height, worldItem.height)
     }
 
     linearDamping: 30

@@ -26,7 +26,7 @@ PhysicsItem {
     // Enemy movement
     Connections {
         target: Game.engine
-        onEnginePostTick: {
+        function onEnginePostTick() {
             if (!root.enemy)
                 return
 
@@ -48,6 +48,7 @@ PhysicsItem {
     onYChanged: {
         if (!enemy) return
         enemy.position.y = y / app.gridSize
+        z = worldItem.calculateLayerValue(enemy.layer, y, height, worldItem.height)
     }
 
     fixtures: [

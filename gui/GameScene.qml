@@ -150,12 +150,10 @@ Item {
                     id: gameObjet
                     gameObject: mapScene.activeObjects.get(model.index)
                     itemDebugEnabled: root.itemDebugEnabled
-                    worldHeight: worldItem.height
-                    width: gameObject ? gameObject.size.width * app.gridSize : 0
-                    height: gameObject ? gameObject.size.height * app.gridSize : 0
-                    x: gameObject ? gameObject.position.x * app.gridSize : 0
-                    y: gameObject ? gameObject.position.y * app.gridSize : 0
-                    z: gameObject ? worldItem.calculateLayerValue(gameObject.layer, y, height, worldItem.height) : 0
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
                 }
             }
 
@@ -165,11 +163,10 @@ Item {
                 delegate: GameItem {
                     gameItem: mapScene.activeItems.get(model.index)
                     itemDebugEnabled: root.itemDebugEnabled
-                    width: gameItem ? gameItem.size.width * app.gridSize : 0
-                    height: gameItem ? gameItem.size.height * app.gridSize : 0
-                    x: gameItem ? gameItem.position.x * app.gridSize : 0
-                    y: gameItem ? gameItem.position.y * app.gridSize : 0
-                    z: gameItem ? worldItem.calculateLayerValue(gameItem.layer, y, height, worldItem.height) : 0
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
                 }
             }
 
@@ -179,11 +176,10 @@ Item {
                 delegate: GameItem {
                     gameItem: mapScene.activeChests.get(model.index)
                     itemDebugEnabled: root.itemDebugEnabled
-                    width: gameItem ? gameItem.size.width * app.gridSize : 0
-                    height: gameItem ? gameItem.size.height * app.gridSize : 0
-                    x: gameItem ? gameItem.position.x * app.gridSize : 0
-                    y: gameItem ? gameItem.position.y * app.gridSize : 0
-                    z: gameItem ? worldItem.calculateLayerValue(gameItem.layer, y, height, worldItem.height) : 0
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
                 }
             }
 
@@ -194,13 +190,12 @@ Item {
                     character: mapScene.activeCharacters.get(model.index)
                     itemDebugEnabled: root.itemDebugEnabled
                     particleSystem: particles
-                    width: character ? character.size.width * app.gridSize : 0
-                    height: character ? character.size.height * app.gridSize : 0
-                    x: character ? character.position.x * app.gridSize : 0
-                    y: character ? character.position.y * app.gridSize : 0
-                    z: character ? worldItem.calculateLayerValue(character.layer, y, height, worldItem.height) : 0
-                    // Get the player item for this scene
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
                     Component.onCompleted: {
+                        // Get the player item for this scene
                         if (character && character.isPlayer) {
                             root.playerItem = this
                         }
@@ -214,11 +209,10 @@ Item {
                 delegate: EnemyItem {
                     itemDebugEnabled: root.itemDebugEnabled
                     enemy: mapScene.activeEnemies.get(model.index)
-                    width: enemy ? enemy.size.width * app.gridSize : 0
-                    height: enemy ? enemy.size.height * app.gridSize : 0
-                    x: enemy ? enemy.position.x * app.gridSize : 0
-                    y: enemy ? enemy.position.y * app.gridSize : 0
-                    z: enemy ? worldItem.calculateLayerValue(enemy.layer, y, height, worldItem.height) : 0
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
                 }
             }
         }
