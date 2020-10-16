@@ -113,7 +113,7 @@ GamePage {
         running: true
     }
 
-
+    // Main layout
     ColumnLayout {
         id: mainColumn
         anchors.fill: parent
@@ -154,13 +154,14 @@ GamePage {
                                 }
 
                                 ColorPicker {
+                                    id: backgroundColorPicker
                                     Layout.fillWidth: true
-                                    id: colorPicker
-                                    function onColorChanged(color) {
+                                    onColorChanged: {
+                                        console.log("Background color changed", color)
                                         gameScene.mapScene.map.backgroundColor = color
                                     }
 
-                                    Component.onCompleted: currentColor = gameScene.mapScene.map.backgroundColor
+                                    Component.onCompleted: color = gameScene.mapScene.map.backgroundColor
                                 }
 
                                 Item { Layout.fillWidth: true; Layout.fillHeight: true }
@@ -185,6 +186,7 @@ GamePage {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     opacity: 1
+                    clip: true
                     physicsWorld: physicsWorld
                     mapScene: Game.mapEditor.mapScene
                     itemDebugEnabled: Game.settings.itemDebugEnabled
@@ -492,7 +494,7 @@ GamePage {
                         MenuItem {
                             text: "Add light source"
                             onTriggered: {
-                                Game.mapEditor.addBackgroundLightSource(LightSource.LightTypeSpotlight, "#FFFFFF", convertMouseCoordinatesToWorldCoordinates(mapMenu.x, mapMenu.y))
+                                Game.mapEditor.addBackgroundLightSource(LightSource.LightTypeSpotlight, "#EEF157", convertMouseCoordinatesToWorldCoordinates(mapMenu.x, mapMenu.y))
                             }
                         }
                     }

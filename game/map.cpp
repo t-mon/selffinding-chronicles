@@ -109,6 +109,7 @@ void Map::setBackgroundColor(const QColor &backgroundColor)
     if (m_backgroundColor == backgroundColor)
         return;
 
+    qCDebug(dcMap()) << "Background color changed" << backgroundColor.name();
     m_backgroundColor = backgroundColor;
     emit backgroundColorChanged(m_backgroundColor);
 }

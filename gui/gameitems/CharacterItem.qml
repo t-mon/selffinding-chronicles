@@ -39,7 +39,7 @@ PhysicsItem {
     onYChanged: {
         if (!character) return
         character.position.y = y / app.gridSize
-        z = worldItem.calculateLayerValue(character.layer, y, height, worldItem.height)
+        z = gameScene.calculateLayerValue(character.layer, y, height, worldItem.height)
         //console.log(character.name, "position changed", x, ",", y)
         if (character.isPlayer) moveCamera()
     }
@@ -995,6 +995,7 @@ PhysicsItem {
         bulletObject.rotation = getBulletAngle()
         bulletObject.x = bulletStartPoint.x
         bulletObject.y = bulletStartPoint.y
+        //bulletObject.z = root.z
         bulletObject.startPositionX = bulletStartPoint.x
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range

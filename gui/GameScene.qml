@@ -38,7 +38,6 @@ Item {
 
     property CharacterItem playerItem: null
 
-    clip: true
     opacity: 0
     Behavior on opacity {
         NumberAnimation {
@@ -47,6 +46,23 @@ Item {
         }
     }
 
+    // Flickabke (background, lights and objects)
+
+    function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
+        if (layer === GameObject.LayerBackground) {
+            return -2
+        } else if (layer === GameObject.LayerBase) {
+            return -1
+        } else if (layer === GameObject.LayerItem) {
+            return itemY + itemHeight
+        }  else if (layer === GameObject.LayerOverlay) {
+            return worldHeight + itemHeight + 1
+        } else {
+            return itemY + itemHeight
+        }
+    }
+
+    // Renders only the background lights
     Flickable {
         id: worldFlickable
         width: worldItem.width > root.width ? root.width : worldItem.width
@@ -55,6 +71,7 @@ Item {
         contentWidth: worldItem.width
         contentHeight: worldItem.height
         enabled: false
+        visible: false
 
         // Only visible in the editor
         ScrollBar.vertical: ScrollBar {
@@ -80,27 +97,70 @@ Item {
             width: mapScene.map.size.width * app.gridSize
             height: mapScene.map.size.height * app.gridSize
 
-            Rectangle {
-                id: backgroundRectangle
-                anchors.fill: parent
-                z: GameObject.LayerBackground - 1
-                color: mapScene.map.backgroundColor
-
-                Repeater {
-                    id: backgroundLightsRepeater
-                    model: mapScene.activeBackgroundLights
-                    delegate: LightSourceItem {
-                        id: lightSource
-                        light: Game.castLightSourceObject(mapScene.activeBackgroundLights.get(model.index))
-                        itemDebugEnabled: root.itemDebugEnabled
-                        width: light.size.width * app.gridSize
-                        height: light.size.height * app.gridSize
-                        x: light.position.x * app.gridSize
-                        y: light.position.y * app.gridSize
-                        z: GameObject.LayerBackground
-                    }
+            Repeater {
+                id: backgroundLightsRepeater
+                model: mapScene.activeBackgroundLights
+                delegate: LightSourceItem {
+                    id: lightSource
+                    light: Game.castLightSourceObject(mapScene.activeBackgroundLights.get(model.index))
+                    itemDebugEnabled: root.itemDebugEnabled
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
                 }
             }
+        }
+    }
+
+    ShaderEffectSource {
+        id: worldShaderEffectSource
+        width: worldFlickable.width
+        height: worldFlickable.height
+        anchors.centerIn: parent
+        sourceItem: worldFlickable
+        hideSource: true
+    }
+
+    ShaderEffect {
+        id: worldShaderEffect
+        anchors.fill: worldShaderEffectSource
+        property var source: worldShaderEffectSource
+        property var backgroundColor: mapScene.map.backgroundColor
+        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+        fragmentShader: "
+            varying highp vec2 coordinate;
+            uniform sampler2D source;
+            uniform lowp float qt_Opacity;
+            uniform highp vec4 backgroundColor;
+            void main() {
+                // Get the pixel of the lights layer
+                highp vec4 lightFragment = texture2D(source, coordinate);
+
+                // Mix the background color with the pixel from the light texture
+                highp vec3 ambientColor = backgroundColor.rgb + lightFragment.rgb * lightFragment.a;
+
+                gl_FragColor = vec4(ambientColor.rgb, 1.0) * qt_Opacity;
+            }
+        "
+    }
+
+    // Renders the items and objects on top of the background render
+    Flickable {
+        id: itemFlickable
+        anchors.fill: worldFlickable
+        contentWidth: worldFlickable.contentWidth
+        contentHeight: worldFlickable.contentHeight
+        contentX: worldFlickable.contentX
+        contentY: worldFlickable.contentY
+        enabled: false
+        visible: true
+
+        Item {
+            id: itemFlickableContent
+            anchors.centerIn: parent
+            width: worldItem.width
+            height: worldItem.height
 
             WorldBoundaries {
                 id: worldBoundaries
@@ -129,20 +189,6 @@ Item {
                 }
             }
 
-            function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
-                if (layer === GameObject.LayerBackground) {
-                    return -2
-                } else if (layer === GameObject.LayerBase) {
-                    return -1
-                } else if (layer === GameObject.LayerItem) {
-                    return itemY + itemHeight
-                }  else if (layer === GameObject.LayerOverlay) {
-                    return worldHeight + itemHeight + 1
-                } else {
-                    return itemY + itemHeight
-                }
-            }
-
             Repeater {
                 id: gameObjectRepeater
                 model: mapScene.activeObjects
@@ -154,6 +200,7 @@ Item {
                     height: model.size.height * app.gridSize
                     x: model.position.x * app.gridSize
                     y: model.position.y * app.gridSize
+                    z: gameScene.calculateLayerValue(model.layer, y, height, worldItem.height)
                 }
             }
 
@@ -230,45 +277,47 @@ Item {
             anchors.fill: parent
             active: root.physicsDebugEnabled
             sourceComponent: debugDrawComponent
-
             Component {
                 id: debugDrawComponent
                 DebugDraw {
                     id: debugDraw
-                    world: physicsWorld
+                    world: root.physicsWorld
                     opacity: 0.4
                 }
             }
         }
     }
 
-//    Flickable {
-//        id: lightsFlickable
-//        anchors.fill: worldFlickable
-//        contentWidth: worldFlickable.contentWidth
-//        contentHeight: worldFlickable.contentHeight
-//        contentX: worldFlickable.contentX
-//        contentY: worldFlickable.contentY
-//        enabled: false
-//        visible: false
 
-//        Item {
-//            id: lightItem
-//            anchors.centerIn: parent
-//            width: worldItem.width
-//            height: worldItem.height
 
-//            Image {
-//                id: characterLight
-//                source: dataDirectory + "/lights/spotlight.svg"
-//                property point playerWorldPosition: getPlayerWorldPosition()
-//                x: playerWorldPosition.x - width / 2
-//                y: playerWorldPosition.y - height / 2
-//                width: 20 * app.gridSize
-//                height: width
-//            }
-//        }
-//    }
+
+    //    Flickable {
+    //        id: lightsFlickable
+    //        anchors.fill: worldFlickable
+    //        contentWidth: worldFlickable.contentWidth
+    //        contentHeight: worldFlickable.contentHeight
+    //        contentX: worldFlickable.contentX
+    //        contentY: worldFlickable.contentY
+    //        enabled: false
+    //        visible: false
+
+    //        Item {
+    //            id: lightItem
+    //            anchors.centerIn: parent
+    //            width: worldItem.width
+    //            height: worldItem.height
+
+    //            Image {
+    //                id: characterLight
+    //                source: dataDirectory + "/lights/spotlight.svg"
+    //                property point playerWorldPosition: getPlayerWorldPosition()
+    //                x: playerWorldPosition.x - width / 2
+    //                y: playerWorldPosition.y - height / 2
+    //                width: 20 * app.gridSize
+    //                height: width
+    //            }
+    //        }
+    //    }
 
 
     // ##################################################################################
@@ -277,11 +326,23 @@ Item {
 
 
 //    ShaderEffectSource {
-//        id: shaderEffectSource
-//        width: worldItem.width > sceneItem.width ? sceneItem.width : worldItem.width
-//        height: worldItem.height > sceneItem.height ? sceneItem.height : worldItem.height
+//        id: itemsShaderEffectSource
+//        width: itemFlickable.width
+//        height: itemFlickable.height
 //        anchors.centerIn: parent
-//        sourceItem: worldFlickable
+//        sourceItem: itemFlickable
+//        hideSource: true
 //    }
+
+
+//    ShaderEffect {
+//        id: itemShaderEffect
+//        anchors.fill: itemsShaderEffectSource
+//        property var source: itemsShaderEffectSource
+//        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+//        fragmentShader: "qrc:shadereffects/fragmentshaders/default.frag"
+//    }
+
+
 
 }

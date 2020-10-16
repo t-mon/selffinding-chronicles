@@ -48,7 +48,7 @@ PhysicsItem {
     onYChanged: {
         if (!enemy) return
         enemy.position.y = y / app.gridSize
-        z = worldItem.calculateLayerValue(enemy.layer, y, height, worldItem.height)
+        z = gameScene.calculateLayerValue(enemy.layer, y, height, worldItem.height)
     }
 
     fixtures: [

@@ -21,40 +21,39 @@
      id="defs2">
     <linearGradient
        inkscape:collect="always"
-       id="light">
+       id="linearGradient837">
       <stop
-         style="stop-color:#ffeeaa;stop-opacity:1;"
+         style="stop-color:#000000;stop-opacity:1;"
          offset="0"
-         id="stop915" />
+         id="stop833" />
       <stop
-         style="stop-color:#ffeeaa;stop-opacity:0;"
+         style="stop-color:#000000;stop-opacity:0;"
          offset="1"
-         id="stop917" />
+         id="stop835" />
     </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient837"
+       id="radialGradient839"
+       cx="69.320839"
+       cy="227.67915"
+       fx="69.320839"
+       fy="227.67915"
+       r="66.145836"
+       gradientUnits="userSpaceOnUse" />
     <filter
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
-       id="filter911"
-       x="-0.024"
+       id="filter866"
+       x="-0.024000004"
        width="1.048"
-       y="-0.024"
+       y="-0.024000004"
        height="1.048">
       <feGaussianBlur
          inkscape:collect="always"
-         stdDeviation="1.3229167"
-         id="feGaussianBlur913" />
+         stdDeviation="1.3229169"
+         id="feGaussianBlur868" />
     </filter>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#light"
-       id="radialGradient921"
-       cx="66.145834"
-       cy="230.85416"
-       fx="66.145834"
-       fy="230.85416"
-       r="69.320835"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(3.1750001,-3.1750029)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -63,9 +62,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.342"
-     inkscape:cx="262.76086"
-     inkscape:cy="121.89462"
+     inkscape:zoom="2.684"
+     inkscape:cx="313.09971"
+     inkscape:cy="312.00805"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -100,17 +99,19 @@
        x="146.18398"
        y="170.29448" />
     <circle
-       style="opacity:1;fill:url(#radialGradient921);fill-opacity:1;stroke:none;stroke-width:3.61521268;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.76902173;paint-order:normal;filter:url(#filter911)"
+       style="opacity:0.731;fill:url(#radialGradient839);fill-opacity:1;stroke:none;stroke-width:3.61521268;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.76902173;paint-order:normal;filter:url(#filter866)"
        id="path815"
-       cx="69.320839"
-       cy="227.67915"
-       r="66.145836"
        transform="matrix(0.95419816,0,0,0.95308667,2.089139e-5,13.933312)"
-       inkscape:label="#light">
+       inkscape:label="#light"
+       r="66.145836"
+       cy="227.78258"
+       cx="69.320839">
       <desc
-         id="desc925">A radial spotlight</desc>
+         id="desc925"
+         style="fill:url(#radialGradient839);fill-opacity:1">A radial spotlight</desc>
       <title
-         id="title923">Spotlight</title>
+         id="title923"
+         style="fill:url(#radialGradient839);fill-opacity:1">Spotlight</title>
     </circle>
   </g>
 </svg>

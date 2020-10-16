@@ -34,7 +34,6 @@ Engine::Engine(QObject *parent) :
 
     connect(m_playerController, &PlayerController::escape, this, &Engine::onEscape);
     connect(m_playerController, &PlayerController::beam, this, &Engine::onBeam);
-    //connect(m_playerController, &PlayerController::shoot, this, &Engine::onShoot);
 
     m_teleportationHandler = new TeleportationHandler(this);
     m_teleportationHandler->reset();

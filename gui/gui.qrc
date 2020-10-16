@@ -77,5 +77,7 @@
         <file>mapeditor/components/ColorPicker.qml</file>
         <file>mapeditor/components/MapEditorToolBar.qml</file>
         <file>gameitems/LightSourceItem.qml</file>
+        <file>shadereffects/vertexshaders/default.frag</file>
+        <file>shadereffects/fragmentshaders/default.frag</file>
     </qresource>
 </RCC>

@@ -449,7 +449,7 @@ GamePage {
         visible: Game.debugging
         onStonedEnabledChanged: {
             if (stonedEnabled) {
-                stonedShader.visible = true
+                //stonedShader.visible = true
                 stonedStartAnimation.start()
                 stonedShaderTimeAnimation.start()
             } else {

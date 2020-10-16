@@ -263,6 +263,7 @@ void GameMapEditor::saveMap()
 void GameMapEditor::deleteAll()
 {
     qCDebug(dcMapEditor()) << "Remove all items and objects";
+    m_map->backgroundLights()->clearModel();
     m_map->objects()->clearModel();
     m_map->items()->clearModel();
     m_map->chests()->clearModel();
