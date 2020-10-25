@@ -46,22 +46,6 @@ Item {
         }
     }
 
-    // Flickabke (background, lights and objects)
-
-    function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
-        if (layer === GameObject.LayerBackground) {
-            return -2
-        } else if (layer === GameObject.LayerBase) {
-            return -1
-        } else if (layer === GameObject.LayerItem) {
-            return itemY + itemHeight
-        }  else if (layer === GameObject.LayerOverlay) {
-            return worldHeight + itemHeight + 1
-        } else {
-            return itemY + itemHeight
-        }
-    }
-
     // Renders only the background lights
     Flickable {
         id: worldFlickable
@@ -110,6 +94,22 @@ Item {
                     y: model.position.y * app.gridSize
                 }
             }
+
+            Repeater {
+                id: gameObjectRepeater
+                model: mapScene.activeObjects
+                delegate: GameObject {
+                    id: gameObjet
+                    gameObject: mapScene.activeObjects.get(model.index)
+                    itemDebugEnabled: root.itemDebugEnabled
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
+                    z: gameScene.calculateLayerValue(model.layer, y, height, worldItem.height)
+                }
+            }
+
         }
     }
 
@@ -128,19 +128,19 @@ Item {
         property var source: worldShaderEffectSource
         property var backgroundColor: mapScene.map.backgroundColor
         vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+        z: gameScene.calculateLayerValue(GameObject.LayerBackground, y, height, worldItem.height)
         fragmentShader: "
             varying highp vec2 coordinate;
             uniform sampler2D source;
             uniform lowp float qt_Opacity;
             uniform highp vec4 backgroundColor;
+
             void main() {
-                // Get the pixel of the lights layer
                 highp vec4 lightFragment = texture2D(source, coordinate);
-
                 // Mix the background color with the pixel from the light texture
-                highp vec3 ambientColor = backgroundColor.rgb + lightFragment.rgb * lightFragment.a;
+                highp vec4 ambientColor = backgroundColor.rgba + lightFragment.rgba;
 
-                gl_FragColor = vec4(ambientColor.rgb, 1.0) * qt_Opacity;
+                gl_FragColor = ambientColor * qt_Opacity;
             }
         "
     }
@@ -189,20 +189,6 @@ Item {
                 }
             }
 
-            Repeater {
-                id: gameObjectRepeater
-                model: mapScene.activeObjects
-                delegate: GameObject {
-                    id: gameObjet
-                    gameObject: mapScene.activeObjects.get(model.index)
-                    itemDebugEnabled: root.itemDebugEnabled
-                    width: model.size.width * app.gridSize
-                    height: model.size.height * app.gridSize
-                    x: model.position.x * app.gridSize
-                    y: model.position.y * app.gridSize
-                    z: gameScene.calculateLayerValue(model.layer, y, height, worldItem.height)
-                }
-            }
 
             Repeater {
                 id: itemsRepeater
@@ -289,8 +275,6 @@ Item {
     }
 
 
-
-
     //    Flickable {
     //        id: lightsFlickable
     //        anchors.fill: worldFlickable
@@ -345,4 +329,17 @@ Item {
 
 
 
+    function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
+        if (layer === GameObject.LayerBackground) {
+            return -2
+        } else if (layer === GameObject.LayerBase) {
+            return -1
+        } else if (layer === GameObject.LayerItem) {
+            return itemY + itemHeight
+        }  else if (layer === GameObject.LayerOverlay) {
+            return worldHeight + itemHeight + 1
+        } else {
+            return itemY + itemHeight
+        }
+    }
 }

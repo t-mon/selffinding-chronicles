@@ -240,7 +240,7 @@ void GameMapEditor::addBackgroundLightSource(LightSource::LightType lightType, c
     lightSource->setLightType(lightType);
     lightSource->setColor(color);
     lightSource->setLayer(GameObject::LayerBackground);
-    lightSource->setSize(QSize(10, 10));
+    lightSource->setSize(QSize(15, 15));
     lightSource->setPosition(QPointF(position.x() - lightSource->size().width() / 2,
                                      position.y() - lightSource->size().height() / 2));
 

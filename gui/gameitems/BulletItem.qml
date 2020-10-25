@@ -25,7 +25,7 @@ PhysicsItem {
 
     onXChanged: evaluateDistance()
     onYChanged: {
-        //z = gameScene.calculateLayerValue(GameObject.LayerOverlay, y, height, worldItem.height)
+        z = gameScene.calculateLayerValue(GameObject.LayerOverlay, y, height, worldItem.height)
         evaluateDistance()
     }
 
