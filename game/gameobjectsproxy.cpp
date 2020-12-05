@@ -33,8 +33,8 @@ void GameObjectsProxy::setGameObjects(GameObjects *gameObjects)
     }
 
     endResetModel();
-
     emit countChanged();
+
 }
 
 int GameObjectsProxy::count() const

@@ -11,6 +11,8 @@
 
 Map::Map(QObject *parent) : QObject(parent)
 {
+    m_backgroundLights = new GameObjects(this);
+
     m_objects = new GameObjects(this);
     m_items = new GameItems(this);
     m_chests = new GameItems(this);
@@ -19,9 +21,11 @@ Map::Map(QObject *parent) : QObject(parent)
     m_weatherAreaModel = new WeatherAreaModel(this);
 }
 
-Map::Map(GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
+Map::Map(GameObjects *backgroundLights, GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
     QObject(parent)
 {
+    m_backgroundLights = backgroundLights;
+
     m_objects = objects;
     m_items = items;
     m_enemies = enemies;
@@ -105,6 +109,7 @@ void Map::setBackgroundColor(const QColor &backgroundColor)
     if (m_backgroundColor == backgroundColor)
         return;
 
+    qCDebug(dcMap()) << "Background color changed" << backgroundColor.name();
     m_backgroundColor = backgroundColor;
     emit backgroundColorChanged(m_backgroundColor);
 }
@@ -126,6 +131,11 @@ void Map::setPlayer(Character *player)
 GameObjects *Map::objects() const
 {
     return m_objects;
+}
+
+GameObjects *Map::backgroundLights() const
+{
+    return m_backgroundLights;
 }
 
 GameItems *Map::items() const
@@ -324,31 +334,31 @@ QDebug operator<<(QDebug debug, Map *map)
     debug.nospace() << ", " << map->resourceFileName();
     debug.nospace() << ", " << map->playerStartPosition();
     debug.nospace() << ", color: " << map->backgroundColor().name();
-    debug.nospace() << ")" << endl;
+    debug.nospace() << ")" << Qt::endl;
 
-    debug.nospace() << "--> Objects:" << endl;
+    debug.nospace() << "--> Objects:" << Qt::endl;
     foreach (GameObject *object, map->objects()->gameObjects()) {
-        debug.nospace() << "    " << object << endl;
+        debug.nospace() << "    " << object << Qt::endl;
     }
 
-    debug.nospace() << "--> Items:" << endl;
+    debug.nospace() << "--> Items:" << Qt::endl;
     foreach (GameItem *item, map->items()->gameItems()) {
-        debug.nospace() << "    " << item << endl;
+        debug.nospace() << "    " << item << Qt::endl;
     }
 
-    debug.nospace() << "--> Chests:" << endl;
+    debug.nospace() << "--> Chests:" << Qt::endl;
     foreach (GameItem *item, map->chests()->gameItems()) {
-        debug.nospace() << "    " << qobject_cast<ChestItem *>(item) << endl;
+        debug.nospace() << "    " << qobject_cast<ChestItem *>(item) << Qt::endl;
     }
 
-    debug.nospace() << "--> Characters:" << endl;
+    debug.nospace() << "--> Characters:" << Qt::endl;
     foreach (GameItem *item, map->characters()->gameItems()) {
-        debug.nospace() << "    " << qobject_cast<Character *>(item) << endl;
+        debug.nospace() << "    " << qobject_cast<Character *>(item) << Qt::endl;
     }
 
-    debug.nospace() << "--> Enemies:" << endl;
+    debug.nospace() << "--> Enemies:" << Qt::endl;
     foreach (GameItem *item, map->enemies()->gameItems()) {
-        debug.nospace() << "    " << qobject_cast<Enemy *>(item) << endl;
+        debug.nospace() << "    " << qobject_cast<Enemy *>(item) << Qt::endl;
     }
 
     return debug.space();

@@ -16,7 +16,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="spotlight.svg">
+   sodipodi:docname="spotlight-2.svg">
   <defs
      id="defs2">
     <linearGradient
@@ -35,26 +35,13 @@
        inkscape:collect="always"
        xlink:href="#light"
        id="radialGradient921"
-       cx="66.145836"
+       cx="66.145834"
        cy="230.85416"
-       fx="66.145836"
+       fx="66.145834"
        fy="230.85416"
        r="69.320835"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.85096604,-0.00370218,0.00349851,0.80602717,12.225332,41.849315)" />
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
-       id="filter845"
-       x="-0.072002808"
-       width="1.1440056"
-       y="-0.071997213"
-       height="1.1439944">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="3.9685966"
-         id="feGaussianBlur847" />
-    </filter>
+       gradientTransform="translate(-2.9832169e-6,4.791905e-6)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -92,24 +79,24 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-164.70832)">
-    <path
-       style="opacity:1;fill:url(#radialGradient921);fill-opacity:1;stroke:none;stroke-width:3.61521268;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.76902173;paint-order:normal;filter:url(#filter845)"
+    <rect
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.72983837;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.76902173;paint-order:normal"
+       id="rect817"
+       width="132.29167"
+       height="132.29167"
+       x="0"
+       y="164.70831" />
+    <circle
+       style="opacity:1;fill:url(#radialGradient921);fill-opacity:1;stroke:none;stroke-width:3.61521268;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.76902173;paint-order:normal"
        id="path815"
-       transform="matrix(0.87375134,0,0,0.86864688,5.1198362,33.047642)"
+       cx="66.145836"
+       cy="230.85416"
        inkscape:label="#light"
-       sodipodi:type="arc"
-       sodipodi:cx="69.320839"
-       sodipodi:cy="227.67915"
-       sodipodi:rx="66.145836"
-       sodipodi:ry="66.145836"
-       sodipodi:start="0.049815234"
-       sodipodi:end="6.2655558"
-       sodipodi:open="true"
-       d="M 135.38462,230.97286 A 66.145836,66.145836 0 0 1 67.14146,293.78908 66.145836,66.145836 0 0 1 3.1835681,226.61472 66.145836,66.145836 0 0 1 69.270018,161.53334 66.145836,66.145836 0 0 1 135.4564,226.5131">
+       r="66.145836">
       <desc
          id="desc925">A radial spotlight</desc>
       <title
          id="title923">Spotlight</title>
-    </path>
+    </circle>
   </g>
 </svg>

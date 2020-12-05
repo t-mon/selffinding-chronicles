@@ -39,6 +39,7 @@ PhysicsItem {
     onYChanged: {
         if (!character) return
         character.position.y = y / app.gridSize
+        z = gameScene.calculateLayerValue(character.layer, y, height, worldItem.height)
         //console.log(character.name, "position changed", x, ",", y)
         if (character.isPlayer) moveCamera()
     }
@@ -66,7 +67,7 @@ PhysicsItem {
     // Character movement
     Connections {
         target: Game.engine
-        onEnginePostTick: {
+        function onEnginePostTick() {
             if (!character)
                 return
 
@@ -84,9 +85,9 @@ PhysicsItem {
     // Character connections
     Connections {
         target: root.character
-        onHeadingChanged: evaluateSpriteState()
-        onMovingChanged: evaluateSpriteState()
-        onShoot: {
+        function onHeadingChanged(heading) { evaluateSpriteState() }
+        function onMovingChanged(moving) { evaluateSpriteState() }
+        function onShoot() {
             if (!character.firearm) {
                 console.log("Character", character.name, "can not shoot. No firearm selected.")
                 return
@@ -97,7 +98,7 @@ PhysicsItem {
 
             console.log("Character", character.name, "shoot arrow using", character.firearm.name, character.firearm.damage)
             var component = Qt.createComponent("BulletItem.qml");
-            var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character, particleSystem: root.particleSystem } )
+            var bulletIncubator = component.incubateObject(itemFlickableContent, { shooter: root.character, particleSystem: root.particleSystem } )
             if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
                 bulletIncubator.onStatusChanged = function(status) {
                     if (status === Component.Ready) {
@@ -109,7 +110,7 @@ PhysicsItem {
             }
         }
 
-        onHit: {
+        function onHit() {
             if (weaponHitAnimation.running)
                 return
 
@@ -123,33 +124,33 @@ PhysicsItem {
         }
 
         // Health indicator
-        onDamaged: {
+        function onDamaged() {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
             damageAnimation.restart()
         }
 
-        onHealed: {
+        function onHealed() {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
 
-        onKilled: {
+        function onKilled() {
             healthIndicator.opacity = 0
             healthIndicatorTimer.stop()
         }
 
-        onMovableChanged: {
+        function onMovableChanged(movable) {
             if (!character) return
             evaluateSpriteState()
         }
 
-        onPlayerOnItemChanged: {
+        function onPlayerOnItemChanged(playerOnItem) {
             healthIndicator.opacity = 1
             healthIndicatorTimer.restart()
         }
 
-        onPlayerFocusChanged: {
+        function onPlayerFocusChanged(playerFocus) {
             if (playerFocus) {
                 healthIndicator.opacity = 1
                 healthIndicatorTimer.restart()
@@ -994,11 +995,12 @@ PhysicsItem {
         bulletObject.rotation = getBulletAngle()
         bulletObject.x = bulletStartPoint.x
         bulletObject.y = bulletStartPoint.y
+        bulletObject.z = root.z
         bulletObject.startPositionX = bulletStartPoint.x
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range
         bulletObject.fireArrow = debugControls.flamesEnabled
-        var velocity = 40
+        var velocity = 25
         bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
     }
 

@@ -34,7 +34,6 @@ Engine::Engine(QObject *parent) :
 
     connect(m_playerController, &PlayerController::escape, this, &Engine::onEscape);
     connect(m_playerController, &PlayerController::beam, this, &Engine::onBeam);
-    //connect(m_playerController, &PlayerController::shoot, this, &Engine::onShoot);
 
     m_teleportationHandler = new TeleportationHandler(this);
     m_teleportationHandler->reset();
@@ -139,6 +138,7 @@ void Engine::giveUpUnlocking()
     qCDebug(dcEngine()) << "Give up unlocking.";
     setCurrentChestItem(nullptr);
     setCurrentPlunderItems(nullptr);
+    setCurrentLockItem(nullptr);
     setState(StateRunning);
 }
 
@@ -223,7 +223,7 @@ void Engine::performBurnDamage(Character *victim, int damage)
 
 void Engine::takeItem(GameItems *gameItems, GameItem *item)
 {
-    qCDebug(dcEngine()) << "Move" << item << "to inventory";
+    qCDebug(dcEngine()) << "Take" << item << "and add it to player inventory";
 
     // Get the list of all matching items
     QList<GameItem *> targetItems;
@@ -255,6 +255,7 @@ void Engine::takeItem(GameItems *gameItems, GameItem *item)
 
 void Engine::takeAllItems(GameItems *gameItems)
 {
+    qCDebug(dcEngineData()) << "Take all items from" << gameItems;
     foreach (GameItem *item, gameItems->gameItems()) {
         gameItems->removeGameItem(item);
         m_player->inventory()->addGameItem(item);
@@ -443,17 +444,18 @@ void Engine::setCurrentChestItem(ChestItem *chestItem)
 
     if (m_currentChestItem) {
         qCDebug(dcEngineData()) << "Set current chest item" << m_currentChestItem << "containing" << m_currentChestItem->items()->gameItems().count() << "items";
-        setCurrentPlunderItems(m_currentChestItem->items());
         if (m_currentChestItem->lockItem()->locked()) {
             qCDebug(dcEngine()) << "The chest is locked. Set the current lock item";
             setCurrentLockItem(m_currentChestItem->lockItem());
         } else {
             qCDebug(dcEngine()) << "The chest is not locked. Show plunder screen";
+            setCurrentPlunderItems(m_currentChestItem->items());
             setState(StatePlunder);
         }
     } else {
         qCDebug(dcEngine()) << "Reset chest item.";
         setCurrentPlunderItems(nullptr);
+        setCurrentLockItem(nullptr);
         m_player->setMovable(true);
     }
 }
@@ -494,6 +496,12 @@ void Engine::setCurrentPlunderItems(GameItems *plunderItems)
 {
     if (m_currentPlunderItems == plunderItems)
         return;
+
+    if (!plunderItems) {
+        qCDebug(dcEngineData()) << "Reset current plunder items";
+    } else {
+        qCDebug(dcEngineData()) << "Set current plunder items" << plunderItems;
+    }
 
     m_currentPlunderItems = plunderItems;
     emit currentPlunderItemsChanged(m_currentPlunderItems);
@@ -618,6 +626,8 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         setCurrentChestItem(nullptr);
         setCurrentConversation(nullptr);
         setCurrentPlunderItems(nullptr);
+        setCurrentLockItem(nullptr);
+        setCurrentLiteratureItem(nullptr);
         setPlayerFocusItem(nullptr);
         setPlayer(nullptr);
         setLoaded(false);
@@ -698,7 +708,7 @@ void Engine::onGameItemActiveChanged(GameItem *item, bool active)
 void Engine::onItemPlayerVisibleChanged(bool playerVisible)
 {
     GameItem *item = qobject_cast<GameItem *>(sender());
-
+    qCDebug(dcEngineData()) << "Item visible to player changed" << item << playerVisible;
     if (!item->focusVisible())
         return;
 
@@ -770,13 +780,12 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
                 evaluatePlayerFocus();
             }
             break;
-        case GameItem::TypeChest:
+        case GameItem::TypeChest: {
             qCDebug(dcEngine()) << "Perform interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
-            if (m_playerFocusItem->interaction() == GameItem::InteractionUnlock) {
-                ChestItem *chestItem = qobject_cast<ChestItem *>(m_playerFocusItem);
-                setCurrentChestItem(chestItem);
-            }
+            ChestItem *chestItem = qobject_cast<ChestItem *>(m_playerFocusItem);
+            setCurrentChestItem(chestItem);
             break;
+        }
         case GameItem::TypeDoor:
             qCDebug(dcEngine()) << "Perform interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
             if (m_playerFocusItem->interaction() == GameItem::InteractionOpen) {
@@ -880,7 +889,12 @@ void Engine::onLeftClicked()
     case StateUnlocking:
         m_currentLockItem->unlockLeftMovement();
         if (!m_currentLockItem->locked()) {
-            qCDebug(dcEngine()) << "Lock unlocked!";
+            qCDebug(dcEngine()) << m_currentLockItem << "unlocked!";
+            setCurrentLockItem(nullptr);
+            if (m_currentChestItem) {
+                setCurrentPlunderItems(m_currentChestItem->items());
+                setState(StatePlunder);
+            }
         }
         break;
     default:
@@ -894,7 +908,12 @@ void Engine::onRightClicked()
     case StateUnlocking:
         m_currentLockItem->unlockRightMovement();
         if (!m_currentLockItem->locked()) {
-            qCDebug(dcEngine()) << "Chest unlocked!";
+            qCDebug(dcEngine()) << m_currentLockItem << "unlocked!";
+            setCurrentLockItem(nullptr);
+            if (m_currentChestItem) {
+                setCurrentPlunderItems(m_currentChestItem->items());
+                setState(StatePlunder);
+            }
         }
         break;
     default:

@@ -24,21 +24,24 @@ PhysicsItem {
     property bool fireArrow: false
 
     onXChanged: evaluateDistance()
-    onYChanged: evaluateDistance()
+    onYChanged: {
+        z = gameScene.calculateLayerValue(GameObject.LayerItems, y, height, worldItem.height)
+        evaluateDistance()
+    }
 
     bullet: true
     fixedRotation: false
     bodyType: Body.Dynamic
     smooth: true
 
-    z: y + height
-
     fixtures: Circle {
         categories: GameObject.PhysicsBullet
-        collidesWith: GameObject.PhysicsCharacter | GameObject.PhysicsEnemy
-                      | GameObject.PhysicsStaticItem | GameObject.PhysicsBodyHitbox
+        collidesWith: GameObject.PhysicsCharacter |
+                      GameObject.PhysicsEnemy |
+                      GameObject.PhysicsStaticItem |
+                      GameObject.PhysicsBodyHitbox
         radius: root.width / 2
-        density: 10
+        density: 20
         friction: 0
         restitution: 0
         onBeginContact: {

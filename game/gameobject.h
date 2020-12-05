@@ -97,6 +97,9 @@ public:
     QPointF position() const;
     void setPosition(const QPointF &position);
 
+    double rotationAngle() const;
+    void setRotationAngle(double rotationAngle);
+
     Layer layer() const;
     void setLayer(Layer layer);
 
@@ -142,6 +145,7 @@ private:
     QString m_resourcePath;
     QString m_name;
     QPointF m_position;
+    double m_rotationAngle = 0;
     Layer m_layer = LayerBase;
     QSizeF m_size = QSizeF(1, 1);
     bool m_focusVisible = true;
@@ -160,6 +164,7 @@ signals:
     void imageNameChanged(const QString &imageName);
     void nameChanged(const QString &name);
     void positionChanged(const QPointF &position);
+    void rotationAngleChanged(double rotationAngle);
     void layerChanged(Layer layer);
     void sizeChanged(const QSizeF &size);
     void focusVisibleChanged(bool focusVisible);

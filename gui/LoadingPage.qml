@@ -11,7 +11,7 @@ GamePage {
 
     Connections {
         target: Game.engine
-        onLoadedChanged: {
+        function onLoadedChanged(loaded) {
             if (loaded) {
                 console.log("Engine loading finished.")
 
@@ -24,9 +24,10 @@ GamePage {
 
     Connections {
         target: gamePageLoader
-        onLoaded: {
+        function onLoaded() {
             console.log("Game page loading finished. Replace current page on stack.")
             pageStack.replace(root, gamePageLoader.item)
+            gamePageLoader.item.evaluateViewWindow()
             gamePageLoader.item.runGame()
         }
     }

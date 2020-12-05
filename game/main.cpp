@@ -115,8 +115,8 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("Game", true);
     s_loggingFilters.insert("GameInput", true);
     s_loggingFilters.insert("Engine", true);
-    s_loggingFilters.insert("EngineData", false);
-    s_loggingFilters.insert("Character", false);
+    s_loggingFilters.insert("EngineData", true);
+    s_loggingFilters.insert("Character", true);
     s_loggingFilters.insert("Settings", true);
     s_loggingFilters.insert("PlayerController", true);
     s_loggingFilters.insert("PathController", false);
@@ -125,12 +125,13 @@ int main(int argc, char *argv[])
     s_loggingFilters.insert("MapEditor", true);
     s_loggingFilters.insert("MapEditorData", true);
     s_loggingFilters.insert("DataManager", true);
-    s_loggingFilters.insert("SoundEngine", true);
+    s_loggingFilters.insert("SoundEngine", false);
     s_loggingFilters.insert("Item", true);
     s_loggingFilters.insert("GameObject", false);
+    s_loggingFilters.insert("GameModels", false);
     s_loggingFilters.insert("Collision", false);
     s_loggingFilters.insert("Conversation", false);
-    s_loggingFilters.insert("Teleportation", true);
+    s_loggingFilters.insert("Teleportation", false);
     s_loggingFilters.insert("qml", true);
 
     QLoggingCategory::installFilter(loggingCategoryFilter);
@@ -181,6 +182,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");
 
     qmlRegisterUncreatableType<LockItem>("Chronicles", 1, 0, "LockItem", "Can't create this in QML.");
+    qmlRegisterUncreatableType<LightSource>("Chronicles", 1, 0, "LightSource", "Can't create this in QML.");
 
     // Weather areas
     qmlRegisterType<WeatherAreaProxy>("Chronicles", 1, 0, "WeatherAreaProxy");

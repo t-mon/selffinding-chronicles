@@ -5,30 +5,31 @@
 #include <QRectF>
 #include <QObject>
 
-#include "game/map.h"
+#include "mapscene.h"
 #include "datamanager.h"
+#include "game/map.h"
 #include "gameobjectsproxy.h"
 #include "items/gameitems.h"
 
 class GameMapEditor : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(Map *map READ map NOTIFY mapChanged)
+    Q_PROPERTY(DataManager *dataManager READ dataManager CONSTANT)
+    Q_PROPERTY(MapScene *mapScene READ mapScene CONSTANT)
+
     Q_PROPERTY(Tool tool READ tool WRITE setTool NOTIFY toolChanged)
     Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
+
     Q_PROPERTY(GameObjects *availableObjects READ availableObjects CONSTANT)
     Q_PROPERTY(GameItems *availableItems READ availableItems CONSTANT)
     Q_PROPERTY(GameItems *availableCharacters READ availableCharacters CONSTANT)
     Q_PROPERTY(GameItems *availableEnemies READ availableEnemies CONSTANT)
 
-    Q_PROPERTY(QRectF viewWindow READ viewWindow WRITE setViewWindow NOTIFY viewWindowChanged)
     Q_PROPERTY(GameObject *selectedGameObject READ selectedGameObject NOTIFY selectedGameObjectChanged)
     Q_PROPERTY(GameItem *selectedGameItem READ selectedGameItem NOTIFY selectedGameItemChanged)
 
-    Q_PROPERTY(Map *map READ map NOTIFY mapChanged)
-    Q_PROPERTY(DataManager *dataManager READ dataManager CONSTANT)
-    Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
-    Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
-    Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
+
 
 public:
     enum Tool {
@@ -47,6 +48,10 @@ public:
     Q_ENUM(Mode)
 
     explicit GameMapEditor(QObject *parent = nullptr);
+
+    Map *map() const;
+    MapScene *mapScene() const;
+    DataManager *dataManager() const;
 
     GameObjects *availableObjects() const;
     GameItems *availableItems() const;
@@ -70,17 +75,15 @@ public:
     GameObject *selectedGameObject() const;
     void createSelectedGameObject(const QString &resourcePath);
 
-    DataManager *dataManager() const;
-    GameItemsProxy *activeItems() const;
-    GameItemsProxy *activeCharacters() const;
-    GameItemsProxy *activeEnemies() const;
 
     QRectF viewWindow() const;
     void setViewWindow(const QRectF &viewWindow);
 
-    Map *map() const;
-    Q_INVOKABLE void createNewMap();
+    Q_INVOKABLE void createNewMap(const QString &mapName, const QSize &mapSize);
     Q_INVOKABLE void placeItemOnMap(const QString &resourcePath, const QPointF &position);
+    Q_INVOKABLE void addBackgroundLightSource(LightSource::LightType lightType, const QColor &color, const QPointF &position);
+
+    Q_INVOKABLE void removeGameItem(GameItem *item);
     Q_INVOKABLE void saveMap();
     Q_INVOKABLE void deleteAll();
 
@@ -95,12 +98,7 @@ private:
     GameItems *m_availableEnemies = nullptr;
 
     DataManager *m_dataManager = nullptr;
-    GameObjectsProxy *m_activeObjects = nullptr;
-    GameItemsProxy *m_activeItems = nullptr;
-    GameItemsProxy *m_activeEnemies = nullptr;
-    GameItemsProxy *m_activeCharacters = nullptr;
-
-    QRectF m_viewWindow;
+    MapScene *m_mapScene = nullptr;
 
     Map *m_map = nullptr;
     GameItem *m_selectedGameItem = nullptr;
@@ -113,7 +111,6 @@ signals:
     void availableItemsChanged(GameItems *gameItems);
     void availableObjectsChanged(GameObjects *gameObjects);
     void mapChanged(Map *map);
-    void viewWindowChanged(const QRectF viewWindow);
     void editorViewOffsetChanged(const QPointF &editorViewOffset);
     void selectedGameItemChanged(GameItem *selectedGameItem);
     void selectedGameObjectChanged(GameObject *selectedGameObject);

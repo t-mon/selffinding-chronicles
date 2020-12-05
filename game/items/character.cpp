@@ -543,9 +543,9 @@ QDebug operator<<(QDebug debug, Character *character)
     debug.nospace() << ", " << character->position();
     debug.nospace() << ", " << character->size();
     debug.nospace() << ")";
-    //    debug.nospace() << endl;
+    //    debug.nospace() << Qt::endl;
     //    foreach (GameItem *item, character->inventory()->gameItems()) {
-    //        debug.nospace() << "    --> " << item->thread() << ", " << item << endl;
+    //        debug.nospace() << "    --> " << item->thread() << ", " << item << Qt::endl;
     //    }
 
     return debug.space();

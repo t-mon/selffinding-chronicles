@@ -100,6 +100,11 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
     m_engine->playerController()->keyReleased(key);
 }
 
+LightSource *Game::castLightSourceObject(GameObject *object)
+{
+    return qobject_cast<LightSource *>(object);
+}
+
 WeaponItem *Game::castWeaponItem(GameItem *item)
 {
     return qobject_cast<WeaponItem *>(item);

@@ -26,6 +26,7 @@ GameOverlayItem {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 gameItems: Game.engine.currentPlunderItems
+                onGameItemsChanged: console.log("Plunder overlay game items changed", Game.engine.currentPlunderItems)
                 onSelectedGameItemChanged: {
                     if (!selectedGameItem) {
                         itemDescription.item = null

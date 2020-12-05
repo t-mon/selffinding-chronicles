@@ -30,26 +30,31 @@ DataManager::~DataManager()
 
 DataManager::State DataManager::state() const
 {
+    QMutexLocker locker(&m_stateMutex);
     return m_state;
 }
 
 QString DataManager::saveGameName() const
 {
+    QMutexLocker locker(&m_saveGameMutex);
     return m_saveGameName;
 }
 
 SaveGames *DataManager::saveGames() const
 {
+    QMutexLocker locker(&m_saveGameMutex);
     return m_saveGames;
 }
 
 Map *DataManager::map() const
 {
+    QMutexLocker locker(&m_mapMutex);
     return m_map;
 }
 
 Character *DataManager::player() const
 {
+    QMutexLocker locker(&m_playerMutex);
     return m_player;
 }
 
@@ -102,9 +107,9 @@ void DataManager::startNewGameTask()
     // Create map
     QMutexLocker mapLocker(&m_mapMutex);
     m_map = new Map(nullptr);
-    m_map->loadMap(":/maps/test-character.json");
+    //m_map->loadMap(":/maps/test-character.json");
     //m_map->loadMap(":/maps/test-door.json");
-    //m_map->loadMap(":/maps/test-environment.json");
+    m_map->loadMap(":/maps/test-environment.json");
     //m_map->loadMap(":/maps/test-chest.json");
     //m_map->loadMap(":/maps/test-monster.json");
 

@@ -15,12 +15,29 @@ import "physics"
 Item {
     id: root
 
+    property MapScene mapScene
     property World physicsWorld
 
-    property bool gameOverlayVisible: true
-    property bool flickable: worldFlickable
+    // Appearance controls
+    property bool scrollBarsEnabled: false
+    property bool itemDebugEnabled: false
+    property bool physicsDebugEnabled: false
+    property bool particlesRunning: false
 
-    // Create animation
+    // Ambient contols
+
+    // Weather controls
+    property bool rainingEnabled: false
+    property bool snowingEnabled: false
+    property bool turbulenceEnabled: false
+
+    // Read only
+    readonly property Flickable flickable: worldFlickable
+    readonly property Item world: worldItem
+    readonly property Repeater items: itemsRepeater
+
+    property CharacterItem playerItem: null
+
     opacity: 0
     Behavior on opacity {
         NumberAnimation {
@@ -29,6 +46,20 @@ Item {
         }
     }
 
+
+    /*
+
+
+
+
+      */
+
+
+    // ##################################################################################
+    // Background
+    // ##################################################################################
+
+    // Renders only the background lights
     Flickable {
         id: worldFlickable
         width: worldItem.width > root.width ? root.width : worldItem.width
@@ -37,19 +68,121 @@ Item {
         contentWidth: worldItem.width
         contentHeight: worldItem.height
         enabled: false
+        visible: true
+
+        // Only visible in the editor
+        ScrollBar.vertical: ScrollBar {
+            visible: scrollBarsEnabled
+            enabled: scrollBarsEnabled
+            active: scrollBarsEnabled
+            interactive: true
+            policy: ScrollBar.AlwaysOn
+        }
+
+        // Only visible in the editor
+        ScrollBar.horizontal: ScrollBar {
+            visible: scrollBarsEnabled
+            enabled: scrollBarsEnabled
+            active: scrollBarsEnabled
+            interactive: true
+            policy: ScrollBar.AlwaysOn
+        }
 
         Item {
             id: worldItem
             anchors.centerIn: parent
-            width: Game.engine.mapScene.map.size.width * app.gridSize
-            height: Game.engine.mapScene.map.size.height * app.gridSize
+            width: mapScene.map.size.width * app.gridSize
+            height: mapScene.map.size.height * app.gridSize
 
-            Rectangle {
-                id: backgroundRectangle
-                anchors.fill: parent
-                z: GameObject.LayerBackground - 1
-                color: Game.engine.mapScene.map.backgroundColor
+            Repeater {
+                id: backgroundLightsRepeater
+                model: mapScene.activeBackgroundLights
+                delegate: LightSourceItem {
+                    id: lightSource
+                    light: Game.castLightSourceObject(mapScene.activeBackgroundLights.get(model.index))
+                    itemDebugEnabled: root.itemDebugEnabled
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
+                }
             }
+
+            Repeater {
+                id: gameObjectRepeater
+                model: mapScene.activeObjects
+                delegate: GameObject {
+                    id: gameObjet
+                    gameObject: mapScene.activeObjects.get(model.index)
+                    itemDebugEnabled: root.itemDebugEnabled
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
+                    z: gameScene.calculateLayerValue(model.layer, y, height, worldItem.height)
+                }
+            }
+        }
+    }
+
+
+
+//    ShaderEffect {
+//        id: worldShaderEffect
+//        anchors.fill: worldFlickable
+//        width: worldFlickable.width
+//        height: worldFlickable.height
+//        anchors.centerIn: parent
+
+//        z: gameScene.calculateLayerValue(GameObject.LayerBackground, y, height, worldItem.height)
+
+//        property var source: ShaderEffectSource {
+//            id: worldShaderEffectSource
+//            sourceItem: worldFlickable
+//            hideSource: true
+//        }
+
+//        property var backgroundColor: mapScene.map.backgroundColor
+
+//        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+//        fragmentShader: "
+//            varying highp vec2 coordinate;
+//            uniform sampler2D source;
+//            uniform lowp float qt_Opacity;
+//            uniform highp vec4 backgroundColor;
+
+//            void main() {
+//                highp vec4 lightFragment = texture2D(source, coordinate);
+//                // Mix the background color with the pixel from the light texture
+//                highp vec4 ambientColor = backgroundColor.rgba + lightFragment.rgba;
+
+//                gl_FragColor = ambientColor * qt_Opacity;
+//            }
+//        "
+//    }
+
+    // ##################################################################################
+    // Items
+    // ##################################################################################
+
+    // Renders the items and objects on top of the background render
+    Flickable {
+        id: itemFlickable
+        anchors.fill: worldFlickable
+        contentWidth: worldFlickable.contentWidth
+        contentHeight: worldFlickable.contentHeight
+        contentX: worldFlickable.contentX
+        contentY: worldFlickable.contentY
+        enabled: false
+        visible: true
+
+        //z: gameScene.calculateLayerValue(GameObject.LayerItems, y, height, worldItem.height)
+
+        Item {
+            id: itemFlickableContent
+            anchors.centerIn: parent
+            width: worldItem.width
+            height: worldItem.height
 
             WorldBoundaries {
                 id: worldBoundaries
@@ -59,7 +192,7 @@ Item {
             ParticleSystem {
                 id: particles
                 anchors.fill: parent
-                running: false
+                running: root.particlesRunning
 
                 ImageParticle {
                     id: flameImageParticle
@@ -79,80 +212,47 @@ Item {
             }
 
 
-            function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
-                if (layer === GameObject.LayerBackground) {
-                    return -2
-                } else if (layer === GameObject.LayerBase) {
-                    return -1
-                } else if (layer === GameObject.LayerItem) {
-                    return itemY + itemHeight
-                }  else if (layer === GameObject.LayerOverlay) {
-                    return worldHeight + itemHeight + 1
-                } else {
-                    return itemY + itemHeight
-                }
-            }
-
-            Repeater {
-                id: gameObjectRepeater
-                model: Game.engine.mapScene.activeObjects
-                delegate: GameObject {
-                    id: gameObjet
-                    gameObject: Game.engine.mapScene.activeObjects.get(model.index)
-                    itemDebugEnabled: debugControls.itemDebugEnabled
-                    worldHeight: worldItem.height
-                    width: model.size.width * app.gridSize
-                    height: model.size.height * app.gridSize
-                    x: model.position.x * app.gridSize
-                    y: model.position.y * app.gridSize
-                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
-                }
-            }
-
             Repeater {
                 id: itemsRepeater
-                model: Game.engine.mapScene.activeItems
+                model: mapScene.activeItems
                 delegate: GameItem {
-                    gameItem: Game.engine.mapScene.activeItems.get(model.index)
-                    itemDebugEnabled: debugControls.itemDebugEnabled
+                    gameItem: mapScene.activeItems.get(model.index)
+                    itemDebugEnabled: root.itemDebugEnabled
                     width: model.size.width * app.gridSize
                     height: model.size.height * app.gridSize
                     x: model.position.x * app.gridSize
                     y: model.position.y * app.gridSize
-                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                 }
             }
 
             Repeater {
                 id: chestsRepeater
-                model: Game.engine.mapScene.activeChests
+                model: mapScene.activeChests
                 delegate: GameItem {
-                    gameItem: Game.engine.mapScene.activeChests.get(model.index)
-                    itemDebugEnabled: debugControls.itemDebugEnabled
+                    gameItem: mapScene.activeChests.get(model.index)
+                    itemDebugEnabled: root.itemDebugEnabled
                     width: model.size.width * app.gridSize
                     height: model.size.height * app.gridSize
                     x: model.position.x * app.gridSize
                     y: model.position.y * app.gridSize
-                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                 }
             }
 
             Repeater {
                 id: characersRepeater
-                model: Game.engine.mapScene.activeCharacters
+                model: mapScene.activeCharacters
                 delegate: CharacterItem {
-                    id: characterItem
-                    character: Game.engine.mapScene.activeCharacters.get(model.index)
-                    itemDebugEnabled: debugControls.itemDebugEnabled
+                    character: mapScene.activeCharacters.get(model.index)
+                    itemDebugEnabled: root.itemDebugEnabled
                     particleSystem: particles
                     width: model.size.width * app.gridSize
                     height: model.size.height * app.gridSize
                     x: model.position.x * app.gridSize
                     y: model.position.y * app.gridSize
-                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                     Component.onCompleted: {
-                        if (characterItem.character.isPlayer) {
-                            root.playerItem = characterItem
+                        // Get the player item for this scene
+                        if (character && character.isPlayer) {
+                            root.playerItem = this
                         }
                     }
                 }
@@ -160,15 +260,14 @@ Item {
 
             Repeater {
                 id: enemiesRepeater
-                model: Game.engine.mapScene.activeEnemies
+                model: mapScene.activeEnemies
                 delegate: EnemyItem {
-                    itemDebugEnabled: debugControls.itemDebugEnabled
-                    enemy: Game.engine.mapScene.activeEnemies.get(model.index)
+                    itemDebugEnabled: root.itemDebugEnabled
+                    enemy: mapScene.activeEnemies.get(model.index)
                     width: model.size.width * app.gridSize
                     height: model.size.height * app.gridSize
                     x: model.position.x * app.gridSize
                     y: model.position.y * app.gridSize
-                    z: worldItem.calculateLayerValue(model.layer, y, height, worldItem.height)
                 }
             }
         }
@@ -176,37 +275,93 @@ Item {
         Weather {
             id: weather
             anchors.fill: parent
-            raining: debugControls.rainingEnabled
-            snowing: debugControls.snowingEnabled
-            turbulence: debugControls.turbulenceEnabled
+            raining: root.rainingEnabled
+            snowing: root.snowingEnabled
+            turbulence: root.turbulenceEnabled
+        }
+
+        Loader {
+            id: physicsDebugDrawLoader
+            anchors.fill: parent
+            active: root.physicsDebugEnabled
+            sourceComponent: debugDrawComponent
+            Component {
+                id: debugDrawComponent
+                DebugDraw {
+                    id: debugDraw
+                    world: root.physicsWorld
+                    opacity: 0.4
+                }
+            }
         }
     }
 
-    Flickable {
-        id: lightsFlickable
-        anchors.fill: worldFlickable
-        contentWidth: worldFlickable.contentWidth
-        contentHeight: worldFlickable.contentHeight
-        contentX: worldFlickable.contentX
-        contentY: worldFlickable.contentY
-        enabled: false
-        visible: false
 
-        Item {
-            id: lightItem
-            anchors.centerIn: parent
-            width: worldItem.width
-            height: worldItem.height
+    //    Flickable {
+    //        id: lightsFlickable
+    //        anchors.fill: worldFlickable
+    //        contentWidth: worldFlickable.contentWidth
+    //        contentHeight: worldFlickable.contentHeight
+    //        contentX: worldFlickable.contentX
+    //        contentY: worldFlickable.contentY
+    //        enabled: false
+    //        visible: false
 
-            Image {
-                id: characterLight
-                source: dataDirectory + "/lights/spotlight.svg"
-                property point playerWorldPosition: getPlayerWorldPosition()
-                x: playerWorldPosition.x - width / 2
-                y: playerWorldPosition.y - height / 2
-                width: 20 * app.gridSize
-                height: width
-            }
+    //        Item {
+    //            id: lightItem
+    //            anchors.centerIn: parent
+    //            width: worldItem.width
+    //            height: worldItem.height
+
+    //            Image {
+    //                id: characterLight
+    //                source: dataDirectory + "/lights/spotlight.svg"
+    //                property point playerWorldPosition: getPlayerWorldPosition()
+    //                x: playerWorldPosition.x - width / 2
+    //                y: playerWorldPosition.y - height / 2
+    //                width: 20 * app.gridSize
+    //                height: width
+    //            }
+    //        }
+    //    }
+
+
+    // ##################################################################################
+    // GameScene render layers
+    // ##################################################################################
+
+
+//    ShaderEffectSource {
+//        id: itemsShaderEffectSource
+//        width: itemFlickable.width
+//        height: itemFlickable.height
+//        anchors.centerIn: parent
+//        sourceItem: itemFlickable
+//        hideSource: true
+//    }
+
+
+//    ShaderEffect {
+//        id: itemShaderEffect
+//        anchors.fill: itemsShaderEffectSource
+//        property var source: itemsShaderEffectSource
+//        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+//        fragmentShader: "qrc:shadereffects/fragmentshaders/default.frag"
+//    }
+
+
+
+    function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
+        if (layer === GameObject.LayerBackground) {
+            return -2
+        } else if (layer === GameObject.LayerBase) {
+            return -1
+        } else if (layer === GameObject.LayerItem) {
+            return itemY + itemHeight
+        }  else if (layer === GameObject.LayerOverlay) {
+            return worldHeight + itemHeight + 1
+        } else {
+            return itemY + itemHeight
         }
     }
 }

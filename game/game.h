@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE void keyReleased(const Qt::Key &key, bool autoRepeat);
 
     // Cast methods
+    Q_INVOKABLE LightSource *castLightSourceObject(GameObject *object);
     Q_INVOKABLE WeaponItem *castWeaponItem(GameItem *item);
     Q_INVOKABLE FirearmItem *castFirearmItem(GameItem *item);
     Q_INVOKABLE PlantItem *castPlantItem(GameItem *item);

@@ -45,7 +45,7 @@ GameOverlayItem {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Text.AlignHCenter
-                        text: chestItem ? chestItem.unlockProgress : ""
+                        text: chestItem ? chestItem.lockItem.unlockProgress : ""
                         color: "white"
                     }
 
@@ -76,7 +76,7 @@ GameOverlayItem {
                                     anchors.centerIn: parent
                                     from: 0
                                     to: 100
-                                    value: chestItem ? chestItem.unlockProgress : 0
+                                    value: chestItem ? chestItem.lockItem.unlockProgress : 0
                                 }
                             }
 

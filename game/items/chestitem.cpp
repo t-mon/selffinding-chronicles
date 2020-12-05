@@ -77,10 +77,10 @@ QDebug operator<<(QDebug debug, ChestItem *chestItem)
     debug.nospace() << ", " << (chestItem->open() ? "open" : "closed");
     debug.nospace() << ", " << (chestItem->lockItem()->locked() ? "locked" : "unlocked");
     debug.nospace() << ", " << chestItem->lockItem()->lockCombination();
-    debug.nospace() << ")" << endl;
+    debug.nospace() << ")" << Qt::endl;
 
     foreach (GameItem *item, chestItem->items()->gameItems()) {
-        debug.nospace() << "    --> " << item << endl;
+        debug.nospace() << "    --> " << item << Qt::endl;
     }
 
     return debug.space();

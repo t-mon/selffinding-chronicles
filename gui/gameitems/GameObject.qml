@@ -136,7 +136,6 @@ PhysicsItem {
 
     // TODO: vertices fixture
 
-
     Image {
         id: objectImage
         anchors.fill: parent

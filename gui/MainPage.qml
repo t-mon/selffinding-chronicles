@@ -11,7 +11,7 @@ GamePage {
     id: mainPage
 
     property var music: Game.soundEngine.registerMusicStream(dataDirectory + "/sounds/ambient/spring-birds-loop.ogg")
-    Component.onCompleted: music.play()
+    //Component.onCompleted: music.play()
     Component.onDestruction: Game.soundEngine.unregisterMusicStream(music)
 
     GameLabel {

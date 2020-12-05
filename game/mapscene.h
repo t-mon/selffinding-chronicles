@@ -14,6 +14,7 @@ class MapScene : public QObject
     Q_PROPERTY(Map *map READ map WRITE setMap NOTIFY mapChanged)
     Q_PROPERTY(QRectF viewWindow READ viewWindow WRITE setViewWindow NOTIFY viewWindowChanged)
 
+    Q_PROPERTY(GameObjectsProxy *activeBackgroundLights READ activeBackgroundLights CONSTANT)
     Q_PROPERTY(GameObjectsProxy *activeObjects READ activeObjects CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeChests READ activeChests CONSTANT)
@@ -30,6 +31,7 @@ public:
     QRectF viewWindow() const;
     void setViewWindow(const QRectF &viewWindow);
 
+    GameObjectsProxy *activeBackgroundLights() const;
     GameObjectsProxy *activeObjects() const;
     GameItemsProxy *activeItems() const;
     GameItemsProxy *activeChests() const;
@@ -46,6 +48,7 @@ private:
     QRectF m_viewWindow = QRectF(-1, -1, 1, 1); // is valid, therefore it will be used as filter
     Map *m_map = nullptr;
 
+    GameObjectsProxy *m_activeBackgroundLights = nullptr;
     GameObjectsProxy *m_activeObjects = nullptr;
     GameItemsProxy *m_activeItems = nullptr;
     GameItemsProxy *m_activeChests = nullptr;

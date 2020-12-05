@@ -11,7 +11,7 @@ Item {
     property GameItems gameItems
     property GameItem selectedGameItem
 
-    //onSelectedGameItemChanged: console.log("Selected item:", (selectedGameItem ? selectedGameItem.name : "no item left"))
+    onSelectedGameItemChanged: console.log("Selected item:", (selectedGameItem ? selectedGameItem.name : "no item left"))
 
     property real itemSize: app.gridSize * 2.5
 
@@ -69,9 +69,9 @@ Item {
                 var clickedIndex = itemsGridView.indexAt(mouseX, mouseY)
                 console.log("Clicked on --> " + clickedIndex)
 
-                if (clickedIndex >= 0)
+                if (clickedIndex >= 0) {
                     itemsGridView.currentIndex = clickedIndex
-
+                }
             }
         }
     }

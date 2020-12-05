@@ -1,4 +1,4 @@
-QT += core qml quick quickcontrols2 svg multimedia
+QT += core qml quick quickcontrols2 svg xml multimedia
 
 CONFIG += c++11 -Wall -Werror
 
@@ -32,6 +32,7 @@ HEADERS += \
     game/audio/gamesoundeffect.h \
     game/audio/gamesoundsource.h \
     game/audio/soundengine.h \
+    game/components/svgitem.h \
     game/game.h \
     game/field.h \
     game/fields.h \
@@ -44,6 +45,7 @@ HEADERS += \
     game/items/passageitem.h \
     game/items/teleporteritem.h \
     game/items/weatherareaproxy.h \
+    game/lightsource.h \
     game/map.h \
     game/debugcategories.h \
     game/mapscene.h \
@@ -87,6 +89,7 @@ SOURCES += game/main.cpp \
     game/audio/gamesoundeffect.cpp \
     game/audio/gamesoundsource.cpp \
     game/audio/soundengine.cpp \
+    game/components/svgitem.cpp \
     game/game.cpp \
     game/field.cpp \
     game/fields.cpp \
@@ -99,6 +102,7 @@ SOURCES += game/main.cpp \
     game/items/passageitem.cpp \
     game/items/teleporteritem.cpp \
     game/items/weatherareaproxy.cpp \
+    game/lightsource.cpp \
     game/map.cpp \
     game/debugcategories.cpp \
     game/mapscene.cpp \
