@@ -1,22 +1,44 @@
 {
+    "name": "Test chest",
     "backgroundColor": "#307a78",
-    "characters": [
-    ],
+    "playerStartX": 2,
+    "playerStartY": 8,
+    "width": 20,
     "height": 20,
     "items": [
         {
-            "data": ":/gamedata/items/doors/door-1.json",
-            "x": 10,
-            "y": 10
-        },
-        {
-            "data": ":/gamedata/items/doors/door-2.json",
-            "x": 10,
-            "y": 6
+            "x": 5,
+            "y": 5,
+            "data": ":/gamedata/items/firearms/crossbow.json"
         }
     ],
-    "name": "Test door",
-    "playerStartX": 2,
-    "playerStartY": 8,
-    "width": 20
+    "characters": [
+    ],
+    "chests": [
+        {
+            "data": ":/gamedata/items/chests/chest-1.json",
+            "x": 10,
+            "y": 10,
+            "chest": {
+                "lock": {
+                    "locked": true,
+                    "lockCombination": [ 0, 1, 0, 1 ]
+                },
+                "inventory": [
+                    {
+                        "data": ":/gamedata/items/plants/healing-herb.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/items/weapons/sword.json",
+                        "count": 2
+                    },
+                    {
+                        "data": ":/gamedata/items/firearms/hunting-bow.json",
+                        "count": 4
+                    }
+                ]
+            }
+        }
+    ]
 }

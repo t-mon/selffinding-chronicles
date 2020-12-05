@@ -46,12 +46,12 @@ private:
     GameItems *m_gameItems = nullptr;
 
     QRectF m_viewFilter = QRectF();
-    QStringList m_shownItemIds;
     QString m_itemIdFilter;
+    QStringList m_shownItemIds;
     GameItem::Type m_itemTypeFilter = GameItem::TypeNone;
     bool m_filterDuplicates = false;
 
-protected:
+protected:    
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 

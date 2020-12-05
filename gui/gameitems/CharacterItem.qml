@@ -98,7 +98,7 @@ PhysicsItem {
 
             console.log("Character", character.name, "shoot arrow using", character.firearm.name, character.firearm.damage)
             var component = Qt.createComponent("BulletItem.qml");
-            var bulletIncubator = component.incubateObject(worldItem, { shooter: root.character, particleSystem: root.particleSystem } )
+            var bulletIncubator = component.incubateObject(itemFlickableContent, { shooter: root.character, particleSystem: root.particleSystem } )
             if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
                 bulletIncubator.onStatusChanged = function(status) {
                     if (status === Component.Ready) {
@@ -995,7 +995,7 @@ PhysicsItem {
         bulletObject.rotation = getBulletAngle()
         bulletObject.x = bulletStartPoint.x
         bulletObject.y = bulletStartPoint.y
-        //bulletObject.z = root.z
+        bulletObject.z = root.z
         bulletObject.startPositionX = bulletStartPoint.x
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range

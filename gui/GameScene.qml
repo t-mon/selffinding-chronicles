@@ -46,6 +46,19 @@ Item {
         }
     }
 
+
+    /*
+
+
+
+
+      */
+
+
+    // ##################################################################################
+    // Background
+    // ##################################################################################
+
     // Renders only the background lights
     Flickable {
         id: worldFlickable
@@ -55,7 +68,7 @@ Item {
         contentWidth: worldItem.width
         contentHeight: worldItem.height
         enabled: false
-        visible: false
+        visible: true
 
         // Only visible in the editor
         ScrollBar.vertical: ScrollBar {
@@ -109,41 +122,48 @@ Item {
                     z: gameScene.calculateLayerValue(model.layer, y, height, worldItem.height)
                 }
             }
-
         }
     }
 
-    ShaderEffectSource {
-        id: worldShaderEffectSource
-        width: worldFlickable.width
-        height: worldFlickable.height
-        anchors.centerIn: parent
-        sourceItem: worldFlickable
-        hideSource: true
-    }
 
-    ShaderEffect {
-        id: worldShaderEffect
-        anchors.fill: worldShaderEffectSource
-        property var source: worldShaderEffectSource
-        property var backgroundColor: mapScene.map.backgroundColor
-        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
-        z: gameScene.calculateLayerValue(GameObject.LayerBackground, y, height, worldItem.height)
-        fragmentShader: "
-            varying highp vec2 coordinate;
-            uniform sampler2D source;
-            uniform lowp float qt_Opacity;
-            uniform highp vec4 backgroundColor;
 
-            void main() {
-                highp vec4 lightFragment = texture2D(source, coordinate);
-                // Mix the background color with the pixel from the light texture
-                highp vec4 ambientColor = backgroundColor.rgba + lightFragment.rgba;
+//    ShaderEffect {
+//        id: worldShaderEffect
+//        anchors.fill: worldFlickable
+//        width: worldFlickable.width
+//        height: worldFlickable.height
+//        anchors.centerIn: parent
 
-                gl_FragColor = ambientColor * qt_Opacity;
-            }
-        "
-    }
+//        z: gameScene.calculateLayerValue(GameObject.LayerBackground, y, height, worldItem.height)
+
+//        property var source: ShaderEffectSource {
+//            id: worldShaderEffectSource
+//            sourceItem: worldFlickable
+//            hideSource: true
+//        }
+
+//        property var backgroundColor: mapScene.map.backgroundColor
+
+//        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+//        fragmentShader: "
+//            varying highp vec2 coordinate;
+//            uniform sampler2D source;
+//            uniform lowp float qt_Opacity;
+//            uniform highp vec4 backgroundColor;
+
+//            void main() {
+//                highp vec4 lightFragment = texture2D(source, coordinate);
+//                // Mix the background color with the pixel from the light texture
+//                highp vec4 ambientColor = backgroundColor.rgba + lightFragment.rgba;
+
+//                gl_FragColor = ambientColor * qt_Opacity;
+//            }
+//        "
+//    }
+
+    // ##################################################################################
+    // Items
+    // ##################################################################################
 
     // Renders the items and objects on top of the background render
     Flickable {
@@ -155,6 +175,8 @@ Item {
         contentY: worldFlickable.contentY
         enabled: false
         visible: true
+
+        //z: gameScene.calculateLayerValue(GameObject.LayerItems, y, height, worldItem.height)
 
         Item {
             id: itemFlickableContent

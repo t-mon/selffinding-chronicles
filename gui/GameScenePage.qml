@@ -21,7 +21,9 @@ GamePage {
     onWidthChanged: console.log("Game page widht changed.") && evaluateViewWindow()
     onHeightChanged: console.log("Game page height changed.") &&  evaluateViewWindow()
 
-    Component.onCompleted: console.log("Game scene created. Scene size:", root.width, "x", root.height, "|" , "Grid size:", app.gridSize)
+    Component.onCompleted: {
+        console.log("Game scene created. Scene size:", root.width, "x", root.height, "|" , "Grid size:", app.gridSize)
+    }
     Component.onDestruction: console.log("Game scene destroy")
 
     property CharacterItem playerItem: gameScene.playerItem

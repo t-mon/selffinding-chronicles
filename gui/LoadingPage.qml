@@ -27,6 +27,7 @@ GamePage {
         function onLoaded() {
             console.log("Game page loading finished. Replace current page on stack.")
             pageStack.replace(root, gamePageLoader.item)
+            gamePageLoader.item.evaluateViewWindow()
             gamePageLoader.item.runGame()
         }
     }
