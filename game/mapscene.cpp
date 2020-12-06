@@ -60,42 +60,44 @@ void MapScene::setMap(Map *map)
 
         // Initially activate items around the player
         qCDebug(dcMapScene()) << "Initialize active objects and items around the player";
-        QSize initialViewWindowSize(30, 30);
-        QPointF initialViewWindowPosition(m_map->player()->position().x() - initialViewWindowSize.width() / 2, m_map->player()->position().y() - initialViewWindowSize.height() / 2);
-        setViewWindow(QRectF(initialViewWindowPosition, initialViewWindowSize));
+        if (m_map->player()) {
+            QSize initialViewWindowSize(40, 40);
+            QPointF initialViewWindowPosition(m_map->player()->position().x() - initialViewWindowSize.width() / 2, m_map->player()->position().y() - initialViewWindowSize.height() / 2);
+            setViewWindow(QRectF(initialViewWindowPosition, initialViewWindowSize));
+        }
 
-//        // Activate all objects
-//        qCDebug(dcMapScene()) << "Active background lights" << m_activeBackgroundLights->count();
-//        for (int i = 0; i < m_activeObjects->count(); i++) {
-//            m_activeObjects->get(i)->setActive(true);
-//        }
+        //        // Activate all objects
+        //        qCDebug(dcMapScene()) << "Active background lights" << m_activeBackgroundLights->count();
+        //        for (int i = 0; i < m_activeObjects->count(); i++) {
+        //            m_activeObjects->get(i)->setActive(true);
+        //        }
 
-//        qCDebug(dcMapScene()) << "Active objects" << m_activeObjects->count();
-//        for (int i = 0; i < m_activeObjects->count(); i++) {
-//            m_activeObjects->get(i)->setActive(true);
-//        }
+        //        qCDebug(dcMapScene()) << "Active objects" << m_activeObjects->count();
+        //        for (int i = 0; i < m_activeObjects->count(); i++) {
+        //            m_activeObjects->get(i)->setActive(true);
+        //        }
 
-//        qCDebug(dcMapScene()) << "Active items" << m_activeItems->count();
-//        for (int i = 0; i < m_activeItems->count(); i++) {
-//            m_activeItems->get(i)->setActive(true);
-//        }
+        //        qCDebug(dcMapScene()) << "Active items" << m_activeItems->count();
+        //        for (int i = 0; i < m_activeItems->count(); i++) {
+        //            m_activeItems->get(i)->setActive(true);
+        //        }
 
-//        qCDebug(dcMapScene()) << "Active chests" << m_activeChests->count();
-//        for (int i = 0; i < m_activeChests->count(); i++) {
-//            m_activeChests->get(i)->setActive(true);
-//        }
+        //        qCDebug(dcMapScene()) << "Active chests" << m_activeChests->count();
+        //        for (int i = 0; i < m_activeChests->count(); i++) {
+        //            m_activeChests->get(i)->setActive(true);
+        //        }
 
-//        qCDebug(dcMapScene()) << "Active characters" << m_activeCharacters->count();
-//        for (int i = 0; i < m_activeCharacters->count(); i++) {
-//            m_activeCharacters->get(i)->setActive(true);
-//        }
+        //        qCDebug(dcMapScene()) << "Active characters" << m_activeCharacters->count();
+        //        for (int i = 0; i < m_activeCharacters->count(); i++) {
+        //            m_activeCharacters->get(i)->setActive(true);
+        //        }
 
-//        qCDebug(dcMapScene()) << "Active enemies" << m_activeEnemies->count();
-//        for (int i = 0; i < m_activeEnemies->count(); i++) {
-//            m_activeEnemies->get(i)->setActive(true);
-//        }
+        //        qCDebug(dcMapScene()) << "Active enemies" << m_activeEnemies->count();
+        //        for (int i = 0; i < m_activeEnemies->count(); i++) {
+        //            m_activeEnemies->get(i)->setActive(true);
+        //        }
 
-//        qCDebug(dcMapScene()) << "Active weather areas" << m_activeWeatherAreas->count();
+        //        qCDebug(dcMapScene()) << "Active weather areas" << m_activeWeatherAreas->count();
 
     } else {
         qCDebug(dcMapScene()) << "Reset. No map set to scene";
