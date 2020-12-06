@@ -63,6 +63,9 @@ GamePage {
         snowingEnabled: debugControls.snowingEnabled
         turbulenceEnabled: debugControls.turbulenceEnabled
 
+        stonedEnabled: debugControls.stonedEnabled
+        grayscaleEnabled: debugControls.grayscaleEnabled
+
         property bool gameOverlayVisible: true
 
         // ##################################################################################
@@ -390,56 +393,6 @@ GamePage {
 //    }
 
 
-//    ShaderEffect {
-//        id: stonedShader
-//        anchors.fill: source
-
-//        visible: false
-//        blending: false
-
-//        property var source: shaderEffectSource
-//        property real amplitude: 0.02
-//        property real frequency: 8
-//        property real time: 0
-
-//        NumberAnimation on time {
-//            id: stonedShaderTimeAnimation
-//            loops: Animation.Infinite
-//            from: 0
-//            to: Math.PI * 2
-//            duration: 1800
-//            running: false
-//        }
-
-//        fragmentShader: "qrc:shadereffects/fragmentshaders/wobble.frag"
-//    }
-
-//    PropertyAnimation {
-//        id: stonedStartAnimation
-//        target: stonedShader
-//        property: "amplitude"
-//        loops: 1
-//        duration: 5000 * app.gameSpeedFactor
-//        from: 0
-//        to: 0.02
-//        onRunningChanged: if (!running) console.log("Start stoned animation finished. Fully stoned ;)")
-//    }
-
-//    PropertyAnimation {
-//        id: stonedStopAnimation
-//        target: stonedShader
-//        property: "amplitude"
-//        loops: 1
-//        duration: 5000 * app.gameSpeedFactor
-//        to: 0
-//        onRunningChanged: {
-//            if (!running)  {
-//                console.log("Stop stoned animation finished. Clean again :)")
-//                stonedShaderTimeAnimation.stop()
-//                stonedShader.visible = false
-//            }
-//        }
-//    }
 
     // ##################################################################################
     // Debug controls on top of the scene item
@@ -449,15 +402,6 @@ GamePage {
         id: debugControls
         anchors.fill: parent
         visible: Game.debugging
-        onStonedEnabledChanged: {
-            if (stonedEnabled) {
-                //stonedShader.visible = true
-                stonedStartAnimation.start()
-                stonedShaderTimeAnimation.start()
-            } else {
-                stonedStopAnimation.start()
-            }
-        }
     }
 
     // ##################################################################################

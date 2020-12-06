@@ -11,6 +11,7 @@ import "components"
 import "gameitems"
 import "gameoverlays"
 import "physics"
+import "effects"
 
 Item {
     id: root
@@ -31,6 +32,10 @@ Item {
     property bool snowingEnabled: false
     property bool turbulenceEnabled: false
 
+    // Shader controls
+    property bool stonedEnabled: false
+    property bool grayscaleEnabled: false
+
     // Read only
     readonly property Flickable flickable: worldFlickable
     readonly property Item world: worldItem
@@ -45,7 +50,6 @@ Item {
             easing { type: Easing.InOutExpo }
         }
     }
-
 
     function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
         if (layer === GameObject.LayerBackground) {
@@ -254,176 +258,207 @@ Item {
         }
     }
 
+    // ##################################################################################
+    // Shader effects
+    // ##################################################################################
+
+    GrayscaleEffect {
+        id: grayscaleShader
+        effectEnabled: root.grayscaleEnabled
+        width: worldFlickable.width
+        height: worldFlickable.height
+
+        shaderEffectSource: ShaderEffectSource {
+            width: worldFlickable.width
+            height: worldFlickable.height
+            hideSource: true
+            sourceItem: StonedEffect {
+                id: stonedEffect
+                width: worldFlickable.width
+                height: worldFlickable.height
+                anchors.centerIn: parent
+                effectEnabled: root.stonedEnabled
+
+                shaderEffectSource: ShaderEffectSource {
+                    id: mainEffectSource
+                    width: worldFlickable.width
+                    height: worldFlickable.height
+                    hideSource: true
+                    sourceItem: worldFlickable
+                }
+            }
+        }
+    }
 
 
-//    ShaderEffect {
-//        id: worldShaderEffect
-//        anchors.fill: worldFlickable
-//        width: worldFlickable.width
-//        height: worldFlickable.height
-//        anchors.centerIn: parent
+    //    ShaderEffect {
+    //        id: worldShaderEffect
+    //        anchors.fill: worldFlickable
+    //        width: worldFlickable.width
+    //        height: worldFlickable.height
+    //        anchors.centerIn: parent
 
-//        z: gameScene.calculateLayerValue(GameObject.LayerBackground, y, height, worldItem.height)
+    //        z: gameScene.calculateLayerValue(GameObject.LayerBackground, y, height, worldItem.height)
 
-//        property var source: ShaderEffectSource {
-//            id: worldShaderEffectSource
-//            sourceItem: worldFlickable
-//            hideSource: true
-//        }
+    //        property var source: ShaderEffectSource {
+    //            id: worldShaderEffectSource
+    //            sourceItem: worldFlickable
+    //            hideSource: true
+    //        }
 
-//        property var backgroundColor: mapScene.map.backgroundColor
+    //        property var backgroundColor: mapScene.map.backgroundColor
 
-//        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
-//        fragmentShader: "
-//            varying highp vec2 coordinate;
-//            uniform sampler2D source;
-//            uniform lowp float qt_Opacity;
-//            uniform highp vec4 backgroundColor;
+    //        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+    //        fragmentShader: "
+    //            varying highp vec2 coordinate;
+    //            uniform sampler2D source;
+    //            uniform lowp float qt_Opacity;
+    //            uniform highp vec4 backgroundColor;
 
-//            void main() {
-//                highp vec4 lightFragment = texture2D(source, coordinate);
-//                // Mix the background color with the pixel from the light texture
-//                highp vec4 ambientColor = backgroundColor.rgba + lightFragment.rgba;
+    //            void main() {
+    //                highp vec4 lightFragment = texture2D(source, coordinate);
+    //                // Mix the background color with the pixel from the light texture
+    //                highp vec4 ambientColor = backgroundColor.rgba + lightFragment.rgba;
 
-//                gl_FragColor = ambientColor * qt_Opacity;
-//            }
-//        "
-//    }
+    //                gl_FragColor = ambientColor * qt_Opacity;
+    //            }
+    //        "
+    //    }
 
     // ##################################################################################
     // Items
     // ##################################################################################
 
-//    // Renders the items and objects on top of the background render
-//    Flickable {
-//        id: itemFlickable
-//        anchors.fill: worldFlickable
-//        contentWidth: worldFlickable.contentWidth
-//        contentHeight: worldFlickable.contentHeight
-//        contentX: worldFlickable.contentX
-//        contentY: worldFlickable.contentY
-//        enabled: false
-//        visible: true
+    //    // Renders the items and objects on top of the background render
+    //    Flickable {
+    //        id: itemFlickable
+    //        anchors.fill: worldFlickable
+    //        contentWidth: worldFlickable.contentWidth
+    //        contentHeight: worldFlickable.contentHeight
+    //        contentX: worldFlickable.contentX
+    //        contentY: worldFlickable.contentY
+    //        enabled: false
+    //        visible: true
 
-//        //z: gameScene.calculateLayerValue(GameObject.LayerItems, y, height, worldItem.height)
+    //        //z: gameScene.calculateLayerValue(GameObject.LayerItems, y, height, worldItem.height)
 
-//        Item {
-//            id: itemFlickableContent
-//            anchors.centerIn: parent
-//            width: worldItem.width
-//            height: worldItem.height
+    //        Item {
+    //            id: itemFlickableContent
+    //            anchors.centerIn: parent
+    //            width: worldItem.width
+    //            height: worldItem.height
 
-//            WorldBoundaries {
-//                id: worldBoundaries
-//                worldObject: worldItem
-//            }
+    //            WorldBoundaries {
+    //                id: worldBoundaries
+    //                worldObject: worldItem
+    //            }
 
-//            ParticleSystem {
-//                id: particles
-//                anchors.fill: parent
-//                running: root.particlesRunning
+    //            ParticleSystem {
+    //                id: particles
+    //                anchors.fill: parent
+    //                running: root.particlesRunning
 
-//                ImageParticle {
-//                    id: flameImageParticle
-//                    groups: ["flame"]
-//                    source: dataDirectory + "/images/game/glowdot.png"
-//                    color: "#11ff400f"
-//                    colorVariation: 0.2
-//                }
+    //                ImageParticle {
+    //                    id: flameImageParticle
+    //                    groups: ["flame"]
+    //                    source: dataDirectory + "/images/game/glowdot.png"
+    //                    color: "#11ff400f"
+    //                    colorVariation: 0.2
+    //                }
 
-//                ImageParticle {
-//                    id: footstepImageParticle
-//                    groups: ["footstep"]
-//                    source: dataDirectory + "/images/characters/footstep.png"
-//                    autoRotation: true
-//                    color: "#66ffffff"
-//                }
-//            }
+    //                ImageParticle {
+    //                    id: footstepImageParticle
+    //                    groups: ["footstep"]
+    //                    source: dataDirectory + "/images/characters/footstep.png"
+    //                    autoRotation: true
+    //                    color: "#66ffffff"
+    //                }
+    //            }
 
 
-//            Repeater {
-//                id: itemsRepeater
-//                model: mapScene.activeItems
-//                delegate: GameItem {
-//                    gameItem: mapScene.activeItems.get(model.index)
-//                    itemDebugEnabled: root.itemDebugEnabled
-//                    width: model.size.width * app.gridSize
-//                    height: model.size.height * app.gridSize
-//                    x: model.position.x * app.gridSize
-//                    y: model.position.y * app.gridSize
-//                }
-//            }
+    //            Repeater {
+    //                id: itemsRepeater
+    //                model: mapScene.activeItems
+    //                delegate: GameItem {
+    //                    gameItem: mapScene.activeItems.get(model.index)
+    //                    itemDebugEnabled: root.itemDebugEnabled
+    //                    width: model.size.width * app.gridSize
+    //                    height: model.size.height * app.gridSize
+    //                    x: model.position.x * app.gridSize
+    //                    y: model.position.y * app.gridSize
+    //                }
+    //            }
 
-//            Repeater {
-//                id: chestsRepeater
-//                model: mapScene.activeChests
-//                delegate: GameItem {
-//                    gameItem: mapScene.activeChests.get(model.index)
-//                    itemDebugEnabled: root.itemDebugEnabled
-//                    width: model.size.width * app.gridSize
-//                    height: model.size.height * app.gridSize
-//                    x: model.position.x * app.gridSize
-//                    y: model.position.y * app.gridSize
-//                }
-//            }
+    //            Repeater {
+    //                id: chestsRepeater
+    //                model: mapScene.activeChests
+    //                delegate: GameItem {
+    //                    gameItem: mapScene.activeChests.get(model.index)
+    //                    itemDebugEnabled: root.itemDebugEnabled
+    //                    width: model.size.width * app.gridSize
+    //                    height: model.size.height * app.gridSize
+    //                    x: model.position.x * app.gridSize
+    //                    y: model.position.y * app.gridSize
+    //                }
+    //            }
 
-//            Repeater {
-//                id: characersRepeater
-//                model: mapScene.activeCharacters
-//                delegate: CharacterItem {
-//                    character: mapScene.activeCharacters.get(model.index)
-//                    itemDebugEnabled: root.itemDebugEnabled
-//                    particleSystem: particles
-//                    width: model.size.width * app.gridSize
-//                    height: model.size.height * app.gridSize
-//                    x: model.position.x * app.gridSize
-//                    y: model.position.y * app.gridSize
-//                    Component.onCompleted: {
-//                        // Get the player item for this scene
-//                        if (character && character.isPlayer) {
-//                            root.playerItem = this
-//                        }
-//                    }
-//                }
-//            }
+    //            Repeater {
+    //                id: characersRepeater
+    //                model: mapScene.activeCharacters
+    //                delegate: CharacterItem {
+    //                    character: mapScene.activeCharacters.get(model.index)
+    //                    itemDebugEnabled: root.itemDebugEnabled
+    //                    particleSystem: particles
+    //                    width: model.size.width * app.gridSize
+    //                    height: model.size.height * app.gridSize
+    //                    x: model.position.x * app.gridSize
+    //                    y: model.position.y * app.gridSize
+    //                    Component.onCompleted: {
+    //                        // Get the player item for this scene
+    //                        if (character && character.isPlayer) {
+    //                            root.playerItem = this
+    //                        }
+    //                    }
+    //                }
+    //            }
 
-//            Repeater {
-//                id: enemiesRepeater
-//                model: mapScene.activeEnemies
-//                delegate: EnemyItem {
-//                    itemDebugEnabled: root.itemDebugEnabled
-//                    enemy: mapScene.activeEnemies.get(model.index)
-//                    width: model.size.width * app.gridSize
-//                    height: model.size.height * app.gridSize
-//                    x: model.position.x * app.gridSize
-//                    y: model.position.y * app.gridSize
-//                }
-//            }
-//        }
+    //            Repeater {
+    //                id: enemiesRepeater
+    //                model: mapScene.activeEnemies
+    //                delegate: EnemyItem {
+    //                    itemDebugEnabled: root.itemDebugEnabled
+    //                    enemy: mapScene.activeEnemies.get(model.index)
+    //                    width: model.size.width * app.gridSize
+    //                    height: model.size.height * app.gridSize
+    //                    x: model.position.x * app.gridSize
+    //                    y: model.position.y * app.gridSize
+    //                }
+    //            }
+    //        }
 
-//        Weather {
-//            id: weather
-//            anchors.fill: parent
-//            raining: root.rainingEnabled
-//            snowing: root.snowingEnabled
-//            turbulence: root.turbulenceEnabled
-//        }
+    //        Weather {
+    //            id: weather
+    //            anchors.fill: parent
+    //            raining: root.rainingEnabled
+    //            snowing: root.snowingEnabled
+    //            turbulence: root.turbulenceEnabled
+    //        }
 
-//        Loader {
-//            id: physicsDebugDrawLoader
-//            anchors.fill: parent
-//            active: root.physicsDebugEnabled
-//            sourceComponent: debugDrawComponent
-//            Component {
-//                id: debugDrawComponent
-//                DebugDraw {
-//                    id: debugDraw
-//                    world: root.physicsWorld
-//                    opacity: 0.4
-//                }
-//            }
-//        }
-//    }
+    //        Loader {
+    //            id: physicsDebugDrawLoader
+    //            anchors.fill: parent
+    //            active: root.physicsDebugEnabled
+    //            sourceComponent: debugDrawComponent
+    //            Component {
+    //                id: debugDrawComponent
+    //                DebugDraw {
+    //                    id: debugDraw
+    //                    world: root.physicsWorld
+    //                    opacity: 0.4
+    //                }
+    //            }
+    //        }
+    //    }
 
 
     //    Flickable {
@@ -460,23 +495,23 @@ Item {
     // ##################################################################################
 
 
-//    ShaderEffectSource {
-//        id: itemsShaderEffectSource
-//        width: itemFlickable.width
-//        height: itemFlickable.height
-//        anchors.centerIn: parent
-//        sourceItem: itemFlickable
-//        hideSource: true
-//    }
+    //    ShaderEffectSource {
+    //        id: itemsShaderEffectSource
+    //        width: itemFlickable.width
+    //        height: itemFlickable.height
+    //        anchors.centerIn: parent
+    //        sourceItem: itemFlickable
+    //        hideSource: true
+    //    }
 
 
-//    ShaderEffect {
-//        id: itemShaderEffect
-//        anchors.fill: itemsShaderEffectSource
-//        property var source: itemsShaderEffectSource
-//        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
-//        fragmentShader: "qrc:shadereffects/fragmentshaders/default.frag"
-//    }
+    //    ShaderEffect {
+    //        id: itemShaderEffect
+    //        anchors.fill: itemsShaderEffectSource
+    //        property var source: itemsShaderEffectSource
+    //        vertexShader: "qrc:shadereffects/vertexshaders/default.frag"
+    //        fragmentShader: "qrc:shadereffects/fragmentshaders/default.frag"
+    //    }
 
 
 

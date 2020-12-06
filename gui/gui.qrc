@@ -79,5 +79,7 @@
         <file>gameitems/LightSourceItem.qml</file>
         <file>shadereffects/vertexshaders/default.frag</file>
         <file>shadereffects/fragmentshaders/default.frag</file>
+        <file>effects/StonedEffect.qml</file>
+        <file>effects/GrayscaleEffect.qml</file>
     </qresource>
 </RCC>
