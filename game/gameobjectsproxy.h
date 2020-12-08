@@ -30,7 +30,7 @@ public:
 private:
     GameObjects *m_gameObjects = nullptr;
 
-    QRectF m_viewFilter;
+    QRectF m_viewFilter = QRectF();
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;

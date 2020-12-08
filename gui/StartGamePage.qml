@@ -31,6 +31,13 @@ GamePage {
             onClicked: pageStack.push(Qt.resolvedUrl("SaveGamesPage.qml"))
         }
 
+        GameButton {
+            Layout.fillWidth: true
+            text: qsTr("Tutorials")
+            font.pixelSize: app.largeFont
+            onClicked: pageStack.push(Qt.resolvedUrl("TutorialsPage.qml"))
+        }
+
         Item {
             id: spacingItem
             Layout.fillWidth: true

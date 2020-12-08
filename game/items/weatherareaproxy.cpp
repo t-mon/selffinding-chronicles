@@ -119,6 +119,11 @@ int WeatherAreaProxy::count() const
     return rowCount(QModelIndex());
 }
 
+void WeatherAreaProxy::resetFilter()
+{
+    setViewFilter(QRectF());
+}
+
 QRectF WeatherAreaProxy::viewFilter() const
 {
     return m_viewFilter;

@@ -44,20 +44,11 @@ void MapScene::setMap(Map *map)
         return;
 
     m_map = map;
-    emit mapChanged(m_map);
 
     if (m_map) {
         qCDebug(dcMapScene()) << "Set the new map to the scene" << m_map->name();
 
         // Initialize the proxies
-        m_activeBackgroundLights->setGameObjects(m_map->backgroundLights());
-        m_activeObjects->setGameObjects(m_map->objects());
-        m_activeItems->setGameItems(m_map->items());
-        m_activeChests->setGameItems(m_map->chests());
-        m_activeCharacters->setGameItems(m_map->characters());
-        m_activeEnemies->setGameItems(m_map->enemies());
-        m_activeWeatherAreas->setAreaModel(m_map->weatherAreas());
-
         // Initially activate items around the player
         qCDebug(dcMapScene()) << "Initialize active objects and items around the player";
         if (m_map->player()) {
@@ -66,42 +57,40 @@ void MapScene::setMap(Map *map)
             setViewWindow(QRectF(initialViewWindowPosition, initialViewWindowSize));
         }
 
-        //        // Activate all objects
-        //        qCDebug(dcMapScene()) << "Active background lights" << m_activeBackgroundLights->count();
-        //        for (int i = 0; i < m_activeObjects->count(); i++) {
-        //            m_activeObjects->get(i)->setActive(true);
-        //        }
-
-        //        qCDebug(dcMapScene()) << "Active objects" << m_activeObjects->count();
-        //        for (int i = 0; i < m_activeObjects->count(); i++) {
-        //            m_activeObjects->get(i)->setActive(true);
-        //        }
-
-        //        qCDebug(dcMapScene()) << "Active items" << m_activeItems->count();
-        //        for (int i = 0; i < m_activeItems->count(); i++) {
-        //            m_activeItems->get(i)->setActive(true);
-        //        }
-
-        //        qCDebug(dcMapScene()) << "Active chests" << m_activeChests->count();
-        //        for (int i = 0; i < m_activeChests->count(); i++) {
-        //            m_activeChests->get(i)->setActive(true);
-        //        }
-
-        //        qCDebug(dcMapScene()) << "Active characters" << m_activeCharacters->count();
-        //        for (int i = 0; i < m_activeCharacters->count(); i++) {
-        //            m_activeCharacters->get(i)->setActive(true);
-        //        }
-
-        //        qCDebug(dcMapScene()) << "Active enemies" << m_activeEnemies->count();
-        //        for (int i = 0; i < m_activeEnemies->count(); i++) {
-        //            m_activeEnemies->get(i)->setActive(true);
-        //        }
-
-        //        qCDebug(dcMapScene()) << "Active weather areas" << m_activeWeatherAreas->count();
+        m_activeBackgroundLights->setGameObjects(m_map->backgroundLights());
+        m_activeObjects->setGameObjects(m_map->objects());
+        m_activeItems->setGameItems(m_map->items());
+        m_activeChests->setGameItems(m_map->chests());
+        m_activeCharacters->setGameItems(m_map->characters());
+        m_activeEnemies->setGameItems(m_map->enemies());
+        m_activeWeatherAreas->setAreaModel(m_map->weatherAreas());
 
     } else {
-        qCDebug(dcMapScene()) << "Reset. No map set to scene";
+        qCDebug(dcMapScene()) << "Reset all data and unset map";
+
+        m_activeBackgroundLights->setGameObjects(nullptr);
+        m_activeBackgroundLights->resetFilter();
+
+        m_activeObjects->setGameObjects(nullptr);
+        m_activeObjects->resetFilter();
+
+        m_activeItems->setGameItems(nullptr);
+        m_activeItems->resetFilter();
+
+        m_activeChests->setGameItems(nullptr);
+        m_activeChests->resetFilter();
+
+        m_activeCharacters->setGameItems(nullptr);
+        m_activeCharacters->resetFilter();
+
+        m_activeEnemies->setGameItems(nullptr);
+        m_activeEnemies->resetFilter();
+
+        m_activeWeatherAreas->setAreaModel(nullptr);
+        m_activeWeatherAreas->resetFilter();
     }
+
+    emit mapChanged(m_map);
 }
 
 QRectF MapScene::viewWindow() const

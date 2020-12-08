@@ -395,8 +395,6 @@ void Engine::setPlayer(Character *player)
         m_player = nullptr;
     }
 
-    if (player)
-        qCDebug(dcEngine()) << "Set player" << player;
 
     m_player = player;
     emit playerChanged(m_player);
@@ -408,10 +406,13 @@ void Engine::setPlayer(Character *player)
     }
 
     if (m_player) {
+        qCDebug(dcEngine()) << "Set player" << m_player;
         m_player->setIsPlayer(true);
         m_player->setMovable(true);
         m_playerController->setPlayer(m_player);
         connect(m_player, &Character::positionChanged, this, &Engine::onPlayerPositionChanged);
+    } else {
+        m_playerController->setPlayer(m_player);
     }
 
 }
@@ -623,6 +624,7 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
     case DataManager::StateStarting:
     case DataManager::StateLoading:
         setState(StateLoading);
+        m_mapScene->setMap(nullptr);
         setCurrentChestItem(nullptr);
         setCurrentConversation(nullptr);
         setCurrentPlunderItems(nullptr);
@@ -634,20 +636,21 @@ void Engine::onDataManagerStateChanged(DataManager::State state)
         setLoading(true);
         break;
     case DataManager::StateIdle:
-        if (!m_dataManager->player())
+        if (!m_dataManager->map()->player())
             return;
 
         // Set the map to the map scene
+        qCDebug(dcEngine()) << "Setting loaded map into scene...";
         m_mapScene->setMap(m_dataManager->map());
 
         // Initialize the player
+        qCDebug(dcEngine()) << "Initializing player...";
         setPlayer(m_mapScene->map()->player());
-        m_player->setName(Game::instance()->settings()->playerName());
 
         qCDebug(dcEngine()) << "Set control mode" << Game::instance()->settings()->controlMode();
         m_playerController->setControlMode(Game::instance()->settings()->controlMode());
 
-        qCDebug(dcEngine()) << "Engine data initialized. Pause engine until the UI is ready.";
+        qCDebug(dcEngine()) << "Engine data initialized. Pause engine until the UI is ready...";
         setState(StatePaused);
         setLoading(false);
         setLoaded(true);
@@ -1035,21 +1038,27 @@ void Engine::tick()
 
 void Engine::resetEngine()
 {
-    qCDebug(dcEngine()) << "Reset the game engine";
+    qCDebug(dcEngine()) << "Reseting the game engine...";
 
+    setPlayer(nullptr);
     setCurrentPlayerPosition(QPoint());
+    setPlayerFocusItem(nullptr);
     setCurrentPlayerField(nullptr);
     m_playerVisibleItems.clear();
-    setPlayerFocusItem(nullptr);
-    setLoaded(false);
-    setLoading(false);
+
+    m_mapScene->setMap(nullptr);
+    m_dataManager->resetData();
+
     setCurrentConversation(nullptr);
     setCurrentChestItem(nullptr);
+    setCurrentLockItem(nullptr);
+    setCurrentLiteratureItem(nullptr);
     setCurrentPlunderItems(nullptr);
 
-    m_dataManager->resetData();
-    m_mapScene->setMap(nullptr);
-    setPlayer(nullptr);
+    m_keepInventoryOpen = false;
+
+    setLoaded(false);
+    setLoading(false);
 
     setState(StateUnitialized);
 }

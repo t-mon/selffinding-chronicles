@@ -22,6 +22,7 @@ PhysicsItem {
     bodyType: enemy ? (enemy.movable ? enemy.bodyType : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
     linearDamping: 10
     fixedRotation: true
+    active: enemy ? enemy.active : false
 
     // Enemy movement
     Connections {

@@ -52,12 +52,6 @@ Map *DataManager::map() const
     return m_map;
 }
 
-Character *DataManager::player() const
-{
-    QMutexLocker locker(&m_playerMutex);
-    return m_player;
-}
-
 void DataManager::createItem(const QString &resourcePath, const QPointF &position)
 {
     GameItem *item = DataLoader::loadGameItemFromResourcePath(resourcePath, m_map);
@@ -102,27 +96,21 @@ void DataManager::setSaveGameName(const QString &saveGameName)
 
 void DataManager::startNewGameTask()
 {
-    qCDebug(dcDataManager()) << "Start loading new game";
+    qCDebug(dcDataManager()) << "Start new game" << m_newGameMapPath;
 
     // Create map
     QMutexLocker mapLocker(&m_mapMutex);
     m_map = new Map(nullptr);
-    //m_map->loadMap(":/maps/test-character.json");
-    //m_map->loadMap(":/maps/test-door.json");
-    m_map->loadMap(":/maps/test-environment.json");
-    //m_map->loadMap(":/maps/test-chest.json");
-    //m_map->loadMap(":/maps/test-monster.json");
+    m_map->loadMap(m_newGameMapPath);
 
     // Create default player
     qCDebug(dcDataManager()) << "Create default player";
-    QMutexLocker playerLocker(&m_playerMutex);
     GameItem *playerGameItem = DataLoader::loadGameItemFromResourcePath(":/gamedata/characters/player.json", m_map);
-    m_player = qobject_cast<Character *>(playerGameItem);
-    m_player->setPosition(m_map->playerStartPosition());
-    m_player->setIsPlayer(true);
+    Character *player = qobject_cast<Character *>(playerGameItem);
+    player->setPosition(m_map->playerStartPosition());
 
     // Add player to characters
-    m_map->setPlayer(m_player);
+    m_map->setPlayer(player);
 
     // Push the map back to the main thread
     qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();
@@ -146,12 +134,11 @@ void DataManager::loadGameTask()
     QVariantMap generalMap = DataLoader::loadJsonData(m_saveGame->generalFileName());
     QVariantMap playerMap = generalMap.value("player").toMap();
     QPointF position = QPointF(playerMap.value("x").toDouble(), playerMap.value("y").toDouble());
-    m_player = DataLoader::createCharacterObject(playerMap.value("data").toString(), playerMap, position, m_map);
-    m_player->setIsPlayer(true);
-    m_player->setName(Game::instance()->settings()->playerName());
+    Character *player = DataLoader::createCharacterObject(playerMap.value("data").toString(), playerMap, position, m_map);
+    player->setName(Game::instance()->settings()->playerName());
 
     // Add player to characters
-    m_map->setPlayer(m_player);
+    m_map->setPlayer(player);
 
 
     // Push the map back to the main thread
@@ -375,15 +362,11 @@ void DataManager::resetData()
         return;
     }
 
+    QMutexLocker mapLocker(&m_mapMutex);
     if (m_map) {
-        m_map->deleteLater();
+        delete m_map;
         m_map = nullptr;
     }
-
-    if (m_player) {
-        m_player = nullptr;
-    }
-
 
     setSaveGameName(QString());
     setState(StateIdle);
@@ -415,10 +398,28 @@ void DataManager::startNewGame()
     }
 
     qCDebug(dcDataManager()) << "Start a new game";
+    m_newGameMapPath = ":/maps/test-environment.json";
 
     // Reset all data
     resetData();
     setState(StateStarting);
+}
+
+void DataManager::startTutorial(const QString &tutorialMap)
+{
+    if (isRunning()) {
+        qCWarning(dcDataManager()) << "Could not start tutorial, the thread is still runnging.";
+        return;
+    }
+
+    // Reset all data
+    qCDebug(dcDataManager()) << "Start tutorial" << tutorialMap;
+
+    m_newGameMapPath = tutorialMap;
+
+    resetData();
+    setState(StateStarting);
+
 }
 
 void DataManager::saveMap(Map *map, const QString &saveGameName)

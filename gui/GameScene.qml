@@ -267,6 +267,7 @@ Item {
         effectEnabled: root.grayscaleEnabled
         width: worldFlickable.width
         height: worldFlickable.height
+        anchors.centerIn: parent
 
         shaderEffectSource: ShaderEffectSource {
             width: worldFlickable.width

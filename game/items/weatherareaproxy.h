@@ -57,13 +57,15 @@ public:
 
     int count() const;
 
+    Q_INVOKABLE void resetFilter();
+
     QRectF viewFilter() const;
     void setViewFilter(const QRectF &viewFilter);
 
 private:
     WeatherAreaModel *m_areaModel = nullptr;
 
-    QRectF m_viewFilter;
+    QRectF m_viewFilter = QRectF();
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;

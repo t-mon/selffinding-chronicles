@@ -81,5 +81,6 @@
         <file>shadereffects/fragmentshaders/default.frag</file>
         <file>effects/StonedEffect.qml</file>
         <file>effects/GrayscaleEffect.qml</file>
+        <file>TutorialsPage.qml</file>
     </qresource>
 </RCC>

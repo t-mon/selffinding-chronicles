@@ -114,7 +114,6 @@ private:
 
     DataManager *m_dataManager = nullptr;
     QElapsedTimer m_loadingTimer;
-
     MapScene *m_mapScene = nullptr;
 
     Character *m_player = nullptr;
@@ -123,7 +122,6 @@ private:
     TeleportationHandler *m_teleportationHandler = nullptr;
 
     Conversation *m_currentConversation = nullptr;
-    Character *m_currentConversationCharacter = nullptr;
     ChestItem *m_currentChestItem = nullptr;
     LockItem *m_currentLockItem = nullptr;
     LiteratureItem *m_currentLiteratureItem = nullptr;

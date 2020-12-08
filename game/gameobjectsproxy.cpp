@@ -24,17 +24,18 @@ void GameObjectsProxy::setGameObjects(GameObjects *gameObjects)
 
     beginResetModel();
     m_gameObjects = gameObjects;
-    emit gameObjectsChanged(gameObjects);
     setSourceModel(m_gameObjects);
+    emit gameObjectsChanged(gameObjects);
 
     if (m_gameObjects) {
         connect(m_gameObjects, &GameObjects::countChanged, this, &GameObjectsProxy::onSourceModelCountChanged);
-        invalidateFilter();
     }
 
     endResetModel();
-    emit countChanged();
 
+    invalidateFilter();
+    sort(0);
+    emit countChanged();
 }
 
 int GameObjectsProxy::count() const
@@ -78,19 +79,24 @@ bool GameObjectsProxy::filterAcceptsRow(int sourceRow, const QModelIndex &source
 
     // Get the current game item
     if (!m_gameObjects)
-        return true;
+        return false;
 
     GameObject *gameObject = m_gameObjects->get(sourceRow);
     if (!gameObject)
-        return true;
-
-    // If no filter, return always true
-    if (m_viewFilter.isNull())
-        return true;
-
-    // Filter out items not in the view filter
-    if (!m_viewFilter.isNull() && !m_viewFilter.intersects(QRectF(gameObject->position(), gameObject->size())))
         return false;
+
+    if (m_viewFilter.isValid()) {
+        if (!m_viewFilter.intersects(QRectF(gameObject->position(), gameObject->size()))) {
+            if (gameObject->active()) {
+                emit const_cast<GameObjectsProxy *>(this)->gameObjectActiveChanged(gameObject, false);
+            }
+            return false;
+        } else {
+            if (!gameObject->active()) {
+                emit const_cast<GameObjectsProxy *>(this)->gameObjectActiveChanged(gameObject, true);
+            }
+        }
+    }
 
     return true;
 }
@@ -107,16 +113,20 @@ bool GameObjectsProxy::lessThan(const QModelIndex &left, const QModelIndex &righ
 void GameObjectsProxy::onSourceModelCountChanged()
 {
     invalidateFilter();
+    sort(0);
+    emit countChanged();
 }
 
 void GameObjectsProxy::onRowsInseted(const QModelIndex &parent, int first, int last)
 {
     Q_UNUSED(parent)
 
-    for (int i = first; i <= last; i++) {
-        GameObject *object = get(i);
-        if (object) {
-            emit gameObjectActiveChanged(object, true);
+    if (m_viewFilter.isValid()) {
+        for (int i = first; i <= last; i++) {
+            GameObject *object = get(i);
+            if (object && !object->active()) {
+                emit gameObjectActiveChanged(object, true);
+            }
         }
     }
 
@@ -136,10 +146,12 @@ void GameObjectsProxy::onRowsAboutToBeRemoved(const QModelIndex &parent, int fir
 {
     Q_UNUSED(parent)
 
-    for (int i = first; i <= last; i++) {
-        GameObject *object = get(i);
-        if (object) {
-            emit gameObjectActiveChanged(object, false);
+    if (m_viewFilter.isValid()) {
+        for (int i = first; i <= last; i++) {
+            GameObject *object = get(i);
+            if (object && object->active()) {
+                emit gameObjectActiveChanged(object, false);
+            }
         }
     }
 

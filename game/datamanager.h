@@ -19,7 +19,6 @@ class DataManager : public QThread
     Q_PROPERTY(SaveGames *saveGames READ saveGames CONSTANT)
     Q_PROPERTY(QString saveGameName READ saveGameName NOTIFY saveGameNameChanged)
     Q_PROPERTY(Map *map READ map NOTIFY mapChanged)
-    Q_PROPERTY(Character *player READ player NOTIFY playerChanged)
 
 public:
     enum State {
@@ -36,11 +35,9 @@ public:
 
     State state() const;
     QString saveGameName() const;
-
     SaveGames *saveGames() const;
 
     Map *map() const;
-    Character *player() const;
 
     void createItem(const QString &resourcePath, const QPointF &position);
 
@@ -59,9 +56,7 @@ private:
 
     Map *m_map = nullptr;
     mutable QMutex m_mapMutex;
-
-    Character *m_player = nullptr;
-    mutable QMutex m_playerMutex;
+    QString m_newGameMapPath;
 
     // Set members
     void setState(State state);
@@ -91,7 +86,6 @@ signals:
     void savingFinished();
 
     void mapChanged(Map *map);
-    void playerChanged(Character *player);
 
 private slots:
     void onThreadFinished();
@@ -101,6 +95,8 @@ public slots:
     void resetData();
 
     void startNewGame();
+    void startTutorial(const QString &tutorialMap);
+
     void saveMap(Map *map, const QString &saveGameName);
     void saveGame(const QImage &screenshot);
     void loadGame(SaveGame *saveGame);

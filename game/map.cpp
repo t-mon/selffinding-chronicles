@@ -34,7 +34,7 @@ Map::Map(GameObjects *backgroundLights, GameObjects *objects, GameItems *items, 
 
 Map::~Map()
 {
-
+    clear();
 }
 
 QSize Map::size() const
@@ -122,6 +122,7 @@ Character *Map::player() const
 void Map::setPlayer(Character *player)
 {
     m_player = player;
+    m_player->setIsPlayer(true);
 
     // Note: add the player always to the character list
     if (m_player)
@@ -332,7 +333,7 @@ QDebug operator<<(QDebug debug, Map *map)
     debug.nospace() << ", " << map->size();
     debug.nospace() << ", " << map->resourcePath();
     debug.nospace() << ", " << map->resourceFileName();
-    debug.nospace() << ", " << map->playerStartPosition();
+    debug.nospace() << ", Start position:" << map->playerStartPosition();
     debug.nospace() << ", color: " << map->backgroundColor().name();
     debug.nospace() << ")" << Qt::endl;
 
