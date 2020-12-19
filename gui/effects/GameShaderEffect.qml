@@ -5,17 +5,33 @@ import QtGraphicalEffects 1.0
 ShaderEffect {
     id: root
 
-    property ShaderEffectSource shaderEffectSource
-    property bool effectEnabled: false
+    antialiasing: app.antialiasing
+
+    property ShaderEffectSource worldShaderEffectSource
+    property ShaderEffectSource lightsShaderEffectSource
 
     // Shader properties
-    property var source: shaderEffectSource
+    property var world: worldShaderEffectSource
+    property var light: lightsShaderEffectSource
+
+    // Grayscale
+    property real grayscaleFactor: 0 // 1 = grayscale, 0 = full color
+
+    // Ambient
+    property real ambientBrightness: 1.0
+    property color ambientLightColor: Qt.rgba(0, 0, 0, 0)
+
+    // Stoned effect
+    property bool stonedEffectEnabled: false
     property real amplitude: 0
     property real frequency: 8
     property real time: 0
 
-    onEffectEnabledChanged: {
-        if (effectEnabled) {
+    vertexShader: "qrc:shadereffects/vertexshaders/gamescene.frag"
+    fragmentShader: "qrc:shadereffects/fragmentshaders/gamescene.frag"
+
+    onStonedEffectEnabledChanged: {
+        if (stonedEffectEnabled) {
             console.log("Stoned enabled")
             stonedStartAnimation.start()
             stonedShaderTimeAnimation.start()
@@ -25,8 +41,6 @@ ShaderEffect {
         }
     }
 
-    //blending: false
-
     NumberAnimation on time {
         id: stonedShaderTimeAnimation
         loops: Animation.Infinite
@@ -35,8 +49,6 @@ ShaderEffect {
         duration: 1800
         running: false
     }
-
-    fragmentShader: "qrc:shadereffects/fragmentshaders/wobble.frag"
 
     PropertyAnimation {
         id: stonedStartAnimation
@@ -64,5 +76,4 @@ ShaderEffect {
             }
         }
     }
-
 }

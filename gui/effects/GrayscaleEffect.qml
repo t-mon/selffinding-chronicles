@@ -6,10 +6,12 @@ ShaderEffect {
     id: root
 
     property ShaderEffectSource shaderEffectSource
-    property bool effectEnabled: false
-    property var source: shaderEffectSource
 
-    blending: false
-    vertexShader: root.effectEnabled ? "qrc:shadereffects/vertexshaders/grayscale.frag" : "qrc:shadereffects/vertexshaders/default.frag"
-    fragmentShader: root.effectEnabled ? "qrc:shadereffects/fragmentshaders/grayscale.frag" : "qrc:shadereffects/fragmentshaders/default.frag"
+    // Shader properties
+    property var source: shaderEffectSource
+    property real colorFactor: 0 // 1 = grayscale, 0 = full color
+
+    //blending: false
+    vertexShader: "qrc:shadereffects/vertexshaders/grayscale.frag"
+    fragmentShader: "qrc:shadereffects/fragmentshaders/grayscale.frag"
 }

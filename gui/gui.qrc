@@ -38,8 +38,6 @@
         <file>components/ContentItemDescription.qml</file>
         <file>gameoverlays/GameOverlayItem.qml</file>
         <file>components/FlameItem.qml</file>
-        <file>shadereffects/fragmentshaders/wobble.frag</file>
-        <file>shadereffects/fragmentshaders/+hlsl/wobble.frag</file>
         <file>components/DebugControls.qml</file>
         <file>gameitems/BulletItem.qml</file>
         <file>mapeditor/MapEditor.qml</file>
@@ -62,25 +60,21 @@
         <file>gameoverlays/ReadLiteratureOverlay.qml</file>
         <file>components/ItemDebugFrame.qml</file>
         <file>shadereffects/fragmentshaders/teleport.frag</file>
-        <file>shadereffects/fragmentshaders/+hlsl/teleport.frag</file>
-        <file>shadereffects/fragmentshaders/grayscale.frag</file>
-        <file>shadereffects/fragmentshaders/+hlsl/grayscale.frag</file>
-        <file>shadereffects/vertexshaders/grayscale.frag</file>
-        <file>shadereffects/fragmentshaders/magic.frag</file>
         <file>gameitems/GameObject.qml</file>
         <file>SaveGamesPage.qml</file>
         <file>mapeditor/components/MapEditorToolButton.qml</file>
-        <file>shadereffects/fragmentshaders/light.frag</file>
-        <file>shadereffects/fragmentshaders/shadow.frag</file>
         <file>GameScene.qml</file>
         <file>mapeditor/components/AvailableItemMenu.qml</file>
         <file>mapeditor/components/ColorPicker.qml</file>
         <file>mapeditor/components/MapEditorToolBar.qml</file>
         <file>gameitems/LightSourceItem.qml</file>
-        <file>shadereffects/vertexshaders/default.frag</file>
-        <file>shadereffects/fragmentshaders/default.frag</file>
         <file>effects/StonedEffect.qml</file>
         <file>effects/GrayscaleEffect.qml</file>
         <file>TutorialsPage.qml</file>
+        <file>effects/LightsEffect.qml</file>
+        <file>effects/AmbientEffect.qml</file>
+        <file>effects/GameShaderEffect.qml</file>
+        <file>shadereffects/fragmentshaders/gamescene.frag</file>
+        <file>shadereffects/vertexshaders/gamescene.frag</file>
     </qresource>
 </RCC>

@@ -110,6 +110,28 @@ void GameItem::setInventoryInteraction(GameItem::Interaction interaction)
     emit inventoryInteractionChanged(m_inventoryInteraction);
 }
 
+LightSource *GameItem::lightSource() const
+{
+    return m_lightSource;
+}
+
+void GameItem::setLightSource(LightSource *lightSource)
+{
+    if (m_lightSource == lightSource)
+        return;
+
+    if (m_lightSource) {
+        disconnect(this, &GameItem::positionChanged, m_lightSource, &LightSource::setPosition);
+    }
+
+    m_lightSource = lightSource;
+    emit lightSourceChanged(m_lightSource);
+
+    if (m_lightSource) {
+        m_lightSource->setPosition(position());
+        connect(this, &GameItem::positionChanged, m_lightSource, &LightSource::setPosition);
+    }
+}
 
 QString GameItem::interactionString() const
 {

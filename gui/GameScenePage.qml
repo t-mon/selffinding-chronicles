@@ -11,6 +11,7 @@ import "components"
 import "gameitems"
 import "gameoverlays"
 import "physics"
+import "mapeditor/components/"
 
 GamePage {
     id: root
@@ -55,16 +56,24 @@ GamePage {
         anchors.fill: parent
         physicsWorld: physicsWorld
         mapScene: Game.engine.mapScene
-        scrollBarsEnabled: false
 
+        // Ambient contols
+        ambientBrightness: debugControls.ambientBrightness
+        ambientLightColor: debugControls.ambientLightColor
+
+        // Appearance controls
+        scrollBarsEnabled: false
         itemDebugEnabled: debugControls.itemDebugEnabled
         physicsDebugEnabled: debugControls.physicsDebugEnabled
+
+        // Weather controls
         rainingEnabled: debugControls.rainingEnabled
         snowingEnabled: debugControls.snowingEnabled
         turbulenceEnabled: debugControls.turbulenceEnabled
 
+        // Shader controls
         stonedEnabled: debugControls.stonedEnabled
-        grayscaleEnabled: debugControls.grayscaleEnabled
+        grayscaleFactor: debugControls.grayscaleFactor
 
         property bool gameOverlayVisible: true
 
@@ -271,130 +280,6 @@ GamePage {
     }
 
     // ##################################################################################
-    // Shader effects
-    // ##################################################################################
-
-//    ShaderEffectSource {
-//        id: shaderEffectSource
-//        width: worldItem.width > gameScene.width ? gameScene.width : worldItem.width
-//        height: worldItem.height > gameScene.height ? gameScene.height : worldItem.height
-//        anchors.centerIn: parent
-//        sourceItem: worldFlickable
-//    }
-
-//    ShaderEffect {
-//        id: magicShader
-//        visible: debugControls.magicEnabled
-//        anchors.fill: source
-//        blending: false
-
-//        property var source: shaderEffectSource
-//        property real blueChannel: 0.8
-
-//        fragmentShader: "qrc:shadereffects/fragmentshaders/magic.frag"
-//    }
-
-//    ShaderEffect {
-//        id: grayscaleShader
-//        visible: debugControls.grayscaleEnabled
-//        anchors.fill: source
-
-//        blending: false
-
-//        property var source: shaderEffectSource
-
-//        vertexShader: "qrc:shadereffects/vertexshaders/grayscale.frag"
-//        fragmentShader: "qrc:shadereffects/fragmentshaders/grayscale.frag"
-//    }
-
-//    //    ShaderEffect {
-//    //        id: lightShader
-//    //        visible: debugControls.lightEnabled
-//    //        width: parent.width
-//    //        height: parent.height
-//    //        blending: false
-
-//    //        property var source: shaderEffectSource
-//    //        property point playerScreenPosition: getPlayerScreenPosition()
-//    //        property point playerPosition: Qt.point(playerScreenPosition.x / gameScene.width, playerScreenPosition.y / gameScene.height)
-//    //        property point screenSize: Qt.point(gameScene.width, gameScene.height)
-//    //        property real screenRatio: gameScene.width / gameScene.height
-//    //        property real lightRadius: 10 * (gameScene.width / app.gridSize) / gameScene.width
-
-//    //        fragmentShader: "qrc:shadereffects/fragmentshaders/light.frag"
-//    //    }
-
-//    ShaderEffect {
-//        id: ambientShader
-//        visible: debugControls.lightEnabled
-//        anchors.fill: world
-
-//        blending: false
-
-//        property var world: shaderEffectSource
-//        property var light: ShaderEffectSource {
-//            sourceItem: lightsFlickable
-//            hideSource: true
-//        }
-
-//        property real ambientBrightness: debugControls.ambientBrightness
-//        property real alpha: 0.2
-
-//        fragmentShader: "
-//            varying highp vec2 qt_TexCoord0;
-//            uniform sampler2D world;
-//            uniform sampler2D light;
-
-//            uniform lowp float qt_Opacity;
-
-//            uniform lowp float ambientBrightness;
-//            uniform lowp float alpha;
-
-//            vec3 rgb2hsb(vec3 c);
-//            vec3 hsb2rgb(vec3 c);
-
-//            void main(void) {
-//                lowp vec4 worldTexture = texture2D(world, qt_TexCoord0);
-//                lowp vec4 lightTexture = texture2D(light, qt_TexCoord0);
-
-//                lowp float brightness = ambientBrightness;
-
-//                if (lightTexture.a != 0.0) {
-//                    brightness = mix(ambientBrightness, 1.0, lightTexture.a);
-//                }
-
-//                vec3 hsbWorldColor = rgb2hsb(worldTexture.rgb);
-//                hsbWorldColor.b = hsbWorldColor.b * brightness;
-//                vec3 finalColor = hsb2rgb(hsbWorldColor);
-//                gl_FragColor = vec4(finalColor, worldTexture.a) * qt_Opacity;
-//            }
-
-//            vec3 rgb2hsb(vec3 c) {
-//                vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-//                vec4 p = mix(vec4(c.bg, K.wz),
-//                             vec4(c.gb, K.xy),
-//                             step(c.b, c.g));
-//                vec4 q = mix(vec4(p.xyw, c.r),
-//                             vec4(c.r, p.yzx),
-//                             step(p.x, c.r));
-//                float d = q.x - min(q.w, q.y);
-//                float e = 1.0e-10;
-//                return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)),
-//                            d / (q.x + e),
-//                            q.x);
-//            }
-
-//            vec3 hsb2rgb(vec3 c) {
-//                vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0), 6.0)-3.0)-1.0, 0.0, 1.0 );
-//                rgb = rgb*rgb*(3.0 - 2.0 * rgb);
-//                return c.z * mix(vec3(1.0), rgb, c.y);
-//            }
-//        "
-//    }
-
-
-
-    // ##################################################################################
     // Debug controls on top of the scene item
     // ##################################################################################
 
@@ -402,6 +287,32 @@ GamePage {
         id: debugControls
         anchors.fill: parent
         visible: Game.debugging
+    }
+
+    Popup {
+        id: ambientLightPopup
+        implicitWidth: 300
+        implicitHeight: 400
+        x: root.width - width
+        y: 0
+        opacity: 0.7
+        onAboutToHide: Game.debugging = true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        contentItem: Item {
+            width: ambientLightPopup.width
+            height: ambientLightPopup.height
+
+            ColorPicker {
+                id: backgroundColorPicker
+                anchors.fill: parent
+                onColorChanged: {
+                    debugControls.ambientLightColor = color
+                }
+
+                Component.onCompleted: color = debugControls.ambientLightColor
+            }
+        }
     }
 
     // ##################################################################################

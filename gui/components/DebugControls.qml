@@ -1,7 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.0
-
+import QtQuick.Controls 2.12
 import Chronicles 1.0
 
 Item {
@@ -9,15 +8,23 @@ Item {
 
     property bool itemDebugEnabled: false
     property bool physicsDebugEnabled: false
+
     property bool stonedEnabled: false
-    property bool grayscaleEnabled: false
-    property bool lightEnabled: false
+
+    property real grayscaleFactor: 0.0
+
+    // Ambient
     property real ambientBrightness: 1.0
-    property bool magicEnabled: false
+    property color ambientLightColor: Qt.rgba(0, 0, 0, 0)
+
     property bool flamesEnabled: false
+
+    // Weather controls
     property bool rainingEnabled: false
     property bool snowingEnabled: false
     property bool turbulenceEnabled: false
+
+    onAmbientLightColorChanged: console.log("Ambient light color changed", ambientLightColor)
 
     Flickable {
         width: root.width / 2
@@ -60,20 +67,25 @@ Item {
                 Component.onCompleted: checked = root.stonedEnabled
             }
 
-            SwitchDelegate {
-                width: parent.width
+            RowLayout {
                 height: 40
-                text: qsTr("Grayscale")
-                onCheckedChanged: root.grayscaleEnabled = !root.grayscaleEnabled
-                Component.onCompleted: checked = root.grayscaleEnabled
-            }
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
 
-            SwitchDelegate {
-                width: parent.width
-                height: 40
-                text: qsTr("Light")
-                onCheckedChanged: root.lightEnabled = !root.lightEnabled
-                Component.onCompleted: checked = root.lightEnabled
+                Label {
+                    text: qsTr("Grayscale factor")
+                }
+
+                Slider {
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 1
+                    value: 1.0
+                    onValueChanged: root.grayscaleFactor = value
+                    Component.onCompleted: value = root.grayscaleFactor
+                }
             }
 
             RowLayout {
@@ -97,13 +109,29 @@ Item {
                 }
             }
 
-            SwitchDelegate {
-                width: parent.width
+            RowLayout {
                 height: 40
-                text: qsTr("Magic")
-                onCheckedChanged: root.magicEnabled = !root.magicEnabled
-                Component.onCompleted: checked = root.magicEnabled
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
+
+                Label {
+                    text: qsTr("Ambient color") + " | " + root.ambientLightColor
+                    Layout.fillWidth: true
+                }
+
+                Button {
+                    Layout.preferredHeight: 40
+                    text: qsTr("Pick ambient color")
+                    onClicked: {
+                        Game.debugging = false
+                        ambientLightPopup.open()
+                    }
+                }
             }
+
+
 
             SwitchDelegate {
                 width: parent.width

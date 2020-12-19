@@ -109,6 +109,12 @@ void DataManager::startNewGameTask()
     Character *player = qobject_cast<Character *>(playerGameItem);
     player->setPosition(m_map->playerStartPosition());
 
+    // Create a default light source for testing
+    LightSource *lightSource = new LightSource(player);
+    lightSource->setColor(Qt::blue);
+    lightSource->setSize(QSizeF(20, 20));
+    player->setLightSource(lightSource);
+
     // Add player to characters
     m_map->setPlayer(player);
 
@@ -137,7 +143,13 @@ void DataManager::loadGameTask()
     Character *player = DataLoader::createCharacterObject(playerMap.value("data").toString(), playerMap, position, m_map);
     player->setName(Game::instance()->settings()->playerName());
 
-    // Add player to characters
+    // Create a default light source for testing
+    LightSource *lightSource = new LightSource(player);
+    lightSource->setColor(Qt::blue);
+    lightSource->setSize(QSizeF(20, 20));
+    player->setLightSource(lightSource);
+
+    // Set player to map (add to characters)
     m_map->setPlayer(player);
 
 

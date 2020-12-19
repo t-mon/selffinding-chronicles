@@ -5,6 +5,7 @@
 #include <QPointF>
 
 #include "../gameobject.h"
+#include "../lightsource.h"
 
 class GameItem : public GameObject
 {
@@ -19,8 +20,7 @@ class GameItem : public GameObject
     Q_PROPERTY(bool playerVisible READ playerVisible WRITE setPlayerVisible NOTIFY playerVisibleChanged)
     Q_PROPERTY(bool hidingPlayer READ hidingPlayer NOTIFY hidingPlayerChanged)
     Q_PROPERTY(bool playerOnItem READ playerOnItem WRITE setPlayerOnItem NOTIFY playerOnItemChanged)
-
-    Q_ENUMS(Type)
+    Q_PROPERTY(LightSource *lightSource READ lightSource WRITE setLightSource NOTIFY lightSourceChanged)
 
 public:
     enum Type {
@@ -92,6 +92,9 @@ public:
     Interaction inventoryInteraction() const;
     void setInventoryInteraction(Interaction interaction);
 
+    LightSource *lightSource() const;
+    void setLightSource(LightSource *lightSource);
+
     QString interactionString() const;
 
     virtual void performInteraction() = 0;
@@ -105,6 +108,8 @@ private:
     bool m_hidingPlayer = false;
     bool m_playerOnItem = false;
 
+    LightSource *m_lightSource = nullptr;
+
 protected:
     Interaction m_interaction = InteractionNone;
     Interaction m_inventoryInteraction = InteractionUse;
@@ -117,6 +122,7 @@ signals:
     void playerVisibleChanged(bool playerVisible);
     void hidingPlayerChanged(bool hidingPlayer);
     void playerOnItemChanged(bool playerOnItem);
+    void lightSourceChanged(LightSource *lightSource);
 
     // Interaction signals
     void picked();

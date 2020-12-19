@@ -144,9 +144,6 @@ PhysicsItem {
 
     // TODO: vertices fixture
 
-
-
-
     Image {
         id: itemImage
         anchors.fill: parent
@@ -154,40 +151,15 @@ PhysicsItem {
         opacity: root.itemDebugEnabled ? 0.5 : 1
     }
 
-//    // Default shader
-//    ShaderEffect {
-//        id: shadowShader
-//        width: parent.width
-//        height: parent.height
-//        blending: false
-
-//        fragmentShader: "
-//            uniform lowp float qt_Opacity;
-//            uniform highp vec2 offset;
-//            uniform sampler2D source;
-//            uniform sampler2D shadow;
-//            uniform highp float darkness;
-//            uniform highp vec2 delta;
-
-//            varying highp vec2 qt_TexCoord0;
-
-//            void main() {
-//                lowp vec4 fg = texture2D(source, qt_TexCoord0);
-//                lowp vec4 bg = texture2D(shadow, qt_TexCoord0 + delta);
-//                gl_FragColor = (fg + vec4(0., 0., 0., darkness * bg.a) * (1. - fg.a)) * qt_Opacity;
-//            }
-//        "
-//    }
-
     Glow {
-        id: glowEffect
         source: itemImage
         anchors.fill: itemImage
         radius: 8
         samples: 20
         color: "white"
-        visible: gameItem && gameItem.playerFocus ? true : false
-        opacity: visible ? 1 : 0
+        opacity: gameItem && gameItem.playerFocus ? true : false
+        onVisibleChanged: console.log("Glow changed")
+
         Behavior on opacity { NumberAnimation { duration: 200 } }
     }
 

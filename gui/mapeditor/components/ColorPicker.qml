@@ -44,6 +44,7 @@ Item {
 
         Loader {
             Layout.fillWidth: true
+            Layout.fillHeight: true
             sourceComponent: modeComboBox.currentIndex === 0 ? rgbComponent : (modeComboBox.currentIndex === 1 ? hsvComponent : hslComponent)
 
             Component {

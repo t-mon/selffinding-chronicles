@@ -21,27 +21,16 @@
      id="defs2">
     <linearGradient
        inkscape:collect="always"
-       id="light">
+       id="linearGradient825">
       <stop
-         style="stop-color:#ffeeaa;stop-opacity:1;"
+         style="stop-color:#000000;stop-opacity:1;"
          offset="0"
-         id="stop915" />
+         id="stop821" />
       <stop
-         style="stop-color:#ffeeaa;stop-opacity:0;"
+         style="stop-color:#000000;stop-opacity:0;"
          offset="1"
-         id="stop917" />
+         id="stop823" />
     </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#light"
-       id="radialGradient921"
-       cx="66.145836"
-       cy="230.85416"
-       fx="66.145836"
-       fy="230.85416"
-       r="69.320835"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.85096604,-0.00370218,0.00349851,0.80602717,12.225332,41.849315)" />
     <filter
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
@@ -55,6 +44,17 @@
          stdDeviation="3.9685966"
          id="feGaussianBlur847" />
     </filter>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient825"
+       id="radialGradient827"
+       cx="69.315704"
+       cy="227.67915"
+       fx="69.315704"
+       fy="227.67915"
+       r="75.665331"
+       gradientTransform="matrix(0.87425262,0.00293869,-0.00293519,0.87180564,9.3845506,28.983489)"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -63,9 +63,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.342"
-     inkscape:cx="43.684854"
-     inkscape:cy="121.89462"
+     inkscape:zoom="2.684"
+     inkscape:cx="233.10001"
+     inkscape:cy="254.20601"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -93,9 +93,9 @@
      id="layer1"
      transform="translate(0,-164.70832)">
     <path
-       style="opacity:1;fill:url(#radialGradient921);fill-opacity:1;stroke:none;stroke-width:3.61521268;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.76902173;paint-order:normal;filter:url(#filter845)"
+       style="opacity:1;fill:url(#radialGradient827);fill-opacity:1;stroke:none;stroke-width:3.61521268;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.76902173;paint-order:normal;filter:url(#filter845)"
        id="path815"
-       transform="matrix(0.87375134,0,0,0.86864688,5.1198362,33.047642)"
+       transform="matrix(0.87382209,0,0,0.87452783,5.5762412,31.740024)"
        inkscape:label="#light"
        sodipodi:type="arc"
        sodipodi:cx="69.320839"
@@ -107,9 +107,11 @@
        sodipodi:open="true"
        d="M 135.38462,230.97286 A 66.145836,66.145836 0 0 1 67.14146,293.78908 66.145836,66.145836 0 0 1 3.1835681,226.61472 66.145836,66.145836 0 0 1 69.270018,161.53334 66.145836,66.145836 0 0 1 135.4564,226.5131">
       <desc
-         id="desc925">A radial spotlight</desc>
+         id="desc925"
+         style="fill:url(#radialGradient827);fill-opacity:1">A radial spotlight</desc>
       <title
-         id="title923">Spotlight</title>
+         id="title923"
+         style="fill:url(#radialGradient827);fill-opacity:1">Spotlight</title>
     </path>
   </g>
 </svg>

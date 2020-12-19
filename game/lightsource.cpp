@@ -35,3 +35,17 @@ void LightSource::setColor(const QColor &color)
     m_color = color;
     emit colorChanged(m_color);
 }
+
+bool LightSource::enabled() const
+{
+    return m_enabled;
+}
+
+void LightSource::setEnabled(bool enabled)
+{
+    if (m_enabled == enabled)
+        return;
+
+    m_enabled = enabled;
+    emit enabledChanged(m_enabled);
+}
