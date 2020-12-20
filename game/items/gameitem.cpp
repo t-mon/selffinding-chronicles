@@ -120,16 +120,15 @@ void GameItem::setLightSource(LightSource *lightSource)
     if (m_lightSource == lightSource)
         return;
 
-    if (m_lightSource) {
-        disconnect(this, &GameItem::positionChanged, m_lightSource, &LightSource::setPosition);
-    }
-
     m_lightSource = lightSource;
     emit lightSourceChanged(m_lightSource);
 
     if (m_lightSource) {
         m_lightSource->setPosition(position());
-        connect(this, &GameItem::positionChanged, m_lightSource, &LightSource::setPosition);
+        connect(this, &GameItem::positionChanged, m_lightSource, [this](const QPointF &position){
+            Q_UNUSED(position)
+            m_lightSource->setPosition(QPointF(centerPosition().x() - m_lightSource->size().width() / 2, centerPosition().y() - m_lightSource->size().height() / 2));
+        });
     }
 }
 

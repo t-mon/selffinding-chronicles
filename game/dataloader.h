@@ -65,11 +65,13 @@ public:
     static QList<GameObject *> loadGameObjects(const QVariantList &objectsList, QObject *parent = nullptr);
 
     static void fillGameItemData(GameItem *item, const QVariantMap &description);
+    static void fillGameItemLightData(GameItem *item, const QVariantMap &description);
     static void fillGameObjectData(GameObject *object, const QVariantMap &description);
     static void fillCharacterItemData(Character *character, const QVariantMap &characterMap);
     static void fillLockItemData(LockItem *lockItem, const QVariantMap &lockMap);
     static void fillChestItemData(ChestItem *chestItem, const QVariantMap &chestMap);
     static void fillPassageItemData(PassageItem *passageItem, const QVariantMap &passageMap);
+
 
     // Save
     static QVariantMap gameObjectToVariantMap(GameObject *object);

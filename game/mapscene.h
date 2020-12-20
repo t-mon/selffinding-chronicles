@@ -16,6 +16,7 @@ class MapScene : public QObject
 
     Q_PROPERTY(GameObjectsProxy *activeBackgroundLights READ activeBackgroundLights CONSTANT)
     Q_PROPERTY(GameObjectsProxy *activeObjects READ activeObjects CONSTANT)
+    Q_PROPERTY(GameObjectsProxy *activeLights READ activeLights CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeItems READ activeItems CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeChests READ activeChests CONSTANT)
     Q_PROPERTY(GameItemsProxy *activeEnemies READ activeEnemies CONSTANT)
@@ -33,6 +34,7 @@ public:
 
     GameObjectsProxy *activeBackgroundLights() const;
     GameObjectsProxy *activeObjects() const;
+    GameObjectsProxy *activeLights() const;
     GameItemsProxy *activeItems() const;
     GameItemsProxy *activeChests() const;
     GameItemsProxy *activeCharacters() const;
@@ -50,6 +52,7 @@ private:
 
     GameObjectsProxy *m_activeBackgroundLights = nullptr;
     GameObjectsProxy *m_activeObjects = nullptr;
+    GameObjectsProxy *m_activeLights = nullptr;
     GameItemsProxy *m_activeItems = nullptr;
     GameItemsProxy *m_activeChests = nullptr;
     GameItemsProxy *m_activeEnemies = nullptr;

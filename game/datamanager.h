@@ -58,6 +58,8 @@ private:
     mutable QMutex m_mapMutex;
     QString m_newGameMapPath;
 
+    Character *createDefaultPlayer();
+
     // Set members
     void setState(State state);
     void setSaveGameName(const QString &saveGameName);

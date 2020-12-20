@@ -269,6 +269,7 @@ QDebug operator<<(QDebug debug, GameObject *gameObject)
 {
     debug.nospace() << "GameObject(" << gameObject->name();
     debug.nospace() << ", " << gameObject->position();
+    debug.nospace() << ", " << gameObject->size();
     debug.nospace() << ", " << gameObject->shape();
     debug.nospace() << ", " << gameObject->layer();
     debug.nospace() << ") ";

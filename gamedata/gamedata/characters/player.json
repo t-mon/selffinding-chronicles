@@ -20,6 +20,13 @@
         "vertices": []
     },
 
+    "lightSource": {
+        "color": "#ce6fb2cb",
+        "width": 15,
+        "height": 15,
+        "enabled": true
+    },
+
     "character": {
         "gender": "male",
         "role": "Player",

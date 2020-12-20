@@ -413,13 +413,30 @@ GameItem *DataLoader::loadGameItemFromResourcePath(const QString &resourcePath, 
 {
     // TODO: check cache for faster loading
     QVariantMap itemMap = loadJsonData(resourcePath);
-    return loadGameItem(resourcePath, QPointF(-1, -1), itemMap, parent);
+    GameItem *item = loadGameItem(resourcePath, QPointF(-1, -1), itemMap, parent);
+    return item;
 }
 
 void DataLoader::fillGameItemData(GameItem *item, const QVariantMap &description)
 {
-    // Game object properties
+    // Game item properties
     fillGameObjectData(qobject_cast<GameObject *>(item), description);
+    fillGameItemLightData(item, description);
+}
+
+void DataLoader::fillGameItemLightData(GameItem *item, const QVariantMap &description)
+{
+    if (description.contains("lightSource")) {
+        QVariantMap lightSourceMap = description.value("lightSource").toMap();
+        LightSource *lightSource = new LightSource(item);
+        lightSource->setColor(QColor(lightSourceMap.value("color").toString()));
+        lightSource->setSize(QSizeF(lightSourceMap.value("width").toDouble(), lightSourceMap.value("height").toDouble()));
+        lightSource->setPosition(item->position());
+        lightSource->setEnabled(lightSourceMap.value("enabled").toBool());
+        lightSource->setName("Light source " + lightSource->color().name(QColor::HexArgb) + " " + item->name());
+        lightSource->setLayer(GameObject::LayerItems);
+        item->setLightSource(lightSource);
+    }
 }
 
 void DataLoader::fillGameObjectData(GameObject *object, const QVariantMap &description)
@@ -488,13 +505,13 @@ void DataLoader::fillCharacterItemData(Character *character, const QVariantMap &
         character->setPaths(paths);
 
         // Load current path information
-//        QVariantMap currentPathMap = characterMap.value("currentPath").toMap();
-//        QPointF startPosition = QPointF(currentPathMap.value("startPositionX").toDouble(), currentPathMap.value("startPositionY").toDouble());
-//        character->pathController()->setPath()
+        //        QVariantMap currentPathMap = characterMap.value("currentPath").toMap();
+        //        QPointF startPosition = QPointF(currentPathMap.value("startPositionX").toDouble(), currentPathMap.value("startPositionY").toDouble());
+        //        character->pathController()->setPath()
 
-//        currentPathMap.insert("currentPath", pathController->path()->id());
+        //        currentPathMap.insert("currentPath", pathController->path()->id());
 
-//        currentPathMap.insert("currentPathIndex", pathController->path()->currentIndex());
+        //        currentPathMap.insert("currentPathIndex", pathController->path()->currentIndex());
     }
 }
 

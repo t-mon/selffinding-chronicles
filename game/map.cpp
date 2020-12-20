@@ -12,8 +12,8 @@
 Map::Map(QObject *parent) : QObject(parent)
 {
     m_backgroundLights = new GameObjects(this);
-
     m_objects = new GameObjects(this);
+    m_lights = new GameObjects(this);
     m_items = new GameItems(this);
     m_chests = new GameItems(this);
     m_enemies = new GameItems(this);
@@ -21,12 +21,12 @@ Map::Map(QObject *parent) : QObject(parent)
     m_weatherAreaModel = new WeatherAreaModel(this);
 }
 
-Map::Map(GameObjects *backgroundLights, GameObjects *objects, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
+Map::Map(GameObjects *backgroundLights, GameObjects *objects, GameObjects *lights, GameItems *items, GameItems *enemies, GameItems *characters, QObject *parent) :
     QObject(parent)
 {
     m_backgroundLights = backgroundLights;
-
     m_objects = objects;
+    m_lights = lights;
     m_items = items;
     m_enemies = enemies;
     m_characters = characters;
@@ -125,8 +125,13 @@ void Map::setPlayer(Character *player)
     m_player->setIsPlayer(true);
 
     // Note: add the player always to the character list
-    if (m_player)
+    if (m_player) {
         m_characters->addGameItem(m_player);
+
+        if (m_player->lightSource()) {
+            m_lights->addGameObject(m_player->lightSource());
+        }
+    }
 }
 
 GameObjects *Map::objects() const
@@ -137,6 +142,11 @@ GameObjects *Map::objects() const
 GameObjects *Map::backgroundLights() const
 {
     return m_backgroundLights;
+}
+
+GameObjects *Map::lights() const
+{
+    return m_lights;
 }
 
 GameItems *Map::items() const
@@ -227,24 +237,33 @@ void Map::loadMapVariant(const QVariantMap &mapData)
     qCDebug(dcMap()) << "--> load objects" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     QList<GameObject *> objects = DataLoader::loadGameObjects(mapData.value("objects").toList(), this);
     m_objects->addGameObjectList(objects);
-    foreach (GameObject *object, objects)
+    foreach (GameObject *object, objects) {
         qCDebug(dcMap()) << "        " << object;
-
+    }
 
     // Load items
     qCDebug(dcMap()) << "--> load items" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     QList<GameItem *> items = DataLoader::loadGameItems(mapData.value("items").toList(), this);
     m_items->addGameItemList(items);
-    foreach (GameItem *item, items)
+    foreach (GameItem *item, items) {
         qCDebug(dcMap()) << "        " << item;
+        if (item->lightSource()) {
+            qCDebug(dcMap()) << "        " << qobject_cast<GameObject *>(item->lightSource());
+            m_lights->addGameObject(qobject_cast<GameObject *>(item->lightSource()));
+        }
+    }
 
     // Load chests
     qCDebug(dcMap()) << "--> load chests" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
     QList<GameItem *> chestItems = DataLoader::loadChestItems(mapData.value("chests").toList(), this);
     m_chests->addGameItemList(chestItems);
-    foreach (GameItem *item, chestItems)
+    foreach (GameItem *item, chestItems) {
         qCDebug(dcMap()) << "        " << qobject_cast<ChestItem *>(item);
-
+        if (item->lightSource()) {
+            m_lights->addGameObject(qobject_cast<GameObject *>(item->lightSource()));
+            qCDebug(dcMap()) << "        " << qobject_cast<GameObject *>(item->lightSource());
+        }
+    }
 
     // Load characters
     qCDebug(dcMap()) << "--> load characters" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
@@ -256,6 +275,10 @@ void Map::loadMapVariant(const QVariantMap &mapData)
             characterItem->pathController()->setPath(characterItem->paths().first(), characterItem->position());
         }
         qCDebug(dcMap()) << "        " << qobject_cast<Character *>(item);
+        if (item->lightSource()) {
+            m_lights->addGameObject(qobject_cast<GameObject *>(item->lightSource()));
+            qCDebug(dcMap()) << "        " << qobject_cast<GameObject *>(item->lightSource());
+        }
     }
 
     // Load enemies
@@ -268,14 +291,16 @@ void Map::loadMapVariant(const QVariantMap &mapData)
             characterItem->pathController()->setPath(characterItem->paths().first(), characterItem->position());
         }
         qCDebug(dcMap()) << "        " << qobject_cast<Enemy *>(item);
+        if (item->lightSource()) {
+            m_lights->addGameObject(item->lightSource());
+            qCDebug(dcMap()) << "        " << qobject_cast<GameObject *>(item->lightSource());
+        }
     }
 
     // Create weater areas for the entire map
     qCDebug(dcMap()) << "Initialize weather areas for map size" << m_size;
     m_weatherAreaModel->initializeAreas(m_size);
     qCDebug(dcMap()) << "Weather area total count for world size" << m_size << "Count:" << m_weatherAreaModel->rowCount();
-
-
     qCDebug(dcMap()) << "Map loading finished successfully:" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";
 }
 
@@ -320,6 +345,7 @@ void Map::clear()
     m_chests->clearModel();
     m_characters->clearModel();
     m_enemies->clearModel();
+    m_lights->clearModel();
 
     // Delete all fields
     qDeleteAll(m_mapData);
@@ -339,6 +365,11 @@ QDebug operator<<(QDebug debug, Map *map)
 
     debug.nospace() << "--> Objects:" << Qt::endl;
     foreach (GameObject *object, map->objects()->gameObjects()) {
+        debug.nospace() << "    " << object << Qt::endl;
+    }
+
+    debug.nospace() << "--> Lights:" << Qt::endl;
+    foreach (GameObject *object, map->lights()->gameObjects()) {
         debug.nospace() << "    " << object << Qt::endl;
     }
 

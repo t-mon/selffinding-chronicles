@@ -111,10 +111,10 @@ PhysicsItem {
         }
 
         function onHit() {
-            if (weaponHitAnimation.running)
+            if (character.armed !== Character.ArmedWeapon)
                 return
 
-            if (character.armed !== Character.ArmedWeapon)
+            if (weaponHitAnimation.running)
                 return
 
             console.log("Character", character.name, "hit using weapon", character.weapon.name, character.weapon.damage)
@@ -253,6 +253,7 @@ PhysicsItem {
         Behavior on opacity { NumberAnimation { duration: 200 } }
     }
 
+
     Loader {
         anchors.fill: parent
         active: root.itemDebugEnabled
@@ -279,96 +280,113 @@ PhysicsItem {
         percentage: character ? character.healthPercentage : 0
     }
 
-    Item {
-        id: packedWeaponItem
-        visible: false
+    Loader {
+        id: packedWeaponItemLoader
         width: root.width / 2
         height: width
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? width / 5 : -width / 5) : 0
-        rotation: {
-            if (!character || !character.weapon)
-                return 0
+        sourceComponent: packedWeaponItemComponent
 
-            var rotationAngle = 0
-            if (character.heading === Character.HeadingLeft) {
-                rotationAngle = -130
-            } else {
-                rotationAngle = 130
-            }
+        Component {
+            id: packedWeaponItemComponent
+            Item {
+                id: packedWeaponItem
+                rotation: {
+                    if (!character || !character.weapon)
+                        return 0
 
-            return rotationAngle
-        }
+                    var rotationAngle = 0
+                    if (character.heading === Character.HeadingLeft) {
+                        rotationAngle = -130
+                    } else {
+                        rotationAngle = 130
+                    }
 
-        Loader {
-            anchors.fill: parent
-            active: root.itemDebugEnabled
-            source: "../components/ItemDebugFrame.qml"
-        }
+                    return rotationAngle
+                }
 
-        Image {
-            id: packedWeaponImage
-            anchors.fill: parent
-            mirror: character ? character.heading === Character.HeadingLeft : false
-            source: {
-                if (!character || !character.weapon)
-                    return ""
+                Loader {
+                    anchors.fill: parent
+                    active: root.itemDebugEnabled
+                    source: "../components/ItemDebugFrame.qml"
+                }
 
-                return dataDirectory + character.weapon.imageName
+                Image {
+                    id: packedWeaponImage
+                    anchors.fill: parent
+                    mirror: character ? character.heading === Character.HeadingLeft : false
+                    source: {
+                        if (!character || !character.weapon)
+                            return ""
+
+                        return dataDirectory + character.weapon.imageName
+                    }
+                }
             }
         }
     }
 
-    Item {
-        id: packedFirearmItem
-        visible: false
+    Loader {
+        id: packedFirearmItemLoader
         width: root.width / 2
         height: width
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? width / 4 : -width / 4) : 0
-        rotation: {
-            if (!character || !character.firearm)
-                return 0
+        sourceComponent: packedFirearmItemComponent
 
-            var rotationAngle = 0
-            if (character.heading === Character.HeadingLeft) {
-                rotationAngle = 30
-            } else {
-                rotationAngle = -30
-            }
+        Component {
+            id: packedFirearmItemComponent
+            Item {
+                id: packedFirearmItem
 
-            if (character.firearm.firearmType === FirearmItem.FirearmTypeBow) {
-                if (character.heading === Character.HeadingLeft) {
-                    rotationAngle += 75
-                } else {
-                    rotationAngle -= 75
+                rotation: {
+                    if (!character || !character.firearm)
+                        return 0
+
+                    var rotationAngle = 0
+                    if (character.heading === Character.HeadingLeft) {
+                        rotationAngle = 30
+                    } else {
+                        rotationAngle = -30
+                    }
+
+                    if (character.firearm.firearmType === FirearmItem.FirearmTypeBow) {
+                        if (character.heading === Character.HeadingLeft) {
+                            rotationAngle += 75
+                        } else {
+                            rotationAngle -= 75
+                        }
+                    }
+
+                    return rotationAngle
                 }
-            }
 
-            return rotationAngle
-        }
+                Loader {
+                    anchors.fill: parent
+                    active: root.itemDebugEnabled
+                    source: "../components/ItemDebugFrame.qml"
+                }
 
-        Loader {
-            anchors.fill: parent
-            active: root.itemDebugEnabled
-            source: "../components/ItemDebugFrame.qml"
-        }
+                Image {
+                    id: packedFirearmImage
+                    anchors.fill: parent
+                    mirror: character ? character.heading === Character.HeadingLeft : false
+                    source: {
+                        if (!character || !character.firearm)
+                            return ""
 
-        Image {
-            id: packedFirearmImage
-            anchors.fill: parent
-            mirror: character ? character.heading === Character.HeadingLeft : false
-            source: {
-                if (!character || !character.firearm)
-                    return ""
-
-                return dataDirectory + character.firearm.imageName
+                        return dataDirectory + character.firearm.imageName
+                    }
+                }
             }
         }
     }
+
+
 
     FlameItem {
         id: flameItem
@@ -539,7 +557,7 @@ PhysicsItem {
         antialiasing: app.antialiasing
         active: character ? character.active : false
         fixedRotation: false
-        rotation: root.rotationAngle + weaponItem.rotation
+        rotation: root.rotationAngle + weaponItemLoader.rotation
         enabled: root.hitAttackRunning
         fixtures: [
             Box {
@@ -580,7 +598,6 @@ PhysicsItem {
 
         Component {
             id: weaponItemJointComponent
-
             RevoluteJoint {
                 id: weaponJoint
                 enableMotor: false
@@ -636,82 +653,23 @@ PhysicsItem {
             }
         }
 
-        Item {
-            id: weaponItem
-            visible: character ? character.armed === Character.ArmedWeapon : false
+
+        Loader {
+            id: weaponItemLoader
             width: root.width / 2
             height: width
             x: parent.width / 2
             y: parent.height / 2 - height / 2
-
             rotation: 0
 
-            transform: Rotation {
-                origin.x: -weaponItem.width / 2
-                origin.y: weaponItem.height / 2
-                angle: weaponItem.rotation
-                axis { x: 0; y: 0; z: 1 }
-            }
-
-            SequentialAnimation {
-                id: weaponHitAnimation
-                //onRunningChanged: console.log("Hit animation", running ? "running" : "stopped")
-                PropertyAnimation {
-                    id: weaponHitSwing1Animation
-                    target: weaponItem
-                    property: "rotation"
-                    to: character ? (character.heading === Character.HeadingLeft ? 45 : -45) : 0
-                    duration: 175
-                    easing.type: Easing.OutQuad
-                }
-                ScriptAction { script: { root.hitAttackRunning = true } }
-                PropertyAnimation {
-                    id: weaponHitSwing2Animation
-                    target: weaponItem
-                    property: "rotation"
-                    to: character ? (character.heading === Character.HeadingLeft ? -45 : 45) : 0
-                    duration: 150
-                    easing.type: Easing.InOutQuart
-                }
-                ScriptAction { script: { root.hitAttackRunning = false } }
-                PropertyAnimation {
-                    id: weaponHitSwing3Animation
-                    target: weaponItem
-                    property: "rotation"
-                    to: 0
-                    duration: 175
-                    easing.type: Easing.InQuad
-                }
-            }
-
-            Loader {
-                anchors.fill: parent
-                active: root.itemDebugEnabled
-                source: "../components/ItemDebugFrame.qml"
-            }
-
-            Image {
-                id: weaponImage
-                anchors.fill: parent
-                rotation: 90
-                mirror: character ? character.heading === Character.HeadingLeft : false
-                source: {
-                    if (!character)
-                        return ""
-
-                    if (!character.weapon)
-                        return ""
-
-                    return dataDirectory + character.weapon.imageName
-                }
-            }
-
+            sourceComponent: weaponItemComponent
+            onStateChanged: console.log("Weapon state changed", state)
             states: [
                 State {
                     name: "noWeapon"
                     when: character && !character.weapon
-                    PropertyChanges { target: weaponItem; visible: false }
-                    PropertyChanges { target: packedWeaponItem; visible: false }
+                    PropertyChanges { target: weaponItemLoader; active: false }
+                    PropertyChanges { target: packedWeaponItemLoader; active: false }
                     StateChangeScript {
                         script: {
                             console.log("Character", character.name, "holding no weapon")
@@ -721,8 +679,8 @@ PhysicsItem {
                 State {
                     name: "holdingWeapon"
                     when: character && character.weapon && character.armed === Character.ArmedWeapon
-                    PropertyChanges { target: weaponItem; visible: true }
-                    PropertyChanges { target: packedWeaponItem; visible: false }
+                    PropertyChanges { target: weaponItemLoader; active: true }
+                    PropertyChanges { target: packedWeaponItemLoader; active: false }
                     StateChangeScript {
                         script: {
                             console.log("Character", character.name, "holding weapon")
@@ -732,8 +690,8 @@ PhysicsItem {
                 State {
                     name: "packedWeapon"
                     when: character && character.weapon && character.armed !== Character.ArmedWeapon
-                    PropertyChanges { target: weaponItem; visible: false }
-                    PropertyChanges { target: packedWeaponItem; visible: true }
+                    PropertyChanges { target: weaponItemLoader; active: false }
+                    PropertyChanges { target: packedWeaponItemLoader; active: true }
                     StateChangeScript {
                         script: {
                             console.log("Character", character.name, "packed weapon")
@@ -741,52 +699,91 @@ PhysicsItem {
                     }
                 }
             ]
+
+            SequentialAnimation {
+                id: weaponHitAnimation
+                //onRunningChanged: console.log("Hit animation", running ? "running" : "stopped")
+                PropertyAnimation {
+                    id: weaponHitSwing1Animation
+                    target: weaponItemLoader.item
+                    property: "rotation"
+                    to: character ? (character.heading === Character.HeadingLeft ? 45 : -45) : 0
+                    duration: 175
+                    easing.type: Easing.OutQuad
+                }
+                ScriptAction { script: { root.hitAttackRunning = true } }
+                PropertyAnimation {
+                    id: weaponHitSwing2Animation
+                    target: weaponItemLoader.item
+                    property: "rotation"
+                    to: character ? (character.heading === Character.HeadingLeft ? -45 : 45) : 0
+                    duration: 150
+                    easing.type: Easing.InOutQuart
+                }
+                ScriptAction { script: { root.hitAttackRunning = false } }
+                PropertyAnimation {
+                    id: weaponHitSwing3Animation
+                    target: weaponItemLoader.item
+                    property: "rotation"
+                    to: 0
+                    duration: 175
+                    easing.type: Easing.InQuad
+                }
+            }
+
+
+            Component {
+                id: weaponItemComponent
+                Item {
+                    id: weaponItem
+                    //visible: character ? character.armed === Character.ArmedWeapon : false
+                    transform: Rotation {
+                        origin.x: -weaponItem.width / 2
+                        origin.y: weaponItem.height / 2
+                        angle: weaponItem.rotation
+                        axis { x: 0; y: 0; z: 1 }
+                    }
+
+                    Loader {
+                        anchors.fill: parent
+                        active: root.itemDebugEnabled
+                        source: "../components/ItemDebugFrame.qml"
+                    }
+
+                    Image {
+                        id: weaponImage
+                        anchors.fill: parent
+                        rotation: 90
+                        mirror: character ? character.heading === Character.HeadingLeft : false
+                        source: {
+                            if (!character)
+                                return ""
+
+                            if (!character.weapon)
+                                return ""
+
+                            return dataDirectory + character.weapon.imageName
+                        }
+                    }
+                }
+            }
         }
 
-        Item {
-            id: firearmItem
-            visible: false
+        Loader {
+            id: firearmItemLoader
             width: root.width / 2
             height: width
             x: parent.width / 2
             y: parent.height / 2 - height / 2
 
-            rotation: 0
-
-            transform: Rotation {
-                origin.x: -firearmItem.width / 2
-                origin.y: firearmItem.height / 2
-                angle: firearmItem.rotation
-                axis { x: 0; y: 0; z: 1 }
-            }
-
-            Loader {
-                anchors.fill: parent
-                active: root.itemDebugEnabled
-                source: "../components/ItemDebugFrame.qml"
-            }
-
-            Image {
-                id: firearmImage
-                anchors.fill: parent
-                rotation: 90
-                mirror: character ? character.heading === Character.HeadingLeft : false
-                source: {
-                    if (!character || !character.firearm)
-                        return ""
-
-                    return dataDirectory + character.firearm.imageName
-                }
-            }
-
+            sourceComponent: firearmComponent
             onStateChanged: console.log("Firearm weapon state changed", state)
-
             states: [
                 State {
                     name: "noFirearm"
                     when: character && !character.firearm
-                    PropertyChanges { target: firearmItem; visible: false }
-                    PropertyChanges { target: packedFirearmItem; visible: false }
+                    PropertyChanges { target: firearmItemLoader; active: false }
+                    PropertyChanges { target: packedFirearmItemLoader; active: false }
                     StateChangeScript {
                         script: {
                             console.log("Character", character.name, "holding no firearm")
@@ -796,8 +793,8 @@ PhysicsItem {
                 State {
                     name: "holdingFirearm"
                     when: character && character.firearm && character.armed === Character.ArmedFirearm
-                    PropertyChanges { target: firearmItem; visible: true }
-                    PropertyChanges { target: packedFirearmItem; visible: false }
+                    PropertyChanges { target: firearmItemLoader; active: true }
+                    PropertyChanges { target: packedFirearmItemLoader; active: false }
                     StateChangeScript {
                         script: {
                             console.log("Character", character.name, "holding firearm")
@@ -807,8 +804,8 @@ PhysicsItem {
                 State {
                     name: "packedFirearm"
                     when: character && character.firearm && character.armed !== Character.ArmedFirearm
-                    PropertyChanges { target: firearmItem; visible: false }
-                    PropertyChanges { target: packedFirearmItem; visible: true }
+                    PropertyChanges { target: firearmItemLoader; active: false }
+                    PropertyChanges { target: packedFirearmItemLoader; active: true }
                     StateChangeScript {
                         script: {
                             console.log("Character", character.name, "packed firearm")
@@ -816,6 +813,39 @@ PhysicsItem {
                     }
                 }
             ]
+
+            Component {
+                id: firearmComponent
+                Item {
+                    id: firearmItem
+                    rotation: 0
+                    transform: Rotation {
+                        origin.x: -firearmItem.width / 2
+                        origin.y: firearmItem.height / 2
+                        angle: firearmItem.rotation
+                        axis { x: 0; y: 0; z: root.z + 1 }
+                    }
+
+                    Loader {
+                        anchors.fill: parent
+                        active: root.itemDebugEnabled
+                        source: "../components/ItemDebugFrame.qml"
+                    }
+
+                    Image {
+                        id: firearmImage
+                        anchors.fill: parent
+                        rotation: 90
+                        mirror: character ? character.heading === Character.HeadingLeft : false
+                        source: {
+                            if (!character || !character.firearm)
+                                return ""
+
+                            return dataDirectory + character.firearm.imageName
+                        }
+                    }
+                }
+            }
         }
     }
 

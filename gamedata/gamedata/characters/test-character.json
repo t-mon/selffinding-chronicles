@@ -20,6 +20,13 @@
         "vertices": []
     },
 
+    "lightSource": {
+        "color": "#ce6fb2cb",
+        "width": 10,
+        "height": 10,
+        "enabled": true
+    },
+
     "character": {
         "gender": "male",
         "role": "Friend",

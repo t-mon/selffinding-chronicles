@@ -10,6 +10,9 @@ MapScene::MapScene(QObject *parent) : QObject(parent)
     m_activeObjects = new GameObjectsProxy(this);
     m_activeObjects->setViewFilter(m_viewWindow);
 
+    m_activeLights = new GameObjectsProxy(this);
+    m_activeLights->setViewFilter(m_viewWindow);
+
     m_activeItems = new GameItemsProxy(this);
     m_activeItems->setViewFilter(m_viewWindow);
 
@@ -27,6 +30,7 @@ MapScene::MapScene(QObject *parent) : QObject(parent)
 
     connect(m_activeBackgroundLights, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
     connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
+    connect(m_activeLights, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
     connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
     connect(m_activeChests, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
     connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
@@ -57,8 +61,9 @@ void MapScene::setMap(Map *map)
             setViewWindow(QRectF(initialViewWindowPosition, initialViewWindowSize));
         }
 
-        m_activeBackgroundLights->setGameObjects(m_map->backgroundLights());
         m_activeObjects->setGameObjects(m_map->objects());
+        m_activeBackgroundLights->setGameObjects(m_map->backgroundLights());
+        m_activeLights->setGameObjects(m_map->lights());
         m_activeItems->setGameItems(m_map->items());
         m_activeChests->setGameItems(m_map->chests());
         m_activeCharacters->setGameItems(m_map->characters());
@@ -73,6 +78,9 @@ void MapScene::setMap(Map *map)
 
         m_activeObjects->setGameObjects(nullptr);
         m_activeObjects->resetFilter();
+
+        m_activeLights->setGameObjects(nullptr);
+        m_activeLights->resetFilter();
 
         m_activeItems->setGameItems(nullptr);
         m_activeItems->resetFilter();
@@ -121,6 +129,11 @@ GameObjectsProxy *MapScene::activeObjects() const
     return m_activeObjects;
 }
 
+GameObjectsProxy *MapScene::activeLights() const
+{
+    return m_activeLights;
+}
+
 GameItemsProxy *MapScene::activeItems() const
 {
     return m_activeItems;
@@ -150,6 +163,7 @@ void MapScene::evaluateProxies()
 {
     m_activeBackgroundLights->setViewFilter(m_viewWindow);
     m_activeObjects->setViewFilter(m_viewWindow);
+    m_activeLights->setViewFilter(m_viewWindow);
     m_activeItems->setViewFilter(m_viewWindow);
     m_activeChests->setViewFilter(m_viewWindow);
     m_activeEnemies->setViewFilter(m_viewWindow);

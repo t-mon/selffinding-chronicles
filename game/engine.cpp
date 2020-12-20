@@ -17,6 +17,7 @@ Engine::Engine(QObject *parent) :
     m_mapScene = new MapScene(this);
 
     connect(m_mapScene->activeObjects(), &GameObjectsProxy::gameObjectActiveChanged, this, &Engine::onGameObjectActiveChanged);
+    connect(m_mapScene->activeLights(), &GameObjectsProxy::gameObjectActiveChanged, this, &Engine::onGameObjectActiveChanged);
     connect(m_mapScene->activeItems(), &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_mapScene->activeChests(), &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);
     connect(m_mapScene->activeEnemies(), &GameItemsProxy::gameItemActiveChanged, this, &Engine::onGameItemActiveChanged);

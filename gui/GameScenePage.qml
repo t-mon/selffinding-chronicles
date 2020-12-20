@@ -315,6 +315,36 @@ GamePage {
         }
     }
 
+    Popup {
+        id: playerLightPopup
+        implicitWidth: 300
+        implicitHeight: 400
+        x: root.width - width
+        y: 0
+        opacity: 0.7
+        onAboutToHide: Game.debugging = true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        contentItem: Item {
+            width: playerLightPopup.width
+            height: playerLightPopup.height
+
+            ColorPicker {
+                anchors.fill: parent
+                onColorChanged: {
+                    debugControls.playerLightColor = color
+                    if (gameScene.playerItem) {
+                        gameScene.playerItem.character.lightSource.color = debugControls.playerLightColor
+                    }
+                }
+
+                Component.onCompleted: {
+                    color = (gameScene.playerItem && gameScene.playerItem.character ? gameScene.playerItem.character.lightSource.color : "transparent")
+                }
+            }
+        }
+    }
+
     // ##################################################################################
     // Functions
     // ##################################################################################

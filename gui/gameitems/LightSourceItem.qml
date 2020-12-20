@@ -8,78 +8,40 @@ import Chronicles 1.0
 Item {
     id: root
 
-    property LightSource lightSource: null
+    property LightSource lightSource
     property bool itemDebugEnabled: false
 
-    antialiasing: true
-
-    //    ShaderEffect {
-    //        id: lightShader
-    //        anchors.fill: parent
-
-    //        property color lightColor: "red" //lightSource ? lightSource.color : "blue"
-    //        blending: false
-
-    //        fragmentShader: "
-    //            varying highp vec2 qt_TexCoord0;
-    //            uniform lowp float qt_Opacity;
-    //            lowp vec4 lightColor;
-
-    //            void main(void) {
-    //                highp vec2 center = vec2(0.5);
-    //                highp float radius = 0.4;
-    //                highp float distance = distance(qt_TexCoord0, center);
-    //                highp vec4 finalColor = vec4(lightColor.rgb, 1.0);
-    //                if (distance <= radius) {
-    //                    finalColor.a = 1.0;// - smoothstep(0.0, radius, distance);;
-    //                } else {
-    //                    finalColor.a = 0.0;
-    //                }
-    //                gl_FragColor = finalColor * qt_Opacity;
-    //            }
-    //        "
-    //    }
-
-    //    z: GameObject.LayerBackground
-    //    //opacity: 0.8
-
-//    Image {
-//        id: lightSourceImage
-//        anchors.fill: parent
-//        fillMode: Image.Stretch
-//        source: {
-//            var sourcePath = dataDirectory + "/lights/spotlight.svg"
-//            if (!root.light)
-//                return sourcePath
-
-//            switch (light.lightType) {
-//            case LightSource.LightTypeSpotlight:
-//                sourcePath = dataDirectory + "/lights/spotlight.svg"
-//                break;
-//            }
-
-//            return sourcePath
-//        }
-//    }
-
-//    ColorOverlay {
-//        id: colorizedLight
-//        anchors.fill: parent
-//        source: lightSourceImage
-//        color: root.light ? lightSource.color : "transparent"
-//    }
-
-//    Rectangle {
-//        anchors.fill: parent
-//        radius: height / 2
-//        color: lightSource.color
-//    }
+    antialiasing: app.antialiasing
 
     RadialGradient {
-        anchors.fill: parent
+        id: lightGradient
+        width: parent.width
+        height: parent.height
+        anchors.centerIn: parent
         gradient: Gradient {
-            GradientStop { position: 0.0; color: lightSource.color }
+            GradientStop { position: 0.0; color: root.lightSource ? root.lightSource.color : "transparent" }
+            GradientStop { position: 0.1; color: root.lightSource ? root.lightSource.color : "transparent" }
             GradientStop { position: 0.5; color:  "transparent" }
+        }
+
+        SequentialAnimation {
+            running: true
+            loops: SequentialAnimation.Infinite
+            ScaleAnimator {
+                target: lightGradient;
+                from: 1;
+                to: 0.9;
+                easing.type: Easing.OutQuad
+                duration: 800
+            }
+
+            ScaleAnimator {
+                target: lightGradient;
+                from: 0.9;
+                to: 1;
+                easing.type: Easing.InQuad
+                duration: 1000
+            }
         }
     }
 

@@ -105,6 +105,33 @@ void GameItems::addGameItem(GameItem *item)
 
     beginInsertRows(QModelIndex(), m_gameItems.count(), m_gameItems.count());
     m_gameItems.append(item);
+
+//    // Connect only properties used in the repeater
+//    connect(item, &GameItem::nameChanged, this, [this, item]() {
+//        QModelIndex idx = index(m_gameItems.indexOf(item), 0);
+//        emit dataChanged(idx, idx, {NameRole});
+//    });
+
+//    connect(item, &GameItem::positionChanged, this, [this, item]() {
+//        QModelIndex idx = index(m_gameItems.indexOf(item), 0);
+//        emit dataChanged(idx, idx, {PositionRole});
+//    });
+
+//    connect(item, &GameItem::sizeChanged, this, [this, item]() {
+//        QModelIndex idx = index(m_gameItems.indexOf(item), 0);
+//        emit dataChanged(idx, idx, {SizeRole});
+//    });
+
+//    connect(item, &GameItem::centerPosition, this, [this, item]() {
+//        QModelIndex idx = index(m_gameItems.indexOf(item), 0);
+//        emit dataChanged(idx, idx, {CenterPositionRole});
+//    });
+
+//    connect(item, &GameItem::layerChanged, this, [this, item]() {
+//        QModelIndex idx = index(m_gameItems.indexOf(item), 0);
+//        emit dataChanged(idx, idx, {LayerRole});
+//    });
+
     endInsertRows();
 
     emit countChanged(m_gameItems.count());

@@ -113,19 +113,19 @@ Item {
             width: mapScene.map.size.width * app.gridSize
             height: mapScene.map.size.height * app.gridSize
 
-            Repeater {
-                id: backgroundLightsRepeater
-                model: mapScene.activeBackgroundLights
-                delegate: LightSourceItem {
-                    id: lightSource
-                    lightSource: Game.castLightSourceObject(mapScene.activeBackgroundLights.get(model.index))
-                    itemDebugEnabled: root.itemDebugEnabled
-                    width: model.size.width * app.gridSize
-                    height: model.size.height * app.gridSize
-                    x: model.position.x * app.gridSize
-                    y: model.position.y * app.gridSize
-                }
-            }
+            //            Repeater {
+            //                id: backgroundLightsRepeater
+            //                model: mapScene.activeBackgroundLights
+            //                delegate: LightSourceItem {
+            //                    id: lightSource
+            //                    lightSource: Game.castLightSourceObject(mapScene.activeBackgroundLights.get(model.index))
+            //                    itemDebugEnabled: root.itemDebugEnabled
+            //                    width: model.size.width * app.gridSize
+            //                    height: model.size.height * app.gridSize
+            //                    x: model.position.x * app.gridSize
+            //                    y: model.position.y * app.gridSize
+            //                }
+            //            }
 
             Repeater {
                 id: gameObjectRepeater
@@ -257,15 +257,24 @@ Item {
         enabled: false
         visible: false
 
-        // Test player light source
-        LightSourceItem {
-            id: playerLight
-            lightSource: playerItem ? playerItem.character.lightSource : null
-            property point playerWorldPosition: getPlayerWorldPosition()
-            x: playerWorldPosition.x - width / 2
-            y: playerWorldPosition.y - height / 2
-            width: 15 * app.gridSize
-            height: width
+        Item {
+            id: lightFlickableContent
+            anchors.centerIn: parent
+            width: worldItem.width
+            height: worldItem.height
+
+            Repeater {
+                id: lightsRepeater
+                model: mapScene.activeLights
+                delegate: LightSourceItem {
+                    lightSource: mapScene.activeLights.get(model.index)
+                    itemDebugEnabled: root.itemDebugEnabled
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
+                }
+            }
         }
     }
 
@@ -296,8 +305,8 @@ Item {
         }
 
         lightsShaderEffectSource: ShaderEffectSource {
-            width: worldFlickable.width
-            height: worldFlickable.height
+            width: lightsFlickable.width
+            height: lightsFlickable.height
             hideSource: true
             sourceItem: lightsFlickable
         }
@@ -308,13 +317,13 @@ Item {
         id: physicsDebugDrawLoader
         width: worldFlickable.width
         height: worldFlickable.height
-        anchors.centerIn: parent
+        anchors.fill: worldFlickable
         active: root.physicsDebugEnabled
         sourceComponent: debugDrawComponent
+
         Component {
             id: debugDrawComponent
             Flickable {
-                anchors.fill: worldFlickable
                 contentWidth: worldFlickable.contentWidth
                 contentHeight: worldFlickable.contentHeight
                 contentX: worldFlickable.contentX

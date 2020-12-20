@@ -66,6 +66,15 @@ void DataManager::createItem(const QString &resourcePath, const QPointF &positio
     }
 }
 
+Character *DataManager::createDefaultPlayer()
+{
+    qCDebug(dcDataManager()) << "Create default player";
+    GameItem *playerGameItem = DataLoader::loadGameItemFromResourcePath(":/gamedata/characters/player.json", m_map);
+    Character *player = qobject_cast<Character *>(playerGameItem);
+    player->setPosition(m_map->playerStartPosition());
+    return player;
+}
+
 void DataManager::setState(DataManager::State state)
 {
     if (m_state == state)
@@ -103,20 +112,8 @@ void DataManager::startNewGameTask()
     m_map = new Map(nullptr);
     m_map->loadMap(m_newGameMapPath);
 
-    // Create default player
-    qCDebug(dcDataManager()) << "Create default player";
-    GameItem *playerGameItem = DataLoader::loadGameItemFromResourcePath(":/gamedata/characters/player.json", m_map);
-    Character *player = qobject_cast<Character *>(playerGameItem);
-    player->setPosition(m_map->playerStartPosition());
-
-    // Create a default light source for testing
-    LightSource *lightSource = new LightSource(player);
-    lightSource->setColor(Qt::blue);
-    lightSource->setSize(QSizeF(20, 20));
-    player->setLightSource(lightSource);
-
     // Add player to characters
-    m_map->setPlayer(player);
+    m_map->setPlayer(createDefaultPlayer());
 
     // Push the map back to the main thread
     qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();
@@ -143,15 +140,8 @@ void DataManager::loadGameTask()
     Character *player = DataLoader::createCharacterObject(playerMap.value("data").toString(), playerMap, position, m_map);
     player->setName(Game::instance()->settings()->playerName());
 
-    // Create a default light source for testing
-    LightSource *lightSource = new LightSource(player);
-    lightSource->setColor(Qt::blue);
-    lightSource->setSize(QSizeF(20, 20));
-    player->setLightSource(lightSource);
-
     // Set player to map (add to characters)
     m_map->setPlayer(player);
-
 
     // Push the map back to the main thread
     qCDebug(dcDataManager()) << "Push loaded map back to main thread" << QCoreApplication::instance()->thread();

@@ -16,6 +16,7 @@ Item {
     // Ambient
     property real ambientBrightness: 1.0
     property color ambientLightColor: Qt.rgba(0, 0, 0, 0)
+    property color playerLightColor: Qt.rgba(0, 0, 0, 0)
 
     property bool flamesEnabled: false
 
@@ -25,6 +26,7 @@ Item {
     property bool turbulenceEnabled: false
 
     onAmbientLightColorChanged: console.log("Ambient light color changed", ambientLightColor)
+    onPlayerLightColorChanged: console.log("Player light color changed", playerLightColor)
 
     Flickable {
         width: root.width / 2
@@ -123,6 +125,7 @@ Item {
 
                 Button {
                     Layout.preferredHeight: 40
+                    Layout.fillWidth: true
                     text: qsTr("Pick ambient color")
                     onClicked: {
                         Game.debugging = false
@@ -132,6 +135,28 @@ Item {
             }
 
 
+            RowLayout {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
+
+                Label {
+                    text: qsTr("Player light color") + " | " + root.playerLightColor
+                    Layout.fillWidth: true
+                }
+
+                Button {
+                    Layout.preferredHeight: 40
+                    Layout.fillWidth: true
+                    text: qsTr("Pick player light color")
+                    onClicked: {
+                        Game.debugging = false
+                        playerLightPopup.open()
+                    }
+                }
+            }
 
             SwitchDelegate {
                 width: parent.width
