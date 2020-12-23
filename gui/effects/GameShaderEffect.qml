@@ -27,7 +27,7 @@ ShaderEffect {
     property real frequency: 8
     property real time: 0
 
-    vertexShader: "qrc:shadereffects/vertexshaders/gamescene.frag"
+    vertexShader: "qrc:shadereffects/vertexshaders/gamescene.vert"
     fragmentShader: "qrc:shadereffects/fragmentshaders/gamescene.frag"
 
     onStonedEffectEnabledChanged: {

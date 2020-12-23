@@ -100,9 +100,19 @@ void Game::keyReleased(const Qt::Key &key, bool autoRepeat)
     m_engine->playerController()->keyReleased(key);
 }
 
+int Game::generateRandomNumber(int lowest, int highest)
+{
+    return QRandomGenerator::global()->bounded(lowest, highest);
+}
+
 LightSource *Game::castLightSourceObject(GameObject *object)
 {
     return qobject_cast<LightSource *>(object);
+}
+
+FireItem *Game::castFireItem(GameItem *item)
+{
+    return qobject_cast<FireItem *>(item);
 }
 
 WeaponItem *Game::castWeaponItem(GameItem *item)

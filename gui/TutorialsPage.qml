@@ -31,6 +31,10 @@ GamePage {
             name: "Chest"
             mapPath: ":/maps/test-chest.json"
         }
+        ListElement {
+            name: "Fire"
+            mapPath: ":/maps/test-fire.json"
+        }
     }
 
 

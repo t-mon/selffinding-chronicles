@@ -1,0 +1,39 @@
+{
+    "name": "Torch",
+    "type": "fire",
+    "imageName": "/images/items/fires/torch.png",
+    "geometry": {
+        "width": 2,
+        "height": 2,
+        "layer": "items"
+    },
+
+    "physicsGeometry": {
+        "body": "dynamic",
+        "shape": "rectangle",
+        "width": 0.3,
+        "height": 2,
+        "x": 0.85,
+        "y": 0,
+        "category": 4,
+        "collision": 32,
+        "vertices": []
+    },
+
+    "lightSource": {
+        "offsetX": -0.1,
+        "offsetY": -1.1,
+        "color": "#ce6fb2cb",
+        "width": 10,
+        "height": 10
+    },
+
+    "fire": {
+        "offsetX": -0.1,
+        "offsetY": -1.1,
+        "burning": false,
+        "angle": 270,
+        "angleVariation": 22,
+        "magnitude": 20
+    }
+}

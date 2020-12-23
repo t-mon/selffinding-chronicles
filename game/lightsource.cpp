@@ -8,6 +8,20 @@ LightSource::LightSource(QObject *parent) :
 
 }
 
+QPointF LightSource::offset() const
+{
+    return m_offset;
+}
+
+void LightSource::setOffset(const QPointF &offset)
+{
+    if (m_offset == offset)
+        return;
+
+    m_offset = offset;
+    emit offsetChanged(m_offset);
+}
+
 LightSource::LightType LightSource::lightType() const
 {
     return m_lightType;
@@ -20,6 +34,20 @@ void LightSource::setLightType(LightSource::LightType lightType)
 
     m_lightType = lightType;
     emit lightTypeChanged(m_lightType);
+}
+
+LightSource::LightBehaviour LightSource::lightBehaviour() const
+{
+    return m_lightBehaviour;
+}
+
+void LightSource::setLightBehaviour(LightSource::LightBehaviour lightBehaviour)
+{
+    if (m_lightBehaviour == lightBehaviour)
+        return;
+
+    m_lightBehaviour = lightBehaviour;
+    emit lightBehaviourChanged(m_lightBehaviour);
 }
 
 QColor LightSource::color() const
@@ -36,16 +64,17 @@ void LightSource::setColor(const QColor &color)
     emit colorChanged(m_color);
 }
 
-bool LightSource::enabled() const
+bool LightSource::lightEnabled() const
 {
-    return m_enabled;
+    return m_lightEnabled;
 }
 
-void LightSource::setEnabled(bool enabled)
+void LightSource::setLightEnabled(bool lightEnabled)
 {
-    if (m_enabled == enabled)
+    if (m_lightEnabled == lightEnabled)
         return;
 
-    m_enabled = enabled;
-    emit enabledChanged(m_enabled);
+    qCDebug(dcGameObject()) << "Light" << name() << (lightEnabled ? "enabled" : "disabled");
+    m_lightEnabled = lightEnabled;
+    emit lightEnabledChanged(m_lightEnabled);
 }

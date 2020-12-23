@@ -8,6 +8,8 @@
 #include <QQmlEngine>
 #include <QElapsedTimer>
 
+#include <QRandomGenerator>
+
 #include "engine.h"
 #include "gamesettings.h"
 #include "gamemapeditor.h"
@@ -51,8 +53,12 @@ public:
     Q_INVOKABLE void keyPressed(const Qt::Key &key, bool autoRepeat);
     Q_INVOKABLE void keyReleased(const Qt::Key &key, bool autoRepeat);
 
+    Q_INVOKABLE int generateRandomNumber(int lowest, int highest);
+
+
     // Cast methods
     Q_INVOKABLE LightSource *castLightSourceObject(GameObject *object);
+    Q_INVOKABLE FireItem *castFireItem(GameItem *item);
     Q_INVOKABLE WeaponItem *castWeaponItem(GameItem *item);
     Q_INVOKABLE FirearmItem *castFirearmItem(GameItem *item);
     Q_INVOKABLE PlantItem *castPlantItem(GameItem *item);

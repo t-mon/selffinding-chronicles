@@ -45,5 +45,7 @@
         <file>gamedata/items/doors/door-2.json</file>
         <file>maps/test-chest.json</file>
         <file>lights/spotlight.svg</file>
+        <file>gamedata/items/fires/torch.json</file>
+        <file>maps/test-fire.json</file>
     </qresource>
 </RCC>

@@ -182,7 +182,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<Enemy>("Chronicles", 1, 0, "Enemy", "Can't create this in QML.");
 
     qmlRegisterUncreatableType<LockItem>("Chronicles", 1, 0, "LockItem", "Can't create this in QML.");
-    qmlRegisterUncreatableType<LightSource>("Chronicles", 1, 0, "LightSource", "Can't create this in QML.");
+    qmlRegisterUncreatableType<FireItem>("Chronicles", 1, 0, "FireItem", "Can't create this in QML.");
+    qmlRegisterType<LightSource>("Chronicles", 1, 0, "LightSource");
 
     // Weather areas
     qmlRegisterType<WeatherAreaProxy>("Chronicles", 1, 0, "WeatherAreaProxy");

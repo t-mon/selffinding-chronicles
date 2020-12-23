@@ -854,6 +854,8 @@ void Engine::onPrimaryActionPressedChanged(bool pressed)
         }
         default:
             qCWarning(dcEngine()) << "Unhandled action on item" << m_playerFocusItem;
+            qCDebug(dcEngine()) << "Perform interaction" << m_playerFocusItem->interaction() << m_playerFocusItem;
+            m_playerFocusItem->performInteraction();
             break;
         }
     }

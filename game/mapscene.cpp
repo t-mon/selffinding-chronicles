@@ -31,6 +31,7 @@ MapScene::MapScene(QObject *parent) : QObject(parent)
     connect(m_activeBackgroundLights, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
     connect(m_activeObjects, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
     connect(m_activeLights, &GameObjectsProxy::gameObjectActiveChanged, this, &MapScene::onGameObjectActiveChanged);
+
     connect(m_activeItems, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
     connect(m_activeChests, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
     connect(m_activeEnemies, &GameItemsProxy::gameItemActiveChanged, this, &MapScene::onGameItemActiveChanged);
@@ -157,6 +158,18 @@ GameItemsProxy *MapScene::activeEnemies() const
 WeatherAreaProxy *MapScene::activeWeatherAreas() const
 {
     return m_activeWeatherAreas;
+}
+
+void MapScene::registerTemporaryLightSource(LightSource *lightSource)
+{
+    qCDebug(dcMapScene()) << "Register temporary light source";
+    m_activeLights->gameObjects()->addGameObject(lightSource);
+}
+
+void MapScene::unregisterTemporaryLightSource(LightSource *lightSource)
+{
+    qCDebug(dcMapScene()) << "Unregister temporary light source";
+    m_activeLights->gameObjects()->removeGameObject(lightSource);
 }
 
 void MapScene::evaluateProxies()

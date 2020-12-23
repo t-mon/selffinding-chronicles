@@ -113,19 +113,19 @@ Item {
             width: mapScene.map.size.width * app.gridSize
             height: mapScene.map.size.height * app.gridSize
 
-            //            Repeater {
-            //                id: backgroundLightsRepeater
-            //                model: mapScene.activeBackgroundLights
-            //                delegate: LightSourceItem {
-            //                    id: lightSource
-            //                    lightSource: Game.castLightSourceObject(mapScene.activeBackgroundLights.get(model.index))
-            //                    itemDebugEnabled: root.itemDebugEnabled
-            //                    width: model.size.width * app.gridSize
-            //                    height: model.size.height * app.gridSize
-            //                    x: model.position.x * app.gridSize
-            //                    y: model.position.y * app.gridSize
-            //                }
-            //            }
+            Repeater {
+                id: backgroundLightsRepeater
+                model: mapScene.activeBackgroundLights
+                delegate: LightSourceItem {
+                    id: lightSource
+                    lightSource: Game.castLightSourceObject(mapScene.activeBackgroundLights.get(model.index))
+                    itemDebugEnabled: root.itemDebugEnabled
+                    width: model.size.width * app.gridSize
+                    height: model.size.height * app.gridSize
+                    x: model.position.x * app.gridSize
+                    y: model.position.y * app.gridSize
+                }
+            }
 
             Repeater {
                 id: gameObjectRepeater
@@ -183,6 +183,7 @@ Item {
                 delegate: GameItem {
                     gameItem: mapScene.activeItems.get(model.index)
                     itemDebugEnabled: root.itemDebugEnabled
+                    particleSystem: particles
                     width: model.size.width * app.gridSize
                     height: model.size.height * app.gridSize
                     x: model.position.x * app.gridSize
@@ -312,7 +313,7 @@ Item {
         }
     }
 
-    // Load physics debug only if enabled
+    // Load physics debug only if enabled, on top
     Loader {
         id: physicsDebugDrawLoader
         width: worldFlickable.width
@@ -338,5 +339,4 @@ Item {
             }
         }
     }
-
 }

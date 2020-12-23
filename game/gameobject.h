@@ -16,7 +16,7 @@ class GameObject : public QObject
     Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QPointF centerPosition READ centerPosition NOTIFY positionChanged)
     Q_PROPERTY(double layer READ layer NOTIFY layerChanged)
-    Q_PROPERTY(QSizeF size READ size NOTIFY sizeChanged)
+    Q_PROPERTY(QSizeF size READ size WRITE setSize NOTIFY sizeChanged)
     Q_PROPERTY(bool focusVisible READ focusVisible NOTIFY focusVisibleChanged)
     Q_PROPERTY(bool backgroundObject READ backgroundObject CONSTANT)
     Q_PROPERTY(bool active READ active NOTIFY activeChanged)
@@ -60,7 +60,7 @@ public:
         PhysicsBullet       = 0x0080,
         PhysicsMagic        = 0x0100,
         PhysicsBodyHitbox   = 0x0200,
-        PhysicsCategory11   = 0x0400,
+        PhysicsFire         = 0x0400,
         PhysicsCategory12   = 0x0800,
         PhysicsCategory13   = 0x1000,
         PhysicsCategory14   = 0x2000,

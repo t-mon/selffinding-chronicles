@@ -127,7 +127,7 @@ void GameItem::setLightSource(LightSource *lightSource)
         m_lightSource->setPosition(position());
         connect(this, &GameItem::positionChanged, m_lightSource, [this](const QPointF &position){
             Q_UNUSED(position)
-            m_lightSource->setPosition(QPointF(centerPosition().x() - m_lightSource->size().width() / 2, centerPosition().y() - m_lightSource->size().height() / 2));
+            m_lightSource->setPosition(QPointF(centerPosition().x() - m_lightSource->size().width() / 2 + m_lightSource->offset().x(), centerPosition().y() - m_lightSource->size().height() / 2 + m_lightSource->offset().y()));
         });
     }
 }
@@ -204,6 +204,14 @@ QString GameItem::interactionToString(Interaction interaction)
     case InteractionUnlock:
         //: This string describes an interaction for an item.
         interactionString = tr("Unlock");
+        break;
+    case InteractionIgnite:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Ignite");
+        break;
+    case InteractionExtinguish:
+        //: This string describes an interaction for an item.
+        interactionString = tr("Extinguish");
         break;
     }
 

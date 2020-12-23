@@ -10,11 +10,9 @@ QMAKE_CFLAGS_WARN_ON
 QMAKE_CXXFLAGS_WARN_ON
 
 #QMAKE_CXXFLAGS += -isystem "$$PWD/qml-box2d/box2d_lib" -Werror -std=c++11 -g
-QMAKE_LFLAGS *= -std=c++11
 
 RESOURCES += gui/gui.qrc \
              gamedata/gamedata.qrc
-
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -40,6 +38,7 @@ HEADERS += \
     game/gameobjectsproxy.h \
     game/items/boxitem.h \
     game/items/dooritem.h \
+    game/items/fireitem.h \
     game/items/literatureitem.h \
     game/items/lockitem.h \
     game/items/passageitem.h \
@@ -97,6 +96,7 @@ SOURCES += game/main.cpp \
     game/gameobjectsproxy.cpp \
     game/items/boxitem.cpp \
     game/items/dooritem.cpp \
+    game/items/fireitem.cpp \
     game/items/literatureitem.cpp \
     game/items/lockitem.cpp \
     game/items/passageitem.cpp \
@@ -163,5 +163,7 @@ android {
         $$ANDROID_PACKAGE_SOURCE_DIR/gradle/wrapper/gradle-wrapper.properties \
         $$ANDROID_PACKAGE_SOURCE_DIR/gradlew.bat
 }
+
+ANDROID_ABIS = armeabi-v7a
 
 

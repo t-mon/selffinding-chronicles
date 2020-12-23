@@ -23,6 +23,9 @@ class Map : public QObject
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString resourceFileName READ resourceFileName NOTIFY resourceFileNameChanged)
     Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
+    Q_PROPERTY(qreal ambientBrightness READ ambientBrightness WRITE setAmbientBrightness NOTIFY ambientBrightnessChanged)
+    Q_PROPERTY(QColor ambientColor READ ambientColor WRITE setAmbientColor NOTIFY ambientColorChanged)
+    Q_PROPERTY(qreal grayscaleFactor READ grayscaleFactor WRITE setGrayscaleFactor NOTIFY grayscaleFactorChanged)
 
 public:
     explicit Map(QObject *parent = nullptr);
@@ -43,8 +46,27 @@ public:
 
     QString resourceFileName() const;
 
+    // Ambient information
     QColor backgroundColor() const;
     void setBackgroundColor(const QColor &backgroundColor);
+
+    qreal ambientBrightness() const;
+    void setAmbientBrightness(qreal ambientBrightness);
+
+    QColor ambientColor() const;
+    void setAmbientColor(const QColor &ambientColor);
+
+    qreal grayscaleFactor() const;
+    void setGrayscaleFactor(qreal grayscaleFactor);
+
+
+    // Weather information
+    bool raining() const;
+    void setRaining(bool raining);
+
+    bool snowing() const;
+    void setSnowing(bool snowing);
+
 
     Character *player() const;
     void setPlayer(Character *player);
@@ -70,7 +92,14 @@ private:
     QString m_name;
     QString m_resourcePath;
     QString m_resourceFileName;
+
     QColor m_backgroundColor;
+    qreal m_ambientBrightness = 1.0;
+    QColor m_ambientColor = Qt::transparent;
+    qreal m_grayscaleFactor = 0.0;
+
+    bool m_raining = false;
+    bool m_snowing = false;
 
     Character *m_player = nullptr;
 
@@ -92,7 +121,11 @@ signals:
     void playerStartPositionChanged(const QPointF &playerStartPosition);
     void nameChanged(const QString &name);
     void resourceFileNameChanged(const QString &resourceFileName);
+
     void backgroundColorChanged(const QColor &backgroundColor);
+    void ambientBrightnessChanged(qreal ambientBrightness);
+    void ambientColorChanged(const QColor &ambientColor);
+    void grayscaleFactorChanged(qreal grayscaleFactor);
 
 public slots:
     void clear();

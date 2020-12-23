@@ -75,6 +75,6 @@
         <file>effects/AmbientEffect.qml</file>
         <file>effects/GameShaderEffect.qml</file>
         <file>shadereffects/fragmentshaders/gamescene.frag</file>
-        <file>shadereffects/vertexshaders/gamescene.frag</file>
+        <file>shadereffects/vertexshaders/gamescene.vert</file>
     </qresource>
 </RCC>

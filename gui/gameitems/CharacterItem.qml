@@ -98,7 +98,13 @@ PhysicsItem {
 
             console.log("Character", character.name, "shoot arrow using", character.firearm.name, character.firearm.damage)
             var component = Qt.createComponent("BulletItem.qml");
+            if (!component)
+                 console.warn("Failed to create bullet component")
+
             var bulletIncubator = component.incubateObject(itemFlickableContent, { shooter: root.character, particleSystem: root.particleSystem } )
+            if (!bulletIncubator)
+                 console.warn("Failed to create bullet incubator", component.errorString())
+
             if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
                 bulletIncubator.onStatusChanged = function(status) {
                     if (status === Component.Ready) {
@@ -388,40 +394,40 @@ PhysicsItem {
 
 
 
-    FlameItem {
-        id: flameItem
-        width: parent.width
-        height: parent.height
-        anchors.left: parent.left
-        anchors.bottom: parent.top
-        anchors.bottomMargin: -height * 2 / 3
-        enabled: root.character ? root.burning && root.character.active : false
-        angle: 270
-        angleVariation: 30
-        magnitude: 30
-        particleSystem: root.particleSystem
+//    FlameItem {
+//        id: flameItem
+//        width: parent.width
+//        height: parent.height
+//        anchors.left: parent.left
+//        anchors.bottom: parent.top
+//        anchors.bottomMargin: -height * 2 / 3
+//        enabled: root.character ? root.burning && root.character.active : false
+//        angle: 270
+//        angleVariation: 30
+//        magnitude: 30
+//        particleSystem: root.particleSystem
 
-        Timer {
-            id: buringTimer
-            interval: 5000 / app.gameSpeedFactor
-            onTriggered: flameFadeOutAnimation.start()
-        }
+//        Timer {
+//            id: buringTimer
+//            interval: 5000 / app.gameSpeedFactor
+//            onTriggered: flameFadeOutAnimation.start()
+//        }
 
-        PropertyAnimation {
-            id: flameFadeOutAnimation
-            duration: 2000 / app.gameSpeedFactor
-            target: flameItem
-            property: "opacity"
-            loops: 1
-            to: 0
-            onRunningChanged: {
-                if (!running) {
-                    flameItem.visible = false
-                    root.burning = false
-                }
-            }
-        }
-    }
+//        PropertyAnimation {
+//            id: flameFadeOutAnimation
+//            duration: 2000 / app.gameSpeedFactor
+//            target: flameItem
+//            property: "opacity"
+//            loops: 1
+//            to: 0
+//            onRunningChanged: {
+//                if (!running) {
+//                    flameItem.visible = false
+//                    root.burning = false
+//                }
+//            }
+//        }
+//    }
 
     SpriteSequence {
         id: characterSpriteSequence
@@ -1029,7 +1035,7 @@ PhysicsItem {
         bulletObject.startPositionX = bulletStartPoint.x
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range
-        bulletObject.fireArrow = debugControls.flamesEnabled
+        bulletObject.burning = debugControls.flamesEnabled
         var velocity = 25
         bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
     }

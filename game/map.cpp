@@ -114,6 +114,48 @@ void Map::setBackgroundColor(const QColor &backgroundColor)
     emit backgroundColorChanged(m_backgroundColor);
 }
 
+qreal Map::ambientBrightness() const
+{
+    return m_ambientBrightness;
+}
+
+void Map::setAmbientBrightness(qreal ambientBrightness)
+{
+    if (m_ambientBrightness == ambientBrightness)
+        return;
+
+    m_ambientBrightness = ambientBrightness;
+    emit ambientBrightnessChanged(m_ambientBrightness);
+}
+
+QColor Map::ambientColor() const
+{
+    return m_ambientColor;
+}
+
+void Map::setAmbientColor(const QColor &ambientColor)
+{
+    if (m_ambientColor == ambientColor)
+        return;
+
+    m_ambientColor = ambientColor;
+    emit ambientColorChanged(m_ambientColor);
+}
+
+qreal Map::grayscaleFactor() const
+{
+    return m_grayscaleFactor;
+}
+
+void Map::setGrayscaleFactor(qreal grayscaleFactor)
+{
+    if (m_grayscaleFactor == grayscaleFactor)
+        return;
+
+    m_grayscaleFactor = grayscaleFactor;
+    emit grayscaleFactorChanged(m_grayscaleFactor);
+}
+
 Character *Map::player() const
 {
     return m_player;
@@ -204,6 +246,9 @@ void Map::loadMapVariant(const QVariantMap &mapData)
     setName(mapData.value("name").toString());
     setPlayerStartPosition(QPointF(mapData.value("playerStartX").toDouble(), mapData.value("playerStartY").toDouble()));
     setBackgroundColor(QColor(mapData.value("backgroundColor").toString()));
+    setAmbientColor(QColor(mapData.value("ambientColor", QColor("#00000000")).toString()));
+    setAmbientBrightness(mapData.value("ambientBrightness", 1.0).toDouble());
+    setGrayscaleFactor(mapData.value("grayscaleFactor", 0.0).toDouble());
 
     // Initialize fields
     qCDebug(dcMap()) << "--> initialize fields" << QDateTime::currentMSecsSinceEpoch() - startTime << "[ms]";

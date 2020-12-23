@@ -121,6 +121,27 @@ BoxItem *DataLoader::createBoxItem(const QString &resourcePath, const QVariantMa
     return boxItem;
 }
 
+FireItem *DataLoader::createFireItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
+{
+    FireItem *fireItem = new FireItem(parent);
+    fireItem->setResourcePath(resourcePath);
+    fireItem->setItemId(getItemIdFromResourcePath(resourcePath));
+    fireItem->setPosition(position);
+
+    QVariantMap firemMap = description.value("fire").toMap();
+    QPointF offset;
+    offset.setX(firemMap.value("offsetX").toDouble());
+    offset.setY(firemMap.value("offsetY").toDouble());
+    fireItem->setOffset(offset);
+    fireItem->setBurning(firemMap.value("burning").toBool());
+    fireItem->setFireAngle(firemMap.value("angle").toDouble());
+    fireItem->setFireAngleVariation(firemMap.value("angleVariation").toDouble());
+    fireItem->setFireMagnitude(firemMap.value("magnitude").toDouble());
+
+    fillGameItemData(qobject_cast<GameItem *>(fireItem), description);
+    return fireItem;
+}
+
 Character *DataLoader::createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPointF &position, QObject *parent)
 {
     Character *character = new Character(parent);
@@ -402,6 +423,8 @@ GameItem *DataLoader::loadGameItem(const QString &resourcePath, const QPointF &p
         return createTeleportItem(resourcePath, itemMap, position, parent);
     } else if (itemTypeString == "box") {
         return createBoxItem(resourcePath, itemMap, position, parent);
+    } else if (itemTypeString == "fire") {
+        return createFireItem(resourcePath, itemMap, position, parent);
     } else {
         qCWarning(dcDataManager()) << "Unhandled type" << itemTypeString;
     }
@@ -432,7 +455,8 @@ void DataLoader::fillGameItemLightData(GameItem *item, const QVariantMap &descri
         lightSource->setColor(QColor(lightSourceMap.value("color").toString()));
         lightSource->setSize(QSizeF(lightSourceMap.value("width").toDouble(), lightSourceMap.value("height").toDouble()));
         lightSource->setPosition(item->position());
-        lightSource->setEnabled(lightSourceMap.value("enabled").toBool());
+        lightSource->setOffset(QPointF(lightSourceMap.value("offsetX").toDouble(), lightSourceMap.value("offsetY").toDouble()));
+        lightSource->setLightEnabled(lightSourceMap.value("enabled").toBool());
         lightSource->setName("Light source " + lightSource->color().name(QColor::HexArgb) + " " + item->name());
         lightSource->setLayer(GameObject::LayerItems);
         item->setLightSource(lightSource);

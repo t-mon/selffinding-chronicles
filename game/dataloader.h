@@ -21,6 +21,7 @@
 #include "items/boxitem.h"
 #include "items/dooritem.h"
 #include "items/passageitem.h"
+#include "items/fireitem.h"
 
 class DataLoader
 {
@@ -36,6 +37,7 @@ public:
     static LiteratureItem *createLiteratureItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
     static TeleporterItem *createTeleportItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
     static BoxItem *createBoxItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
+    static FireItem *createFireItem(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
 
     static Character *createCharacterObject(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);
     static Enemy *createEnemyObject(const QString &resourcePath, const QVariantMap &description, const QPointF &position = QPointF(), QObject *parent = nullptr);

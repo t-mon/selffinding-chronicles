@@ -1,0 +1,32 @@
+{
+    "name": "Test fire",
+    "backgroundColor": "#ff307a78",
+    "playerStartX": 2,
+    "playerStartY": 8,
+    "ambientBrightness": 0.5,
+    "ambientColor": "#00000000",
+    "grayscaleFactor": 0.0,
+    "width": 50,
+    "height": 50,
+    "items": [
+        {
+            "x": 10,
+            "y": 10,
+            "data": ":/gamedata/items/fires/torch.json"
+        },
+        {
+            "x": 15,
+            "y": 10,
+            "data": ":/gamedata/items/fires/torch.json"
+        },
+        {
+            "x": 20,
+            "y": 10,
+            "data": ":/gamedata/items/fires/torch.json"
+        }
+    ],
+    "characters": [
+    ],
+    "chests": [
+    ]
+}

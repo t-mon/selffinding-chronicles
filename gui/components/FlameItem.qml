@@ -1,18 +1,74 @@
 import QtQuick 2.9
 import QtQuick.Particles 2.0
 
+import Box2D 2.0
 import Chronicles 1.0
+import "../physics"
 
-Item {
+PhysicsItem {
     id: root
 
-    property bool enabled: true
-    property bool turbulence: false
-    property real angle: 270
-    property real angleVariation: 22
-    property real magnitude: 20
+    property var particleSystem
+    property FireItem fireItem
+    property point absolutPosition
 
-    property var particleSystem: null
+    property bool turbulence: false
+    property real angle: fireItem ? fireItem.fireAngle : 270
+    property real angleVariation: fireItem ? fireItem.fireAngleVariation : 22
+    property real magnitude: fireItem ? fireItem.fireMagnitude : 20
+
+    fixedRotation: false
+    bodyType: Body.Dynamic
+    smooth: true
+    fixtures: [
+        Circle {
+            categories: GameObject.PhysicsFire
+            collidesWith: GameObject.PhysicsCharacter |
+                          GameObject.PhysicsEnemy |
+                          GameObject.PhysicsFire
+            radius: root.width / 4
+            density: 0
+            sensor: true
+            x: absolutPosition.x + width / 4
+            y: absolutPosition.y + height / 4
+            friction: 0
+            restitution: 0
+            onBeginContact: console.log("contact fire")
+        }
+    ]
+
+    Emitter {
+        anchors.centerIn: parent
+        system: root.particleSystem
+        group: "flame"
+        enabled: fireItem.burning
+        emitRate: 150
+        lifeSpan: 1000
+        size: app.gridSize / 2
+        endSize: app.gridSize / 2
+        sizeVariation: app.gridSize / 2
+        acceleration: PointDirection { y: -40 }
+        velocity: AngleDirection {
+            angle: root.angle
+            magnitude: root.magnitude
+            angleVariation: root.angleVariation
+            magnitudeVariation: 8
+        }
+    }
+
+    //    Item {
+    //        id: flameItem
+    //        anchors.fill: parent
+    //        x: flamePosition.x
+    //        y: flamePosition.y
+    //        Rectangle {
+    //            anchors.fill: parent
+    //            color: "red"
+    //        }
+
+    //    }
+
+
 
     //    Turbulence {
     //        id: turb
@@ -41,25 +97,6 @@ Item {
     //    }
 
 
-    Emitter {
-        anchors.centerIn: parent
-        system: root.particleSystem
-        group: "flame"
-        enabled: root.enabled
-        emitRate: 100
-        lifeSpan: 1000
-        size: app.gridSize / 2
-        endSize: app.gridSize / 2
-        sizeVariation: app.gridSize / 2
-        acceleration: PointDirection { y: -40 }
-        velocity: AngleDirection {
-            angle: root.angle
-            magnitude: root.magnitude
-            angleVariation: root.angleVariation
-            magnitudeVariation: 8
-        }
-
-    }
 
     //    TrailEmitter {
     //        id: smoke1

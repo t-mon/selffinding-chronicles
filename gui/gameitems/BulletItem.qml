@@ -21,7 +21,8 @@ PhysicsItem {
     property real startPositionY
     property real maxDistance: shootRange * app.gridSize
 
-    property bool fireArrow: false
+    property bool lightEnabled: false
+    property bool burning: false
 
     onXChanged: evaluateDistance()
     onYChanged: {
@@ -29,80 +30,124 @@ PhysicsItem {
         evaluateDistance()
     }
 
+    onBurningChanged: {
+        if (burning)
+            lightEnabled = true
+    }
+
     bullet: true
     fixedRotation: false
     bodyType: Body.Dynamic
     smooth: true
 
-    fixtures: Circle {
-        categories: GameObject.PhysicsBullet
-        collidesWith: GameObject.PhysicsCharacter |
-                      GameObject.PhysicsEnemy |
-                      GameObject.PhysicsStaticItem |
-                      GameObject.PhysicsBodyHitbox
-        radius: root.width / 2
-        density: 20
-        friction: 0
-        restitution: 0
-        onBeginContact: {
-            var target = other.getBody().target
-            var victim = null
-            if (target.gameItem) {
+    fixtures: [
+        Circle {
+            categories: GameObject.PhysicsBullet
+            collidesWith: GameObject.PhysicsCharacter |
+                          GameObject.PhysicsEnemy |
+                          GameObject.PhysicsStaticItem |
+                          GameObject.PhysicsBodyHitbox |
+                          GameObject.PhysicsFire
+            radius: root.width / 2
+            density: 20
+            friction: 0
+            restitution: 0
+            onBeginContact: {
+                var target = other.getBody().target
+                var victim = null
+                if (target.gameItem) {
 
-                // TODO: colides with burning item ignite arrow
+                    // TODO: colides with fire item ignite arrow
 
-                // If we have a collision with an item
-                switch (target.itemType) {
-                case GameItem.TypeChest:
-                    console.log("Arrow collision with chest")
+                    // If we have a collision with an item
+                    switch (target.itemType) {
+                    case GameItem.TypeChest:
+                        console.log("Arrow collision with chest")
+                        root.body.linearVelocity = Qt.point(0, 0)
+                        root.active = false
+                        dissapearAnimation.start()
+                        break;
+                    case GameItem.TypeStatic:
+                        console.log("Arrow collision with static item")
+                        root.body.linearVelocity = Qt.point(0, 0)
+                        root.active = false
+                        dissapearAnimation.start()
+                        break;
+                    case GameItem.TypeBox:
+                        console.log("Arrow collision with box")
+                        root.body.linearVelocity = Qt.point(0, 0)
+                        root.active = false
+                        dissapearAnimation.start()
+                        break;
+                    case GameItem.TypeTree:
+                        console.log("Arrow collision with tree")
+                        root.body.linearVelocity = Qt.point(0, 0)
+                        root.active = false
+                        dissapearAnimation.start()
+                        break;
+                    default:
+                        root.body.linearVelocity = Qt.point(0, 0)
+                        root.active = false
+                        dissapearAnimation.start()
+                        break
+                    }
+                    return
+                } else {
                     root.body.linearVelocity = Qt.point(0, 0)
-                    root.active = false
                     dissapearAnimation.start()
-                    break;
-                case GameItem.TypeStatic:
-                    console.log("Arrow collision with static item")
-                    root.body.linearVelocity = Qt.point(0, 0)
-                    root.active = false
-                    dissapearAnimation.start()
-                    break;
-                case GameItem.TypeBox:
-                    console.log("Arrow collision with box")
-                    root.body.linearVelocity = Qt.point(0, 0)
-                    root.active = false
-                    dissapearAnimation.start()
-                    break;
-                case GameItem.TypeTree:
-                    console.log("Arrow collision with tree")
-                    root.body.linearVelocity = Qt.point(0, 0)
-                    root.active = false
-                    dissapearAnimation.start()
-                    break;
-                default:
-                    root.body.linearVelocity = Qt.point(0, 0)
-                    root.active = false
-                    dissapearAnimation.start()
-                    break
                 }
-                return
-            } else {
-                root.body.linearVelocity = Qt.point(0, 0)
-                dissapearAnimation.start()
-            }
 
-            if (target.enemy) {
-                victim = target.enemy
-                if (root.fireArrow) target.inflame()
-            } else if (target.character) {
-                victim = target.character
-                if (root.fireArrow) target.inflame()
-            } else {
-                return
-            }
+                if (target.enemy) {
+                    victim = target.enemy
+                    if (root.burning) target.inflame()
+                } else if (target.character) {
+                    victim = target.character
+                    if (root.burning) target.inflame()
+                } else {
+                    return
+                }
 
-            //console.log("Arrow impact", root.shooter.name, " --> ", victim.name, "damage:", damage )
-            Game.engine.performShootImpact(root.shooter, victim, damage)
-            root.destroy()
+                //console.log("Arrow impact", root.shooter.name, " --> ", victim.name, "damage:", damage )
+                Game.engine.performShootImpact(root.shooter, victim, damage)
+                root.destroy()
+            }
+        },
+        Circle {
+            categories: GameObject.PhysicsFire
+            collidesWith: GameObject.PhysicsFire
+            radius: root.width / 2
+            density: 0
+            sensor: true
+            friction: 0
+            restitution: 0
+            onBeginContact: {
+                // Get fireitem
+                var flameItem = other.getBody().target
+                if (root.burning && flameItem.fireItem.burning) {
+                    console.log("Burning bullet contact --> burning fire | do nothing")
+                } else if (!root.burning && flameItem.fireItem.burning) {
+                    root.burning = true
+                    console.log("Bullet contact --> burning fire  | ignite bullet")
+                } else if (root.burning && !flameItem.fireItem.burning) {
+                    console.log("Burning bullet contact --> off fire  | ignite fire")
+                    flameItem.fireItem.burning = true
+                } else if (!root.burning && !flameItem.fireItem.burning) {
+                    console.log("Bullet contact --> off fire  | do nothing")
+                }
+            }
         }
+    ]
+
+    LightSource {
+        id: lightSource
+        size:  Qt.size(5, 5)
+        position: Qt.point(root.x / app.gridSize - size.width / 2, root.y  / app.gridSize - size.height / 2)
+        lightEnabled: root.lightEnabled
+        color: "#ce6fb2cb"
+        name: "Bullet light"
+
+        Component.onCompleted: Game.engine.mapScene.registerTemporaryLightSource(lightSource)
+        Component.onDestruction: Game.engine.mapScene.unregisterTemporaryLightSource(lightSource)
     }
 
     Image {
@@ -122,7 +167,7 @@ PhysicsItem {
 
         ParticleSystem {
             anchors.fill: parent
-            running: root.fireArrow
+            running: root.burning
 
             ImageParticle {
                 groups: ["flame"]
@@ -150,24 +195,30 @@ PhysicsItem {
         }
     }
 
-    PropertyAnimation {
+    ParallelAnimation {
         id: dissapearAnimation
-        target: root
-        property: "opacity"
-        to: 0
-        duration: 1000
-        loops: 1
-
         onRunningChanged: {
             if (running) {
+                root.lightEnabled = false
                 flameItem.angle = 180
                 flameItem.angleVariation = 360
-                flameItem.magnitude = 20
+                flameItem.magnitude = 10
             } else {
                 root.destroy()
             }
         }
+
+        PropertyAnimation {
+            target: root
+            property: "opacity"
+            to: 0
+            duration: 1000
+            easing.type: Easing.OutCubic
+            loops: 1
+        }
     }
+
+
 
     function evaluateDistance() {
         if (body.linearVelocity == Qt.point(0, 0) || dissapearAnimation.running)

@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.0
+import QtQuick.Particles 2.0
 import QtGraphicalEffects 1.0
 
 import Box2D 2.0
@@ -13,6 +14,8 @@ PhysicsItem {
     id: root
 
     property GameItem gameItem
+    property ParticleSystem particleSystem
+
     property int itemType: gameItem ? gameItem.itemType : GameItem.TypeNone
     property real angle: 0
 
@@ -149,6 +152,38 @@ PhysicsItem {
         anchors.fill: parent
         source: gameItem ? dataDirectory + gameItem.imageName : ""
         opacity: root.itemDebugEnabled ? 0.5 : 1
+    }
+
+    Loader {
+        id: fireLoader
+        active: itemType === GameItem.TypeFire
+        x: fireItem ? fireItem.offset.x * app.gridSize : 0
+        y: fireItem ? fireItem.offset.y * app.gridSize : 0
+        width: parent.width
+        height: parent.height
+        sourceComponent: fireComponent
+
+        property FireItem fireItem: Game.castFireItem(root.gameItem)
+
+        Component {
+            id: fireComponent
+
+            FlameItem {
+                id: flameItem
+                particleSystem: root.particleSystem
+                fireItem: fireLoader.fireItem
+                anchors.centerIn: parent
+                absolutPosition: Qt.point(root.x + fireLoader.x, root.y + fireLoader.y)
+                width: fireLoader.width / 2
+                height: width
+
+                Loader {
+                    anchors.fill: parent
+                    active: root.itemDebugEnabled
+                    source: "../components/ItemDebugFrame.qml"
+                }
+            }
+        }
     }
 
     Glow {

@@ -23,6 +23,8 @@ class MapScene : public QObject
     Q_PROPERTY(GameItemsProxy *activeCharacters READ activeCharacters CONSTANT)
     Q_PROPERTY(WeatherAreaProxy *activeWeatherAreas READ activeWeatherAreas CONSTANT)
 
+
+
 public:
     explicit MapScene(QObject *parent = nullptr);
 
@@ -41,6 +43,9 @@ public:
     GameItemsProxy *activeEnemies() const;
     WeatherAreaProxy *activeWeatherAreas() const;
 
+
+    Q_INVOKABLE void registerTemporaryLightSource(LightSource *lightSource);
+    Q_INVOKABLE void unregisterTemporaryLightSource(LightSource *lightSource);
 
 signals:
     void mapChanged(Map *map);
