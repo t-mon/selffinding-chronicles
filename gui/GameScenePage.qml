@@ -24,6 +24,9 @@ GamePage {
 
     Component.onCompleted: {
         console.log("Game scene created. Scene size:", root.width, "x", root.height, "|" , "Grid size:", app.gridSize)
+        debugControls.ambientBrightness = Game.engine.mapScene.map.ambientBrightness
+        debugControls.ambientLightColor = Game.engine.mapScene.map.ambientLightColor
+        debugControls.grayscaleFactor = Game.engine.mapScene.map.grayscaleFactor
     }
     Component.onDestruction: console.log("Game scene destroy")
 
@@ -287,6 +290,9 @@ GamePage {
         id: debugControls
         anchors.fill: parent
         visible: Game.debugging
+        onAmbientBrightnessChanged: gameScene.mapScene.map.ambientBrightness = ambientBrightness
+        onAmbientLightColorChanged: gameScene.mapScene.map.ambientLightColor = ambientLightColor
+        onGrayscaleFactorChanged: gameScene.mapScene.map.grayscaleFactor = grayscaleFactor
     }
 
     Popup {

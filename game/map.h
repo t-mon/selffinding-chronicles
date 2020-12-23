@@ -24,7 +24,7 @@ class Map : public QObject
     Q_PROPERTY(QString resourceFileName READ resourceFileName NOTIFY resourceFileNameChanged)
     Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
     Q_PROPERTY(qreal ambientBrightness READ ambientBrightness WRITE setAmbientBrightness NOTIFY ambientBrightnessChanged)
-    Q_PROPERTY(QColor ambientColor READ ambientColor WRITE setAmbientColor NOTIFY ambientColorChanged)
+    Q_PROPERTY(QColor ambientLightColor READ ambientLightColor WRITE setAmbientLightColor NOTIFY ambientLightColorChanged)
     Q_PROPERTY(qreal grayscaleFactor READ grayscaleFactor WRITE setGrayscaleFactor NOTIFY grayscaleFactorChanged)
 
 public:
@@ -53,8 +53,8 @@ public:
     qreal ambientBrightness() const;
     void setAmbientBrightness(qreal ambientBrightness);
 
-    QColor ambientColor() const;
-    void setAmbientColor(const QColor &ambientColor);
+    QColor ambientLightColor() const;
+    void setAmbientLightColor(const QColor &ambientLightColor);
 
     qreal grayscaleFactor() const;
     void setGrayscaleFactor(qreal grayscaleFactor);
@@ -95,7 +95,7 @@ private:
 
     QColor m_backgroundColor;
     qreal m_ambientBrightness = 1.0;
-    QColor m_ambientColor = Qt::transparent;
+    QColor m_ambientLightColor = Qt::transparent;
     qreal m_grayscaleFactor = 0.0;
 
     bool m_raining = false;
@@ -124,7 +124,7 @@ signals:
 
     void backgroundColorChanged(const QColor &backgroundColor);
     void ambientBrightnessChanged(qreal ambientBrightness);
-    void ambientColorChanged(const QColor &ambientColor);
+    void ambientLightColorChanged(const QColor &ambientLightColor);
     void grayscaleFactorChanged(qreal grayscaleFactor);
 
 public slots:

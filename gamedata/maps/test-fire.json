@@ -3,9 +3,9 @@
     "backgroundColor": "#ff307a78",
     "playerStartX": 2,
     "playerStartY": 8,
-    "ambientBrightness": 0.5,
-    "ambientColor": "#00000000",
-    "grayscaleFactor": 0.0,
+    "ambientBrightness": 0.4,
+    "ambientLightColor": "#00000000",
+    "grayscaleFactor": 0.2,
     "width": 50,
     "height": 50,
     "items": [
