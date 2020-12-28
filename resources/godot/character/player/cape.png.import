@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/cape.png-cc893e2e0ea36c087a1b0c258fc2ec94.stex"
+path="res://.import/cape.png-4be0d2fdd669031affe9963104800c0e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://character/cape.png"
-dest_files=[ "res://.import/cape.png-cc893e2e0ea36c087a1b0c258fc2ec94.stex" ]
+source_file="res://character/player/cape.png"
+dest_files=[ "res://.import/cape.png-4be0d2fdd669031affe9963104800c0e.stex" ]
 
 [params]
 

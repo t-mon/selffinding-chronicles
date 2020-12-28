@@ -5,7 +5,7 @@ resource_name = "idle"
 length = 6.0
 step = 0.5
 tracks/0/type = "bezier"
-tracks/0/path = NodePath("Skeleton2D/root/hip/chest/neck:position:x")
+tracks/0/path = NodePath("Skeleton2D/root/hip/belly/chest/neck:position:x")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -15,7 +15,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 3, 6 )
 }
 tracks/1/type = "bezier"
-tracks/1/path = NodePath("Skeleton2D/root/hip/chest/neck:position:y")
+tracks/1/path = NodePath("Skeleton2D/root/hip/belly/chest/neck:position:y")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -25,7 +25,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 3, 6 )
 }
 tracks/2/type = "bezier"
-tracks/2/path = NodePath("Skeleton2D/root/hip/chest/neck:rotation_degrees")
+tracks/2/path = NodePath("Skeleton2D/root/hip/belly/chest/neck:rotation_degrees")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
@@ -65,122 +65,32 @@ tracks/5/keys = {
 "times": PoolRealArray( 0, 3, 6 )
 }
 tracks/6/type = "bezier"
-tracks/6/path = NodePath("Polygon2D/leg-right:position:x")
+tracks/6/path = NodePath("Skeleton2D/root/hip/belly:position:x")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/imported = false
 tracks/6/enabled = true
 tracks/6/keys = {
-"points": PoolRealArray( 430.911, -0.25, 0, 0.25, 0, 430.911, -0.25, 0, 0.25, 0, 430.911, -0.25, 0, 0.25, 0 ),
+"points": PoolRealArray( -15.566, -0.25, 0, 0.25, 0, -16.566, -0.25, 0, 0.25, 0, -15.566, -0.25, 0, 0.25, 0 ),
 "times": PoolRealArray( 0, 3, 6 )
 }
 tracks/7/type = "bezier"
-tracks/7/path = NodePath("Polygon2D/leg-right:position:y")
+tracks/7/path = NodePath("Skeleton2D/root/hip/belly:position:y")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/imported = false
 tracks/7/enabled = true
 tracks/7/keys = {
-"points": PoolRealArray( 709.529, -0.25, 0, 0.25, 0, 709.529, -0.25, 0, 0.25, 0, 709.529, -0.25, 0, 0.25, 0 ),
+"points": PoolRealArray( -75.8334, -0.25, 0, 0.25, 0, -70.8334, -0.25, 0, 0.25, 0, -75.8334, -0.25, 0, 0.25, 0 ),
 "times": PoolRealArray( 0, 3, 6 )
 }
 tracks/8/type = "bezier"
-tracks/8/path = NodePath("Polygon2D/leg-right:rotation_degrees")
+tracks/8/path = NodePath("Skeleton2D/root/hip/belly:rotation_degrees")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/imported = false
 tracks/8/enabled = true
 tracks/8/keys = {
-"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/9/type = "bezier"
-tracks/9/path = NodePath("Skeleton2D/root/hip/chest/neck/head:position:x")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/keys = {
-"points": PoolRealArray( -2.84311, -0.25, 0, 0.25, 0, -2.84311, -0.25, 0, 0.25, 0, -2.84311, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/10/type = "bezier"
-tracks/10/path = NodePath("Skeleton2D/root/hip/chest/neck/head:position:y")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/keys = {
-"points": PoolRealArray( -110.959, -0.25, 0, 0.25, 0, -110.959, -0.25, 0, 0.25, 0, -110.959, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/11/type = "bezier"
-tracks/11/path = NodePath("Skeleton2D/root/hip/chest/neck/head:rotation_degrees")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/keys = {
-"points": PoolRealArray( -9.55769, -0.25, 0, 0.25, 0, -9.55769, -0.25, 0, 0.25, 0, -9.55769, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/12/type = "bezier"
-tracks/12/path = NodePath("Skeleton2D/root/hip/chest:position:x")
-tracks/12/interp = 1
-tracks/12/loop_wrap = true
-tracks/12/imported = false
-tracks/12/enabled = true
-tracks/12/keys = {
-"points": PoolRealArray( -15.566, -0.25, 0, 0.25, 0, -16.566, -0.25, 0, 0.25, 0, -15.566, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/13/type = "bezier"
-tracks/13/path = NodePath("Skeleton2D/root/hip/chest:position:y")
-tracks/13/interp = 1
-tracks/13/loop_wrap = true
-tracks/13/imported = false
-tracks/13/enabled = true
-tracks/13/keys = {
-"points": PoolRealArray( -75.8334, -0.25, 0, 0.25, 0, -70.8334, -0.25, 0, 0.25, 0, -75.8334, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/14/type = "bezier"
-tracks/14/path = NodePath("Skeleton2D/root/hip/chest:rotation_degrees")
-tracks/14/interp = 1
-tracks/14/loop_wrap = true
-tracks/14/imported = false
-tracks/14/enabled = true
-tracks/14/keys = {
 "points": PoolRealArray( -7.49464, -0.25, 0, 0.25, 0, -4.67017, -0.25, 0, 0.25, 0, -7.49464, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/15/type = "bezier"
-tracks/15/path = NodePath("Polygon2D/leg-left:position:x")
-tracks/15/interp = 1
-tracks/15/loop_wrap = true
-tracks/15/imported = false
-tracks/15/enabled = true
-tracks/15/keys = {
-"points": PoolRealArray( 524.249, -0.25, 0, 0.25, 0, 524.249, -0.25, 0, 0.25, 0, 524.249, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/16/type = "bezier"
-tracks/16/path = NodePath("Polygon2D/leg-left:position:y")
-tracks/16/interp = 1
-tracks/16/loop_wrap = true
-tracks/16/imported = false
-tracks/16/enabled = true
-tracks/16/keys = {
-"points": PoolRealArray( 683.659, -0.25, 0, 0.25, 0, 683.659, -0.25, 0, 0.25, 0, 683.659, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 3, 6 )
-}
-tracks/17/type = "bezier"
-tracks/17/path = NodePath("Polygon2D/leg-left:rotation_degrees")
-tracks/17/interp = 1
-tracks/17/loop_wrap = true
-tracks/17/imported = false
-tracks/17/enabled = true
-tracks/17/keys = {
-"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
 "times": PoolRealArray( 0, 3, 6 )
 }
