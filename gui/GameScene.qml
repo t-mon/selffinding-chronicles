@@ -37,6 +37,9 @@ Item {
     // Shader controls
     property bool stonedEnabled: false
     property real grayscaleFactor: 0.0
+    property real brightness: 1.0
+    property real contrast: 1.0
+    property real gamma: 1.0
 
     // Read only
     readonly property Flickable flickable: worldFlickable
@@ -52,20 +55,6 @@ Item {
         NumberAnimation {
             duration: 1000
             easing { type: Easing.InOutExpo }
-        }
-    }
-
-    function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
-        if (layer === GameObject.LayerBackground) {
-            return -2
-        } else if (layer === GameObject.LayerBase) {
-            return -1
-        } else if (layer === GameObject.LayerItem) {
-            return itemY + itemHeight
-        }  else if (layer === GameObject.LayerOverlay) {
-            return worldHeight + itemHeight + 1
-        } else {
-            return itemY + itemHeight
         }
     }
 
@@ -96,7 +85,6 @@ Item {
             interactive: true
             policy: ScrollBar.AlwaysOn
         }
-
 
         // Background items
         Rectangle {
@@ -294,6 +282,10 @@ Item {
 
         // Set properties to the effect
         grayscaleFactor: root.grayscaleFactor
+        brightness: root.brightness
+        contrast: root.contrast
+        gamma: root.gamma
+
         ambientBrightness: root.ambientBrightness
         ambientLightColor: root.ambientLightColor
         stonedEffectEnabled: root.stonedEnabled
@@ -313,7 +305,10 @@ Item {
         }
     }
 
-    // Load physics debug only if enabled, on top
+    // ##################################################################################
+    // Physics debug draw
+    // ##################################################################################
+
     Loader {
         id: physicsDebugDrawLoader
         width: worldFlickable.width
@@ -337,6 +332,24 @@ Item {
                     opacity: 0.4
                 }
             }
+        }
+    }
+
+    // ##################################################################################
+    // Functions
+    // ##################################################################################
+
+    function calculateLayerValue(layer, itemY, itemHeight, worldHeight) {
+        if (layer === GameObject.LayerBackground) {
+            return -2
+        } else if (layer === GameObject.LayerBase) {
+            return -1
+        } else if (layer === GameObject.LayerItem) {
+            return itemY + itemHeight
+        }  else if (layer === GameObject.LayerOverlay) {
+            return worldHeight + itemHeight + 1
+        } else {
+            return itemY + itemHeight
         }
     }
 }

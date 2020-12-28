@@ -12,6 +12,9 @@ Item {
     property bool stonedEnabled: false
 
     property real grayscaleFactor: 0.0
+    property real brightness: 1.0
+    property real contrast: 1.0
+    property real gamma: 1.0
 
     // Ambient
     property real ambientBrightness: 1.0
@@ -87,6 +90,70 @@ Item {
                     value: 1.0
                     onValueChanged: root.grayscaleFactor = value
                     Component.onCompleted: value = root.grayscaleFactor
+                }
+            }
+
+            RowLayout {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
+
+                Label {
+                    text: qsTr("Brightness")
+                }
+
+                Slider {
+                    Layout.fillWidth: true
+                    from: 0.0
+                    to: 2.0
+                    value: 1.0
+                    onValueChanged: root.brightness = value
+                    Component.onCompleted: value = root.brightness
+                }
+            }
+
+
+            RowLayout {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
+
+                Label {
+                    text: qsTr("Contrast")
+                }
+
+                Slider {
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 2.0
+                    value: 1.0
+                    onValueChanged: root.contrast = value
+                    Component.onCompleted: value = root.contrast
+                }
+            }
+
+            RowLayout {
+                height: 40
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: app.margins
+                anchors.rightMargin: app.margins
+
+                Label {
+                    text: qsTr("Gamma")
+                }
+
+                Slider {
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 2.0
+                    value: 1.0
+                    onValueChanged: root.gamma = value
+                    Component.onCompleted: value = root.gamma
                 }
             }
 

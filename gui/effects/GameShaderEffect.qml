@@ -15,7 +15,10 @@ ShaderEffect {
     property var light: lightsShaderEffectSource
 
     // Grayscale
-    property real grayscaleFactor: 0 // 1 = grayscale, 0 = full color
+    property real grayscaleFactor: 0.0 // 1 = full grayscale, 0 = full color
+    property real brightness: 1.0
+    property real contrast: 1.0
+    property real gamma: 1.0
 
     // Ambient
     property real ambientBrightness: 1.0

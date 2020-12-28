@@ -77,6 +77,9 @@ GamePage {
         // Shader controls
         stonedEnabled: debugControls.stonedEnabled
         grayscaleFactor: debugControls.grayscaleFactor
+        brightness: debugControls.brightness
+        contrast: debugControls.contrast
+        gamma: debugControls.gamma
 
         property bool gameOverlayVisible: true
 

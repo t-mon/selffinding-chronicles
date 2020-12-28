@@ -10,6 +10,10 @@ uniform sampler2D light;
 // Grayscale (1 = full grayscale, 0 = full color)
 uniform lowp float grayscaleFactor;
 
+uniform lowp float brightness;
+uniform lowp float contrast;
+uniform lowp float gamma;
+
 // Ambient
 uniform lowp float ambientBrightness;
 uniform lowp vec4 ambientLightColor;
@@ -25,8 +29,12 @@ uniform lowp float time;
 // ###################################################
 
 vec3 convertGrayscale(vec3 color, float colorFactor);
+vec3 brightnessContrastCorrection(vec3 color, float brightness, float contrast);
+vec3 gammaCorrection(vec3 color, float gamma);
+
 vec3 rgb2hsb(vec3 color);
 vec3 hsb2rgb(vec3 color);
+
 
 float blendAdd(float base, float blend);
 vec3 blendAdd(vec3 base, vec3 blend);
@@ -89,6 +97,12 @@ void main(void)
         worldPixel = vec4(blendSoftLight(worldPixel.rgb, lightColor, lightPixel.a), worldPixel.a);
     }
 
+    // Apply gamma correction
+    worldPixel = vec4(gammaCorrection(worldPixel.rgb, gamma), worldPixel.a);
+
+    // Apply brightness/contrast correction
+    //worldPixel = vec4(brightnessContrastCorrection(worldPixel.rgb, brightness, contrast), worldPixel.a);
+
     // Perform ambient brightness
     if (ambientBrightness != 1.0) {
         float brightness = ambientBrightness;
@@ -112,6 +126,18 @@ vec3 convertGrayscale(vec3 color, float colorFactor)
 {
     float grey =  0.21 * color.r + 0.71 * color.g + 0.07 * color.b;
     return color.rgb * (1.0 - colorFactor) + (grey * colorFactor);
+}
+
+// Aply brightness contrast correction
+vec3 brightnessContrastCorrection(vec3 color, float brightness, float contrast)
+{
+    return (color - 0.5) * contrast + 0.5 + brightness;
+}
+
+// Apply gamma correction
+vec3 gammaCorrection(vec3 color, float gamma)
+{
+    return pow(color, vec3(1.0 / gamma));
 }
 
 // Convert RGB <--> HSL
