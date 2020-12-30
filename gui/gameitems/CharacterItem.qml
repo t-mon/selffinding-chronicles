@@ -170,9 +170,9 @@ PhysicsItem {
     fixtures: [
         Circle {
             id: headCircle
-            radius: root.width / 4
-            x: root.width / 4
-            y: 0
+            radius: root.width / 8
+            x: root.width / 2 - radius
+            y: root.width / 4 - radius
             categories: GameItem.PhysicsBodyHitbox
             collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
             density: 1.0
@@ -181,10 +181,10 @@ PhysicsItem {
         },
         Box {
             id: bodyBox
-            width: root.width / 2
+            width: root.width / 4
             height: width
-            x: root.width / 4
-            y: root.width / 4
+            x: root.width / 2 - width / 2
+            y: root.width / 2 - height / 2
             categories: GameItem.PhysicsBodyHitbox
             collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
             density: 1.0
@@ -194,12 +194,12 @@ PhysicsItem {
         },
         Circle {
             id: bodyCircle
-            radius: root.width / 4
-            x: root.width / 4
-            y: root.height - root.width / 2
+            radius: root.width / 8
+            x: root.width / 2 - radius
+            y: root.height / 2 + radius
             categories: character ? character.categoryFlag : 0
             collidesWith: character ? character.collisionFlag : 0
-            density: 1
+            density: 10
             friction: 0.0
             restitution: 0.0
 
@@ -433,40 +433,40 @@ PhysicsItem {
         id: characterSpriteSequence
         anchors.fill: parent
         opacity: root.itemDebugEnabled ? 0.5 : 1
-        interpolate: false
         running: Game.running
+        interpolate: true
         sprites: [
             Sprite {
                 source: dataDirectory + "/images/characters/character-idle/idle-right.png"
                 name: "idle-right"
-                frameCount: 1
-                frameWidth: 300
-                frameHeight: 300
-                frameDuration: 0
+                frameCount: 16
+                frameWidth: 200
+                frameHeight: 200
+                frameDuration: 80
             },
             Sprite {
                 source: dataDirectory + "/images/characters/character-idle/idle-left.png"
                 name: "idle-left"
-                frameCount: 1
-                frameWidth: 300
-                frameHeight: 300
-                frameDuration: 0
+                frameCount: 16
+                frameWidth: 200
+                frameHeight: 200
+                frameDuration: 80
             },
             Sprite {
                 source: dataDirectory + "/images/characters/character-run/run-left.png"
                 name: "running-left"
-                frameCount: 4
-                frameWidth: 300
-                frameHeight: 300
-                frameDuration: 200 / app.gameSpeedFactor
+                frameCount: 16
+                frameWidth: 200
+                frameHeight: 200
+                frameDuration: 40 / app.gameSpeedFactor
             },
             Sprite {
                 source: dataDirectory + "/images/characters/character-run/run-right.png"
                 name: "running-right"
-                frameCount: 4
-                frameWidth: 300
-                frameHeight: 300
-                frameDuration: 200 / app.gameSpeedFactor
+                frameCount: 16
+                frameWidth: 200
+                frameHeight: 200
+                frameDuration: 40 / app.gameSpeedFactor
             }
         ]
     }
