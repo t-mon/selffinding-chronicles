@@ -8,8 +8,8 @@ var resolution = 2
 # Objects
 var defaultViewport
 var timer
-var currentSpriteImageRight
-var currentSpriteImageLeft
+var currentSpriteImage
+
 
 # Runtime variables
 var frame = 1
@@ -69,19 +69,17 @@ func renderNextAnimation():
 	set_current_animation(currentAnimationName) 
 	
 	# Create the current sprite image
-	currentSpriteImageRight = Image.new()
-	currentSpriteImageRight.create(current_animation_length * resolution * finalSize.x, finalSize.y, false, Image.FORMAT_RGBA8)
-	currentSpriteImageLeft = Image.new()
-	currentSpriteImageLeft.create(current_animation_length * resolution * finalSize.x, finalSize.y, false, Image.FORMAT_RGBA8)
-	
-	timer.start(1)
+	currentSpriteImage = Image.new()
+	currentSpriteImage.create(current_animation_length * resolution * finalSize.x, finalSize.y, false, Image.FORMAT_RGBA8)
+
+	timer.start(0.5)
 
 
 func saveImage(image, name, index):
 	image.convert(Image.FORMAT_RGBA8)
 	image.flip_y()
 	image.resize(finalSize.x, finalSize.y, Image.INTERPOLATE_LANCZOS)
-	var finalName = currentAnimationDirectory + "/" + name + "-right-%02d.png" % index
+	var finalName = currentAnimationDirectory + "/" + name + "-%02d.png" % index
 	print("Saving image ", finalName)
 	image.save_png(finalName)
 	
@@ -93,23 +91,10 @@ func saveImage(image, name, index):
 			image.lock()
 			var pixel = image.get_pixel(x, y);
 			image.unlock()
-			currentSpriteImageRight.lock()
-			currentSpriteImageRight.set_pixel((index - 1) * width + x, y, pixel)
-			currentSpriteImageRight.unlock()
+			currentSpriteImage.lock()
+			currentSpriteImage.set_pixel((index - 1) * width + x, y, pixel)
+			currentSpriteImage.unlock()
 
-	# Render mirrored
-	image.flip_x()
-	finalName = currentAnimationDirectory + "/" + name + "-left-%02d.png" % index
-	print("Saving image ", finalName)
-	image.save_png(finalName)
-	for x in range(0, width - 1):
-		for y in range(0, height - 1):
-			image.lock()
-			var pixel = image.get_pixel(x, y);
-			image.unlock()
-			currentSpriteImageLeft.lock()
-			currentSpriteImageLeft.set_pixel((index - 1) * width + x, y, pixel)
-			currentSpriteImageLeft.unlock()
 
 
 func _on_timer_timeout():
@@ -120,8 +105,7 @@ func _on_timer_timeout():
 	frame += 1
 	if (frame >= (current_animation_length * resolution) + 1):
 		timer.stop()
-		currentSpriteImageRight.save_png(currentAnimationDirectory + "/" + currentAnimationName + "-right.png")
-		currentSpriteImageLeft.save_png(currentAnimationDirectory + "/" + currentAnimationName + "-left.png")
+		currentSpriteImage.save_png(currentAnimationDirectory + "/" + currentAnimationName + ".png")
 		print("Done rendering ", currentAnimationName)
 		renderNextAnimation()
 

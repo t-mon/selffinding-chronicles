@@ -23,6 +23,8 @@ PhysicsItem {
     property real auraRadius: character ? (character.auraRange + character.size.width / 2) * app.gridSize : app.gridSize
     property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
 
+    property real characterGridSize: width / 8
+
     bodyType: character ? (character.alive ? GameObject.BodyTypeDynamic : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
     fixedRotation: true
     linearDamping: 10
@@ -86,7 +88,21 @@ PhysicsItem {
     Connections {
         target: root.character
         function onHeadingChanged(heading) { evaluateSpriteState() }
-        function onMovingChanged(moving) { evaluateSpriteState() }
+        function onMovingChanged(moving) {
+
+            if (!character.alive)
+                return
+
+            console.log("---> character moving changed")
+            if (moving) {
+                characterSpriteSequence.jumpTo("running")
+            } else {
+                characterSpriteSequence.jumpTo("break")
+                characterSpriteSequence.goalSprite = "idle"
+            }
+
+            //evaluateSpriteState()
+        }
         function onShoot() {
             if (!character.firearm) {
                 console.log("Character", character.name, "can not shoot. No firearm selected.")
@@ -99,11 +115,11 @@ PhysicsItem {
             console.log("Character", character.name, "shoot arrow using", character.firearm.name, character.firearm.damage)
             var component = Qt.createComponent("BulletItem.qml");
             if (!component)
-                 console.warn("Failed to create bullet component")
+                console.warn("Failed to create bullet component")
 
             var bulletIncubator = component.incubateObject(itemFlickableContent, { shooter: root.character, particleSystem: root.particleSystem } )
             if (!bulletIncubator)
-                 console.warn("Failed to create bullet incubator", component.errorString())
+                console.warn("Failed to create bullet incubator", component.errorString())
 
             if (bulletIncubator && bulletIncubator.status !== Component.Ready) {
                 bulletIncubator.onStatusChanged = function(status) {
@@ -170,9 +186,9 @@ PhysicsItem {
     fixtures: [
         Circle {
             id: headCircle
-            radius: root.width / 8
-            x: root.width / 2 - radius
-            y: root.width / 4 - radius
+            radius: characterGridSize
+            x: root.width / 2 - characterGridSize
+            y: root.width / 2 - 2 * characterGridSize
             categories: GameItem.PhysicsBodyHitbox
             collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
             density: 1.0
@@ -181,10 +197,10 @@ PhysicsItem {
         },
         Box {
             id: bodyBox
-            width: root.width / 4
-            height: width
-            x: root.width / 2 - width / 2
-            y: root.width / 2 - height / 2
+            width: characterGridSize * 2
+            height: width * 2
+            x: root.width / 2 - characterGridSize
+            y: root.height / 2 - characterGridSize
             categories: GameItem.PhysicsBodyHitbox
             collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
             density: 1.0
@@ -194,9 +210,9 @@ PhysicsItem {
         },
         Circle {
             id: bodyCircle
-            radius: root.width / 8
-            x: root.width / 2 - radius
-            y: root.height / 2 + radius
+            radius: characterGridSize
+            x: root.width / 2 - characterGridSize
+            y: root.height - 2 * characterGridSize
             categories: character ? character.categoryFlag : 0
             collidesWith: character ? character.collisionFlag : 0
             density: 10
@@ -231,7 +247,6 @@ PhysicsItem {
         height: width
         anchors.horizontalCenter: root.horizontalCenter
         anchors.bottom: root.bottom
-        anchors.bottomMargin: root.height / 5
         system: root.particleSystem
         group: "footstep"
         enabled: root.character ? Game.running && root.character.moving && root.character.alive : false
@@ -291,9 +306,9 @@ PhysicsItem {
         width: root.width / 2
         height: width
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 0
+        anchors.verticalCenterOffset: characterGridSize
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? width / 5 : -width / 5) : 0
+        anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? characterGridSize / 2 : -characterGridSize / 2) : 0
         sourceComponent: packedWeaponItemComponent
 
         Component {
@@ -306,9 +321,9 @@ PhysicsItem {
 
                     var rotationAngle = 0
                     if (character.heading === Character.HeadingLeft) {
-                        rotationAngle = -130
+                        rotationAngle = -140
                     } else {
-                        rotationAngle = 130
+                        rotationAngle = 140
                     }
 
                     return rotationAngle
@@ -340,8 +355,9 @@ PhysicsItem {
         width: root.width / 2
         height: width
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: characterGridSize
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? width / 4 : -width / 4) : 0
+        anchors.horizontalCenterOffset: character ? (character.heading === Character.HeadingLeft ? characterGridSize / 2 : -characterGridSize / 2) : 0
         sourceComponent: packedFirearmItemComponent
 
         Component {
@@ -355,16 +371,16 @@ PhysicsItem {
 
                     var rotationAngle = 0
                     if (character.heading === Character.HeadingLeft) {
-                        rotationAngle = 30
+                        rotationAngle = 20
                     } else {
-                        rotationAngle = -30
+                        rotationAngle = -20
                     }
 
                     if (character.firearm.firearmType === FirearmItem.FirearmTypeBow) {
                         if (character.heading === Character.HeadingLeft) {
-                            rotationAngle += 75
+                            rotationAngle += 70
                         } else {
-                            rotationAngle -= 75
+                            rotationAngle -= 70
                         }
                     }
 
@@ -394,81 +410,106 @@ PhysicsItem {
 
 
 
-//    FlameItem {
-//        id: flameItem
-//        width: parent.width
-//        height: parent.height
-//        anchors.left: parent.left
-//        anchors.bottom: parent.top
-//        anchors.bottomMargin: -height * 2 / 3
-//        enabled: root.character ? root.burning && root.character.active : false
-//        angle: 270
-//        angleVariation: 30
-//        magnitude: 30
-//        particleSystem: root.particleSystem
+    //    FlameItem {
+    //        id: flameItem
+    //        width: parent.width
+    //        height: parent.height
+    //        anchors.left: parent.left
+    //        anchors.bottom: parent.top
+    //        anchors.bottomMargin: -height * 2 / 3
+    //        enabled: root.character ? root.burning && root.character.active : false
+    //        angle: 270
+    //        angleVariation: 30
+    //        magnitude: 30
+    //        particleSystem: root.particleSystem
 
-//        Timer {
-//            id: buringTimer
-//            interval: 5000 / app.gameSpeedFactor
-//            onTriggered: flameFadeOutAnimation.start()
-//        }
+    //        Timer {
+    //            id: buringTimer
+    //            interval: 5000 / app.gameSpeedFactor
+    //            onTriggered: flameFadeOutAnimation.start()
+    //        }
 
-//        PropertyAnimation {
-//            id: flameFadeOutAnimation
-//            duration: 2000 / app.gameSpeedFactor
-//            target: flameItem
-//            property: "opacity"
-//            loops: 1
-//            to: 0
-//            onRunningChanged: {
-//                if (!running) {
-//                    flameItem.visible = false
-//                    root.burning = false
-//                }
-//            }
-//        }
-//    }
+    //        PropertyAnimation {
+    //            id: flameFadeOutAnimation
+    //            duration: 2000 / app.gameSpeedFactor
+    //            target: flameItem
+    //            property: "opacity"
+    //            loops: 1
+    //            to: 0
+    //            onRunningChanged: {
+    //                if (!running) {
+    //                    flameItem.visible = false
+    //                    root.burning = false
+    //                }
+    //            }
+    //        }
+    //    }
+
 
     SpriteSequence {
         id: characterSpriteSequence
+
+        // Use layer for mirroring sprite content
         anchors.fill: parent
         opacity: root.itemDebugEnabled ? 0.5 : 1
         running: Game.running
         interpolate: true
+        onGoalSpriteChanged: console.log("goal sprite changed", goalSprite)
         sprites: [
             Sprite {
-                source: dataDirectory + "/images/characters/character-idle/idle-right.png"
-                name: "idle-right"
+                source: dataDirectory + "/images/characters/idle.png"
+                name: "idle"
                 frameCount: 16
                 frameWidth: 200
                 frameHeight: 200
                 frameDuration: 80
+                to: {"running": 0, "idle": 1}
             },
             Sprite {
-                source: dataDirectory + "/images/characters/character-idle/idle-left.png"
-                name: "idle-left"
-                frameCount: 16
-                frameWidth: 200
-                frameHeight: 200
-                frameDuration: 80
-            },
-            Sprite {
-                source: dataDirectory + "/images/characters/character-run/run-left.png"
-                name: "running-left"
+                source: dataDirectory + "/images/characters/run.png"
+                name: "running"
                 frameCount: 16
                 frameWidth: 200
                 frameHeight: 200
                 frameDuration: 40 / app.gameSpeedFactor
+                to: {"running": 1, "idle": 0}
             },
             Sprite {
-                source: dataDirectory + "/images/characters/character-run/run-right.png"
-                name: "running-right"
-                frameCount: 16
+                source: dataDirectory + "/images/characters/break.png"
+                name: "break"
+                frameCount: 8
                 frameWidth: 200
                 frameHeight: 200
-                frameDuration: 40 / app.gameSpeedFactor
+                frameDuration: 20 / app.gameSpeedFactor
+                to: {"idle": 1}
             }
         ]
+    }
+
+    ShaderEffect {
+        id: spriteShader
+        anchors.fill: parent
+
+        property bool mirroring: root.character && root.character.heading === Character.HeadingLeft
+        property var source: ShaderEffectSource {
+            sourceItem: characterSpriteSequence
+            hideSource: true
+        }
+
+        fragmentShader: "
+            uniform lowp sampler2D source;
+            uniform lowp float qt_Opacity;
+            varying highp vec2 qt_TexCoord0;
+            uniform bool mirroring;
+
+            void main() {
+                highp vec2 coordinate = qt_TexCoord0;
+                if (mirroring == true) {
+                    coordinate.x = 1.0 - coordinate.x;
+                }
+                gl_FragColor = texture2D(source, coordinate) * qt_Opacity;
+            }
+        "
     }
 
     // ##################################################################################
@@ -535,7 +576,7 @@ PhysicsItem {
                 collideConnected: true
                 bodyA: root.body
                 bodyB: focusPhyicsItem.body
-                localAnchorA: Qt.point(root.width / 2, root.height / 2)
+                localAnchorA: Qt.point(root.width / 2, 5 * characterGridSize)
                 localAnchorB: Qt.point(focusPhyicsItem.width / 2, focusPhyicsItem.height / 2)
             }
         }
@@ -610,7 +651,7 @@ PhysicsItem {
                 collideConnected: true
                 bodyA: root.body
                 bodyB: weaponPhysicsItem.body
-                localAnchorA: Qt.point(root.width / 2, root.height / 2)
+                localAnchorA: Qt.point(root.width / 2, 5 * characterGridSize)
                 localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
             }
         }
@@ -631,7 +672,8 @@ PhysicsItem {
         id: rotationItem
         width: parent.width
         height: parent.height
-        anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: 5 * characterGridSize - height / 2
         rotation: root.rotationAngle
 
         Loader {
@@ -976,35 +1018,19 @@ PhysicsItem {
             return
 
         if (!character.alive) {
-            if (root.character.heading === Character.HeadingLeft) {
-                characterSpriteSequence.jumpTo("idle-left")
-            } else {
-                characterSpriteSequence.jumpTo("idle-right")
-            }
+            characterSpriteSequence.jumpTo("idle")
             return;
         }
 
         if (!character.movable) {
-            if (root.character.heading === Character.HeadingLeft) {
-                characterSpriteSequence.jumpTo("idle-left")
-            } else {
-                characterSpriteSequence.jumpTo("idle-right")
-            }
+            characterSpriteSequence.jumpTo("idle")
             return;
         }
 
         if (root.character.moving) {
-            if (root.character.heading === Character.HeadingLeft) {
-                characterSpriteSequence.jumpTo("running-left")
-            } else {
-                characterSpriteSequence.jumpTo("running-right")
-            }
+            characterSpriteSequence.jumpTo("running")
         } else {
-            if (root.character.heading === Character.HeadingLeft) {
-                characterSpriteSequence.jumpTo("idle-left")
-            } else {
-                characterSpriteSequence.jumpTo("idle-right")
-            }
+            characterSpriteSequence.jumpTo("idle")
         }
     }
 
@@ -1014,7 +1040,7 @@ PhysicsItem {
     }
 
     function getBulletYOffset() {
-        var centerY = root.height / 2
+        var centerY = root.height / 2 + characterGridSize
         return (centerY + (root.height / 2 + app.gridSize / 4 + app.gridSize / 2) * Math.sin(character.angle)) - app.gridSize / 4
     }
 
@@ -1036,7 +1062,7 @@ PhysicsItem {
         bulletObject.startPositionY = bulletStartPoint.y
         bulletObject.shootRange = root.character.firearm.range
         bulletObject.burning = debugControls.flamesEnabled
-        var velocity = 25
+        var velocity = 15
         bulletObject.body.linearVelocity = Qt.point(velocity * Math.cos(character.angle), velocity * Math.sin(character.angle))
     }
 

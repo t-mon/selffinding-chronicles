@@ -25,7 +25,7 @@ ApplicationWindow {
     property string gameName: qsTr("Self finding chronicles")
 
     // This is the main scaling property. Everything is scales with the gridSize
-    property real gridSize: Math.min(app.width / 25, app.height / 18)
+    property real gridSize: Math.min(app.width / 24, app.height / 15)
     property real menuItemSize: gridSize * 2.5
     property real velocityScale: 10
 

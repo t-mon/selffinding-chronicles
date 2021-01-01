@@ -370,7 +370,7 @@ GamePage {
 
     function getPlayerWorldPosition() {
         var playerX = Game.engine.player.centerPosition.x * app.gridSize
-        var playerY = Game.engine.player.centerPosition.y * app.gridSize
+        var playerY = (Game.engine.player.centerPosition.y /*+ Game.engine.player.size.height / 8*/) * app.gridSize
         return Qt.point(playerX, playerY)
     }
 
@@ -382,7 +382,6 @@ GamePage {
     }
 
     function moveCamera() {
-
         // Get player position in the scene
         var playerWorldPosition = getPlayerWorldPosition()
         //console.log("#############", playerWorldPosition.x, playerWorldPosition.y)
@@ -439,6 +438,7 @@ GamePage {
 
         // Get player position in the scene
         var playerScenePosition = getPlayerScreenPosition()
+
         var dx = screenMouseArea.mouseX - playerScenePosition.x
         var dy = screenMouseArea.mouseY - playerScenePosition.y
         Game.engine.player.angle = Math.atan2(dy , dx)
