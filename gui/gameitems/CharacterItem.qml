@@ -453,8 +453,7 @@ PhysicsItem {
         anchors.fill: parent
         opacity: root.itemDebugEnabled ? 0.5 : 1
         running: Game.running
-        interpolate: true
-        onGoalSpriteChanged: console.log("goal sprite changed", goalSprite)
+        interpolate: false
         sprites: [
             Sprite {
                 source: dataDirectory + "/images/characters/idle.png"
@@ -462,12 +461,30 @@ PhysicsItem {
                 frameCount: 16
                 frameWidth: 200
                 frameHeight: 200
-                frameDuration: 80
-                to: {"running": 0, "idle": 1}
+                frameDuration: 60
+                to: {"running": 0, "idle": 0.8, "idle-blink": 0.2}
+            },
+            Sprite {
+                source: dataDirectory + "/images/characters/idle-blink.png"
+                name: "idle-blink"
+                frameCount: 16
+                frameWidth: 200
+                frameHeight: 200
+                frameDuration: 60
+                to: {"running": 0, "idle": 1.0}
             },
             Sprite {
                 source: dataDirectory + "/images/characters/run.png"
                 name: "running"
+                frameCount: 16
+                frameWidth: 200
+                frameHeight: 200
+                frameDuration: 40 / app.gameSpeedFactor
+                to: {"running": 0.8, "running-blink": 0.2, "idle": 0}
+            },
+            Sprite {
+                source: dataDirectory + "/images/characters/run-blink.png"
+                name: "running-blink"
                 frameCount: 16
                 frameWidth: 200
                 frameHeight: 200
@@ -477,7 +494,7 @@ PhysicsItem {
             Sprite {
                 source: dataDirectory + "/images/characters/break.png"
                 name: "break"
-                frameCount: 8
+                frameCount: 16
                 frameWidth: 200
                 frameHeight: 200
                 frameDuration: 20 / app.gameSpeedFactor
