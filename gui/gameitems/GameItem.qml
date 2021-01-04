@@ -27,6 +27,13 @@ PhysicsItem {
         gameItem.playerOnItem = playerOnItem
     }
 
+//    Binding {
+//        id: positionBinding
+//        target: gameItem
+//        property: "position"
+//        value: Qt.point((root.centerPosition.x) / app.gridSize, (root.centerPosition.y) / app.gridSize)
+//    }
+
     onXChanged: {
         if (!gameItem) return
         gameItem.position.x = x / app.gridSize

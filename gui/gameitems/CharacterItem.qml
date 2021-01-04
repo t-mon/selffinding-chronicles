@@ -24,25 +24,36 @@ PhysicsItem {
     property real rotationAngle: character ? character.angle * 180 / Math.PI : 0
 
     property real characterGridSize: width / 8
+    property point characterCenter: Qt.point(centerPosition.x, centerPosition.y + characterGridSize)
 
     bodyType: character ? (character.alive ? GameObject.BodyTypeDynamic : GameObject.BodyTypeStatic) : GameObject.BodyTypeStatic
     fixedRotation: true
     linearDamping: 10
+    angularDamping: 0
     antialiasing: app.antialiasing
     active: character ? character.active : false
+
+//    Binding {
+//        id: positionBinding
+//        target: character
+//        property: "position"
+//        value: Qt.point((root.centerPosition.x) / app.gridSize, (root.centerPosition.y) / app.gridSize)
+//    }
 
     onXChanged: {
         if (!character) return
         character.position.x = x / app.gridSize
-        //console.log(character.name, "position changed", x, ",", y)
+        //character.position = Qt.point(x  / app.gridSize, y / app.gridSize)
+        //console.log(character.name, "position changed", x, "|", y)
         if (character.isPlayer) moveCamera()
     }
 
     onYChanged: {
         if (!character) return
         character.position.y = y / app.gridSize
+        //character.position = Qt.point(x  / app.gridSize, y / app.gridSize)
         z = gameScene.calculateLayerValue(character.layer, y, height, worldItem.height)
-        //console.log(character.name, "position changed", x, ",", y)
+        //console.log(character.name, "position changed", x, "|", y)
         if (character.isPlayer) moveCamera()
     }
 
@@ -79,15 +90,17 @@ PhysicsItem {
             var currentVelocity = body.linearVelocity
             var dvx = character.movementVector.x * app.velocityScale - currentVelocity.x
             var dvy = character.movementVector.y * app.velocityScale - currentVelocity.y
-            //console.log("Apply linear impulse to body", currentVelocity)
-            body.applyLinearImpulse(Qt.point(dvx, dvy), Qt.point(root.width / 2, root.height / 2))
+            //console.log("Apply impulse", dvx, dvy)
+            body.applyLinearImpulse(Qt.point(dvx, dvy), root.body.getWorldCenter())
         }
     }
 
     // Character connections
     Connections {
         target: root.character
+
         function onHeadingChanged(heading) { evaluateSpriteState() }
+
         function onMovingChanged(moving) {
 
             if (!character.alive)
@@ -100,9 +113,8 @@ PhysicsItem {
                 characterSpriteSequence.jumpTo("break")
                 characterSpriteSequence.goalSprite = "idle"
             }
-
-            //evaluateSpriteState()
         }
+
         function onShoot() {
             if (!character.firearm) {
                 console.log("Character", character.name, "can not shoot. No firearm selected.")
@@ -191,9 +203,10 @@ PhysicsItem {
             y: root.width / 2 - 2 * characterGridSize
             categories: GameItem.PhysicsBodyHitbox
             collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
-            density: 1.0
+            density: 0.0
             friction: 0.0
             restitution: 0.0
+            sensor: true
         },
         Box {
             id: bodyBox
@@ -203,7 +216,7 @@ PhysicsItem {
             y: root.height / 2 - characterGridSize
             categories: GameItem.PhysicsBodyHitbox
             collidesWith: GameItem.PhysicsSensor | GameItem.PhysicsWeapon | GameItem.PhysicsBullet | GameItem.PhysicsMagic
-            density: 1.0
+            density: 0.0
             friction: 0.0
             restitution: 0.0
             sensor: true
@@ -215,9 +228,10 @@ PhysicsItem {
             y: root.height - 2 * characterGridSize
             categories: character ? character.categoryFlag : 0
             collidesWith: character ? character.collisionFlag : 0
-            density: 10
+            density: 5
             friction: 0.0
             restitution: 0.0
+            sensor: false
 
             onBeginContact: {
                 if (!root.character || !character.isPlayer)
@@ -265,8 +279,8 @@ PhysicsItem {
     }
 
     Glow {
-        source: characterSpriteSequence
-        anchors.fill: characterSpriteSequence
+        source: spriteShader
+        anchors.fill: spriteShader
         radius: 8
         samples: 20
         color: "white"
@@ -468,6 +482,7 @@ PhysicsItem {
                 source: dataDirectory + "/images/characters/idle-blink.png"
                 name: "idle-blink"
                 frameCount: 16
+                frameDurationVariation: 5
                 frameWidth: 200
                 frameHeight: 200
                 frameDuration: 60
@@ -508,6 +523,7 @@ PhysicsItem {
         anchors.fill: parent
 
         property bool mirroring: root.character && root.character.heading === Character.HeadingLeft
+
         property var source: ShaderEffectSource {
             sourceItem: characterSpriteSequence
             hideSource: true
@@ -539,8 +555,9 @@ PhysicsItem {
         width: root.width
         height: width
         x: root.x
-        y: root.y
+        y: root.y + characterGridSize
         linearDamping: 0
+        angularDamping: 0
         bodyType: GameObject.BodyTypeDynamic
         antialiasing: app.antialiasing
         fixedRotation: false
@@ -550,7 +567,7 @@ PhysicsItem {
             Box {
                 id: focusSensor
                 width: root.auraRadius
-                height: root.width / 8
+                height: characterGridSize
                 x: root.width / 2
                 y: root.height / 2 - height / 2
                 categories: GameItem.PhysicsSensor
@@ -609,80 +626,80 @@ PhysicsItem {
         Component.onDestruction: focusItemJointLoader.active = false
     }
 
-    // Weapon sensor
-    PhysicsItem {
-        id: weaponPhysicsItem
-        width: root.width
-        height: width
-        x: root.x
-        y: root.y
-        linearDamping: 10
-        bodyType: GameObject.BodyTypeDynamic
-        antialiasing: app.antialiasing
-        active: character ? character.active : false
-        fixedRotation: false
-        rotation: root.rotationAngle + weaponItemLoader.rotation
-        enabled: root.hitAttackRunning
-        fixtures: [
-            Box {
-                id: weaponSensor
-                width: root.hitAttackRunning ? app.gridSize * 2 : 0
-                height: root.width / 6
-                x: root.width / 2
-                y: root.height / 2 - height / 2
-                categories: GameItem.PhysicsWeapon
-                collidesWith: GameItem.PhysicsAll
-                density: 0.0
-                friction: 0.0
-                restitution: 0.0
-                sensor: true
+//    // Weapon sensor
+//    PhysicsItem {
+//        id: weaponPhysicsItem
+//        width: root.width
+//        height: width
+//        x: root.x
+//        y: root.y
+//        linearDamping: 10
+//        bodyType: GameObject.BodyTypeDynamic
+//        antialiasing: app.antialiasing
+//        active: character ? character.active : false
+//        fixedRotation: false
+//        rotation: root.rotationAngle + weaponItemLoader.rotation
+//        enabled: root.hitAttackRunning
+//        fixtures: [
+//            Box {
+//                id: weaponSensor
+//                width: root.hitAttackRunning ? app.gridSize * 2 : 0
+//                height: root.width / 6
+//                x: root.width / 2
+//                y: root.height / 2 - height / 2
+//                categories: GameItem.PhysicsWeapon
+//                collidesWith: GameItem.PhysicsAll
+//                density: 0.0
+//                friction: 0.0
+//                restitution: 0.0
+//                sensor: true
 
-                onBeginContact: {
-                    if (!root.hitAttackRunning)
-                        return
+//                onBeginContact: {
+//                    if (!root.hitAttackRunning)
+//                        return
 
-                    var target = other.getBody().target
-                    if (target === root || target === focusPhyicsItem)
-                        return
+//                    var target = other.getBody().target
+//                    if (target === root || target === focusPhyicsItem)
+//                        return
 
-                    if (target.itemType && target.enemy) {
-                        if (character && character.weapon) {
-                            Game.engine.performHitAttack(root.character, Game.castEnemyToCharacter(target.enemy), character.weapon.damage)
-                            return
-                        }
-                    } else if (target.itemType && target.character) {
-                        if (character && character.weapon) {
-                            Game.engine.performHitAttack(root.character, target.character, character.weapon.damage)
-                            return
-                        }
-                    }
-                }
-            }
-        ]
+//                    if (target.itemType && target.enemy) {
+//                        if (character && character.weapon) {
+//                            Game.engine.performHitAttack(root.character, Game.castEnemyToCharacter(target.enemy), character.weapon.damage)
+//                            return
+//                        }
+//                    } else if (target.itemType && target.character) {
+//                        if (character && character.weapon) {
+//                            Game.engine.performHitAttack(root.character, target.character, character.weapon.damage)
+//                            return
+//                        }
+//                    }
+//                }
+//            }
+//        ]
 
-        Component {
-            id: weaponItemJointComponent
-            RevoluteJoint {
-                id: weaponJoint
-                enableMotor: false
-                collideConnected: true
-                bodyA: root.body
-                bodyB: weaponPhysicsItem.body
-                localAnchorA: Qt.point(root.width / 2, 5 * characterGridSize)
-                localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
-            }
-        }
+//        Component {
+//            id: weaponItemJointComponent
+//            RevoluteJoint {
+//                id: weaponJoint
+//                enableMotor: false
+//                collideConnected: true
+//                bodyA: root.body
+//                bodyB: weaponPhysicsItem.body
+//                localAnchorA: Qt.point(root.width / 2, 4 * characterGridSize)
+//                localAnchorB: Qt.point(weaponPhysicsItem.width / 2, weaponPhysicsItem.height / 2)
+//            }
+//        }
 
-        // Note: make sure the joint will be created after the 2 bodies, and destroyed before the bodies
-        Loader {
-            id: weaponItemJointLoader
-            active: false
-            sourceComponent: weaponItemJointComponent
-        }
+//        // Note: make sure the joint will be created after the 2 bodies, and destroyed before the bodies
+//        Loader {
+//            id: weaponItemJointLoader
+//            active: false
+//            sourceComponent: weaponItemJointComponent
+//        }
 
-        Component.onCompleted: weaponItemJointLoader.active = true
-        Component.onDestruction: weaponItemJointLoader.active = false
-    }
+//        Component.onCompleted: weaponItemJointLoader.active = true
+//        Component.onDestruction: weaponItemJointLoader.active = false
+//    }
 
 
     Item {

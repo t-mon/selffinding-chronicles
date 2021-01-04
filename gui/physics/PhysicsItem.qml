@@ -6,6 +6,8 @@ Item {
 
     property alias body: itemBody
 
+    property point centerPosition: Qt.point(x + width / 2, y + height / 2)
+
     property bool playerOnItem: false
     property bool playerAuraRange: false
     property bool itemDebugEnabled: false

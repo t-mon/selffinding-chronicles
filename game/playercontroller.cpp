@@ -160,13 +160,11 @@ void PlayerController::keyReleased(const Qt::Key &key)
 
 void PlayerController::clickPrimaryAction()
 {
-    emit primaryActionPressed();
     emit primaryActionPressedChanged(true);
 }
 
 void PlayerController::clickSecondaryAction()
 {
-    emit secondaryActionPressed();
     emit secondaryActionPressedChanged(true);
 }
 
@@ -245,8 +243,6 @@ void PlayerController::setPrimaryActionPressed(bool pressed)
     qCDebug(dcPlayerController()) << "Primary action" << (pressed ? "pressed" : "released");
     m_primaryActionPressed = pressed;
     emit primaryActionPressedChanged(m_primaryActionPressed);
-    if (m_primaryActionPressed)
-        emit primaryActionPressed();
 }
 
 void PlayerController::setSecondaryActionPressed(bool pressed)
@@ -257,8 +253,6 @@ void PlayerController::setSecondaryActionPressed(bool pressed)
     qCDebug(dcPlayerController()) << "Secondary action" << (pressed ? "pressed" : "released");
     m_secondaryActionPressed = pressed;
     emit secondaryActionPressedChanged(m_secondaryActionPressed);
-    if (m_secondaryActionPressed)
-        emit secondaryActionPressed();
 }
 
 void PlayerController::setInventoryPressed(bool pressed)
