@@ -387,7 +387,7 @@ GamePage {
     function moveCamera() {
         // Get player position in the scene
         var playerWorldPosition = getPlayerWorldPosition()
-        console.log("#############", playerWorldPosition.x, playerWorldPosition.y)
+        //console.log("#############", playerWorldPosition.x, playerWorldPosition.y)
         if (gameScene.flickable.width < gameScene.world.width) {
             // Do camera x movement
             if (playerWorldPosition.x <= gameScene.flickable.width / 2) {

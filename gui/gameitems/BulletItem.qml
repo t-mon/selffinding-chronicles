@@ -123,6 +123,9 @@ PhysicsItem {
             onBeginContact: {
                 // Get fireitem
                 var flameItem = other.getBody().target
+                if (!flameItem.fireItem)
+                    return
+
                 if (root.burning && flameItem.fireItem.burning) {
                     console.log("Burning bullet contact --> burning fire | do nothing")
                 } else if (!root.burning && flameItem.fireItem.burning) {
